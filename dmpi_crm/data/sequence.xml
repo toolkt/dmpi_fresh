@@ -13,6 +13,16 @@
             <field name="prefix">PO</field>
         </record>
 
+        <record id="crm_contract_sequence" model="ir.sequence">
+            <field name="name">Contract</field>
+            <field name="code">dmpi.crm.contract</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding">8</field>
+            <field name="number_increment">1</field>
+            <field name="number_next_actual">1</field>
+            <field name="prefix">PO</field>
+        </record>
+
         <record id="so_sequence" model="ir.sequence">
             <field name="name">Sales Order</field>
             <field name="code">dmpi.crm.sale.order</field>

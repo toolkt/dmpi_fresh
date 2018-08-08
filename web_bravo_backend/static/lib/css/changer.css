@@ -1,0 +1,510 @@
+/*!
+ * jquery-changer v3.2.0
+ * Flexible changer menu using jQuery, iScroll and CSS.
+ * http://git.blivesta.com/changer
+ * License : MIT
+ * Author : blivesta <design@blivesta.com> (http://blivesta.com/)
+ */
+
+/*!------------------------------------*\
+    Base
+\*!------------------------------------*/
+.changer-nav {
+  position: fixed;
+  z-index: 101;
+  top: 0;
+  overflow: hidden;
+  width: 16.25rem;
+  height: 100%;
+  color: #222;
+  background-color: #fff;
+}
+
+.changer-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 3.75rem;
+  display: block;
+  padding-right: .75rem;
+  padding-left: .75rem;
+  text-decoration: none;
+  color: #222;
+}
+
+.changer-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changer-menu-item {
+  font-size: 1rem;
+  display: block;
+  padding: .75rem;
+  text-decoration: none;
+  color: #222;
+}
+
+.changer-menu-item:hover {
+  text-decoration: underline;
+  color: #555;
+  background-color: transparent;
+}
+
+/*! overlay */
+.changer-overlay {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .2);
+}
+
+.changer-open .changer-overlay {
+  display: block;
+}
+
+/* XXX: local patch waiting for:
+   https://github.com/blivesta/changer/pull/36
+*/
+.changer-open {
+  overflow: hidden;
+}
+/* end local patch */
+
+/*!------------------------------------*\
+    Top
+\*!------------------------------------*/
+.changer--top .changer-nav {
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  -webkit-transition: top .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition: top .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+}
+
+.changer--top.changer-open .changer-nav {
+  top: 0;
+}
+
+.changer--top .changer-hamburger,
+.changer--top.changer-open .changer-hamburger {
+  right: 0;
+}
+/*!------------------------------------*\
+    Left
+\*!------------------------------------*/
+.changer--left .changer-nav {
+  left: -16.25rem;
+  -webkit-transition: left .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition: left .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+}
+
+.changer--left.changer-open .changer-nav,
+.changer--left .changer-hamburger,
+.changer--left.changer-open .changer-navbar .changer-hamburger {
+  left: 0;
+}
+
+.changer--left.changer-open .changer-hamburger {
+  left: 16.25rem;
+}
+/*!------------------------------------*\
+    Right
+\*!------------------------------------*/
+.changer--right .changer-nav {
+  right: -16.25rem;
+  -webkit-transition: right .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition: right .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+}
+
+.changer--right.changer-open .changer-nav,
+.changer--right .changer-hamburger,
+.changer--right.changer-open .changer-navbar .changer-hamburger {
+  right: 0;
+}
+
+.changer--right.changer-open .changer-hamburger {
+  right: 16.25rem;
+}
+/*!------------------------------------*\
+    Hamburger
+\*!------------------------------------*/
+.changer-hamburger {
+  position: fixed;
+  z-index: 104;
+  top: 0;
+  display: block;
+  box-sizing: content-box;
+  width: 2rem;
+  padding: 0;
+  padding-top: 18px;
+  padding-right: .75rem;
+  padding-bottom: 30px;
+  padding-left: .75rem;
+  -webkit-transition: all .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition: all .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+}
+
+.changer-hamburger:hover {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.changer-hamburger-icon {
+  position: relative;
+  display: block;
+  margin-top: 10px;
+}
+
+.changer-hamburger-icon,
+.changer-hamburger-icon:before,
+.changer-hamburger-icon:after {
+  width: 100%;
+  height: 2px;
+  -webkit-transition: all .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition: all .6s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  background-color: #222;
+}
+
+.changer-hamburger-icon:before,
+.changer-hamburger-icon:after {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  content: ' ';
+}
+
+.changer-hamburger-icon:after {
+  top: 10px;
+}
+
+.changer-open .changer-hamburger-icon {
+  background-color: transparent;
+}
+
+.changer-open .changer-hamburger-icon:before,
+.changer-open .changer-hamburger-icon:after {
+  top: 0;
+}
+
+.changer-open .changer-hamburger-icon:before {
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.changer-open .changer-hamburger-icon:after {
+  -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+/*!------------------------------------*\
+    accessibility
+\*!------------------------------------*/
+
+/*!
+ * Only display content to screen readers
+ * See: http://a11yproject.com/posts/how-to-hide-content
+ */
+.sr-only {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+/*!
+ * Use in conjunction with .sr-only to only display content when it's focused.
+ * Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+ * Credit: HTML5 Boilerplate
+ */
+.sr-only-focusable:active,
+.sr-only-focusable:focus {
+  position: static;
+  overflow: visible;
+  clip: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+/*!------------------------------------*\
+    Sidebar
+\*!------------------------------------*/
+.changer--sidebar {
+  background-color: #fff;
+}
+
+.changer--sidebar .changer-contents {
+  background-color: #fff;
+}
+
+@media (min-width: 64em) {
+  .changer--sidebar .changer-hamburger {
+    display: none;
+    visibility: hidden;
+  }
+
+  .changer--sidebar .changer-nav {
+    display: block;
+    -webkit-transform: none;
+        -ms-transform: none;
+            transform: none;
+    position: fixed;
+    width: 12.5rem;
+    height: 100%;
+  }
+
+  /*! Left */
+  .changer--sidebar.changer--left .changer-nav {
+    left: 0;
+    border-right: 1px solid #ddd;
+  }
+
+  .changer--sidebar.changer--left .changer-contents {
+    margin-left: 12.5rem;
+  }
+
+  /*! Right */
+  .changer--sidebar.changer--right .changer-nav {
+    right: 0;
+    border-left: 1px solid #ddd;
+  }
+
+  .changer--sidebar.changer--right .changer-contents {
+    margin-right: 12.5rem;
+  }
+
+  /*! container */
+  .changer--sidebar .changer-container {
+    max-width: 48rem;
+  }
+}
+
+@media (min-width: 75em) {
+  .changer--sidebar .changer-nav {
+    width: 16.25rem;
+  }
+
+  .changer--sidebar.changer--left .changer-contents {
+    margin-left: 16.25rem;
+  }
+
+  .changer--sidebar.changer--right .changer-contents {
+    margin-right: 16.25rem;
+  }
+
+  /*! container */
+  .changer--sidebar .changer-container {
+    max-width: 60rem;
+  }
+}
+/*!------------------------------------*\
+    Navbar
+\*!------------------------------------*/
+.changer--navbarTopGutter {
+  padding-top: 3.75rem;
+}
+
+.changer-navbar .changer-navbar-header {
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.changer-navbar {
+  z-index: 102;
+  top: 0;
+  width: 100%;
+}
+
+/*! .changer-navbar modifier */
+.changer-navbar--fixed {
+  position: fixed;
+}
+
+.changer-navbar-header {
+  position: relative;
+  z-index: 102;
+  box-sizing: border-box;
+  width: 100%;
+  height: 3.75rem;
+  padding: 0 .75rem;
+  text-align: center;
+}
+
+.changer-navbar .changer-brand {
+  line-height: 3.75rem;
+  display: inline-block;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-decoration: none;
+}
+
+.changer-navbar .changer-brand:hover {
+  background-color: transparent;
+}
+
+.changer-navbar .changer-nav {
+  padding-top: 3.75rem;
+}
+
+.changer-navbar .changer-menu {
+  padding-bottom: 7.5rem;
+}
+
+@media (min-width: 64em) {
+  .changer-navbar {
+    height: 3.75rem;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+  }
+
+  .changer-navbar .changer-navbar-header {
+    position: relative;
+    display: block;
+    float: left;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .changer-navbar .changer-menu--right {
+    float: right;
+  }
+
+  .changer-navbar .changer-menu li {
+    float: left;
+  }
+
+  .changer-navbar .changer-menu-item {
+    line-height: 3.75rem;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .changer-navbar .changer-hamburger {
+    display: none;
+  }
+
+  .changer-navbar .changer-nav {
+    position: relative;
+    left: 0;
+    overflow: visible;
+    width: auto;
+    height: 3.75rem;
+    padding-top: 0;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+  }
+
+  .changer-navbar .changer-menu {
+    padding: 0;
+  }
+
+  /*! dropdown */
+  .changer-navbar .changer-dropdown-menu {
+    position: absolute;
+    width: 16.25rem;
+    border: 1px solid #ddd;
+  }
+
+  .changer-navbar .changer-dropdown-menu-item {
+    padding-left: .75rem;
+  }
+}
+/*!------------------------------------*\
+    Dropdown
+\*!------------------------------------*/
+.changer-dropdown-menu {
+  display: none;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+}
+
+.changer-dropdown-menu > li {
+  width: 100%;
+  list-style: none;
+}
+
+.changer-dropdown-menu-item {
+  line-height: 3.75rem;
+  display: block;
+  padding: 0;
+  padding-right: .75rem;
+  padding-left: 1.5rem;
+  text-decoration: none;
+  color: #222;
+}
+
+.changer-dropdown-menu-item:hover {
+  text-decoration: underline;
+  color: #555;
+  background-color: transparent;
+}
+
+/*! open */
+.changer-dropdown.open > .changer-dropdown-menu {
+  display: block;
+}
+
+/*! changer-caret */
+.changer-dropdown .changer-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 4px;
+  -webkit-transition: opacity .2s ease, -webkit-transform .2s ease;
+  transition: opacity .2s ease, -webkit-transform .2s ease;
+  transition: transform .2s ease, opacity .2s ease;
+  transition: transform .2s ease, opacity .2s ease, -webkit-transform .2s ease;
+  -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+          transform: rotate(0deg);
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+/*! open */
+.changer-dropdown.open .changer-caret {
+  -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+/*!------------------------------------*\
+    Container
+\*!------------------------------------*/
+.changer-container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 64em) {
+  .changer-container {
+    max-width: 60rem;
+  }
+}
+
+@media (min-width: 75em) {
+  .changer-container {
+    max-width: 70rem;
+  }
+}

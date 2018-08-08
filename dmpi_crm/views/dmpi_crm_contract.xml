@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_dmpi_crm_contract_search" model="ir.ui.view">
+            <field name="name">CRM Contract</field>
+            <field name="model">dmpi.crm.contract</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="sap_cn_no"/>
+                    <field name="partner_id"/>
+                    <field name="customer_ref"/>
+                    
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <group>
+                        <filter string="Active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+    </data>
+
+</odoo>
