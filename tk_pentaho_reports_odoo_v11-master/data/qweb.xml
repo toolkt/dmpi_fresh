@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="pentaho_web" name="pentaho qwebactionmanager" inherit_id="web.assets_backend">
+        <xpath expr="//script[contains(@src, '/web/static/src/js/report/qwebactionmanager.js')]" position="replace">
+            <script type="text/javascript" src="/tk_pentaho_reports_odoo_v11/static/src/js/pentaho/qwebactionmanager.js"/>
+        </xpath>
+    </template>
+</odoo>
