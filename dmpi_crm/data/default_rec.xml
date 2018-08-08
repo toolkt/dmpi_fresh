@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <data noupdate="1">
+
+
+    	<!-- TODO PREPOPULATE PROD DATABASE-->
+
+        <record id="config_product_code_p5" forcecreate='True' model="dmpi.crm.config">
+              <field name="select_name">P5</field>
+        </record>
+
+    config_id = fields.Many2one('dmpi.crm.config',"Config ID")
+    sequence = fields.Integer('Sequence')
+    select_group = fields.Char("Group")
+    select_name = fields.Char("Select Name", track_visibility='onchange')
+    select_value = fields.Char("Select Value", track_visibility='onchange')
+
+
+    </data>
+</odoo>

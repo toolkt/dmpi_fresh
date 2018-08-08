@@ -1,0 +1,5 @@
+/*.o_form_view .o_notebook:last-child > .tab-content {
+    border-bottom: none;
+    overflow: auto;
+    overflow-y: hidden;
+}*/

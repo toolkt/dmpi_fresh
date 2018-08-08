@@ -1,0 +1,454 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+        <menuitem id="dmpi_reports_main_menu" name="Reporting" web_icon="dmpi_fresh_reports,static/description/icon.png"/>
+        <menuitem id="dmpi_reports_config_menu" parent="dmpi_reports_main_menu" name="Configuration" sequence="40"/>
+        <menuitem id="dmpi_reports_menu" parent="dmpi_reports_main_menu" name="Reports" sequence="10"/>
+
+        <!-- PRE SHIPMENT TEMPLATES -->
+        <record id="dmpi_crm_template_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.template.tree</field>
+            <field name="model">dmpi.crm.template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Pre-Shipment Template">
+                    <field name="name"/>
+                    <field name="active"/>
+                </tree>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_template_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.template.form</field>
+            <field name="model">dmpi.crm.template</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            	<form string="Pre-Shipment Template">
+            		<sheet>
+                        <h1><field name="name"/></h1>
+                        <p>Active: <field name="active"/></p>
+                        <p class="text-info">Creating Rules: (output, comparator, % factor)</p>
+            			<group>
+            				<group string="Operation Rules">
+                                <field name="ext_rule"/>
+                                <field name="int_rule"/>
+                                <field name="pack_rule"/>
+                                <field name="overall_rule"/>
+                                <field name="ext_weight" invisible="1"/>
+                                <field name="int_weight" invisible="1"/>
+                                <field name="pack_weight" invisible="1"/>
+                                <field name="total_weight" invisible="1"/>
+            				</group>
+                            <group string="Hold">
+                                <field name="ext_hold"/>
+                                <field name="int_hold"/>
+                                <field name="pack_hold"/>
+                            </group>
+            			</group>
+                        <notebook>
+                            <page string="Weight Factor Values">
+                                <field name="tmpl_lines">
+                                    <form string="Weight Factor Values">
+                                        <sheet>
+                                            <group col="4">
+                                                <field name="sequence"/>
+                                                <field name="factor_id"/>
+                                                <field name="type"/>
+                                                <field name="code"/>
+                                                <field name="weight"/>
+                                                <field name="rule"/>
+                                                <field name="is_hold"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                    <tree editable="bottom">
+                                        <field name="sequence"/>
+                                        <field name="factor_id"/>
+                                        <field name="type"/>
+                                        <field name="code"/>
+                                        <field name="weight" sum="Total"/>
+                                        <field name="rule"/>
+                                        <field name="is_hold"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+            		</sheet>
+            	</form>
+           </field>
+		</record>
+
+        <record id="dmpi_crm_template_action" model="ir.actions.act_window">
+            <field name="name">Pre-Shipment Template</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'active_test':False}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"></p>
+            </field>
+        </record>
+
+        <menuitem action="dmpi_crm_template_action" id="dmpi_crm_template" parent="dmpi_reports_config_menu" sequence="8"/>
+
+        <!-- FACTORS -->
+        <record id="dmpi_crm_factor_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.factor.tree</field>
+            <field name="model">dmpi.crm.factor</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Template Factors" editable="bottom">
+                    <!-- <field name="sequence"/> -->
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="type"/>
+                    <field name="active"/>
+                </tree>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_factor_action" model="ir.actions.act_window">
+            <field name="name">Characteristic</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.factor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'active_test':False}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    List of product characteristics
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="dmpi_crm_factor_action" id="dmpi_crm_factor" parent="dmpi_reports_config_menu" sequence="10"/>
+
+        <!-- DR LINES -->
+<!--         <record id="dmpi_dr_line_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.dr.line.tree</field>
+            <field name="model">dmpi.crm.dr.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="DR Lines" editable="bottom">
+                    <field name="container"/>
+                    <field name="partner"/>
+                    <field name="sku"/>
+                    <field name="lot"/>
+                    <field name="type"/>
+                    <field name="factor"/>
+                    <field name="no_sample"/>
+                    <field name="no_defect"/>
+                    <field name="value"/>
+                    <field name="dr_id"/>
+                </tree>
+           </field>
+        </record>
+
+        <record id="dmpi_dr_line_action" model="ir.actions.act_window">
+            <field name="name">DR Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.dr.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"></p>
+            </field>
+        </record>
+
+        <menuitem action="dmpi_dr_line_action" id="dmpi_dr_line" parent="dmpi_reports_config_menu" sequence="50"/> -->
+
+        <!-- PRESHIPMENT CERTIFICATES -->
+        <record id="dmpi_crm_preship_report_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.preship.report.tree</field>
+            <field name="model">dmpi.crm.preship.report</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Pre-Shipment Reports">
+                    <field name="series_no"/>
+                    <field name="dr_id"/>
+                    <field name="container"/>
+                    <field name="tmpl_id"/>
+                    <field name="date_issue"/>
+                    <field name="issuer"/>
+                    <field name="customer"/>
+                </tree>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_preship_report_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.preship.report.form</field>
+            <field name="model">dmpi.crm.preship.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Pre-Shipment Reports">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
+                        <button name="print_preship_report" string="Print Pre-Shipment Report" type="object" class="oe_highlight"/>
+                        <button name="print_fg_cert_report" string="Print FG Certificate" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <h1><field name="series_no"/></h1>
+                        <group>
+                            <group>
+                                <field name="dr_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                <field name="container"/>
+                                <field name="tmpl_id" string="Template" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                <field name="img"/>
+                            </group>
+                            <group>
+                                <field name="date_issue"/>
+                                <field name="issuer"/>
+                                <field name="customer"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="General">
+                                <group col="4" string="Product Specifications">
+                                    <!-- <field name="product_sc"/> -->
+                                    <field name="shell_color"/>
+                                    <field name="date_load"/>
+
+                                    <!-- <field name="product_ps"/> -->
+                                    <field name="pack_size"/>
+                                    <field name="inspector"/>
+
+                                    <field name="date_pack"/>
+                                    <field name="no_box"/>
+
+                                    <field name="market"/>
+                                    <field name="field_source"/>
+                                </group>
+                                <group col="4" string="FG Certification">
+                                    <field name="variety"/>
+                                    <field name="allergen"/>
+                                    <field name="supervisor"/>
+                                </group>
+
+                                <group col="4" string="Score">
+                                    <field name="total_score"/>
+                                    <field name="total_class"/>
+                                </group>
+
+                            </page>
+                            <page string="Others">
+                                <group>
+                                    <group>
+                                        <field name="temp_start" string="Supply Temp Start"/>
+                                        <field name="temp_end" string="Supply Temp Dep"/>
+                                    </group>
+                                    <group>
+                                        <field name="van_temp_start" string="Van Temp Before"/>
+                                        <field name="van_temp_end" string="Van Temp After"/>
+                                    </group>
+                                    <group>
+                                        <field name="pre_pc"/>
+                                        <field name="post_pc"/>
+                                        <field name="cold_store"/>
+                                    </group>
+                                    <group>
+                                        <field name="pulp_temp_first"/>
+                                        <field name="pulp_temp_mid"/>
+                                        <field name="pulp_temp_last"/>
+                                    </group>
+                                    <group>
+                                        <field name="no_pallet"/>
+                                    </group>
+                                </group>
+                                <separator/>
+                                <field name="remarks" class="oe_inline" placeholder="Remarks..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_preship_report_action" model="ir.actions.act_window">
+            <field name="name">Pre-Shipment Certificate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.preship.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"></p>
+            </field>
+        </record>
+
+        <menuitem action="dmpi_crm_preship_report_action" id="dmpi_crm_preship_report" parent="dmpi_reports_menu"/>
+
+
+        <!-- CONTAINER LOAD PLAN -->
+        <record id="dmpi_crm_clp_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.clp.tree</field>
+            <field name="model">dmpi.crm.clp</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Container Load Plan">
+                    <field name="control_no"/>
+                    <field name="container_no"/>
+                    <field name="plant"/>
+                    <field name="port_origin"/>
+                    <field name="port_destination"/>
+                    <field name="customer"/>
+                </tree>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_clp_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.clp.form</field>
+            <field name="model">dmpi.crm.clp</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Container Load Plan">
+                    <header>
+                        <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <h1><field name="control_no" attrs="{'readonly':True}"/></h1>
+                        <group>
+                            <group>
+                                <field name="container_no"/>
+                                <field name="seal_no"/>
+                                <field name="vessel_name"/>
+                                <field name="plant"/>
+                                <field name="port_origin"/>
+                                <field name="port_destination"/>
+                                <field name="customer"/>
+                            </group>
+                            <group>
+                                <field name="week"/>
+                                <field name="brand"/>
+                                <field name="description"/>
+                                <field name="boxes"/>
+                                <field name="installed" string="Installed Already?"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Packages">
+                                <field name="clp_line_ids">
+                                    <tree string="Packages" editable="bottom">
+                                        <field name="sequence"/>
+                                        <field name="tag_no"/>
+                                        <field name="pack_code"/>
+                                        <field name="pack_size"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <separator/>
+                        <group>
+                            <group string="Signatories">
+                                <field name="encoder"/>
+                                <field name="outbound_checker"/>
+                                <field name="prod_load_counter"/>
+                                <field name="inspector"/>
+                            </group>
+                            <group string="Loading Date/Time">
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="date_depart"/>
+                                <field name="date_arrive"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Summary of Cases">
+                                <field name="summary_case_a" string="A"/>
+                                <field name="summary_case_b" string="B"/>
+                                <field name="summary_case_c" string="C"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Container Temperature">
+                                <field name="container_temp" nolabel="1"/>
+                            </group>
+                            <group string="Pulp Room Temperature">
+                                <field name="pulp_room_temp" nolabel="1"/>
+                            </group>
+                        </group>
+                        <separator/>
+                        <group string="Remarks">
+                                <field name="remarks" nolabel="1" placeholder="Add notes here..."/>
+                        </group>
+                    </sheet>
+                </form>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_clp_action" model="ir.actions.act_window">
+            <field name="name">Container Load Plan</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.clp</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"></p>
+            </field>
+        </record>
+
+        <menuitem action="dmpi_crm_clp_action" id="dmpi_crm_clp" parent="dmpi_reports_menu"/>
+
+
+        <record id="dmpi_crm_preship_summary_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.preship.summary.form</field>
+            <field name="model">dmpi.crm.preship.summary</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Pre-Shipment Loaded Vans Summary">
+                    <sheet string="Pre-Shipment Loaded Vans Summary">
+                        <group col="4" string="Date Loaded">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="Filter">
+                            <field name="filter_template" strin="Template"/>
+                            <field name="tmpl_id" attrs="{'invisible':[('filter_template','!=','template')]}"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="print_preship_summary" string="Print Pre-Shipment Summary" type="object" class="oe_highlight"/>
+                    </footer>
+                </form>
+           </field>
+        </record>
+
+        <record id="dmpi_crm_preship_summary_action" model="ir.actions.act_window">
+            <field name="name">Pre-Shipment Loaded Vans Summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dmpi.crm.preship.summary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="dmpi_crm_preship_summary_action" id="dmpi_crm_preship_summary" parent="dmpi_reports_menu"/>
+
+
+	</data>
+
+    <!-- SEQUENCES -->
+    <data noupdate="1">
+        <record id="preship_sequence" model="ir.sequence">
+            <field name="name">PreShip Certificate</field>
+            <field name="code">dmpi.crm.preship.report</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding">8</field>
+            <field name="number_increment">1</field>
+            <field name="number_next_actual">1</field>
+            <field name="prefix">J</field>
+        </record>
+
+        <record id="clp_sequence" model="ir.sequence">
+            <field name="name">Container Load Plane</field>
+            <field name="code">dmpi.crm.clp</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding">8</field>
+            <field name="number_increment">1</field>
+            <field name="number_next_actual">1</field>
+            <field name="prefix">CLP</field>
+        </record>
+    </data>
+
+</odoo>

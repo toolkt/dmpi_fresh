@@ -1,0 +1,217 @@
+/* Copyright 2017 UNIBRAVO
+ * License OPL-1.0 */
+
+ // App Changer / Icons
+@app-changer-icon-size:      6em;
+@app-changer-icon-margin:    1em;
+@app-changer-width:          100%;
+@app-changer-title-height:   46px;
+
+// Navbar
+@navbar-height: 46px;
+@app-changer-navbar-height:  @navbar-height / 2;
+@app-changer-navbar-padding-vertical: @navbar-padding-vertical / 2;
+@app-changer-padding-horizontal: @navbar-padding-horizontal / 2;
+
+// Changer Toggle
+@changer-toggle-height: @navbar-height;
+@changer-toggle-width: @navbar-height;
+
+// Changer Panel
+@panel-default-text:          @gray-dark;
+@panel-default-border:        transparent;
+@panel-default-heading-bg:    transparent;
+
+.app-changer-icon-open {
+    color: #ffffff;
+}
+
+.app-changer-nav {
+    border: 0px !important;
+    border-radius: 0px !important;
+    background-color: #F4649D;
+    -webkit-border-radius: @border-radius-base;
+    -moz-border-radius: @border-radius-base;
+    .box-shadow(0 6px 12px rgba(0, 0, 0, .175));
+    background-clip: padding-box;
+    background-position: center;	
+	z-index: 10000;
+	.o-background-size(cover);
+	
+    .o_tooltip {
+        z-index: 1051;
+    }
+    
+    .navbar-left {
+        width: 100%;
+
+        li {
+            padding: 0;
+        }
+    }
+
+    .app-changer-title {
+        float: none;
+		color: white;
+		font-size: 14px;
+		font-weight: 400;
+		margin-top: 8px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+    }
+
+    .app-changer-panel-title {
+        line-height: 16px;
+        > .changer-toggle {
+			padding-left: 10px;
+            padding-top: 17px;
+            padding-bottom: 17px;
+            cursor: pointer;
+			color: white;
+        }
+    }
+
+    .app-changer-icon-app {
+		position: relative;
+		width: 80%;
+		max-width: 70px;
+		overflow: hidden;
+		margin: auto;
+        height: 100%;
+        max-height: @app-changer-icon-size;
+        object-fit: contain;
+        object-position: center;
+		border-radius: 3%;
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .panel-body {
+        padding-top: @app-changer-title-height;
+    }
+
+    #appChangerAppPanelHead {
+        position: absolute;
+        height: @app-changer-title-height;
+        width: 100%;
+    }
+
+}
+
+.changer-nav {
+	z-index: 9999 ;
+    width: @app-changer-width;
+	background-color: #706877;
+	background: -webkit-gradient(linear, left top, right bottom, from(#313740), to(#c9a8ab));
+	//.o-linear-gradient(@deg: 90deg, @start-color: #313740, @end-color: #65545c);
+    
+    .app-changer-panel-title {
+        margin-left: -20px;
+		margin-top: 3px;
+    }
+    
+    .panel-body {
+        padding-top: 60px;
+    }
+        
+    #appChangerAppPanelHead {
+	z-index:9999;
+    }
+}
+
+// Center app icons
+.app-changer-nav .panel-body {
+    margin: auto;
+    max-width: 768px;
+    padding-top: 60px !important;
+    width: 90%;
+}
+
+.o_mail_navbar_item .o_notification_counter {
+    background: #05c3bf !important;
+    color: white !important;
+    margin-top: 1em;
+    margin-right: 0;    
+}
+
+
+.changer--left .changer-nav {
+    left: -@app-changer-width;
+	-webkit-transition: left .1ms cubic-bezier(0.190, 1.000, 0.220, 1.000) !important; 
+    transition: left .1ms cubic-bezier(0.190, 1.000, 0.220, 1.000) !important;
+}
+
+.changer--left.changer-open .changer-hamburger {
+    left: @app-changer-width;
+}
+
+.changer--right .changer-nav {
+    right: -@app-changer-width;
+}
+
+.changer-open .oe-right-toolbar {
+    display: none;
+}
+
+.changer-closed .oe-right-toolbar {
+    display: block;
+}
+
+/* App Changer Toggle */
+
+.app-changer-toggle {
+    background-color: transparent;
+}
+
+.app-changer-toggle.navbar-toggle {
+    margin-left: 1em;
+}
+
+.navbar {
+    border-radius: 0px;
+    margin-bottom: 0px !important;
+    border: 0px !important;
+}
+
+// User menubar
+
+.oe_topbar_avatar {
+    max-height: 16px !important;
+    height: 16px !important;
+    width: 16px !important;
+    margin-top: -4px !important;
+}
+
+.oe_topbar_name {
+    top: 0px !important;
+}
+
+.main-nav .navbar-systray > .oe_user_menu_placeholder > li > a .caret {
+    top: 0px !important;
+}
+
+.panel-heading {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+.oe_secondary_menu > li.app-name {
+    padding: 7px 12px !important;
+}
+.main-nav > .container-fluid .o_sub_menu > .o_sub_menu_content > .oe_secondary_menu > li.app-name > .oe_menu_text {
+    font-size: 22px !important;
+	font-weight: 500;
+    color: white;
+    margin-right: 35px;
+}
+
+.main-nav > .container-fluid .o_sub_menu > .o_sub_menu_content > .oe_secondary_menu {
+    margin-left: -8px !important;
+}
+
+.main-nav > .container-fluid .o_sub_menu > .o_sub_menu_content > .oe_secondary_menu > li > a {
+    height: @navbar-height;
+    padding: 0px 8px !important;
+    line-height: @navbar-height !important;
+}

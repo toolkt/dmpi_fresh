@@ -1,0 +1,320 @@
+/* Copyright 2017 UNIBRAVO */
+
+//== Media queries breakpoints
+
+// Extra small screen / phone
+//** Deprecated `@screen-xs` as of v3.0.1
+@screen-xs:                  480px;
+//** Deprecated `@screen-xs-min` as of v3.2.0
+@screen-xs-min:              @screen-xs;
+//** Deprecated `@screen-phone` as of v3.0.1
+@screen-phone:               @screen-xs-min;
+
+// Small screen / tablet
+//** Deprecated `@screen-sm` as of v3.0.1
+@screen-sm:                  768px;
+@screen-sm-min:              @screen-sm;
+//** Deprecated `@screen-tablet` as of v3.0.1
+@screen-tablet:              @screen-sm-min;
+
+// Medium screen / desktop
+//** Deprecated `@screen-md` as of v3.0.1
+@screen-md:                  992px;
+@screen-md-min:              @screen-md;
+//** Deprecated `@screen-desktop` as of v3.0.1
+@screen-desktop:             @screen-md-min;
+
+// Large screen / wide desktop
+//** Deprecated `@screen-lg` as of v3.0.1
+@screen-lg:                  1200px;
+@screen-lg-min:              @screen-lg;
+//** Deprecated `@screen-lg-desktop` as of v3.0.1
+@screen-lg-desktop:          @screen-lg-min;
+
+// So media queries don't overlap when required, provide a maximum
+@screen-xs-max:              (@screen-sm-min - 1);
+@screen-sm-max:              (@screen-md-min - 1);
+@screen-md-max:              (@screen-lg-min - 1);
+
+//== Grid system
+
+@grid-columns:              12;
+@grid-gutter-width:         10px;
+@grid-float-breakpoint:     @screen-sm-min;
+@grid-float-breakpoint-max: (@grid-float-breakpoint - 1);
+
+//== Container sizes
+
+// Small screen / tablet
+@container-tablet:             (720px + @grid-gutter-width);
+//** For `@screen-sm-min` and up.
+@container-sm:                 @container-tablet;
+
+// Medium screen / desktop
+@container-desktop:            (940px + @grid-gutter-width);
+//** For `@screen-md-min` and up.
+@container-md:                 @container-desktop;
+
+// Large screen / wide desktop
+@container-large-desktop:      (1140px + @grid-gutter-width);
+//** For `@screen-lg-min` and up.
+@container-lg:                 @container-large-desktop;
+
+
+
+// UI custom colors (for tags, kanban records' colors, ...)
+@odoo-color-0: #00C7AB;
+@odoo-color-1: #F06050;
+@odoo-color-2: #F4A460;
+@odoo-color-3: #F7CD1F;
+@odoo-color-4: #6CC1ED;
+@odoo-color-5: #814968;
+@odoo-color-6: #EB7E7F;
+@odoo-color-7: #2C8397;
+@odoo-color-8: #475577;
+@odoo-color-9: #D6145F;
+@odoo-color-10: #30C381;
+@odoo-color-11: #9365B8;
+@odoo-color-12: #B05048;
+
+// Font sizes
+@odoo-font-size-base: 13px;
+@odoo-font-size-base-touch: 15px;
+
+// Colors
+@odoo-color-pink: #986783; // Professional Theme @odoo-brand-primary
+@odoo-color-silver: #F8F8F8;
+@odoo-color-silver-dark: #E5E5E5;
+@odoo-color-silver-darker: #d9d7d7;
+
+@gray-lighter-dark: @odoo-color-silver-dark;
+@gray-lighter-darker: @odoo-color-silver-darker;
+
+@odoo-nb-ui-color: 12;
+
+// Colors
+
+@brand-success: #00a04a;
+@brand-info: #87c0d1;
+@brand-warning: #f0ad4e;
+@brand-danger: #dc6965;
+
+@brand-primary: #78717e; //766676 79707d 313740
+@brand-optional: #21b7b4;
+@brand-secondary: #8e8e8e;
+@odoo-brand-primary: @brand-primary;
+@odoo-brand-optional: @brand-optional;
+@odoo-brand-secondary: @brand-secondary;
+@odoo-main-text-color: #676767;
+@odoo-main-color-muted: #a7a7a7;
+@odoo-brand-lightsecondary: #eae6e8;
+
+@odoo-view-background-color: white;
+@odoo-shadow-color: #303030;
+
+@odoo-webclient-background-color: #F8F8F8;
+@odoo-control-panel-background-color: white;
+@odoo-form-lightsecondary: lighten(@odoo-brand-secondary, 25%);
+
+@odoo-list-footer-color: @text-color;
+@odoo-list-footer-bg-color: white;
+@odoo-list-footer-font-weight: bold;
+
+@odoo-tooltip-background-color: @odoo-view-background-color;
+@odoo-tooltip-color: @odoo-main-text-color;
+@odoo-tooltip-arrow-color: @odoo-main-text-color;
+
+
+// Layout
+@screen-xs-min: 475px;
+@screen-xxs-max: (@screen-xs-min - 1);
+
+@odoo-form-group-cols: 12;
+@odoo-form-spacing-unit: 5px;
+@odoo-horizontal-padding: 12px;
+@odoo-innergroup-rpadding: 45px;
+@odoo-dropdown-hpadding: 20px;
+
+@odoo-sheet-vpadding: 24px;
+
+@odoo-avatar-size: 90px;
+
+@odoo-statusbar-height: 33px;
+@odoo-statusbar-arrow-width: @odoo-statusbar-height/3;
+@odoo-statusbar-disabled-bg: lighten(@odoo-brand-lightsecondary, 7%);
+
+@odoo-statbutton-height: 46px;
+@odoo-statbutton-vpadding: 0px;
+@odoo-statbutton-spacing: 6px;
+
+@odoo-label-font-size-factor: 0.8;
+@odoo-navbar-height: 46px;
+@odoo-navbar-inverse-link-hover-bg: darken(@odoo-brand-primary, 10%);
+
+// Basics of a navbar
+
+@navbar-margin-bottom:             @line-height-computed;
+@navbar-border-radius:             @border-radius-base;
+@navbar-padding-horizontal:        floor((@grid-gutter-width / 2));
+@navbar-padding-vertical:          ((@navbar-height - @line-height-computed) / 2);
+@navbar-collapse-max-height:       340px;
+
+@navbar-default-color:             #fff;
+@navbar-default-bg:                @brand-primary;
+@navbar-default-border:            darken(@navbar-default-bg, 6.5%);
+
+// Navbar links
+@navbar-default-link-color:                #fff;
+@navbar-default-link-hover-color:          #fff;
+@navbar-default-link-hover-bg:             darken(@navbar-default-bg, 15%);
+@navbar-default-link-active-color:         #fff;
+@navbar-default-link-active-bg:            darken(@navbar-default-bg, 10%);
+@navbar-default-link-disabled-color:       #ccc;
+@navbar-default-link-disabled-bg:          transparent;
+
+// Navbar brand label
+@navbar-default-brand-color:               @navbar-default-link-color;
+@navbar-default-brand-hover-color:         #fff;
+@navbar-default-brand-hover-bg:            none;
+
+// Navbar toggle
+@navbar-default-toggle-hover-bg:           darken(@navbar-default-bg, 15%);
+@navbar-default-toggle-icon-bar-bg:        #fff;
+@navbar-default-toggle-border-color:       darken(@navbar-default-bg, 15%);
+
+// Side chatter
+@o-chatter-width: 510px;
+@o-chatter-min-width: 510px;
+@o-form-sheet-min-width: @container-md; 
+@o-screen-sidechatter-min: (@o-form-sheet-min-width + 2 * @odoo-horizontal-padding + @o-chatter-min-width);
+
+// Bootstrap variables
+// ------------------------------------------------------------------
+
+//== Grid
+
+//== Greyscale
+@gray-base: #404954;
+@gray-darker: #586371;
+@gray-dark: #555;
+@gray: lighten(@gray-base, 33.5%);
+@gray-light: lighten(@gray-base, 46.7%);
+@gray-lighter: @odoo-color-silver;
+
+//== Titles
+@font-size-h1: @odoo-font-size-base + 19px;
+@font-size-h2: @odoo-font-size-base + 7px;
+@font-size-h3: @odoo-font-size-base + 3px;
+@font-size-h4: @odoo-font-size-base + 2px;
+@font-size-h5: @odoo-font-size-base + 1px;
+@font-size-h6: @odoo-font-size-base;
+
+//== Scaffolding
+@body-bg: @odoo-brand-secondary;
+@text-color: @odoo-main-text-color;
+@link-color: darken(@odoo-brand-optional, 5%);
+@link-hover-decoration: none;
+
+//== Typography
+@font-family-monospace: Roboto;
+@font-family-sans-serif: Roboto;
+@font-family-serif: Roboto;
+@font-size-base: @odoo-font-size-base;
+@headings-font-weight: 400;
+@headings-color: @gray-dark;
+
+//== Components
+@border-radius-base: 0;
+@border-radius-large: 0;
+@border-radius-small: 0;
+@component-active-bg: @gray-lighter;
+@component-active-color: @odoo-brand-optional;
+
+//== Badges
+@badge-bg: transparent;
+@badge-color: @odoo-brand-optional;
+@badge-line-height: @line-height-base;
+
+//== Breadcrumbs
+@breadcrumb-active-color: @odoo-brand-secondary;
+@breadcrumb-bg: @odoo-control-panel-background-color;
+@breadcrumb-color: @odoo-brand-secondary;
+@breadcrumb-padding-horizontal: 0;
+@breadcrumb-padding-vertical: 0;
+
+//== Buttons
+@btn-font-weight: 500;
+
+@btn-default-bg: white;
+@btn-default-border: white;
+@btn-default-color: @link-color;
+
+@btn-primary-bg: @odoo-brand-optional;
+@btn-primary-border: @odoo-brand-optional;
+@btn-primary-color: white;
+
+@btn-icon-bg: white;
+@btn-icon-border: white;
+@btn-icon-color: @odoo-main-text-color;
+
+@btn-success-border: @btn-success-bg;
+@btn-info-border: @btn-info-bg;
+@btn-warning-border: @btn-warning-bg;
+@btn-danger-border: @btn-danger-bg;
+
+//== Dropdowns
+@dropdown-bg: white;
+@dropdown-border: @gray-lighter-dark;
+@dropdown-divider-bg: @gray-lighter-dark;
+@dropdown-link-color: @odoo-main-text-color;
+@dropdown-link-hover-color: @gray-dark;
+@dropdown-link-hover-bg: @gray-lighter-dark;
+@dropdown-link-active-color: @component-active-color;
+@dropdown-link-active-bg: @component-active-bg;
+@dropdown-link-disabled-color: @gray-light;
+@dropdown-header-color: @gray-light;
+
+//== Modals
+@modal-sm: 300px;
+@modal-md: 650px;
+@modal-lg: 980px;
+@modal-inner-padding: @odoo-horizontal-padding;
+@modal-title-padding: @odoo-horizontal-padding;
+
+//== Navs
+@nav-link-padding: 5px 10px;
+
+//== Navbar
+
+@navbar-margin-bottom: 0;
+@navbar-inverse-bg: @odoo-brand-primary;
+@navbar-inverse-link-color: white;
+@navbar-inverse-link-hover-bg: @odoo-navbar-inverse-link-hover-bg;
+@navbar-inverse-toggle-hover-bg: @odoo-brand-primary;
+
+//== Tabs
+@nav-tabs-border-color: transparent;
+@nav-tabs-link-hover-border-color: gray-light;
+@nav-tabs-active-link-hover-bg: @gray-lighter;
+@nav-tabs-active-link-hover-color: @odoo-brand-optional;
+@nav-tabs-active-link-hover-border-color: transparent;
+
+//== Tables
+
+@table-condensed-cell-padding: 7px;
+@table-bg: white;
+@table-bg-accent: @gray-lighter;
+@table-bg-hover: @gray-lighter-dark;
+@table-bg-active: @table-bg-hover;
+@table-border-color: @gray-lighter-dark;
+
+//== Well
+@well-bg: @odoo-color-silver;
+@well-border: @odoo-color-silver;
+
+//== Alerts
+@alert-link-font-weight: bold;
+@alert-success-border: @alert-success-text;
+@alert-info-border: @alert-info-text;
+@alert-warning-border: @alert-warning-text;
+@alert-danger-border: @alert-danger-text;

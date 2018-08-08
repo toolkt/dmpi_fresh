@@ -1,0 +1,1034 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+
+		<!-- WIEGHT FACTORS -->
+		<record id="shell_color" model="dmpi.crm.factor">
+			<!-- <field name="sequence">10</field> -->
+			<field name="code">0010</field>
+			<field name="name">SHELL COLOR</field>
+			<field name="type">external</field>
+			<field name="active">True</field>
+		</record>
+		<record id="crown" model="dmpi.crm.factor">
+			<!-- <field name="sequence">20</field> -->
+			<field name="code">0020</field>
+			<field name="name">CROWN / CC APPEARANCE</field>
+			<field name="type">external</field>
+			<field name="active">True</field>
+		</record>
+		<record id="molds" model="dmpi.crm.factor">
+			<!-- <field name="sequence">30</field> -->
+			<field name="code">0030</field>
+			<field name="name">MOLDS</field>
+			<field name="type">external</field>
+			<field name="active">True</field>
+		</record>
+		<record id="phyto_sanitary" model="dmpi.crm.factor">
+			<!-- <field name="sequence">40</field> -->
+			<field name="code">0040</field>
+			<field name="name">PHYTO-SANITARY</field>
+			<field name="type">external</field>
+			<field name="active">True</field>
+		</record>
+		<record id="other_external" model="dmpi.crm.factor">
+			<!-- <field name="sequence">50</field> -->
+			<field name="code">0050</field>
+			<field name="name">OTHER  EXT DEFECTS</field>
+			<field name="type">external</field>
+			<field name="active">True</field>
+		</record>
+		<record id="internal_maturity" model="dmpi.crm.factor">
+			<!-- <field name="sequence">10</field> -->
+			<field name="code">0010</field>
+			<field name="name">INTERNAL MATURITY</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="bruise" model="dmpi.crm.factor">
+			<!-- <field name="sequence">20</field> -->
+			<field name="code">0020</field>
+			<field name="name">BRUISE</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="trans" model="dmpi.crm.factor">
+			<!-- <field name="sequence">30</field> -->
+			<field name="code">0030</field>
+			<field name="name">TRANS</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="brix" model="dmpi.crm.factor">
+			<!-- <field name="sequence">40</field> -->
+			<field name="code">0040</field>
+			<field name="name">BRIX</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="acid" model="dmpi.crm.factor">
+			<!-- <field name="sequence">50</field> -->
+			<field name="code">0050</field>
+			<field name="name">ACID</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="other_internal" model="dmpi.crm.factor">
+			<!-- <field name="sequence">60</field> -->
+			<field name="code">0060</field>
+			<field name="name">OTHER INT DEFECTS</field>
+			<field name="type">internal</field>
+			<field name="active">True</field>
+		</record>
+		<record id="box_weight" model="dmpi.crm.factor">
+			<!-- <field name="sequence">10</field> -->
+			<field name="code">0010</field>
+			<field name="name">BOX WEIGHT</field>
+			<field name="type">packaging</field>
+			<field name="active">True</field>
+		</record>
+		<record id="box_code" model="dmpi.crm.factor">
+			<!-- <field name="sequence">20</field> -->
+			<field name="code">0020</field>
+			<field name="name">BOX CODE</field>
+			<field name="type">packaging</field>
+			<field name="active">True</field>
+		</record>
+		<record id="pallet_reqt" model="dmpi.crm.factor">
+			<!-- <field name="sequence">30</field> -->
+			<field name="code">0030</field>
+			<field name="name">PALLET REQT</field>
+			<field name="type">packaging</field>
+			<field name="active">True</field>
+		</record>
+		<record id="fom" model="dmpi.crm.factor">
+			<!-- <field name="sequence">40</field> -->
+			<field name="code">0040</field>
+			<field name="name">FOM</field>
+			<field name="type">packaging</field>
+			<field name="active">True</field>
+		</record>
+
+
+		<!-- Pre Shipment Templates -->
+		<record id="wc_japan_korea" model="dmpi.crm.template">
+			<field name="name">WC Japan Korea</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="wc_china" model="dmpi.crm.template">
+			<field name="name">WC China</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="wc_middle_east" model="dmpi.crm.template">
+			<field name="name">WC Middle East</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="wc_sing_oem" model="dmpi.crm.template">
+			<field name="name">WC Sing OEM</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="cl_japan_kor_tai_chi_sing" model="dmpi.crm.template">
+			<field name="name">CL Jap-Kor-Tai-Chi-Sng</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="cl_class_a2" model="dmpi.crm.template">
+			<field name="name">CL Class A2</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+		<record id="cl_nz_rus_others" model="dmpi.crm.template">
+			<field name="name">CL NZ-Rus-Others</field>
+			<field name="ext_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="int_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="pack_rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="overall_rule">(AA,>=,94),(A,>,88),(C,>=,0)</field>
+			<field name="ext_hold">True</field>
+			<field name="int_hold">True</field>
+			<field name="pack_hold">False</field>
+			<field name="active">True</field>
+		</record>
+
+		<!-- Pre Shipment Template Lines -->
+		<record id="dmpi_crm_tmpl_line_1" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">20</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_2" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_3" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">13</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_4" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">12</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_5" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_6" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">8</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_7" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_8" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_9" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_10" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_11" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_12" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_13" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_14" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_15" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_japan_korea"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_16" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_17" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_18" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_19" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">15</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_20" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">9</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_21" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">15</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_22" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_23" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_24" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_25" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_26" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_27" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_28" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_29" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">4</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_30" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_china"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_31" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">15</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_32" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_33" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">8</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_34" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_35" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_36" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">13</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_37" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">17</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_38" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_39" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_40" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_41" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_42" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_43" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_44" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_45" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">1</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_middle_east"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_46" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">15</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_47" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_48" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">12</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_49" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">9</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_50" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_51" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_52" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">12</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_53" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_54" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_55" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_56" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_57" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">4</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_58" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_59" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_60" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.wc_sing_oem"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_61" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_62" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_63" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_64" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_65" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_66" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_67" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">12.5</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_68" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">12.5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_69" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_70" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_71" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_72" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_73" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_74" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_75" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_japan_kor_tai_chi_sing"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_76" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_77" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_78" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">6</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_79" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">7</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_80" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_81" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">20</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_82" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">12.5</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_83" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">12.5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_84" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_85" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_86" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_87" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_88" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_89" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_90" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_class_a2"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_91" model="dmpi.crm.template.line">
+			<field name="sequence">10</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.shell_color"/>
+			<field name="weight">12</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_92" model="dmpi.crm.template.line">
+			<field name="sequence">20</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.crown"/>
+			<field name="weight">8</field>
+			<field name="rule">(AA,>=,94),(A,>=,88),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_93" model="dmpi.crm.template.line">
+			<field name="sequence">30</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.molds"/>
+			<field name="weight">12</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_94" model="dmpi.crm.template.line">
+			<field name="sequence">40</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.phyto_sanitary"/>
+			<field name="weight">13</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_95" model="dmpi.crm.template.line">
+			<field name="sequence">50</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_external"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_96" model="dmpi.crm.template.line">
+			<field name="sequence">60</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.internal_maturity"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,95),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_97" model="dmpi.crm.template.line">
+			<field name="sequence">70</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.bruise"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,90),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_98" model="dmpi.crm.template.line">
+			<field name="sequence">80</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.trans"/>
+			<field name="weight">10</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_99" model="dmpi.crm.template.line">
+			<field name="sequence">90</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.brix"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_100" model="dmpi.crm.template.line">
+			<field name="sequence">100</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.acid"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_101" model="dmpi.crm.template.line">
+			<field name="sequence">110</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.other_internal"/>
+			<field name="weight">5</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_102" model="dmpi.crm.template.line">
+			<field name="sequence">120</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_weight"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(A,>=,95),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_103" model="dmpi.crm.template.line">
+			<field name="sequence">130</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.box_code"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="False"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_104" model="dmpi.crm.template.line">
+			<field name="sequence">140</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.pallet_reqt"/>
+			<field name="weight">2</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+		<record id="dmpi_crm_tmpl_line_105" model="dmpi.crm.template.line">
+			<field name="sequence">150</field>
+			<field name="factor_id" ref="dmpi_fresh_reports.fom"/>
+			<field name="weight">3</field>
+			<field name="rule">(AA,=,100),(C,>=,0)</field>
+			<field name="is_hold" eval="True"/>
+			<field name="tmpl_id" ref="dmpi_fresh_reports.cl_nz_rus_others"/>
+		</record>
+	</data>
+</odoo>

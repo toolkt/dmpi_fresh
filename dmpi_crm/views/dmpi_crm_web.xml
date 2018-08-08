@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="assets_backend" name="dmpi_crm assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+
+            <script type="text/javascript" src="/dmpi_crm/static/lib/jexcel/dist/js/jquery.jexcel.js"></script>
+            <link rel="stylesheet" href="/dmpi_crm/static/lib/jexcel/dist/css/jquery.jexcel.css"/> 
+
+            <script type="text/javascript" src="/dmpi_crm/static/lib/jexcel/dist/js/jquery.jcalendar.js"></script>
+            <link rel="stylesheet" href="/dmpi_crm/static/lib/jexcel/dist/css/jquery.jcalendar.css"/> 
+
+
+            <link rel="stylesheet" href="/dmpi_crm/static/src/css/widget.css"/>
+            <script type="text/javascript" src="/dmpi_crm/static/src/js/widget.js"></script>
+        </xpath>
+    </template>
+</odoo>

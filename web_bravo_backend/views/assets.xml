@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2017 UNIBRAVO. @author UNIBRAVO <info@unibravo.com>  License OPL-1 (http://www.odoo.com) -->
+<odoo>
+
+	<template id="less_helpers" name="web_bravo_backend less helpers" inherit_id="web.less_helpers" priority='15'>
+        <xpath expr="//link[@href='/web/static/src/less/variables.less']" position="replace">
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/variables.less"/>
+        </xpath>
+    </template>
+	
+	<template id="assets_common" name="web_bravo_backend assets common" inherit_id="web.assets_common">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/fonts.less"/>
+        </xpath>
+    </template>
+	
+    <template id="assets_backend" name="New backend assets" inherit_id="web.assets_backend">
+		
+		<xpath expr="//link[@href='/web/static/src/less/views_extra.less']" position="replace">
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/views.less"/>
+        </xpath>
+		<xpath expr="//link[@href='/web/static/src/less/form_view_extra.less']" position="replace">
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/form_view.less"/>
+        </xpath>
+        <xpath expr=".">
+            <link rel="stylesheet" type="text/css" href="/web_bravo_backend/static/lib/css/changer.css"/>
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/main.less" />
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/navbar.less"/>
+            <link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/app_changer.less"/>
+			<link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/variables.less"/>
+			<link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/bootswatch.less"/>
+			<link rel="stylesheet" type="text/less" href="/web_bravo_backend/static/src/less/style.less"/>
+
+            <script type="application/javascript" src="/web_bravo_backend/static/lib/js/iscroll.js"/>
+            <script type="application/javascript" src="/web_bravo_backend/static/lib/js/changer.js"/>
+            <script type="application/javascript" src="/web_bravo_backend/static/src/js/web_bravo_backend.js"/>
+
+        </xpath>
+
+    </template>
+    
+	<template id="qunit_suite" inherit_id="web.qunit_suite">
+        <xpath expr="//t[@t-set='head']" position="inside">
+            <script type="application/javascript" src="/web_bravo_backend/static/tests/js/web_responsive.js"/>
+        </xpath>
+    </template>
+	
+</odoo>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+        <record id="view_dmpi_crm_sale_contract_search" model="ir.ui.view">
+            <field name="name">CRM Sale Contract</field>
+            <field name="model">dmpi.crm.sale.contract</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="sap_cn_no"/>
+                    <field name="partner_id"/>
+                    <field name="customer_ref"/>
+                    <field name="partner_id"/>
+
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <group>
+                        <filter string="Active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_sale_contract_tree" model="ir.ui.view">
+            <field name="name">CRM Sale Contract</field>
+            <field name="model">dmpi.crm.sale.contract</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="contract_type"/>
+                    <field name="customer_ref" />
+                    <field name="po_date"/>
+                    <field name="valid_from" />
+                    <field name="valid_to"/>   
+                    <field name="state"/>     
+
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_sale_contract_form" model="ir.ui.view">
+            <field name="name">CRM Sale Contract</field>
+            <field name="model">dmpi.crm.sale.contract</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <header>
+                        <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit the PO?"/>
+                        <button name="action_approve" states="submitted" string="Approve" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Approve the PO?"/>
+
+                        <button name="action_release" states="soa" string="Release" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Release the PO?"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,processed,enroute,received" statusbar_colors='{"approved":"blue"}'/>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_sheet"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-pencil-square-o"
+                                attrs="{'invisible': [('active', '=', 0)]}">
+                                <field name="active" widget="statinfo" string="Invoices"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="po_display_number" readonly="1" placeholder="Purchase Order"/>
+                            </h1>
+                        </div>
+
+
+                        <group>
+                            <group>
+                                <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                <field name="contract_type"  required="1"/>
+                                <field name="customer_ref" />
+                                <field name="po_date" required="1"/>
+                                <field name="valid_from" required="1"/>
+                                <field name="valid_to" required="1"/>   
+                                <field name="week_no" />                                
+                            </group>
+                            <group>
+
+                                <field name="credit_limit" />
+                                <field name="credit_exposure" />
+                                <field name="remaining_credit" />
+                                <field name="open_so" />
+                                <field name="total_sales" />
+                                <!-- <field name="contract_total" /> -->
+                                <field name="credit_after_sale" />
+
+                                <field name="ar_status" />
+                                <field name="error_count" invisible="1"/>
+                                <field name="errors" invisible="1"/>
+                            </group>
+                        </group>
+
+                    <center attrs="{'invisible': [('error_count','=',0)]}">
+                        <span style="color:red"><field name="errors_disp" readonly="1"/></span>
+                    </center>
+                    <notebook>
+                        <page string="Purchase Worksheet">
+                            <group>
+                                <group>
+                                    <field name="upload_file"/>
+                                </group>
+                                <group>
+                                    <button name="import_po" string="Import PO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
+                                </group>
+                            </group>
+
+                            <field name="contract_line_ids">
+                                <tree editable="bottom" colors="blue:total == 1500;red:total > 1500">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                                    <field name="p5" attrs="{'readonly':[('p5_visible','!=',True)]}"/>
+                                    <field name="p6"  attrs="{'readonly':[('p6_visible','!=',True)]}"/>
+                                    <field name="p7"  attrs="{'readonly':[('p7_visible','!=',True)]}"/>
+                                    <field name="p8"  attrs="{'readonly':[('p8_visible','!=',True)]}"/>
+                                    <field name="p9"  attrs="{'readonly':[('p9_visible','!=',True)]}"/>
+                                    <field name="p10"  attrs="{'readonly':[('p10_visible','!=',True)]}"/>
+                                    <field name="p12"  attrs="{'readonly':[('p12_visible','!=',True)]}"/>
+                                    <field name="total_crown" />
+                                    <field name="p5c7"  attrs="{'readonly':[('p5c7_visible','!=',True)]}"/>
+                                    <field name="p6c8"  attrs="{'readonly':[('p6c8_visible','!=',True)]}"/>
+                                    <field name="p7c9"  attrs="{'readonly':[('p7c9_visible','!=',True)]}"/>
+                                    <field name="p8c10"  attrs="{'readonly':[('p8c10_visible','!=',True)]}"/>
+                                    <field name="p9c11"  attrs="{'readonly':[('p9c11_visible','!=',True)]}"/>
+                                    <field name="p10c12"  attrs="{'readonly':[('p10c12_visible','!=',True)]}"/>
+                                    <field name="p12c20"  attrs="{'readonly':[('p12c20_visible','!=',True)]}"/>
+                                    <field name="total_crownless" />
+                                    <field name="rdd" />
+                                    <field name="total"/>
+                                    <field name="so"/>
+                                    <field name="so_no"/>
+
+
+
+                                    <field name="p5_visible" invisible="1"/>
+                                    <field name="p6_visible" invisible="1" />
+                                    <field name="p7_visible" invisible="1" />
+                                    <field name="p8_visible" invisible="1" />
+                                    <field name="p9_visible" invisible="1" />
+                                    <field name="p10_visible" invisible="1" />
+                                    <field name="p12_visible" invisible="1" />
+                                    <field name="p5c7_visible" invisible="1" />
+                                    <field name="p6c8_visible" invisible="1" />
+                                    <field name="p7c9_visible" invisible="1" />
+                                    <field name="p8c10_visible" invisible="1" />
+                                    <field name="p9c11_visible" invisible="1" />
+                                    <field name="p10c12_visible" invisible="1" />
+                                    <field name="p12c20_visible" invisible="1" />
+
+                                </tree>
+                            </field>
+                            
+                        </page>
+                        <page string="Sales Order">
+                            <group>
+                                <group>
+                                    <field name="upload_file_so"/>
+                                </group>
+                                <group>
+                                    <button name="import_so" string="Import SO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
+                                </group>
+                            </group>
+                            <field name="sale_order_ids">
+                                <tree>
+                                    <field name="partner_id" />
+                                    <field name="p5" />
+                                    <field name="p6" />
+                                    <field name="p7" />
+                                    <field name="p8" />
+                                    <field name="p9" />
+                                    <field name="p10" />
+                                    <field name="p12" />
+                                    <field name="total_crown" />
+                                    <field name="p5c7" />
+                                    <field name="p6c8" />
+                                    <field name="p7c9" />
+                                    <field name="p8c10" />
+                                    <field name="p9c11" />
+                                    <field name="p10c12" />
+                                    <field name="p12c20" />
+                                    <field name="total_crownless" />
+                                    <field name="total_qty" />
+                                    <field name="total_amount" />
+
+                                </tree>
+                            </field>
+                            
+                        </page>
+                        <page string="Delivery">
+                            <field name="dr_ids">
+                                <tree>
+                                    <field name="sap_dr_no" />
+                                    <field name="name" />
+                                </tree>
+                            </field>                            
+                        </page>
+                        <page string="Shipment">
+                            <field name="shp_ids">
+                                <tree>
+                                    <field name="shp_no" />
+                                    <field name="sap_dr_no" />
+                                </tree>
+                            </field>                            
+                        </page>
+
+                        <page string="Invoice">
+                            <field name="invoice_ids">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="dmpi_inv_no" />
+                                </tree>
+                            </field>                            
+                        </page>
+
+                        <!-- <page string="Invoice (FF)">
+                            <field name="dmpi_invoice_ids">
+                                <tree>
+                                    <field name="name" />
+                                </tree>
+                            </field>                            
+                        </page>
+                        <page string="Invoice (DMS)">
+                            <field name="dms_invoice_ids">
+                                <tree>
+                                    <field name="name" />
+                                </tree>
+                            </field>                            
+                        </page> -->
+                        <page string="Quality">
+                            
+                        </page>
+                        <page string="Documents">
+                            
+                        </page>
+                        <page string="Settings">
+                            
+                            <group>
+                                <group>
+                                    <field name="cn_no"/>
+                                    <field name="sent_to_sap"/>
+                                    <field name="sent_to_sap_time"/>
+                                </group>
+                                <group>
+                                    <field name="name" />
+                                	<field name="sap_cn_no" />
+                                    <field name="active" />
+                                    <field name="state_disp"/>
+                                </group>
+
+                            <field name="sheet_settings"/>
+                            <field name="sheet_data"/>
+                            <field name="sap_errors"/>
+
+                            <field name="worksheet_item_text" />
+                            </group>
+                        </page>
+
+                        <page string="Upload">
+                            <group>
+                                <group>
+                                    <field name="upload_file"/>
+                                </group>
+                                <group>
+                                     <button name="import_po" string="Import PO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
+                                     <!-- <button name="import_po2" string="Import PO 2" type="object" class="oe_highlight"/> -->
+                                </group>
+                            </group>
+                            <field name="import_errors" invisible="1"/>
+                            <center attrs="{'invisible': [('import_errors','=','')]}">
+                                <span style="color:red"><field name="import_errors_disp" readonly="1"/></span>
+                            </center>
+                            
+                        </page>
+
+                    </notebook>
+
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_sale_contract" model="ir.actions.act_window">
+            <field name="name">Sales Contract</field>
+            <field name="res_model">dmpi.crm.sale.contract</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context" eval="{'search_default_filter_active':1}"/>
+        </record>
+
+        <menuitem id="menu_sale_contract" action="action_dmpi_crm_sale_contract" parent="menu_dmpi_crm_purchase_top"/>
+
+
+
+
+        <record id="action_dmpi_crm_sale_contract_finance" model="ir.actions.act_window">
+            <field name="name">Sales Contract</field>
+            <field name="res_model">dmpi.crm.sale.contract</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','=','soa')]</field>
+            <field name="context" eval="{'search_default_filter_active':1}"/>
+        </record>
+
+        <menuitem id="menu_sale_contract_finance" action="action_dmpi_crm_sale_contract_finance" parent="menu_dmpi_crm_finance_top"/>
+
+
+</odoo>

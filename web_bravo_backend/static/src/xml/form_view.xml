@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2017 LasLabs Inc.
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+-->
+
+<templates id="form_view" xml:space="preserve">
+
+    <t t-extend="FormView.buttons">
+        <t t-jquery="button[accesskey='a']" t-operation="attributes">
+            <attribute name="accesskey">e</attribute>
+        </t>
+    </t>
+<div t-name="FormRenderingStatusBar" class="o_form_statusbar">
+    <div class="o_statusbar_buttons"/>
+</div>
+
+<t t-name="StatusbarButtons">
+    <div class="o_statusbar_buttons">
+        <div class="btn-group">
+            <a class="btn btn-sm btn-primary dropdown-toggle" href="#"
+                data-toggle="dropdown" aria-expanded="false">Action</a>
+            <ul class="dropdown-menu" role="menu"/>
+        </div>
+    </div>
+</t>
+</templates>
