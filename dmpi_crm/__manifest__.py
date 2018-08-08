@@ -46,7 +46,7 @@
         "views/dmpi_crm_sale.xml",
         "views/dmpi_crm_sale_order.xml",
         "views/dmpi_crm_sale_contract.xml",
-        "views/dmpi_crm_web.xml",
+        #"views/dmpi_crm_web.xml",
         "data/schedule.xml",
         "data/sequence.xml",
     ],
