@@ -37,7 +37,8 @@
         'base',
         'web',
         'mail',
-        # 'dmpi_fresh_reports',
+        'report_xlsx',
+        'tk_pentaho_reports_odoo_v11',
         # 'web_widget_sheet',
     ],
     "data": [
@@ -48,12 +49,17 @@
         "views/dmpi_crm_sale_order.xml",
         "views/dmpi_crm_sale_contract.xml",
         "views/dmpi_crm_contract.xml",
+        "views/dmpi_crm_report.xml",
         #"views/dmpi_crm_web.xml",
 
 
         "data/schedule.xml",
         "data/sequence.xml",
         "data/crm_data.xml",
+        "data/report_config.xml",
+        "data/report_attachment.xml",
+
+        "reports/report.xml"
     ],
     "demo": [
 

@@ -23,3 +23,4 @@ from . import dmpi_crm_config
 from . import dmpi_crm
 from . import dmpi_crm_sale
 from . import dmpi_crm_contract
+from . import dmpi_crm_report

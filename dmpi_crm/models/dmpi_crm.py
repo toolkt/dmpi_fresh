@@ -358,7 +358,7 @@ class DmpiCrmClp(models.Model):
 
         values = {
             'type': 'ir.actions.report',
-            'report_name': 'dmpi_fresh_reports.clp_report',
+            'report_name': 'dmpi_crm.clp_report',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
             'datas': {

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+	<data>
+		<!-- IMAGE IR ATTACHMENT -->
+		<record id="preship_report_logo" model="ir.attachment">
+			<field name="name">Pre-Shipment Report Logo</field>
+			<field name="res_model">dmpi.crm.preship.report</field>
+			<field name="type">binary</field>
+			<field name="datas_fname">philpack_logo.png</field>
+			<field name="datas" type="base64" file="dmpi_crm/static/philpack_logo.png"/>
+		</record>
+	</data>
+</odoo>
