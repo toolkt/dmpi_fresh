@@ -166,7 +166,7 @@
                         </page>
 
                         <page string="Certificate">
-                            <field name="preship_ids" />                        
+                            <!-- <field name="preship_ids" />                         -->
                         </page>
                         
                         <page string="Settings">

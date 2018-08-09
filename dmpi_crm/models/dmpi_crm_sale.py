@@ -1528,7 +1528,7 @@ class DmpiCrmDr(models.Model):
     alt_items = fields.One2many('dmpi.crm.alt.item', 'dr_id', 'Alt Items')
     insp_lots = fields.One2many('dmpi.crm.inspection.lot', 'dr_id', 'Insp Lots')
     clp_ids = fields.One2many('dmpi.crm.clp', 'dr_id', 'CLP')
-    preship_ids = fields.One2many('dmpi.crm.preship.report', 'dr_id', 'Preship Report')
+    # preship_ids = fields.One2many('dmpi.crm.preship.report', 'dr_id', 'Preship Report')
     
 
     odoo_po_no = fields.Char("Odoo PO No.")

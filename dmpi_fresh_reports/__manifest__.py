@@ -21,15 +21,15 @@ For Version 11
     ],
     'data': [
         # data
-        'data/report_config.xml',
-        'data/report_attachment.xml',
-        'data/dr_data.xml',
+        # 'data/report_config.xml',
+        # 'data/report_attachment.xml',
+        # 'data/dr_data.xml',
 
         # reports
-        'reports/report.xml',
+        # 'reports/report.xml',
 
         # views
-        'views/views.xml',
+        # 'views/views.xml',
     ],
     "js": [
     ],

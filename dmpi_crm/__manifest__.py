@@ -37,7 +37,7 @@
         'base',
         'web',
         'mail',
-        'dmpi_fresh_reports',
+        # 'dmpi_fresh_reports',
         # 'web_widget_sheet',
     ],
     "data": [
