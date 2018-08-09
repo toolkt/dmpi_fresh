@@ -32,6 +32,34 @@ class DmpiCrmPartner(models.Model):
     _name = 'dmpi.crm.partner'
     _inherit = ['mail.thread']
 
+
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('customer_code', '=ilike', name + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        accounts = self.search(domain + args, limit=limit)
+        return accounts.name_get()
+
+
+    @api.multi
+    @api.depends('name', 'customer_code')
+    def name_get(self):
+        result = []
+        for rec in self:
+            customer_code = ''
+            if rec.customer_code:
+                customer_code = rec.customer_code
+            name = rec.name+' [' + customer_code+ ']'
+            result.append((rec.id, name))
+        return result
+
+
+
     name            = fields.Char("Name")
     email           = fields.Char("Email")
     active          = fields.Boolean("Active", default=True)
@@ -254,25 +282,36 @@ class DmpiCrmProduct(models.Model):
 
 
 
-class DmpiCrmProductPriceList(models.Model):
-    _name = 'dmpi.crm.product.price.list'
-    _inherit = ['mail.thread']
+# class DmpiCrmProductPriceList(models.Model):
+#     _name = 'dmpi.crm.product.price.list'
+#     _inherit = ['mail.thread']
 
-    name            = fields.Char("Description")
-    partner_id      = fields.Many2one('dmpi.crm.partner','Customer ID')
-    valid_from      = fields.Date("Valid From")
-    valid_to        = fields.Date("Valid To")
-    date_sync       = fields.Datetime("Last Sync")
-    price_upload    = fields.Binary("Upload File")
-    item_ids        = fields.One2many('dmpi.crm.product.price.list.item','version_id','Items')
-    upload_ids      = fields.One2many('dmpi.crm.product.price.list.upload','version_id','Uploads')
+#     name            = fields.Char("Description")
+#     partner_id      = fields.Many2one('dmpi.crm.partner','Customer ID')
+#     valid_from      = fields.Date("Valid From")
+#     valid_to        = fields.Date("Valid To")
+#     date_sync       = fields.Datetime("Last Sync")
+#     price_upload    = fields.Binary("Upload File")
+#     item_ids        = fields.One2many('dmpi.crm.product.price.list.item','version_id','Items')
+#     upload_ids      = fields.One2many('dmpi.crm.product.price.list.upload','version_id','Uploads')
 
-class DmpiCrmProductPriceListItem(models.Model):
-    _name = 'dmpi.crm.product.price.list.item'
+# class DmpiCrmProductPriceListItem(models.Model):
+#     _name = 'dmpi.crm.product.price.list.item'
 
-    version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
-    product_id      = fields.Many2one('dmpi.crm.product',"Product ID")
-    price           = fields.Float("Price")
+#     version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
+#     product_id      = fields.Many2one('dmpi.crm.product',"Product ID")
+#     price           = fields.Float("Price")
+
+
+# class DmpiCrmProductPriceListItem(models.Model):
+#     _name = 'dmpi.crm.product.price.list.upload'
+
+#     version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
+#     valid_from      = fields.Date("Valid From")
+#     valid_to        = fields.Date("Valid To")
+#     sku             = fields.Char('SKU')
+#     customer        = fields.Char('Customer')
+#     price           = fields.Float("Price")
 
 
 
@@ -301,16 +340,6 @@ class DmpiSAPPriceUpload(models.Model):
     condition_currency = fields.Char("Currency")
     uom = fields.Char("Unit of Measure")
 
-
-class DmpiCrmProductPriceListItem(models.Model):
-    _name = 'dmpi.crm.product.price.list.upload'
-
-    version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
-    valid_from      = fields.Date("Valid From")
-    valid_to        = fields.Date("Valid To")
-    sku             = fields.Char('SKU')
-    customer        = fields.Char('Customer')
-    price           = fields.Float("Price")
 
 
 

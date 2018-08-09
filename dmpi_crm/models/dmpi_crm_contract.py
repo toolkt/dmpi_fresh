@@ -37,6 +37,46 @@ import tempfile
 import re
 
 
+CONTRACT_STATE = [
+        ('draft','Draft'),
+        ('submitted','Submitted'),
+        ('confirmed','Confirmed'),
+        ('soa','Statement of Account'),
+        ('approved','Approved'),
+        ('processed','Processed'),
+        ('enroute','Enroute'),
+        ('received','Received'),
+        ('cancel','Cancelled')]
+
+
+def read_data(data):
+    if data:
+        fileobj = TemporaryFile("w+")
+        fileobj.write(base64.b64decode(data).decode('utf-8'))
+        fileobj.seek(0)
+
+        rows = csv.reader(fileobj, quotechar='"', delimiter=',')
+
+        return rows
+
+
+
+class DmpiCrmContractType(models.Model):
+    _name = 'dmpi.crm.contract.type'
+
+    name = fields.Char("Code")
+    description = fields.Char("Description")
+    default = fields.Boolean("Default")
+
+class DmpiCrmProductType(models.Model):
+    _name = 'dmpi.crm.product.type'
+    _order = 'sequence,id'
+
+    name = fields.Char("Code")
+    description = fields.Char("Description")
+    sequence = fields.Integer("Sequence", default=1)
+    sequence_disp = fields.Integer("Sequence", related='sequence')
+    product_map = fields.Char("Product Map")
 
 
 class DmpiCrmContract(models.Model):
@@ -59,46 +99,140 @@ class DmpiCrmContract(models.Model):
                 sap_cn_no = "/%s" % self.sap_cn_no
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
-    po_display_number = fields.Char("PO Numbers", compute="_get_po_display_number")
-    active = fields.Boolean("Active", default=True)
 
+    def _get_contract_type(self):
+        group = 'contract_type'
+        query = """SELECT t.name as select_name,t.name as select_value from dmpi_crm_contract_type t """
+        self.env.cr.execute(query)
+        result = self.env.cr.dictfetchall()
+        res = [(r['select_value'],r['select_name']) for r in result]
+        return res
+
+    def _get_contract_type_default(self):
+        res = self.env['dmpi.crm.contract.type'].search([('default','=',True)],limit=1)[0].name
+        return res
+
+
+
+    contract_id = fields.Many2one("dmpi.crm.contract","Contract")
+    destination_id = fields.Many2one("dmpi.crm.ship.to","Ship To")
+    product_id = fields.Many2one("dmpi.crm.product.type","Product Type")
+    qty = fields.Integer("Quantity")
+
+
+
+    po_display_number = fields.Char("PO Numbers", compute="_get_po_display_number")
+    
+    #Contract Details
     name = fields.Char("ContractNo", default="Draft")
     sap_cn_no = fields.Char("SAP Contract no.")
     customer_ref = fields.Char("Customer Reference")
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
-
     contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
+    week_no = fields.Integer("Week No", default=lambda *a:datetime.now().isocalendar()[1])
 
+    #Line Items
+    contract_line_ids = fields.One2many('dmpi.crm.contract.line', 'contract_id','Contract Lines')
+    sheet_data = fields.Text("Sheet Data")
+
+    #Upload Details
     upload_file = fields.Binary("Upload")
+
+    #Status
+    state = fields.Selection(CONTRACT_STATE,string="State", default='draft')
+    active = fields.Boolean("Active", default=True)
+
+
+    @api.multi
+    def action_upload(self):
+        for rec in self:
+            body = "Uploaded file"
+            rec.message_post(body=body)
+
+
+    @api.multi
+    def action_submit(self):
+        for rec in self:
+            print (rec)
+
+
+    @api.onchange('upload_file')
+    def onchange_upload_file(self):
+        if self.upload_file:
+            rows = read_data(self.upload_file)
+            for r in rows:
+                print(r)
+
+
+
+class DmpiCrmShipTo(models.Model):
+    _name = 'dmpi.crm.ship.to'
+
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('destination', '=ilike', name + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        accounts = self.search(domain + args, limit=limit)
+        return accounts.name_get()
+
+
+    @api.multi
+    @api.depends('name', 'destination')
+    def name_get(self):
+        result = []
+        for rec in self:
+            destination = ''
+            if rec.destination:
+                destination = rec.destination
+            name = destination+' [' + rec.name+ ']'
+            result.append((rec.id, name))
+        return result
+
+
+    name = fields.Char("Ship to Code", required=True)
+    name_disp = fields.Char("Ship to Code", placeholder="Shipto Code", related='name')
+    customer_name = fields.Char("Corporate Name")
+    customer_code = fields.Char("Customer Code")
+    registered_address = fields.Text("Registered Address")
+    contact_no = fields.Char("Contact No")
+    contact_person = fields.Char("Contact Person")
+    contact_person_email = fields.Char("Contact Email")
+    destination = fields.Char("Destination")
+    notify_party = fields.Char("Notify Party")
+    notify_party_detail = fields.Text("Notify Party Details")
+    ship_to = fields.Char("Consignee / Ship to")
+    ship_to_detail = fields.Text("Consignee / Ship to Details")
+    incoterm = fields.Char("Incoterm")
+    mailing_address = fields.Text("Mailing Address")
+
+
 
 
 class DmpiCrmContractLine(models.Model):
     _name = 'dmpi.crm.contract.line'
 
 
-    destination     = fields.
-    p5              = fields.Integer(string="P5")
-    p6              = fields.Integer(string="P6")
-    p7              = fields.Integer(string="P7")
-    p8              = fields.Integer(string="P8")
-    p9              = fields.Integer(string="P9")
-    p10             = fields.Integer(string="P10")
-    p12             = fields.Integer(string="P12")
-    p5c7            = fields.Integer(string="P5C7")
-    p6c8            = fields.Integer(string="P6C8")
-    p7c9            = fields.Integer(string="P7C9")
-    p8c10           = fields.Integer(string="P8C10")
-    p9c11           = fields.Integer(string="P9C11")
-    p10c12          = fields.Integer(string="P10C12")
-    p12c20          = fields.Integer(string="P12C20")
-    total_crown     = fields.Integer(string="Total", compute='_get_totals')
-    total_crownless = fields.Integer(string="Total", compute='_get_totals')
-    total           = fields.Integer(string="Total", compute='_get_totals')
+    def _get_p1(self):
+        name = self.env['dmpi.crm.product.type'].search([('product_map','=','P1')],limit=1)[0].name
+        res = name
+        if not name:
+            res = "P1"
+        return "P5"
 
 
+    contract_id = fields.Many2one("dmpi.crm.contract","Contract")
+    destination_id = fields.Many2one("dmpi.crm.ship.to","Ship To")
+    product_id = fields.Many2one("dmpi.crm.product.type","Product Type")
+
+    qty = fields.Integer("Quantity")
 
 
 

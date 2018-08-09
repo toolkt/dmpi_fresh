@@ -2,6 +2,127 @@
 <odoo>
     <data>
 
+        <record id="view_dmpi_crm_ship_to_tree" model="ir.ui.view">
+            <field name="name">Ship to / Consignee</field>
+            <field name="model">dmpi.crm.ship.to</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="customer_name"/>
+                    <field name="customer_code"/>
+                    <field name="registered_address"/>
+                    <field name="contact_no"/>
+                    <field name="contact_person_email"/>
+                    <field name="destination"/>
+                    <field name="notify_party"/>
+                    <field name="ship_to"/>
+                    <field name="incoterm"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_ship_to_form" model="ir.ui.view">
+            <field name="name">CRM Sale Contract</field>
+            <field name="model">dmpi.crm.ship.to</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name_disp" placeholder="Ship to Code" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="customer_name"/>
+                                <field name="customer_code"/>
+                                <field name="registered_address"/>
+                                
+                            
+                                <field name="contact_person"/>
+                                <field name="contact_no"/>
+                                <field name="contact_person_email"/>
+                            </group>
+                            <group>
+                                <field name="destination"/>
+
+                                <field name="notify_party"/>
+                                <field name="notify_party_detail"/>
+                                
+                                <field name="ship_to"/>
+                                <field name="ship_to_detail"/>
+                                
+                                <field name="incoterm"/>  
+                                <field name="mailing_address"/>
+                                                              
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="action_dmpi_crm_ship_to" model="ir.actions.act_window">
+            <field name="name">Ship to / Consignee</field>
+            <field name="res_model">dmpi.crm.ship.to</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_ship_to" action="action_dmpi_crm_ship_to" parent="menu_dmpi_crm_master_top"/>
+
+
+        <record id="view_dmpi_crm_contract_type_tree" model="ir.ui.view">
+            <field name="name">Contract Type</field>
+            <field name="model">dmpi.crm.contract.type</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="default"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_contract_type" model="ir.actions.act_window">
+            <field name="name">Contract Type</field>
+            <field name="res_model">dmpi.crm.contract.type</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_contract_type" action="action_dmpi_crm_contract_type" parent="menu_dmpi_crm_master_top"/>
+
+
+        <record id="view_dmpi_crm_product_type_tree" model="ir.ui.view">
+            <field name="name">Product Type</field>
+            <field name="model">dmpi.crm.product.type</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="sequence" widget="handle"/>
+                    <field name="sequence_disp" readonly="1"/>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_product_type" model="ir.actions.act_window">
+            <field name="name">Product Type</field>
+            <field name="res_model">dmpi.crm.product.type</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_product_type" action="action_dmpi_crm_product_type" parent="menu_dmpi_crm_master_top"/>
+
+
+
+
+
         <record id="view_dmpi_crm_contract_search" model="ir.ui.view">
             <field name="name">CRM Contract</field>
             <field name="model">dmpi.crm.contract</field>
@@ -11,7 +132,7 @@
                     <field name="sap_cn_no"/>
                     <field name="partner_id"/>
                     <field name="customer_ref"/>
-                    
+
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
@@ -19,6 +140,85 @@
                 </search>
             </field>
         </record>
+
+
+        <record id="view_dmpi_crm_contract_tree" model="ir.ui.view">
+            <field name="name">CRM Contract</field>
+            <field name="model">dmpi.crm.contract</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="sap_cn_no"/>
+                    <field name="partner_id"/>
+                    <field name="customer_ref" />
+                    <field name="po_date"/>
+                    <field name="valid_from" />
+                    <field name="valid_to"/>   
+                    <!-- <field name="state"/> -->
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_contract_form" model="ir.ui.view">
+            <field name="name">Contract</field>
+            <field name="model">dmpi.crm.contract</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <header>
+                        <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit this PO?"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,processed,enroute,received" statusbar_colors='{"approved":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="po_display_number" readonly="1" placeholder="Purchase Order"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                <field name="contract_type"  required="1"/>
+                                <field name="customer_ref" />
+                                <field name="upload_file" /> 
+                                                              
+                            </group>
+                            <group>
+                                <field name="po_date" required="1"/>
+                                <field name="valid_from" required="1"/>
+                                <field name="valid_to" required="1"/>   
+                                <field name="week_no" />  
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="Purchases">
+                                <field name="sheet_data" widget="jsheet"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_contract" model="ir.actions.act_window">
+            <field name="name">Contract</field>
+            <field name="res_model">dmpi.crm.contract</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context" eval="{'search_default_filter_active':1}"/>
+        </record>
+
+        <menuitem id="menu_contract" action="action_dmpi_crm_contract" parent="menu_dmpi_crm_purchase_top"/>
+
+
 
 
     </data>

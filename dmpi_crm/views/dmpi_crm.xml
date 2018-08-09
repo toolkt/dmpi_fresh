@@ -359,6 +359,20 @@
 
 
 
+<!--         <record id="view_dmpi_crm_product_price_list_tree" model="ir.ui.view">
+            <field name="name">Product Price List</field>
+            <field name="model">dmpi.crm.product.price.list</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="valid_from"/>
+                    <field name="valid_to"/>
+                    <field name="date_sync"/>
+                </tree>
+            </field>
+        </record>
+
+
         <record id="view_dmpi_crm_product_price_list_tree" model="ir.ui.view">
             <field name="name">Product Price List</field>
             <field name="model">dmpi.crm.product.price.list</field>
@@ -371,6 +385,8 @@
                 </tree>
             </field>
         </record>
+
+
 
 
         <record id="view_dmpi_crm_product_price_list_form" model="ir.ui.view">
@@ -430,7 +446,7 @@
         </record>
 
         <menuitem id="menu_dmpi_crm_product_price_list" action="action_dmpi_crm_product_price_list" parent="menu_dmpi_crm_master_top"/>
-
+ -->
 
         <record id="view_dmpi_sap_price_upload_search" model="ir.ui.view">
             <field name="name">SAP Price Upload</field>
@@ -479,18 +495,7 @@
 
 
 
-  <record id="view_dmpi_crm_product_price_list_tree" model="ir.ui.view">
-            <field name="name">Product Price List</field>
-            <field name="model">dmpi.crm.product.price.list</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="valid_from"/>
-                    <field name="valid_to"/>
-                    <field name="date_sync"/>
-                </tree>
-            </field>
-        </record>
+
 
 
         <record id="view_dmpi_crm_clp_form" model="ir.ui.view">

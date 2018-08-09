@@ -38,6 +38,7 @@
         'web',
         'mail',
         'dmpi_fresh_reports',
+        # 'web_widget_sheet',
     ],
     "data": [
         "views/dmpi_crm_menu.xml",
@@ -46,9 +47,13 @@
         "views/dmpi_crm_sale.xml",
         "views/dmpi_crm_sale_order.xml",
         "views/dmpi_crm_sale_contract.xml",
-        #"views/dmpi_crm_web.xml",
+        "views/dmpi_crm_contract.xml",
+        "views/dmpi_crm_web.xml",
+
+
         "data/schedule.xml",
         "data/sequence.xml",
+        "data/crm_data.xml",
     ],
     "demo": [
 
