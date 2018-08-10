@@ -216,6 +216,7 @@ class DmpiCrmClp(models.Model):
                 'variables': {
                     'user': user.name,
                     'ids': self.ids,
+                    'dr_id': self.dr_id.id
                 },
             },
         }
@@ -261,6 +262,22 @@ class DmpiCrmClp(models.Model):
 
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
     clp_line_ids = fields.One2many('dmpi.crm.clp.line', 'clp_id', "CLP Line Ids")
+
+
+    def action_view_clp(self):
+   		view = self.env.ref('dmpi_crm.view_dmpi_crm_clp_form',False)
+   		return {
+            'name': _('%s' % self.control_no),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'dmpi.crm.clp',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'res_id': self.id,
+            # 'target': 'new',
+            # 'context': ctx,
+        }
 
 class DmpiCrmClpLine(models.Model):
     _name = 'dmpi.crm.clp.line'

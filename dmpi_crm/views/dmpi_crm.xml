@@ -679,42 +679,45 @@
                                     </tree>
                                 </field>
                             </page>
-                        </notebook>
-                        <separator/>
-                        <group>
-                            <group string="Signatories">
-                                <field name="encoder"/>
-                                <field name="outbound_checker"/>
-                                <field name="prod_load_counter"/>
-                                <field name="inspector"/>
-                            </group>
-                            <group string="Loading Date/Time">
-                                <field name="date_start"/>
-                                <field name="date_end"/>
-                                <field name="date_depart"/>
-                                <field name="date_arrive"/>
-                            </group>
-                        </group>
-                        <group>
-                            <group string="Summary of Cases">
-                                <field name="summary_case_a" string="A"/>
-                                <field name="summary_case_b" string="B"/>
-                                <field name="summary_case_c" string="C"/>
-                            </group>
-                        </group>
+                            <page string="Others">
+                                <group>
+                                    <group string="Summary of Cases">
+                                        <field name="summary_case_a" string="A"/>
+                                        <field name="summary_case_b" string="B"/>
+                                        <field name="summary_case_c" string="C"/>
+                                    </group>
 
-                        <group>
-                            <group string="Container Temperature">
-                                <field name="container_temp" nolabel="1"/>
-                            </group>
-                            <group string="Pulp Room Temperature">
-                                <field name="pulp_room_temp" nolabel="1"/>
-                            </group>
-                        </group>
-                        <separator/>
-                        <group string="Remarks">
-                                <field name="remarks" nolabel="1" placeholder="Add notes here..."/>
-                        </group>
+                                    <group string="Loading Date/Time">
+                                        <field name="date_start"/>
+                                        <field name="date_end"/>
+                                        <field name="date_depart"/>
+                                        <field name="date_arrive"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Container Temperature">
+                                        <field name="container_temp" nolabel="1"/>
+                                    </group>
+                                    <group string="Pulp Room Temperature">
+                                        <field name="pulp_room_temp" nolabel="1"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <group string="Signatories">
+                                        <field name="encoder"/>
+                                        <field name="outbound_checker"/>
+                                        <field name="prod_load_counter"/>
+                                        <field name="inspector"/>
+                                    </group>
+                                </group>
+                                <separator/>
+                                <group string="Remarks">
+                                        <field name="remarks" nolabel="1" placeholder="Add notes here..."/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

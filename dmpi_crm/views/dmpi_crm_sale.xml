@@ -170,7 +170,17 @@
                         </page>
 
                         <page string="CLP">
-                            <field name="clp_ids" />                        
+                            <field name="clp_ids">
+                                <tree>
+                                    <field name="control_no"/>
+                                    <field name="container_no"/>
+                                    <field name="seal_no"/>
+                                    <field name="plant"/>
+                                    <field name="port_origin"/>
+                                    <field name="port_destination"/>
+                                    <button name="action_view_clp" type="object" class="oe_highlight" icon="fa-forward"/>
+                                </tree>
+                            </field>
                         </page>
 
                         <page string="Certificate">
