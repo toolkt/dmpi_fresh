@@ -53,7 +53,7 @@
 
         #"views/dmpi_crm_contract.xml",
         #"views/dmpi_crm_web.xml",
-
+        "security/ir.model.access.csv",
 
         "data/schedule.xml",
         "data/sequence.xml",
