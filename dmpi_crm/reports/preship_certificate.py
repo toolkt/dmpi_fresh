@@ -59,7 +59,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			int_r = 21
 			pack_r = 28
 			foot_r = 35
-			img_attach_r = 36
+			img_attach_r = 40
 			
 
 			# SET ROW HEIGHTS
@@ -492,9 +492,9 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			# sheet.merge_range('F%s:F%s'%(r+6,r+11),o.pulp_temp_mid or '', mrg_center)
 			# sheet.merge_range('G%s:G%s'%(r+6,r+11),o.pulp_temp_last or '', mrg_center)
 
-			for c in 'ABCH':
-				sheet.merge_range('%s%s:%s%s'%(c,r+8,c,r+9),'', mrg_center)
-				sheet.merge_range('%s%s:%s%s'%(c,r+10,c,r+11),'', mrg_center)
+			# for c in 'ABCH':
+			# 	sheet.merge_range('%s%s:%s%s'%(c,r+8,c,r+9),'', mrg_center)
+			# 	sheet.merge_range('%s%s:%s%s'%(c,r+10,c,r+11),'', mrg_center)
 
 			# ADD ATTACHMENT
 			img = o.img
