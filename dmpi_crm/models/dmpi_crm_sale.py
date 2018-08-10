@@ -176,7 +176,7 @@ class DmpiCrmSaleContract(models.Model):
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
 
-    contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
+    contract_type = fields.Many2one("dmpi.crm.contract.type","Contract Type")
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
@@ -1442,7 +1442,7 @@ class DmpiCrmSaleOrderLine(models.Model):
     name = fields.Char("Description")
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')
-    order_id = fields.Many2one('dmpi.crm.sale.order','Sale Order ID')
+    order_id = fields.Many2one('dmpi.crm.sale.order','Sale Order ID', ondelete='cascade')
     product_code = fields.Selection(_get_product_codes)
     product_id = fields.Many2one('dmpi.crm.product','SKU')
     price = fields.Float("Price")

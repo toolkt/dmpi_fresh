@@ -114,6 +114,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
             sale_orders = []
             sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)],limit=1)[0].id
             for l in rec.upload_line_ids:
+                lines = []
+                so_line_no = 0
                 order = {
                         'ship_to_id': l.ship_to_id.id,
                         'notify_id': l.notify_id.id,
@@ -136,6 +138,16 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'p10c12': l.p10c12,
                         'p12c20': l.p12c20
                     }
+                if l.p5 > 0:
+                    so_line_no += 10
+                    product_id = product_code = False
+                    product = self.env['dmpi.crm.product'].search([('code','=','P5'),('partner_id','=','')],limit=1)[0].id
+                    if product:
+                        product_code = ''
+                        product_id = ''
+                    line = { 'name':name , 'so_line_no':so_line_no , 'product_code': product_code, 'product_id': product_id, 'price':price , 'uom': uom, 'qty': l.p5}
+
+
                 print(order)
                 sale_orders.append((0,0,order))
             rec.contract_id.sale_order_ids.unlink()
