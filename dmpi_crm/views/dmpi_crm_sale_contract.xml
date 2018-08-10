@@ -273,7 +273,7 @@
 
 
         <record id="action_dmpi_crm_sale_contract_finance" model="ir.actions.act_window">
-            <field name="name">Sales Contract</field>
+            <field name="name">Sales Contract with AR</field>
             <field name="res_model">dmpi.crm.sale.contract</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('state','=','soa')]</field>
