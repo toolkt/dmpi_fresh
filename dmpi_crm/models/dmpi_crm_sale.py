@@ -77,30 +77,11 @@ def colnum_string(n):
 def read_data(data):
     if data:
         fileobj = TemporaryFile('w+b')
-        fileobj.write(base64.decodestring(data)) 
+        fileobj.write(base64.b64decode(data)) 
         fileobj.seek(0)
 
         rows = csv.reader(fileobj, quotechar='"', delimiter='\t')
-
-        for r in rows:
-            print(r)
-
-
-            
-
-        # with TemporaryFile('w+b') as buf:
-
-        #     buf.write(base64.decodestring(data))
-
-        #     # now we determine the file format
-        #     buf.seek(0)
-        #     rows = csv.reader(buf, quotechar='"', delimiter=',')
-        #     print(rows)
-
-
-
-        # rows = csv.reader(fileobj, quotechar='"', delimiter=',')
-        # return rows
+        return rows
 
 
 
@@ -109,6 +90,7 @@ def read_data(data):
 CONTRACT_STATE = [
         ('draft','Draft'),
         ('submitted','Submitted'),
+        ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
         ('approved','Approved'),
         ('processed','Processed'),
@@ -228,23 +210,30 @@ class DmpiCrmSaleContract(models.Model):
     sent_to_sap = fields.Boolean("Sent to SAP")
     sent_to_sap_time = fields.Datetime("Sent to SAP Time")
 
-    upload_file = fields.Binary("Upload")
-    upload_file_name = fields.Char("Upload Filename")
-    upload_file_template = fields.Binary("Upload Template")
+    # upload_file = fields.Binary("Upload")
+    # upload_file_name = fields.Char("Upload Filename")
+    # upload_file_template = fields.Binary("Upload Template")
 
-    upload_file_so = fields.Binary("Upload")
+    # upload_file_so = fields.Binary("Upload")
 
     error_count = fields.Integer("Error Count")
     errors = fields.Text("Errors")
     errors_disp = fields.Text("Errors", related='errors')
 
-    import_errors = fields.Text("Import Errors")
-    import_errors_disp = fields.Text("Import Errors", related='import_errors')
+    # import_errors = fields.Text("Import Errors")
+    # import_errors_disp = fields.Text("Import Errors", related='import_errors')
 
     sap_errors = fields.Text("SAP Errors")
     week_no = fields.Char("Week No")
 
     
+
+    @api.multi
+    def upload_wizard(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_sale_contract_upload')
+        res['context'] = {'default_contract_id':self.id,}
+        return res
 
 
     # def check_row_error(self,data):
@@ -1038,6 +1027,33 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
+
+    @api.multi
+    def action_submit_contract(self):
+        for rec in self:
+            rec.write({'state':'submitted'})
+
+
+    @api.multi
+    def action_confirm_contract(self):
+        for rec in self:
+            rec.write({'state':'confirmed'})
+
+
+    @api.multi
+    def action_send_contract_to_sap(self):
+        for rec in self:
+            print (rec)
+
+
+    @api.multi
+    def action_send_so_to_sap(self):
+        for rec in self:
+            print (rec)
+
+
+
+
 class DmpiCrmSaleContractLine(models.Model):
     _name = 'dmpi.crm.sale.contract.line'
     _order = 'sequence'
@@ -1243,142 +1259,18 @@ class DmpiCrmSaleOrder(models.Model):
             return result['select_name']
 
 
-    @api.onchange('order_ids')
-    def on_change_order_ids(self):
-        print("CHANGE ORDER IDS")
-        p5 = p6 =  p8 = p7 = p9 = p10 = p12 = p5c7 = p6c8 = p7c9 = p8c10 = p9c11 = p10c12 = p12c20 = 0
-
-
-        for rec in self.order_ids:
-            print(rec.product_id.code)
-
-            if rec.product_code == 'P5' and rec.qty > 0:
-                p5 = rec.qty
-            if rec.product_code == 'P6' and rec.qty > 0:
-                p6 = rec.qty                
-            if rec.product_code == 'P7' and rec.qty > 0:
-                p7 += rec.qty
-            if rec.product_code == 'P8' and rec.qty > 0:
-                p8 = rec.qty
-            if rec.product_code == 'P9' and rec.qty > 0:
-                p9 = rec.qty
-            if rec.product_code == 'P10' and rec.qty > 0:
-                p10 = rec.qty
-            if rec.product_code == 'P12' and rec.qty > 0:
-                p12 = rec.qty
-
-            if rec.product_code == 'P5C7' and rec.qty > 0:
-                p5c7 = rec.qty
-            if rec.product_code == 'P6C8' and rec.qty > 0:
-                p6c8 = rec.qty
-            if rec.product_code == 'P7C9' and rec.qty > 0:
-                p7c9 = rec.qty
-            if rec.product_code == 'P8C10' and rec.qty > 0:
-                p8c10 = rec.qty
-            if rec.product_code == 'P9C11' and rec.qty > 0:
-                p9c11 = rec.qty
-            if rec.product_code == 'P10C12' and rec.qty > 0:
-                p10c12 = rec.qty
-            if rec.product_code == 'P12C20' and rec.qty > 0:
-                p12c20 = rec.qty
-
-        if  p5 > 0: self.p5 = p5 
-        else:       self.p5 = 0
-        if  p6 > 0: self.p6 = p6 
-        else:       self.p6 = 0
-        if  p7 > 0: self.p7 = p7 
-        else:       self.p7 = 0
-        if  p8 > 0: self.p8 = p8 
-        else:       self.p8 = 0
-        if  p9 > 0: self.p9 = p9 
-        else:       self.p9 = 0
-        if  p10 > 0: self.p10 = p10 
-        else:       self.p10 = 0
-        if  p12 > 0: self.p12 = p12 
-        else:       self.p12 = 0
-
-
-        if  p5c7 > 0: self.p5c7 = p5c7 
-        else:       self.p5c7 = 0
-        if  p6c8 > 0: self.p6c8 = p6c8 
-        else:       self.p6c8 = 0
-        if  p7c9 > 0: self.p7c9 = p7c9 
-        else:       self.p7c9 = 0
-        if  p8c10 > 0: self.p8c10 = p8c10 
-        else:       self.p8c10 = 0
-        if  p9c11 > 0: self.p9c11 = p9c11 
-        else:       self.p9c11 = 0
-        if  p10c12 > 0: self.p10c12 = p10c12 
-        else:       self.p10c12 = 0
-        if  p12c20 > 0: self.p12c20 = p12c20 
-        else:       self.p12c20 = 0
-
-
-
-
-
-    # @api.onchange('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20')
-    # def on_change_product_qty(self):
-
-    #     create_vals = []
-
-    #     if self.p7 > 0:
-    #         qty = round_qty(75,self.p7)
-    #         self.p7 = qty
-    #         #Check if product exist
-    #         exist = False
-    #         for rec in self.order_ids:
-    #             if rec.product_code == 'P7':
-    #                 rec.qty = self.p7
-    #                 exist = True
-    #         if not exist:
-    #             product = self.env['dmpi.crm.product'].search([('partner_id','=',self.partner_id.id),('code','=','P7')],limit=1)
-    #             product_id = False
-    #             name = "P7 (Not Setup for customer)"
-    #             if product.id:
-    #                 product_id = product.id
-    #                 name = product.name
-    #             vals = {'product_id':product_id,'name':name,'product_code':'P7','qty':qty}
-    #             print (vals)
-    #             create_vals.append((0,0,vals))
-
-
-    #     if self.p8 > 0:
-    #         qty = round_qty(75,self.p8)
-    #         self.p8 = qty
-    #         #Check if product exist
-    #         exist = False
-    #         for rec in self.order_ids:
-    #             if rec.product_code == 'P8':
-    #                 rec.qty = self.p8
-    #                 exist = True
-    #         if not exist:
-    #             product = self.env['dmpi.crm.product'].search([('partner_id','=',self.partner_id.id),('code','=','P8')],limit=1)
-    #             product_id = False
-    #             name = "P8 (Not Setup for customer)"
-    #             if product.id:
-    #                 product_id = product.id
-    #                 name = product.name
-    #             vals = {'product_id':product_id,'name':name,'product_code':'P8','qty':qty}
-    #             print (vals)
-    #             create_vals.append((0,0,vals))
-
-
-    #     self.order_ids = create_vals
-    #     for rec in self.order_ids:
-    #         rec.onchange_compute_totals()
-
-
     @api.multi
     def action_submit_so(self):
         for rec in self:
             print("SUBMIT SO to SAP")
 
 
-    @api.onchange('partner_id')
-    def on_change_partner_id(self):
-        self.notify_partner_id = self.partner_id.id
-        self.sales_org = self.partner_id.sales_org
+    @api.onchange('ship_to')
+    def on_change_ship_to(self):
+        self.notify_party = self.ship_to.id
+        # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
+        # if sales_org:
+        #     self.sales_org = sales_org
         # print("Onchange Partner")
 
 
@@ -1402,7 +1294,7 @@ class DmpiCrmSaleOrder(models.Model):
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
-    sap_doc_type = fields.Selection(_get_doc_type,"Doc Type", default=_get_doc_type_default)
+    sap_doc_type = fields.Many2one("dmpi.crm.sap.doc.type","Doc Type")
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs')
     valid = fields.Boolean("Valid Order", default=True)
 
@@ -1427,19 +1319,64 @@ class DmpiCrmSaleOrder(models.Model):
 
 
 
+    p5_id              = fields.Many2one("dmpi.crm.product", string="P5", compute='_get_product_codes')
+    p6_id              = fields.Many2one("dmpi.crm.product", string="P6", compute='_get_product_codes')
+    p7_id              = fields.Many2one("dmpi.crm.product", string="P7", compute='_get_product_codes')
+    p8_id              = fields.Many2one("dmpi.crm.product", string="P8", compute='_get_product_codes')
+    p9_id              = fields.Many2one("dmpi.crm.product", string="P9", compute='_get_product_codes')
+    p10_id             = fields.Many2one("dmpi.crm.product", string="P10", compute='_get_product_codes')
+    p12_id             = fields.Many2one("dmpi.crm.product", string="P12", compute='_get_product_codes')
+    p5c7_id            = fields.Many2one("dmpi.crm.product", string="P5C7", compute='_get_product_codes')
+    p6c8_id            = fields.Many2one("dmpi.crm.product", string="P6C8", compute='_get_product_codes')
+    p7c9_id            = fields.Many2one("dmpi.crm.product", string="P7C9", compute='_get_product_codes')
+    p8c10_id           = fields.Many2one("dmpi.crm.product", string="P8C10", compute='_get_product_codes')
+    p9c11_id           = fields.Many2one("dmpi.crm.product", string="P9C11", compute='_get_product_codes')
+    p10c12_id          = fields.Many2one("dmpi.crm.product", string="P10C12", compute='_get_product_codes')
+    p12c20_id          = fields.Many2one("dmpi.crm.product", string="P12C20", compute='_get_product_codes')
 
 
-    partner_id = fields.Many2one('dmpi.crm.partner',"Ship to Party")
-    notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
+
+    # partner_id = fields.Many2one('dmpi.crm.partner',"Ship to Party")
+    ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
+    notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
+    # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
     sales_org = fields.Char("Sales Org")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
     order_date = fields.Date("Order Date")
     estimated_date = fields.Date("Estimated Date")
     shell_color = fields.Char("Shell Color")
+    ship_line = fields.Char("Ship Line")
     requested_deivery_date = fields.Date("Req. Date")
     notes = fields.Text("Notes/Remarks")
 
     total_amount = fields.Float('Total', compute='_get_totals', store=True)
+
+
+
+    @api.depends('contract_id')
+    def _get_product_codes(self):
+        if self.contract_id.partner_id.id:
+            query = """SELECT p.id, p.code, p.sku from dmpi_crm_product p
+                        where p.code != '' and p.partner_id = %s""" % self.contract_id.partner_id.id
+
+            self.env.cr.execute(query)
+            result = self.env.cr.dictfetchall()
+
+            for r in result:
+                if r['code'].upper() == 'P5': self.p5_id = r['id']
+                if r['code'].upper() == 'P6': self.p6_id = r['id']
+                if r['code'].upper() == 'P7': self.p7_id = r['id']
+                if r['code'].upper() == 'P8': self.p8_id = r['id']
+                if r['code'].upper() == 'P9': self.p9_id = r['id']
+                if r['code'].upper() == 'P10': self.p10_id = r['id']
+                if r['code'].upper() == 'P12': self.p12_id = r['id']
+                if r['code'].upper() == 'P5C7': self.p5c7_id = r['id']
+                if r['code'].upper() == 'P6C8': self.p6c8_id = r['id']
+                if r['code'].upper() == 'P7C9': self.p7c9_id = r['id']
+                if r['code'].upper() == 'P8C10': self.p8c10_id = r['id']
+                if r['code'].upper() == 'P9C11': self.p9c11_id = r['id']
+                if r['code'].upper() == 'P10C12': self.p10c12_id = r['id']
+                if r['code'].upper() == 'P12C20': self.p12c20_id = r['id']
 
 
     @api.model
@@ -1474,7 +1411,7 @@ class DmpiCrmSaleOrderLine(models.Model):
     @api.onchange('product_id','qty')
     def onchange_compute_totals(self):
 
-        if not self.order_id.partner_id:
+        if not self.order_id.ship_to_id:
             raise UserError('Please fill out the Ship to Party Field before adding another item')
         else:
             pass
@@ -1482,7 +1419,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 
         query = """SELECT condition_rate from dmpi_sap_price_upload p
                 where p.material = '%s' and ltrim(p.customer,'0') = '%s'
-                limit 1 """ % (self.product_id.sku,self.order_id.partner_id.customer_code)
+                limit 1 """ % (self.product_id.sku,self.order_id.ship_to_id.customer_code)
 
         print(query)
         self.env.cr.execute(query)
@@ -1512,6 +1449,7 @@ class DmpiCrmSaleOrderLine(models.Model):
     uom = fields.Char("Uom")
     qty = fields.Float("Qty")
     total = fields.Float("Total", compute='_get_total')
+
 
 
 class DmpiCrmDr(models.Model):

@@ -167,6 +167,76 @@ class DmpiCrmPartnerAR(models.Model):
     active=fields.Boolean("Active", default=True)
 
 
+class DmpiCrmShipTo(models.Model):
+    _name = 'dmpi.crm.ship.to'
+
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('destination', '=ilike', name + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        accounts = self.search(domain + args, limit=limit)
+        return accounts.name_get()
+
+
+    @api.multi
+    @api.depends('name', 'destination')
+    def name_get(self):
+        result = []
+        for rec in self:
+            destination = ''
+            if rec.destination:
+                destination = rec.destination
+            name = destination+' [' + rec.name+ ']'
+            result.append((rec.id, name))
+        return result
+
+    @api.depends('customer_code')
+    def _get_partner_id(self):
+        for rec in self:
+            if rec.customer_code:
+                partner = self.env['dmpi.crm.partner'].search([('customer_code','=',rec.customer_code)],limit=1)
+                if partner:
+                    rec.partner_id = partner[0].id
+
+    name = fields.Char("Commercial Code", required=True)
+    name_disp = fields.Char("Ship to Code", placeholder="Shipto Code", related='name')
+    customer_name = fields.Char("Corporate Name")
+    customer_code = fields.Char("Customer Code")
+    partner_id = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner_id', store=True)
+    registered_address = fields.Text("Registered Address")
+    contact_no = fields.Char("Contact No")
+    contact_person = fields.Char("Contact Person")
+    contact_person_email = fields.Char("Contact Email")
+    destination = fields.Char("Destination")
+    notify_party = fields.Char("Notify Party")
+    notify_party_detail = fields.Text("Notify Party Details")
+    ship_to_code = fields.Char("Ship to Code")
+    ship_to = fields.Char("Consignee / Ship to")
+    ship_to_detail = fields.Text("Consignee / Ship to Details")
+    incoterm = fields.Char("Incoterm")
+    mailing_address = fields.Text("Mailing Address")
+
+
+class DmpiCrmContractType(models.Model):
+    _name = 'dmpi.crm.contract.type'
+
+    name = fields.Char("Code")
+    description = fields.Char("Description")
+    default = fields.Boolean("Default")
+
+
+class DmpiCrmSapDocType(models.Model):
+    _name = 'dmpi.crm.sap.doc.type'
+
+    name = fields.Char("Code")
+    description = fields.Char("Description")
+    default = fields.Boolean("Default")
+
 
 class DmpiCrmCountry(models.Model):
     _name = 'dmpi.crm.country'

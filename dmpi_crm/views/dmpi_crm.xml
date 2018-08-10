@@ -103,6 +103,148 @@
 
 
 
+        <record id="view_dmpi_crm_ship_to_search" model="ir.ui.view">
+            <field name="name">Ship to</field>
+            <field name="model">dmpi.crm.ship.to</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="ship_to_code"/>
+                    <field name="customer_name"/>
+                    <field name="customer_code"/>
+                    <field name="partner_id"/>
+                    <field name="destination"/>
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <group>
+                        <filter string="Active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_ship_to_tree" model="ir.ui.view">
+            <field name="name">Ship to / Consignee</field>
+            <field name="model">dmpi.crm.ship.to</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="ship_to_code"/>
+                    <field name="customer_name"/>
+                    <field name="customer_code"/>
+                    <field name="partner_id"/>
+                    <field name="registered_address"/>
+                    <field name="contact_no"/>
+                    <field name="contact_person_email"/>
+                    <field name="destination"/>
+                    <field name="notify_party"/>
+                    <field name="ship_to"/>
+                    <field name="incoterm"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_ship_to_form" model="ir.ui.view">
+            <field name="name">CRM Sale Contract</field>
+            <field name="model">dmpi.crm.ship.to</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name_disp" placeholder="Commercial Code" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="ship_to_code"/>
+                                <field name="customer_name"/>
+                                <field name="customer_code"/>
+                                <field name="partner_id"/>
+                                <field name="registered_address"/>
+                                
+                            
+                                <field name="contact_person"/>
+                                <field name="contact_no"/>
+                                <field name="contact_person_email"/>
+                            </group>
+                            <group>
+                                <field name="destination"/>
+
+                                <field name="notify_party"/>
+                                <field name="notify_party_detail"/>
+                                
+                                <field name="ship_to"/>
+                                <field name="ship_to_detail"/>
+                                
+                                <field name="incoterm"/>  
+                                <field name="mailing_address"/>
+                                                              
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_ship_to" model="ir.actions.act_window">
+            <field name="name">Ship to / Consignee</field>
+            <field name="res_model">dmpi.crm.ship.to</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_ship_to" action="action_dmpi_crm_ship_to" parent="menu_dmpi_crm_master_top"/>
+
+
+
+        <record id="view_dmpi_crm_contract_type_tree" model="ir.ui.view">
+            <field name="name">Contract Type</field>
+            <field name="model">dmpi.crm.contract.type</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="default"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_contract_type" model="ir.actions.act_window">
+            <field name="name">Contract Type</field>
+            <field name="res_model">dmpi.crm.contract.type</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_contract_type" action="action_dmpi_crm_contract_type" parent="menu_dmpi_crm_master_top"/>
+
+
+
+        <record id="view_dmpi_crm_sap_doc_type_tree" model="ir.ui.view">
+            <field name="name">SAP Doc Type</field>
+            <field name="model">dmpi.crm.sap.doc.type</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="default"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_sap_doc_type" model="ir.actions.act_window">
+            <field name="name">SAP Doc Type</field>
+            <field name="res_model">dmpi.crm.sap.doc.type</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_sap_doc_type" action="action_dmpi_crm_sap_doc_type" parent="menu_dmpi_crm_master_top"/>
+
+
+
+
         <record id="view_dmpi_crm_country_tree" model="ir.ui.view">
             <field name="name">Country</field>
             <field name="model">dmpi.crm.country</field>

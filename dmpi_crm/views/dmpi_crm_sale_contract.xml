@@ -49,20 +49,27 @@
                     <header>
                         <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit the PO?"/>
                         <button name="action_approve" states="submitted" string="Approve" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Approve the PO?"/>
-
                         <button name="action_release" states="soa" string="Release" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Release the PO?"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,processed,enroute,received" statusbar_colors='{"approved":"blue"}'/>
+
+
+                        <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_confirm_contract" states="submitted" string="Confirm Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_send_contract_to_sap" states="draft" string="Send Contract to SAP" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,processed,enroute,received" statusbar_colors='{"approved":"blue"}'/>
+
 
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="action_view_sheet"
+                            <button name="upload_wizard"
                                 type="object"
+                                string="Upload"
                                 class="oe_stat_button"
-                                icon="fa-pencil-square-o"
-                                attrs="{'invisible': [('active', '=', 0)]}">
-                                <field name="active" widget="statinfo" string="Invoices"/>
+                                icon="fa-upload">
                             </button>
+
                         </div>
                         <div class="oe_title">
                             <h1>
@@ -101,16 +108,7 @@
                         <span style="color:red"><field name="errors_disp" readonly="1"/></span>
                     </center>
                     <notebook>
-                        <page string="Purchase Worksheet">
-                            <group>
-                                <group>
-                                    <field name="upload_file"/>
-                                </group>
-                                <group>
-                                    <button name="import_po" string="Import PO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
-                                </group>
-                            </group>
-
+                        <page string="Purchase Worksheet" invisible="0">
                             <field name="contract_line_ids">
                                 <tree editable="bottom" colors="blue:total == 1500;red:total > 1500">
                                     <field name="sequence" widget="handle"/>
@@ -136,8 +134,6 @@
                                     <field name="so"/>
                                     <field name="so_no"/>
 
-
-
                                     <field name="p5_visible" invisible="1"/>
                                     <field name="p6_visible" invisible="1" />
                                     <field name="p7_visible" invisible="1" />
@@ -158,17 +154,9 @@
                             
                         </page>
                         <page string="Sales Order">
-                            <group>
-                                <group>
-                                    <field name="upload_file_so"/>
-                                </group>
-                                <group>
-                                    <button name="import_so" string="Import SO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
-                                </group>
-                            </group>
                             <field name="sale_order_ids">
                                 <tree>
-                                    <field name="partner_id" />
+                                    <field name="ship_to_id" />
                                     <field name="p5" />
                                     <field name="p6" />
                                     <field name="p7" />
@@ -176,7 +164,6 @@
                                     <field name="p9" />
                                     <field name="p10" />
                                     <field name="p12" />
-                                    <field name="total_crown" />
                                     <field name="p5c7" />
                                     <field name="p6c8" />
                                     <field name="p7c9" />
@@ -184,7 +171,6 @@
                                     <field name="p9c11" />
                                     <field name="p10c12" />
                                     <field name="p12c20" />
-                                    <field name="total_crownless" />
                                     <field name="total_qty" />
                                     <field name="total_amount" />
 
@@ -260,24 +246,6 @@
                             <field name="worksheet_item_text" />
                             </group>
                         </page>
-
-                        <page string="Upload">
-                            <group>
-                                <group>
-                                    <field name="upload_file"/>
-                                </group>
-                                <group>
-                                     <button name="import_po" string="Import PO" type="object" class="oe_highlight" confirm="Are you sure you want to import the file?"/>
-                                     <!-- <button name="import_po2" string="Import PO 2" type="object" class="oe_highlight"/> -->
-                                </group>
-                            </group>
-                            <field name="import_errors" invisible="1"/>
-                            <center attrs="{'invisible': [('import_errors','=','')]}">
-                                <span style="color:red"><field name="import_errors_disp" readonly="1"/></span>
-                            </center>
-                            
-                        </page>
-
                     </notebook>
 
                     </sheet>

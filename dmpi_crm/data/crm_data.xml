@@ -10,9 +10,15 @@
             <field name="default">1</field>
         </record>
 
+        <record id="crm_sap_doc_type_zxso" model="dmpi.crm.sap.doc.type">
+            <field name="name">ZXSO</field>
+            <field name="description">ZXSO</field>
+            <field name="default">1</field>
+        </record>
+
 
         <!-- PRODUCT TYPES with crown-->
-        <record id="crm_product_type_P5" model="dmpi.crm.product.type">
+<!--         <record id="crm_product_type_P5" model="dmpi.crm.product.type">
             <field name="name">P5</field>
             <field name="description">P5</field>
             <field name="sequence">10</field>
@@ -53,10 +59,10 @@
             <field name="description">P12</field>
             <field name="sequence">70</field>
             <field name="product_map">P7</field>
-        </record>
+        </record> -->
 
         <!-- PRODUCT TYPES crownless-->
-        <record id="crm_product_type_P5C7" model="dmpi.crm.product.type">
+<!--         <record id="crm_product_type_P5C7" model="dmpi.crm.product.type">
             <field name="name">P5C7</field>
             <field name="description">P5C7</field>
             <field name="sequence">80</field>
@@ -97,7 +103,7 @@
             <field name="description">P12C20</field>
             <field name="sequence">140</field>
             <field name="product_map">P14</field>
-        </record>
+        </record> -->
 
 
     </data>
