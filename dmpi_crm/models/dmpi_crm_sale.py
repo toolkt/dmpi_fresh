@@ -604,7 +604,7 @@ class DmpiCrmSaleContract(models.Model):
                 items = []
 
                 odoo_po_no  = rec.name
-                sap_doc_type  =  rec.contract_type
+                sap_doc_type  =  rec.contract_type.name
                 sales_org =  rec.partner_id.sales_org
                 dist_channel =   rec.partner_id.dist_channel
                 division =   rec.partner_id.division
