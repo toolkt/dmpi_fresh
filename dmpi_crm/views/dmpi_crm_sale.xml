@@ -10,6 +10,9 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="van_no"/>
+                    <field name="delivery_creation_date"/>
+                    <field name="gi_date"/>
                     <!-- <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
@@ -24,6 +27,11 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="van_no"/>
+                    <field name="delivery_creation_date"/>
+                    <field name="gi_date"/>
+                    <field name="port_origin"/>
+                    <field name="port_destination"/>
                 </tree>
             </field>
         </record>

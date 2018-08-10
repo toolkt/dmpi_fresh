@@ -2,9 +2,9 @@
 <odoo>
 	<data>
 
-        <menuitem id="dmpi_reports_main_menu" name="Reporting" web_icon="dmpi_crm,static/description/icon_report.png"/>
-        <menuitem id="dmpi_reports_config_menu" parent="dmpi_reports_main_menu" name="Configuration" sequence="40"/>
-        <menuitem id="dmpi_reports_menu" parent="dmpi_reports_main_menu" name="Reports" sequence="10"/>
+        <!-- <menuitem id="dmpi_reports_main_menu" name="Reporting" web_icon="dmpi_crm,static/description/icon_report.png"/> -->
+        <menuitem id="dmpi_reports_config_menu" parent="menu_dmpi_crm_master_top" name="Configuration" sequence="40"/>
+        <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Reports" sequence="50"/>
 
         <!-- PRE SHIPMENT TEMPLATES -->
         <record id="dmpi_crm_template_tree" model="ir.ui.view">
@@ -124,40 +124,6 @@
         </record>
 
         <menuitem action="dmpi_crm_factor_action" id="dmpi_crm_factor" parent="dmpi_reports_config_menu" sequence="10"/>
-
-        <!-- DR LINES -->
-<!--         <record id="dmpi_dr_line_tree" model="ir.ui.view">
-            <field name="name">dmpi.crm.dr.line.tree</field>
-            <field name="model">dmpi.crm.dr.line</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <tree string="DR Lines" editable="bottom">
-                    <field name="container"/>
-                    <field name="partner"/>
-                    <field name="sku"/>
-                    <field name="lot"/>
-                    <field name="type"/>
-                    <field name="factor"/>
-                    <field name="no_sample"/>
-                    <field name="no_defect"/>
-                    <field name="value"/>
-                    <field name="dr_id"/>
-                </tree>
-           </field>
-        </record>
-
-        <record id="dmpi_dr_line_action" model="ir.actions.act_window">
-            <field name="name">DR Lines</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">dmpi.crm.dr.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
-            <field name="help" type="html">
-                <p class="oe_view_nocontent_create"></p>
-            </field>
-        </record>
-
-        <menuitem action="dmpi_dr_line_action" id="dmpi_dr_line" parent="dmpi_reports_config_menu" sequence="50"/> -->
 
         <!-- PRESHIPMENT CERTIFICATES -->
         <record id="dmpi_crm_preship_report_tree" model="ir.ui.view">

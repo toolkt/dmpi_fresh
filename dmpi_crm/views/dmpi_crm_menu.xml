@@ -6,7 +6,7 @@
         	<menuitem id="menu_dmpi_crm_purchase_top" name="Purchases" parent="menu_main_dmpi_crm" sequence="10"/>
             <menuitem id="menu_dmpi_crm_commercial_top" name="Commercial" parent="menu_main_dmpi_crm" sequence="20"/>
             <menuitem id="menu_dmpi_crm_finance_top" name="Finance" parent="menu_main_dmpi_crm" sequence="20"/>
-            <menuitem id="menu_dmpi_crm_master_top" name="Master Data" parent="menu_main_dmpi_crm" sequence="30"/>
+            <menuitem id="menu_dmpi_crm_master_top" name="Master Data" parent="menu_main_dmpi_crm" sequence="90"/>
             <menuitem id="menu_dmpi_crm_settings_top" name="Settings" parent="menu_main_dmpi_crm" sequence="100"/>
 
 </odoo>
