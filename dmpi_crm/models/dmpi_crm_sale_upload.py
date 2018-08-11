@@ -41,9 +41,7 @@ def read_data(data):
         fileobj = TemporaryFile("w+")
         fileobj.write(base64.b64decode(data).decode('utf-8'))
         fileobj.seek(0)
-        
         line = csv.reader(fileobj, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
-
         return line
 
 
@@ -56,6 +54,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
     contract_id = fields.Many2one("dmpi.crm.sale.contract","Contract")
     upload_line_ids = fields.One2many('dmpi.crm.sale.contract.upload.line','upload_id',"Upload Lines")
     error_count = fields.Integer("error_count")
+    upload_type = fields.Selection([('customer','Customer'),('commercial','Commercial')])
 
     @api.onchange('upload_file')
     def onchange_upload_file(self):
@@ -114,8 +113,105 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
             sale_orders = []
             sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)],limit=1)[0].id
             for l in rec.upload_line_ids:
-                lines = []
+                so_lines = []
                 so_line_no = 0
+
+                
+
+                def format_so(rec,so_line_no,partner_id=0,qty=0,product_code=''):
+                    name = "Product not Maintained"
+                    product_id = False
+                    query = """SELECT cp.id as product_id, cp.sku, cp.code, cp.partner_id, spu.condition_rate,spu.condition_currency, spu.uom from dmpi_crm_product cp
+                            left join dmpi_sap_price_upload spu on spu.material = cp.sku
+                            where cp.code = '%s' and partner_id = %s""" % (product_code,partner_id)
+                    self.env.cr.execute(query)
+                    result = self.env.cr.dictfetchall()
+                    if result:
+                        name = result[0]['sku']
+                        product_id = result[0]['product_id']
+                    return { 
+                                'name':name, 
+                                'so_line_no':so_line_no, 
+                                'product_code': product_code, 
+                                'product_id': product_id,
+                                'uom': 'CAS', 
+                                'qty': qty
+                            }
+
+                partner_id = rec.contract_id.partner_id.id
+
+                if l.p5 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p5,'P5')
+                    so_lines.append((0,0,line))
+
+                if l.p6 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p6,'P6')
+                    so_lines.append((0,0,line))
+
+                if l.p7 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p7,'P7')
+                    so_lines.append((0,0,line))
+
+                if l.p8 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p8,'P8')
+                    so_lines.append((0,0,line))
+
+                if l.p9 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p9,'P9')
+                    so_lines.append((0,0,line))
+
+                if l.p10 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p10,'P10')
+                    so_lines.append((0,0,line))
+
+                if l.p12 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p12,'P12')
+                    so_lines.append((0,0,line))
+
+                if l.p5c7 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p5c7,'P5C7')
+                    so_lines.append((0,0,line))
+
+                if l.p6c8 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p6c8,'P6C8')
+                    so_lines.append((0,0,line))
+
+                if l.p7c9 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p7c9,'P7C9')
+                    so_lines.append((0,0,line))
+
+                if l.p8c10 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p8c10,'P8C10')
+                    so_lines.append((0,0,line))
+
+                if l.p9c11 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p9c11,'P9C11')
+                    so_lines.append((0,0,line))
+
+                if l.p10c12 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p10c12,'P10C12')
+                    so_lines.append((0,0,line))
+
+                if l.p12c20 > 0:
+                    so_line_no += 10
+                    line = format_so(rec,so_line_no,partner_id,l.p12c20,'P12C20')
+                    so_lines.append((0,0,line))
+
+
+
                 order = {
                         'ship_to_id': l.ship_to_id.id,
                         'notify_id': l.notify_id.id,
@@ -136,22 +232,18 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'p8c10': l.p8c10,
                         'p9c11': l.p9c11,
                         'p10c12': l.p10c12,
-                        'p12c20': l.p12c20
+                        'p12c20': l.p12c20,
+                        'order_ids': so_lines,
                     }
-                if l.p5 > 0:
-                    so_line_no += 10
-                    product_id = product_code = False
-                    product = self.env['dmpi.crm.product'].search([('code','=','P5'),('partner_id','=','')],limit=1)[0].id
-                    if product:
-                        product_code = ''
-                        product_id = ''
-                    line = { 'name':name , 'so_line_no':so_line_no , 'product_code': product_code, 'product_id': product_id, 'price':price , 'uom': uom, 'qty': l.p5}
-
 
                 print(order)
                 sale_orders.append((0,0,order))
-            rec.contract_id.sale_order_ids.unlink()
-            rec.contract_id.sale_order_ids = sale_orders
+            if rec.upload_type == 'customer':
+                rec.contract_id.customer_order_ids.unlink()
+                rec.contract_id.customer_order_ids = sale_orders
+            if rec.upload_type == 'commercial':
+                rec.contract_id.sale_order_ids.unlink()
+                rec.contract_id.sale_order_ids = sale_orders
 
 
 

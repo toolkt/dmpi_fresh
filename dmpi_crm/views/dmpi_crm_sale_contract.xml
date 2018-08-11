@@ -70,6 +70,14 @@
                                 icon="fa-upload">
                             </button>
 
+                            <button name="recompute_order_lines"
+                                type="object"
+                                string="Recompute Price"
+                                class="oe_stat_button"
+                                icon="fa-refresh">
+                            </button>
+
+
                         </div>
                         <div class="oe_title">
                             <h1>
@@ -108,7 +116,7 @@
                         <span style="color:red"><field name="errors_disp" readonly="1"/></span>
                     </center>
                     <notebook>
-                        <page string="Purchase Worksheet" invisible="0">
+                        <page string="Purchase Worksheet" invisible="1">
                             <field name="contract_line_ids">
                                 <tree editable="bottom" colors="blue:total == 1500;red:total > 1500">
                                     <field name="sequence" widget="handle"/>
@@ -153,27 +161,51 @@
                             </field>
                             
                         </page>
+                        <page string="Customer Orders">
+                            <field name="customer_order_ids">
+                                <tree>
+                                    <field name="contract_line_no" string="#"/>
+                                    <field name="ship_to_id" />
+                                    <field name="p5" sum="Total"/>
+                                    <field name="p6" sum="Total"/>
+                                    <field name="p7" sum="Total"/>
+                                    <field name="p8" sum="Total"/>
+                                    <field name="p9" sum="Total"/>
+                                    <field name="p10" sum="Total"/>
+                                    <field name="p12" sum="Total"/>
+                                    <field name="p5c7" sum="Total"/>
+                                    <field name="p6c8" sum="Total"/>
+                                    <field name="p7c9" sum="Total"/>
+                                    <field name="p8c10" sum="Total"/>
+                                    <field name="p9c11" sum="Total"/>
+                                    <field name="p10c12" sum="Total"/>
+                                    <field name="p12c20" sum="Total"/>
+                                    <field name="total_qty" sum="Total"/>
+                                    <field name="total_amount" sum="Total"/>
+                                </tree>
+                            </field>
+                        </page>
                         <page string="Sales Order">
                             <field name="sale_order_ids">
                                 <tree>
+                                    <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
-                                    <field name="p5" />
-                                    <field name="p6" />
-                                    <field name="p7" />
-                                    <field name="p8" />
-                                    <field name="p9" />
-                                    <field name="p10" />
-                                    <field name="p12" />
-                                    <field name="p5c7" />
-                                    <field name="p6c8" />
-                                    <field name="p7c9" />
-                                    <field name="p8c10" />
-                                    <field name="p9c11" />
-                                    <field name="p10c12" />
-                                    <field name="p12c20" />
-                                    <field name="total_qty" />
-                                    <field name="total_amount" />
-
+                                    <field name="p5" sum="Total"/>
+                                    <field name="p6" sum="Total"/>
+                                    <field name="p7" sum="Total"/>
+                                    <field name="p8" sum="Total"/>
+                                    <field name="p9" sum="Total"/>
+                                    <field name="p10" sum="Total"/>
+                                    <field name="p12" sum="Total"/>
+                                    <field name="p5c7" sum="Total"/>
+                                    <field name="p6c8" sum="Total"/>
+                                    <field name="p7c9" sum="Total"/>
+                                    <field name="p8c10" sum="Total"/>
+                                    <field name="p9c11" sum="Total"/>
+                                    <field name="p10c12" sum="Total"/>
+                                    <field name="p12c20" sum="Total"/>
+                                    <field name="total_qty" sum="Total"/>
+                                    <field name="total_amount" sum="Total"/>
                                 </tree>
                             </field>
                             
@@ -202,27 +234,6 @@
                                     <field name="dmpi_inv_no" />
                                 </tree>
                             </field>                            
-                        </page>
-
-                        <!-- <page string="Invoice (FF)">
-                            <field name="dmpi_invoice_ids">
-                                <tree>
-                                    <field name="name" />
-                                </tree>
-                            </field>                            
-                        </page>
-                        <page string="Invoice (DMS)">
-                            <field name="dms_invoice_ids">
-                                <tree>
-                                    <field name="name" />
-                                </tree>
-                            </field>                            
-                        </page> -->
-                        <page string="Quality">
-                            
-                        </page>
-                        <page string="Documents">
-                            
                         </page>
                         <page string="Settings">
                             

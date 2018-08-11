@@ -47,6 +47,7 @@
         "views/dmpi_crm.xml",
         "views/dmpi_crm_sale.xml",
         "views/dmpi_crm_sale_order.xml",
+        # "views/customer_crm_sale_order.xml",
         "views/dmpi_crm_sale_contract.xml",
         "views/dmpi_crm_report.xml",
         "views/dmpi_crm_sale_upload.xml",

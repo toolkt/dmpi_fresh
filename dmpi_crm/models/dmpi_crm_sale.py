@@ -90,6 +90,7 @@ def read_data(data):
 CONTRACT_STATE = [
         ('draft','Draft'),
         ('submitted','Submitted'),
+        ('confirm','For Confirmation'),
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
         ('approved','Approved'),
@@ -117,6 +118,7 @@ PRODUCT_CODES = [
 
 class DmpiCrmSaleContract(models.Model):
     _name = 'dmpi.crm.sale.contract'
+    _description = "Sale Contract"
     _inherit = ['mail.thread']
 
 
@@ -200,6 +202,7 @@ class DmpiCrmSaleContract(models.Model):
     #ONE2MANY RELATIONSHIPTS
     contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
     sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders')
+    customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders')
     invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
     # dmpi_invoice_ids = fields.One2many('dmpi.crm.invoice.dmpi','contract_id','Invoice (DMPI)')
     # dms_invoice_ids = fields.One2many('dmpi.crm.invoice.dms','contract_id','Invoice (DMS)')
@@ -235,6 +238,17 @@ class DmpiCrmSaleContract(models.Model):
         res['context'] = {'default_contract_id':self.id,}
         return res
 
+
+
+    @api.multi
+    def recompute_order_lines(self):
+        for rec in self:
+            for c in rec.customer_order_ids:
+                for l in c.order_ids:
+                    l.recompute_price()
+            for s in rec.sale_order_ids:
+                for l in s.order_ids:
+                    l.recompute_price()
 
     # def check_row_error(self,data):
     #     errors = []
@@ -476,12 +490,12 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
-    @api.depends('sale_order_ids','invoice_ids')
+    @api.depends('sale_order_ids')
     def _compute_totals(self):
         total_sales = 0.0
         for s in self.sale_order_ids:
-            if s.valid:
-                total_sales += s.total_amount
+            for l in s.order_ids:
+                total_sales += l.total
 
         self.total_sales = total_sales
 
@@ -1265,9 +1279,10 @@ class DmpiCrmSaleOrder(models.Model):
             print("SUBMIT SO to SAP")
 
 
-    @api.onchange('ship_to')
+    @api.onchange('ship_to_id')
     def on_change_ship_to(self):
-        self.notify_party = self.ship_to.id
+        self.notify_id = self.ship_to_id.id
+        self.sales_org = self.contract_id.partner_id.sales_org
         # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
         # if sales_org:
         #     self.sales_org = sales_org
@@ -1275,47 +1290,68 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20','order_ids')
-    def _get_totals(self):
-        total_amount = 0.0
+    def get_totals(self):
+        
         for rec in self:
+            total_amount = 0.0
+            for l in rec.order_ids:
+                total_amount += l.total
+                if l.product_code == 'P5': rec.p5 += l.qty
+                if l.product_code == 'P6': rec.p6 += l.qty
+                if l.product_code == 'P7': rec.p7 += l.qty
+                if l.product_code == 'P8': rec.p8 += l.qty
+                if l.product_code == 'P9': rec.p9 += l.qty
+                if l.product_code == 'P10': rec.p10 += l.qty
+                if l.product_code == 'P12': rec.p12 += l.qty
+                if l.product_code == 'P5C7': rec.p5c7 += l.qty
+                if l.product_code == 'P6C8': rec.p6c8 += l.qty
+                if l.product_code == 'P7C9': rec.p7c9 += l.qty
+                if l.product_code == 'P8C10': rec.p8c10 += l.qty
+                if l.product_code == 'P9C11': rec.p9c11 += l.qty
+                if l.product_code == 'P10C12': rec.p10c12 += l.qty
+                if l.product_code == 'P12C20': rec.p12c20 += l.qty
+
+            rec.total_amount = total_amount
             rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
             rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
             rec.total_qty = rec.total_crown + rec.total_crownless
 
         
-            for l in rec.order_ids:
-                total_amount += l.total
+    def _get_doc_types(self):
+        res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
+        return res
 
-            rec.total_amount = total_amount
-
-
+    def _get_default_doc_types(self):
+        res = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)])[0].name
+        return res
 
     name = fields.Char("CRM SO No.", default="Draft")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    contract_line_no = fields.Integer("Contract Lini No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
-    sap_doc_type = fields.Many2one("dmpi.crm.sap.doc.type","Doc Type")
+    sap_doc_type = fields.Selection(_get_doc_types,"Doc Type",default=_get_default_doc_types)
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs')
     valid = fields.Boolean("Valid Order", default=True)
 
 
-    p5              = fields.Integer(string="P5")
-    p6              = fields.Integer(string="P6")
-    p7              = fields.Integer(string="P7")
-    p8              = fields.Integer(string="P8")
-    p9              = fields.Integer(string="P9")
-    p10             = fields.Integer(string="P10")
-    p12             = fields.Integer(string="P12")
-    p5c7            = fields.Integer(string="P5C7")
-    p6c8            = fields.Integer(string="P6C8")
-    p7c9            = fields.Integer(string="P7C9")
-    p8c10           = fields.Integer(string="P8C10")
-    p9c11           = fields.Integer(string="P9C11")
-    p10c12          = fields.Integer(string="P10C12")
-    p12c20          = fields.Integer(string="P12C20")
-    total_crown     = fields.Integer(string="w/Crown", compute='_get_totals')
-    total_crownless = fields.Integer(string="Crownlesss", compute='_get_totals')
-    total_qty       = fields.Integer(string="Total", compute='_get_totals')
+    p5              = fields.Integer(string="P5", compute='get_totals')
+    p6              = fields.Integer(string="P6", compute='get_totals')
+    p7              = fields.Integer(string="P7", compute='get_totals')
+    p8              = fields.Integer(string="P8", compute='get_totals')
+    p9              = fields.Integer(string="P9", compute='get_totals')
+    p10             = fields.Integer(string="P10", compute='get_totals')
+    p12             = fields.Integer(string="P12", compute='get_totals')
+    p5c7            = fields.Integer(string="P5C7", compute='get_totals')
+    p6c8            = fields.Integer(string="P6C8", compute='get_totals')
+    p7c9            = fields.Integer(string="P7C9", compute='get_totals')
+    p8c10           = fields.Integer(string="P8C10", compute='get_totals')
+    p9c11           = fields.Integer(string="P9C11", compute='get_totals')
+    p10c12          = fields.Integer(string="P10C12", compute='get_totals')
+    p12c20          = fields.Integer(string="P12C20", compute='get_totals')
+    total_crown     = fields.Integer(string="w/Crown", compute='get_totals')
+    total_crownless = fields.Integer(string="Crownlesss", compute='get_totals')
+    total_qty       = fields.Integer(string="Total", compute='get_totals')
 
 
 
@@ -1336,7 +1372,7 @@ class DmpiCrmSaleOrder(models.Model):
 
 
 
-    # partner_id = fields.Many2one('dmpi.crm.partner',"Ship to Party")
+    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
     ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
     notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
     # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
@@ -1347,9 +1383,65 @@ class DmpiCrmSaleOrder(models.Model):
     shell_color = fields.Char("Shell Color")
     ship_line = fields.Char("Ship Line")
     requested_deivery_date = fields.Date("Req. Date")
-    notes = fields.Text("Notes/Remarks")
+    notes = fields.Text("Notes/Remarks", compute='display_summary')
 
-    total_amount = fields.Float('Total', compute='_get_totals', store=True)
+    total_amount = fields.Float('Total', compute='get_totals')
+
+    @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20',
+        'p5_id','p6_id','p7_id','p8_id','p9_id','p10_id','p12_id','p5c7_id','p6c8_id','p7c9_id','p8c10_id','p9c11_id','p10c12_id','p12c20_id')
+    def display_summary(self):
+
+        headers = """ 
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P5</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P6</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P7</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P8</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P9</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P10</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P12</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P5C7</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P6C8</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P7C9</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P8C10</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P9C11</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P10C12</th>
+            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P12C20</th>
+        """ 
+
+        rows = """
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+            <td class="o_data_cell o_list_number">%s</td>
+        """ % (self.p5, self.p6, self.p7, self.p8, self.p9, self.p10, self.p12, 
+            self.p5c7, self.p6c8, self.p7c9, self.p8c10, self.p9c11, self.p10c12, self.p12c20)
+
+
+        self.notes = """
+            <h3>SUMMARY</h3>
+            <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
+                <thead>
+                    <tr>
+                        %s
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="o_data_row">
+                        %s
+                    </tr>
+                </tbody>
+            </table>
+        """ %(headers,rows)
 
 
 
@@ -1379,77 +1471,99 @@ class DmpiCrmSaleOrder(models.Model):
                 if r['code'].upper() == 'P12C20': self.p12c20_id = r['id']
 
 
-    @api.model
-    def create(self, vals):
-        seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
-        vals['name'] = seq
-        res = super(DmpiCrmSaleOrder, self).create(vals)
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
+    #     vals['name'] = seq
+    #     res = super(DmpiCrmSaleOrder, self).create(vals)
+    #     return res
 
 
 class DmpiCrmSaleOrderLine(models.Model):
     _name = 'dmpi.crm.sale.order.line'
 
+
+    @api.depends('price','qty')
     def _get_total(self):
         for rec in self:
             rec.total = rec.price*rec.qty
 
 
     def _get_product_codes(self):
-        query = """SELECT s.select_group, s.select_name, s.select_value from dmpi_crm_config_selection s 
-                left join dmpi_crm_config c on c.id = s.config_id
-                where c.active = True and c.default = True and s.select_group = 'product_code'
-                order by s.sequence
-                """ 
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-
-        res = [(r['select_value'],r['select_name']) for r in result]
+        res = [(r.name,r.description) for r in self.env['dmpi.crm.product.code'].search([])]
         return res
 
 
-    @api.onchange('product_id','qty')
-    def onchange_compute_totals(self):
 
-        if not self.order_id.ship_to_id:
-            raise UserError('Please fill out the Ship to Party Field before adding another item')
-        else:
-            pass
-
-
-        query = """SELECT condition_rate from dmpi_sap_price_upload p
-                where p.material = '%s' and ltrim(p.customer,'0') = '%s'
-                limit 1 """ % (self.product_id.sku,self.order_id.ship_to_id.customer_code)
-
-        print(query)
+    def compute_price(self,date,customer_code,material):
+        query = """SELECT sales_org, customer_code, material,freight_term,amount,currency,uom 
+                from dmpi_crm_product_price_list_item i
+                where '%s'::DATE between valid_from and valid_to
+                and customer_code = '%s' and material = '%s'
+                limit 1 """ % (date,customer_code,material)
         self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()
-        print (result)
         if result:
-            self.price = float(result[0]['condition_rate'])
+            self.price = float(result[0]['amount'])
         else:
             self.price = 0
-        self.total = self.qty * self.price
-        self.name = self.product_id.name
-        self.uom = 'CAS'#self.product_id.uom
-        qty = round_qty(75,self.qty)
-        self.qty = qty  
-        self.product_code = self.product_id.code
+        if result:
+            self.uom = result[0]['uom']
+        else:
+            self.uom = 'CAS'
 
-        print("Onchange Partner")
+        if result:
+            return result[0]
+        else:
+            return False
+
+
+    @api.onchange('product_id','qty')
+    def onchange_product_id(self):
+        if self.product_id:
+            result = self.compute_price(datetime.today(),self.order_id.partner_id.customer_code,self.product_id.sku)
+
+            self.product_code = self.product_id.code
+            self.total = self.qty * self.price
+            self.name = self.product_id.name
+            qty = round_qty(75,self.qty)
+            self.qty = qty  
+        
+
+
+    def recompute_price(self):
+        if self.product_id:
+            result = self.compute_price(datetime.today(),self.order_id.partner_id.customer_code,self.product_id.sku)
+
+
 
 
     name = fields.Char("Description")
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')
     order_id = fields.Many2one('dmpi.crm.sale.order','Sale Order ID', ondelete='cascade')
-    product_code = fields.Selection(_get_product_codes)
+    product_code = fields.Selection(_get_product_codes,"Code")
     product_id = fields.Many2one('dmpi.crm.product','SKU')
     price = fields.Float("Price")
     uom = fields.Char("Uom")
     qty = fields.Float("Qty")
     total = fields.Float("Total", compute='_get_total')
 
+
+class CustomerCrmSaleOrder(models.Model):
+    _name = 'customer.crm.sale.order'
+    _display_summary = 'Customer Sale Contract'
+    _inherit = ['dmpi.crm.sale.order']
+
+    order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs')
+
+
+
+class CustomerCrmSaleOrderLine(models.Model):
+    _name = 'customer.crm.sale.order.line'
+    _inherit = ['dmpi.crm.sale.order.line']
+
+    order_id = fields.Many2one('customer.crm.sale.order','Sale Order ID', ondelete='cascade')
 
 
 class DmpiCrmDr(models.Model):

@@ -27,6 +27,33 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
+import csv
+import sys
+import math
+
+import base64
+from tempfile import TemporaryFile
+import tempfile
+import re
+from dateutil.parser import parse
+
+
+
+def read_data(data):
+    if data:
+        fileobj = TemporaryFile("w+")
+        fileobj.write(base64.b64decode(data).decode('utf-8'))
+        fileobj.seek(0)
+        line = csv.reader(fileobj, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
+        return line
+
+
+def parse_date(date):
+    try:
+        return parse(date)
+    except:
+        return False
+
 
 class DmpiCrmPartner(models.Model):
     _name = 'dmpi.crm.partner'
@@ -352,42 +379,124 @@ class DmpiCrmProduct(models.Model):
 
 
 
-# class DmpiCrmProductPriceList(models.Model):
-#     _name = 'dmpi.crm.product.price.list'
-#     _inherit = ['mail.thread']
+class DmpiCrmProductPriceList(models.Model):
+    _name = 'dmpi.crm.product.price.list'
+    _description = "Price List"
+    _inherit = ['mail.thread']
 
-#     name            = fields.Char("Description")
-#     partner_id      = fields.Many2one('dmpi.crm.partner','Customer ID')
-#     valid_from      = fields.Date("Valid From")
-#     valid_to        = fields.Date("Valid To")
-#     date_sync       = fields.Datetime("Last Sync")
-#     price_upload    = fields.Binary("Upload File")
-#     item_ids        = fields.One2many('dmpi.crm.product.price.list.item','version_id','Items')
-#     upload_ids      = fields.One2many('dmpi.crm.product.price.list.upload','version_id','Uploads')
+    name = fields.Char("Name", required=True, track_visibility='onchange')
+    description = fields.Char("Description", track_visibility='onchange')
+    date = fields.Datetime("Date",track_visibility='onchange', default=fields.Datetime.now())
+    week_no = fields.Integer("Week No")
 
-# class DmpiCrmProductPriceListItem(models.Model):
-#     _name = 'dmpi.crm.product.price.list.item'
-
-#     version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
-#     product_id      = fields.Many2one('dmpi.crm.product',"Product ID")
-#     price           = fields.Float("Price")
+    upload_filename  = fields.Char("Filename")
+    upload_file    = fields.Binary("Upload File")
+    item_ids        = fields.One2many('dmpi.crm.product.price.list.item','version_id','Items', track_visibility='onchange')
+    state = fields.Selection([('draft','Draft'),('approved','Approved'),('cancelled','Cancelled')], "State", default='draft', track_visibility='onchange')
 
 
-# class DmpiCrmProductPriceListItem(models.Model):
-#     _name = 'dmpi.crm.product.price.list.upload'
 
-#     version_id      = fields.Many2one('dmpi.crm.product.price.list.version','Versin ID')
-#     valid_from      = fields.Date("Valid From")
-#     valid_to        = fields.Date("Valid To")
-#     sku             = fields.Char('SKU')
-#     customer        = fields.Char('Customer')
-#     price           = fields.Float("Price")
+    @api.multi
+    def action_approve(self):
+        for rec in self:
+            rec.write({'state':'approved'})
 
+    @api.multi
+    def action_cancel(self):
+        for rec in self:
+            rec.write({'state':'cancelled'})
+
+    @api.multi
+    def action_draft(self):
+        for rec in self:
+            rec.write({'state':'draft'})
+
+
+    @api.onchange('upload_file')
+    def onchange_upload_file(self):
+        if self.upload_file:
+            rows = read_data(self.upload_file)
+
+            row_count = 0
+            error_count = 0
+            line_items = []
+            for r in rows:
+                errors = []
+                if r[0] != '':
+                    if row_count == 0: 
+                        print (r)
+                    else:
+                        item = {
+                            'sales_org': r[0],
+                            'customer_code': r[1],
+                            'material': r[2],
+                            'freight_term': r[3],
+                            'amount': r[4],
+                            'currency': r[5],
+                            'uom': r[6],
+                            'valid_from': parse_date(r[7]),
+                            'valid_to': parse_date(r[8]),
+                            'remarks': r[9],
+
+                        }
+
+                        if r[1]:
+                            partner = self.env['dmpi.crm.partner'].search([('customer_code','=',r[1])])
+                            if partner:
+                                item['partner_id'] = partner[0].id
+                        if r[2]:
+                            product = self.env['dmpi.crm.product'].search([('sku','=',r[2])])
+                            if product:
+                                item['product_id'] = product[0].id
+
+
+                        line_items.append((0,0,item))
+                row_count+=1
+            self.item_ids.unlink()
+            self.item_ids = line_items
+
+
+
+class DmpiCrmProductPriceListItem(models.Model):
+    _name = 'dmpi.crm.product.price.list.item'
+
+    
+    version_id = fields.Many2one('dmpi.crm.product.price.list','Versin ID', ondelete="cascade")
+    product_id = fields.Many2one('dmpi.crm.product',"Product ID")
+    sales_org = fields.Char("Sales Org")
+    customer_code = fields.Char("Customer Code")
+    partner_id = fields.Many2one("dmpi.crm.partner","Customer")
+    material = fields.Char("Material")
+    freight_term = fields.Char("Freight")
+    amount = fields.Float("Amount")
+    currency = fields.Char("Currency")
+    uom = fields.Char("Unit of Measure")
+    valid_from = fields.Date("Valid From")
+    valid_to = fields.Date("Valid To")
+    remarks = fields.Char("Remarks")
+
+
+class DmpiCRMSaleContractGroup(models.Model):
+    _name = 'dmpi.crm.sale.contract.group'
+    _description = 'Contract Group'
+
+    name = fields.Char("Name")
+    description = fields.Char("Description")
+
+
+class DmpiCRMProductCode(models.Model):
+    _name = 'dmpi.crm.product.code'
+    _description = 'Product Code'
+    _order = 'sequence'
+
+    name = fields.Char("Name")
+    description = fields.Char("Description")
+    sequence = fields.Integer("Sequence")
 
 
 class DmpiCRMPaymentTerms(models.Model):
     _name = 'dmpi.crm.payment.terms'
-    #_description = 'DMS_A910_PRICEDOWNLOAD'
+    _description = 'Payment Terms'
 
     name = fields.Char("Code")
     days = fields.Integer("Days Due")

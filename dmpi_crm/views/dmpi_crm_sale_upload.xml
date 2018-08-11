@@ -9,6 +9,7 @@
                 <form string="Upload">
                     <group>
                         <field name="upload_file" />
+                        <field name="upload_type"/>
                         <field name="contract_id" invisible="1"/>
                         <field name="error_count" invisible="1"/>
                     </group>
@@ -56,6 +57,6 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-        </record>s
+        </record>
 
 </odoo>

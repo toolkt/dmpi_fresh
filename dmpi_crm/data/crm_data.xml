@@ -18,92 +18,78 @@
 
 
         <!-- PRODUCT TYPES with crown-->
-<!--         <record id="crm_product_type_P5" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P5" model="dmpi.crm.product.code">
             <field name="name">P5</field>
             <field name="description">P5</field>
             <field name="sequence">10</field>
-            <field name="product_map">P1</field>
         </record>
-        <record id="crm_product_type_P6" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P6" model="dmpi.crm.product.code">
             <field name="name">P6</field>
             <field name="description">P6</field>
             <field name="sequence">20</field>
-            <field name="product_map">P2</field>
         </record>
-        <record id="crm_product_type_P7" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P7" model="dmpi.crm.product.code">
             <field name="name">P7</field>
             <field name="description">P7</field>
             <field name="sequence">30</field>
-            <field name="product_map">P3</field>
         </record>
-        <record id="crm_product_type_P8" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P8" model="dmpi.crm.product.code">
             <field name="name">P8</field>
             <field name="description">P8</field>
             <field name="sequence">40</field>
-            <field name="product_map">P4</field>
         </record>
-        <record id="crm_product_type_P9" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P9" model="dmpi.crm.product.code">
             <field name="name">P9</field>
             <field name="description">P9</field>
             <field name="sequence">50</field>
-            <field name="product_map">P5</field>
         </record>
-        <record id="crm_product_type_P10" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P10" model="dmpi.crm.product.code">
             <field name="name">P10</field>
             <field name="description">P10</field>
             <field name="sequence">60</field>
-            <field name="product_map">P6</field>
         </record>
-        <record id="crm_product_type_P12" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P12" model="dmpi.crm.product.code">
             <field name="name">P12</field>
             <field name="description">P12</field>
             <field name="sequence">70</field>
-            <field name="product_map">P7</field>
-        </record> -->
+        </record>
 
         <!-- PRODUCT TYPES crownless-->
-<!--         <record id="crm_product_type_P5C7" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P5C7" model="dmpi.crm.product.code">
             <field name="name">P5C7</field>
             <field name="description">P5C7</field>
             <field name="sequence">80</field>
-            <field name="product_map">P8</field>
         </record>
-        <record id="crm_product_type_P6C8" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P6C8" model="dmpi.crm.product.code">
             <field name="name">P6C8</field>
             <field name="description">P6C8</field>
             <field name="sequence">90</field>
-            <field name="product_map">P9</field>
         </record>
-        <record id="crm_product_type_P7C9" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P7C9" model="dmpi.crm.product.code">
             <field name="name">P7C9</field>
             <field name="description">P7C9</field>
             <field name="sequence">100</field>
-            <field name="product_map">P10</field>
         </record>
-        <record id="crm_product_type_P8C10" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P8C10" model="dmpi.crm.product.code">
             <field name="name">P8C10</field>
             <field name="description">P8C10</field>
             <field name="sequence">110</field>
-            <field name="product_map">P11</field>
         </record>
-        <record id="crm_product_type_P9C11" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P9C11" model="dmpi.crm.product.code">
             <field name="name">P9C11</field>
             <field name="description">P9C11</field>
             <field name="sequence">120</field>
-            <field name="product_map">P12</field>
         </record>
-        <record id="crm_product_type_P10C12" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P10C12" model="dmpi.crm.product.code">
             <field name="name">P10C12</field>
             <field name="description">P10C12</field>
             <field name="sequence">130</field>
-            <field name="product_map">P13</field>
         </record>
-        <record id="crm_product_type_P12C20" model="dmpi.crm.product.type">
+        <record id="crm_product_code_P12C20" model="dmpi.crm.product.code">
             <field name="name">P12C20</field>
             <field name="description">P12C20</field>
             <field name="sequence">140</field>
-            <field name="product_map">P14</field>
-        </record> -->
+        </record>
 
 
     </data>
