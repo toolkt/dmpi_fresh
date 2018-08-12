@@ -521,4 +521,48 @@ class DmpiSAPPriceUpload(models.Model):
 
 
 
+class DmpiCRMChannelGroup(models.Model):
+    _name = 'dmpi.crm.channel.group'
+    _description = 'DMPI CRM Channel Groups'
+
+    name = fields.Char('Channel')
+    code = fields.Char('Channel Code', help="unique identifier of channel")
+    partner_ids = fields.Many2many('res.partner','dmpi_crm_channel_res_partner_rel','channel_id','partner_id', string='Subscribers',
+        help="Email to partners for email notifications.")
+    active = fields.Boolean('Active', default=True)
+
+
+
+class MailMail(models.Model):
+    _inherit = 'mail.mail'
+
+    channel_group_id = fields.Many2one('dmpi.crm.channel.group', string='Channel Group')
+    email_temp_id = fields.Many2one('mail.template', string='Template')
+
+
+    @api.onchange('channel_group_id')
+    def onchange_channel_group_id(self):
+        if self.channel_group_id:
+            email_string = []
+            for p in self.channel_group_id.partner_ids:
+                s = '%s <%s>' % (p.name, p.email)
+                email_string.append(s)
+
+            email_to = ' , '.join(email_string)
+            self.email_to = email_to
+
+        else:
+            self.email_to = ''
+
+    @api.onchange('email_temp_id')
+    def onchange_email_temp_id(self):
+        self.body_html = self.email_temp_id.body_html
+        
+
+
+
+
+
+
+
 

@@ -170,32 +170,10 @@ class DmpiCrmPreshipReport(models.Model):
 		}
 		return values
 
-
-# class DmpiCrmDR(models.Model):
-# 	_name = 'dmpi.crm.dr'	
-	
-# 	name = fields.Char('DR Reference')
-# 	dr_lines = fields.One2many('dmpi.crm.dr.line', 'dr_id', 'DR Lines')
-
-# class DmpiCrmDRLine(models.Model):
-# 	_name = 'dmpi.crm.dr.line'
-# 	_rec_name = 'sku'
-
-# 	container = fields.Char('Container')
-# 	partner = fields.Char('Partner')
-# 	sku = fields.Char('SKU')
-# 	lot = fields.Char('Inspection Lot')
-# 	type = fields.Char('Operation Type')
-# 	factor = fields.Char('Factor')
-# 	no_sample = fields.Integer('No of Samples')
-# 	no_defect = fields.Integer('No of Defects')
-# 	value = fields.Float('Quantitative Value')
-# 	dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID')
-
-
 class DmpiCrmClp(models.Model):
     _name = 'dmpi.crm.clp'
     _rec_name = 'control_no'
+    _order = 'control_no desc'
 
     @api.model
     def create(self, vals):
@@ -206,11 +184,15 @@ class DmpiCrmClp(models.Model):
     def print_clp(self):
         user = self.env.user
 
+        report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report'),('report_type','=','pentaho')], limit=1)
+        report_obj.name = 'CLP_%s_%s' % (self.container_no,self.date_start)
+
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
+            # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
             'datas': {
                 'output_type': 'pdf',
                 'variables': {
@@ -223,6 +205,7 @@ class DmpiCrmClp(models.Model):
 
         return values
 
+    # headers
     control_no = fields.Char('Control No', default="/")
     logo = fields.Binary('Logo')
     layout_name = fields.Char('Layout Name')
@@ -241,23 +224,43 @@ class DmpiCrmClp(models.Model):
     boxes = fields.Integer('Boxes')
     installed = fields.Boolean('Is Installed?')
 
-    encoder = fields.Char('Encoder')
-    outbound_checker = fields.Char('Outbound Checker')
-    supervisor = fields.Char('Supervisor')
-    prod_load_counter = fields.Char('Production Loading Counter')
-    inspector = fields.Char('QA Inspector')
 
+    # signatories
+    encoder_id = fields.Many2one('res.users','Encoder')
+    outbound_checker_id = fields.Many2one('res.users','Outbound Checker')
+    supervisor_id = fields.Many2one('res.users','Supervisor')
+    prod_load_counter_id = fields.Many2one('res.users','Production Loading Counter')
+    inspector_id = fields.Many2one('res.users','QA Inspector')
+
+    encoder_name = fields.Char('Encoder', related="encoder_id.partner_id.name", store=True)
+    outbound_checker_name = fields.Char('Outbound Checker', related="outbound_checker_id.partner_id.name", store=True)
+    supervisor_name = fields.Char('Supervisor', related="supervisor_id.partner_id.name", store=True)
+    prod_load_counter_name = fields.Char('Production Loading Counter', related="prod_load_counter_id.partner_id.name", store=True)
+    inspector_name = fields.Char('QA Inspector', related="inspector_id.partner_id.name", store=True)
+
+    # loading date
     date_start = fields.Char('Start')
     date_end = fields.Char('Finish')
     date_depart = fields.Char('ETD')
     date_arrive = fields.Char('ETA')
 
+    # summary of cases
     summary_case_a = fields.Char('Summary of Cases A')
     summary_case_b = fields.Char('Summary of Cases B')
     summary_case_c = fields.Char('Summary of Cases C')
 
-    container_temp = fields.Text('Container Temp Details')
+    # container temperatures
+    # container_temp = fields.Text('Container Temp Details')
+    simul_no = fields.Char('Simulation No')
+    first_temp = fields.Char('First Temp')
+    mid_temp = fields.Char('Mid Temp')
+    last_temp = fields.Char('Last Temp')
+    van_temp = fields.Char('Van Temp')
+
+    # container temperatures (manual input)
     pulp_room_temp = fields.Text('Pulp Room Temp Details')
+
+
     remarks = fields.Text('Remarks')
 
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
@@ -265,23 +268,19 @@ class DmpiCrmClp(models.Model):
 
 
     def action_view_clp(self):
-   		view = self.env.ref('dmpi_crm.view_dmpi_crm_clp_form',False)
-   		return {
-            'name': _('%s' % self.control_no),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'dmpi.crm.clp',
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'res_id': self.id,
-            # 'target': 'new',
-            # 'context': ctx,
-        }
+
+    	action = self.env.ref('dmpi_crm.action_dmpi_crm_clp').read()[0]
+    	action.update({
+    		'views': [(self.env.ref('dmpi_crm.view_dmpi_crm_clp_form').id, 'form')],
+    		'res_id' : self.id,
+    	})
+
+    	return action
 
 class DmpiCrmClpLine(models.Model):
     _name = 'dmpi.crm.clp.line'
     _rec_name = 'tag_no'
+    _order = 'position'
 
     @api.onchange('position')
     def check_position(self):

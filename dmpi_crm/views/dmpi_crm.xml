@@ -670,11 +670,24 @@
         <menuitem id="menu_dmpi_sap_price_upload" action="action_dmpi_sap_price_upload" parent="menu_dmpi_crm_finance_configuration"/>
 
 
-
-
-
-
-
+        <!-- CONTAINER LOAD PLAN -->
+        <record id="view_dmpi_crm_clp_tree" model="ir.ui.view">
+            <field name="name">Container Load Plan</field>
+            <field name="model">dmpi.crm.clp</field>
+            <field name="arch" type="xml">
+                <tree string="Container Load Plan">
+                    <field name="control_no"/>
+                    <field name="dr_id"/>
+                    <field name="container_no"/>
+                    <field name="plant"/>
+                    <field name="port_origin"/>
+                    <field name="port_destination"/>
+                    <field name="customer"/>
+                    <field name="boxes" sum="Total Boxes"/>
+                    <field name="week"/>
+                </tree>
+            </field>
+        </record>
 
         <record id="view_dmpi_crm_clp_form" model="ir.ui.view">
             <field name="name">Container Load Plan</field>
@@ -685,7 +698,7 @@
                         <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight"/>
                     </header>
                     <sheet>
-                        <h1><field name="control_no" attrs="{'readonly':True}"/></h1>
+                        <h1><field name="dr_id" attrs="{'readonly':True, 'no_open':True}"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                         <group>
                             <group>
                                 <field name="container_no"/>
@@ -717,40 +730,57 @@
                             </page>
                             <page string="Others">
                                 <group>
-                                    <group string="Summary of Cases">
-                                        <field name="summary_case_a" string="A"/>
-                                        <field name="summary_case_b" string="B"/>
-                                        <field name="summary_case_c" string="C"/>
-                                    </group>
-
-                                    <group string="Loading Date/Time">
+                                    <group>
+                                        <div>
+                                            <span>
+                                                <div style="width:10px;height:10px;color:#79717D;padding-right:2px:"></div>
+                                                    Loading Date/Time
+                                            </span>
+                                            <!-- <h4 style="color:#79717D;">Loading Date/Time</h4> -->
+                                        </div>
                                         <field name="date_start"/>
                                         <field name="date_end"/>
                                         <field name="date_depart"/>
                                         <field name="date_arrive"/>
+                                        <h4 style="color:#79717D;">Summary of Cases</h4>
+                                        <field name="summary_case_a" string="A"/>
+                                        <field name="summary_case_b" string="B"/>
+                                        <field name="summary_case_c" string="C"/>
+                                    </group>
+                                    <group>
+                                        <h4 style="color:#79717D;">Container Temp</h4>
+                                        <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
+                                        <field name="simul_no" string="Simul No."/>
+                                        <field name="first_temp" string="First"/>
+                                        <field name="mid_temp" string="Mid"/>
+                                        <field name="last_temp" string="Last"/>
+                                        <field name="van_temp" sring="Van Temp"/>
+
+                                        <h4 style="color:#79717D;">Pulp Room Temp</h4>
+                                        <field name="pulp_room_temp" nolabel="1" colspan="2"/>
                                     </group>
                                 </group>
 
                                 <group>
-                                    <group string="Container Temperature">
-                                        <field name="container_temp" nolabel="1"/>
-                                    </group>
-                                    <group string="Pulp Room Temperature">
-                                        <field name="pulp_room_temp" nolabel="1"/>
-                                    </group>
-                                </group>
+                                    <group>
+                                        <h4 style="color:#676767;">Signatories</h4>
+                                        <field name="encoder_id"/>
+                                        <field name="outbound_checker_id"/>
+                                        <field name="prod_load_counter_id"/>
+                                        <field name="inspector_id"/>
+                                        <field name="supervisor_id"/>
 
-                                <group>
-                                    <group string="Signatories">
-                                        <field name="encoder"/>
-                                        <field name="outbound_checker"/>
-                                        <field name="prod_load_counter"/>
-                                        <field name="inspector"/>
+                                        <field name="encoder_name" invisible="1"/>
+                                        <field name="outbound_checker_name" invisible="1"/>
+                                        <field name="prod_load_counter_name" invisible="1"/>
+                                        <field name="inspector_name" invisible="1"/>
+                                        <field name="supervisor_name" invisible="1"/>
                                     </group>
-                                </group>
-                                <separator/>
-                                <group string="Remarks">
-                                        <field name="remarks" nolabel="1" placeholder="Add notes here..."/>
+                                    <group>
+                                        <separator/>
+                                        <separator/>
+                                        <field name="remarks" placeholder="Add notes here..."/>
+                                    </group>
                                 </group>
                             </page>
                         </notebook>
@@ -916,6 +946,94 @@
 
         <menuitem id="menu_dmpi_crm_invoice" action="action_dmpi_crm_invoice" parent="menu_dmpi_crm_commercial_top"/>
 
+        <!-- RES PARTNER -->
+        <record id="action_dmpi_crm_res_partner_inherit" model="ir.actions.act_window">
+            <field name="name">Resource Partners</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id"></field>
+            <field name="view_ids" eval="[(5,0,0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('base.view_partner_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_form')}),
+                ]"/>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_res_partner" action="action_dmpi_crm_res_partner_inherit" parent="dmpi_reports_config_menu"/>
+
+
+        <!-- CHANNEL GROUPS -->
+        <record id="view_dmpi_crm_channel_group_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.channel.group.tree</field>
+            <field name="model">dmpi.crm.channel.group</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Channel Groups">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_channel_group_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.channel.group.form</field>
+            <field name="model">dmpi.crm.channel.group</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Channel Groups">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Subscribers">
+                                <field name="partner_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="email"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_channel_group" model="ir.actions.act_window">
+            <field name="name">Channel Groups</field>
+            <field name="res_model">dmpi.crm.channel.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="contxet">{'active_test':False}</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_channel_group" action="action_dmpi_crm_channel_group" parent="menu_dmpi_crm_master_top"/>
+
+
+        <!-- INHERIT MAIL FORM -->
+        <record id="view_dmpi_crm_mail_mail_form_inherit" model="ir.ui.view">
+            <field name="name">dmpi.crm.mail.mail.form.inherit</field>
+            <field name="model">mail.mail</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="mail.view_mail_form"/>
+            <field name="arch" type="xml">
+                <field name="email_from" position="before">
+                    <field name="channel_group_id"/>
+                    <field name="email_temp_id"/>
+                </field>
+            </field>
+        </record>
 
 
 </odoo>

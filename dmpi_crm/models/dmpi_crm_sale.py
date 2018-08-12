@@ -250,6 +250,23 @@ class DmpiCrmSaleContract(models.Model):
                 for l in s.order_ids:
                     l.recompute_price()
 
+
+    @api.multi
+    def send_email(self):
+
+        action = self.env.ref('mail.action_view_mail_mail').read()[0]
+        action.update({
+            'views': [(self.env.ref('mail.view_mail_form').id, 'form')],
+            # 'res_id' : self.id,
+            'target': 'new',
+            'context': {
+                'default_body_html': "KIT"
+            }
+        })
+
+        return action
+        
+
     # def check_row_error(self,data):
     #     errors = []
     #     error_count = 0
