@@ -698,7 +698,7 @@
                         <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight"/>
                     </header>
                     <sheet>
-                        <h1><field name="dr_id" attrs="{'readonly':True, 'no_open':True}"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
+                        <h1><field name="dr_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                         <group>
                             <group>
                                 <field name="container_no"/>
@@ -731,24 +731,19 @@
                             <page string="Others">
                                 <group>
                                     <group>
-                                        <div>
-                                            <span>
-                                                <div style="width:10px;height:10px;color:#79717D;padding-right:2px:"></div>
-                                                    Loading Date/Time
-                                            </span>
-                                            <!-- <h4 style="color:#79717D;">Loading Date/Time</h4> -->
-                                        </div>
+                                        <h3><strong style="color:#79717D;">Loading Date/Time</strong></h3>
                                         <field name="date_start"/>
                                         <field name="date_end"/>
                                         <field name="date_depart"/>
                                         <field name="date_arrive"/>
-                                        <h4 style="color:#79717D;">Summary of Cases</h4>
+
+                                        <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
                                         <field name="summary_case_a" string="A"/>
                                         <field name="summary_case_b" string="B"/>
                                         <field name="summary_case_c" string="C"/>
                                     </group>
                                     <group>
-                                        <h4 style="color:#79717D;">Container Temp</h4>
+                                        <h3><strong style="color:#79717D;">Container Temp</strong></h3>
                                         <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                         <field name="simul_no" string="Simul No."/>
                                         <field name="first_temp" string="First"/>
@@ -756,14 +751,14 @@
                                         <field name="last_temp" string="Last"/>
                                         <field name="van_temp" sring="Van Temp"/>
 
-                                        <h4 style="color:#79717D;">Pulp Room Temp</h4>
+                                        <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3>
                                         <field name="pulp_room_temp" nolabel="1" colspan="2"/>
                                     </group>
                                 </group>
 
                                 <group>
                                     <group>
-                                        <h4 style="color:#676767;">Signatories</h4>
+                                        <h3><strong style="color:#79717D;">Signatories</strong></h3>
                                         <field name="encoder_id"/>
                                         <field name="outbound_checker_id"/>
                                         <field name="prod_load_counter_id"/>
