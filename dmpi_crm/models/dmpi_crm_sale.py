@@ -1941,7 +1941,7 @@ class DmpiCrmInvoice(models.Model):
     payer = fields.Char("Payer")  
     inv_create_date = fields.Char("Invoice creation date")
     header_net = fields.Char("Header net value") 
-    source = fields.Selection([('500','500'),('530','530')], "Source")
+    source = fields.Selection([('500','500'),('530','530'),('570','570')], "Source")
 
     invoice_filename = fields.Char("Invoice Filename ")
     invoice_file = fields.Binary("Invoice Attachment")
