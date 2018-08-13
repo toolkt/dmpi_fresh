@@ -212,6 +212,32 @@ class DmpiCrmConfig(models.Model):
         self.search([('default','=',True)],limit=1)[0].process_contract()
 
 
+    @api.model
+    def _cron_process_so(self):
+        print("CRON JOB WORKING")
+        self.search([('default','=',True)],limit=1)[0].process_so()
+
+
+    @api.model
+    def _cron_process_dr(self):
+        print("CRON JOB WORKING")
+        self.search([('default','=',True)],limit=1)[0].process_dr()
+        self.search([('default','=',True)],limit=1)[0].process_shp()
+
+
+
+    @api.model
+    def _cron_process_invoice(self):
+        print("CRON JOB WORKING")
+        self.search([('default','=',True)],limit=1)[0].process_inv()
+        self.search([('default','=',True)],limit=1)[0].process_inv1()
+        self.search([('default','=',True)],limit=1)[0].process_inv2()
+
+
+
+
+
+
     @api.multi
     def test(self):
         print("TEST")
@@ -428,28 +454,36 @@ class DmpiCrmConfig(models.Model):
 
 
             try:
-                files = execute(list_dir,outbound_path,'')
+                files = execute(list_dir,outbound_path,'L_ODOO_SO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
 
                     print (result)
 
                     #Extract the PO number from the Filename 
-                    po_no = f.split('/')[-1:][0].split('_')[3]
-                    # print(po_no)
+                    so_no = f.split('/')[-1:][0].split('_')[3]
+                    print(so_no)
 
-                    # line = result.split('\r\n')
-                    # for l in line:
-                    #     row = l.split('\t')
-                    #     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)])
-                    #     cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
-                    #     #contract.write({'sap_cn_no':cn_no})
-                    #     print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_success))
-                    #     print(f)
-                    #     print(outbound_path_fail_sent)
+                    line = result.split('\r\n')
+                    for l in line:
+                        if len(l) > 0:
+                            row = l.split('\t')
+                            print (row)
+                            so = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)])
+                            if so:
+                                sap_so_date = datetime.strptime(row[1], '%m/%d/%Y')
+                                sap_so_date = sap_so_date.strftime('%Y-%m-%d')
+
+                                for s in so:
+                                    so_details = {'sap_so_no':row[0], 'sap_so_date': sap_so_date }
+                                    s.write(so_details)
+                                # print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_success))
+                                # print(f)
+                                # print(outbound_path_fail_sent)
 
                     execute(transfer_files,f, outbound_path_success)
             except:
+                print("ERROR SO")
                 pass
 
 

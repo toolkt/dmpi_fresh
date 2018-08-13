@@ -113,6 +113,7 @@
                                     <group>
                                         <field name="so_no"/>
                                         <field name="sap_so_no" />
+                                        <field name="sap_so_date" />
                                     </group>
                                     <group>
                                         <field name="contract_id" />

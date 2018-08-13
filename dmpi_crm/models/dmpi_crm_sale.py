@@ -1532,6 +1532,7 @@ class DmpiCrmSaleOrder(models.Model):
     contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
+    sap_so_date = fields.Date("SAP SO Date")
     sap_doc_type = fields.Selection(_get_doc_types,"Doc Type",default=_get_default_doc_types)
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs')
     valid = fields.Boolean("Valid Order", default=True)
