@@ -1219,12 +1219,12 @@ class DmpiCrmConfig(models.Model):
 
                             source = self.env['dmpi.crm.invoice'].search([('dmpi_inv_no','=',row[5]),('source','=','500')],limit=1)
                             if source:
-                                inv['odoo_po_no'] = source.odoo_po_no,
-                                inv['odoo_so_no'] = source.odoo_so_no,
-                                inv['sap_so_no'] = source.sap_so_no,
-                                inv['sap_dr_no'] = source.sap_dr_no,
-                                inv['shp_no'] = source.shp_no,
-                                inv['contract_id'] = source.contract_id.id,
+                                inv['odoo_po_no'] = source[0].odoo_po_no,
+                                inv['odoo_so_no'] = source[0].odoo_so_no,
+                                inv['sap_so_no'] = source[0].sap_so_no,
+                                inv['sap_dr_no'] = source[0].sap_dr_no,
+                                inv['shp_no'] = source[0].shp_no,
+                                inv['contract_id'] = source[0].contract_id.id,
 
                             inv_line = {
                                 'so_line_no' : row[11], 
