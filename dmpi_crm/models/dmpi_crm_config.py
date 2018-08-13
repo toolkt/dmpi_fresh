@@ -1249,7 +1249,7 @@ class DmpiCrmConfig(models.Model):
                     else:
                         new_dr = self.env['dmpi.crm.invoice'].create(inv) 
                         
-                    #execute(transfer_files,f, outbound_path_success)
+                    execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
