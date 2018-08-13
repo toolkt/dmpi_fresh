@@ -1199,9 +1199,6 @@ class DmpiCrmConfig(models.Model):
                             if row[7] != '':
                                 inv_no.append(row[7])
 
-
-                            source = self.env['dmpi.crm.invoice'].search([('dmpi_inv_no','=',row[5]),('source','=','500')],limit=1)
-
                             name = "/".join(inv_no)
 
                                 # inv_no
@@ -1210,14 +1207,8 @@ class DmpiCrmConfig(models.Model):
                                 # raw
 
                             inv = {
-                                'contract_id': source.contract_id.id,
                                 'source':'570',
                                 'name': name,
-                                'odoo_po_no' : source.odoo_po_no or False,
-                                'odoo_so_no' : source.odoo_so_no or False,
-                                'sap_so_no': source.sap_so_no or False,
-                                'sap_dr_no': source.sap_dr_no or False,
-                                'shp_no' : source.shp_no or False,
                                 'dmpi_inv_no': row[5],
                                 'dms_inv_no': row[6],
                                 'sbfti_inv_no': row[7],
@@ -1226,6 +1217,14 @@ class DmpiCrmConfig(models.Model):
                                 'header_net': row[10],
                             }
 
+                            source = self.env['dmpi.crm.invoice'].search([('dmpi_inv_no','=',row[5]),('source','=','500')],limit=1)
+                            if source:
+                                inv['odoo_po_no'] = source.odoo_po_no,
+                                inv['odoo_so_no'] = source.odoo_so_no,
+                                inv['sap_so_no'] = source.sap_so_no,
+                                inv['sap_dr_no'] = source.sap_dr_no,
+                                inv['shp_no'] = source.shp_no,
+                                inv['contract_id'] = source.contract_id.id,
 
                             inv_line = {
                                 'so_line_no' : row[11], 
@@ -1240,7 +1239,7 @@ class DmpiCrmConfig(models.Model):
 
                     inv['inv_lines'] = inv_lines
 
-                    #pprint.pprint(inv, width=4)
+                    pprint.pprint(inv, width=4)
 
                     exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
                     if exist:
