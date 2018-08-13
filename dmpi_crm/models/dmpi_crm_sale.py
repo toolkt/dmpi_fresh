@@ -254,6 +254,13 @@ class DmpiCrmSaleContract(models.Model):
 
 
     @api.multi
+    def re_map_products(self):
+        for rec in self:
+            print(rec)
+
+
+
+    @api.multi
     def send_email(self):
 
         action = self.env.ref('mail.action_view_mail_mail').read()[0]

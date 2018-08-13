@@ -84,6 +84,13 @@
                                 icon="fa-upload">
                             </button>
 
+                            <button name="re_map_products"
+                                type="object"
+                                string="Re-map Products"
+                                class="oe_stat_button"
+                                icon="fa-check">
+                            </button>
+
                             <button name="recompute_order_lines"
                                 type="object"
                                 string="Recompute Price"

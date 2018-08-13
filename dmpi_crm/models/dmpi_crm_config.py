@@ -266,6 +266,7 @@ class DmpiCrmConfig(models.Model):
                 pass
 
             if contract_id:
+
 #--AUTOMATICALLY CREATE SO UPON RECEIVE-------------------------------------------------------------------------------------------------------
                 rec = contract_id
                 for so in rec.sale_order_ids:
@@ -416,9 +417,6 @@ class DmpiCrmConfig(models.Model):
         print("Create SO")
 
         for rec in self:
-
-
-
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
@@ -1161,13 +1159,12 @@ class DmpiCrmConfig(models.Model):
 
     @api.multi
     def process_inv1(self):
-        print("Read Inv")
+        print("Read Inv1")
 
         for rec in self:
 
-
-            outbound_path= rec.outbound_inv_success
-            outbound_path_success= rec.outbound_inv_success_sent
+            outbound_path= rec.outbound_inv1_success
+            outbound_path_success= rec.outbound_inv1_success_sent
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
@@ -1178,6 +1175,7 @@ class DmpiCrmConfig(models.Model):
                 files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
                 
                 for f in files[host_string]:
+                    print("\n\n---------%s" % f)
                     result = execute(read_file,f)[host_string]
 
                     line = result.split('\n')
@@ -1190,8 +1188,8 @@ class DmpiCrmConfig(models.Model):
                     for l in line:
                         row = l.split('\t')
 
-                        if row[0] != '':
-                            print (row)
+                        if len(row) > 1:
+
                             inv_no = []
                             inv_no.append('570')
                             if row[5] != '':
@@ -1201,6 +1199,9 @@ class DmpiCrmConfig(models.Model):
                             if row[7] != '':
                                 inv_no.append(row[7])
 
+
+                            source = self.env['dmpi.crm.invoice'].search([('dmpi_inv_no','=',row[5]),('source','=','500')],limit=1)
+
                             name = "/".join(inv_no)
 
                                 # inv_no
@@ -1208,20 +1209,15 @@ class DmpiCrmConfig(models.Model):
                                 # contract_id
                                 # raw
 
-
-                            contract_id = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1).id
-                            if not contract_id:
-                                contract_id = ""
-
                             inv = {
-                                'contract_id' : contract_id,
-                                'source':'500',
+                                'contract_id': source.contract_id.id,
+                                'source':'570',
                                 'name': name,
-                                'odoo_po_no' : row[0],
-                                'odoo_so_no' : row[1],
-                                'sap_so_no': row[2],
-                                'sap_dr_no': row[3],
-                                'shp_no' : row[4],
+                                'odoo_po_no' : source.odoo_po_no or False,
+                                'odoo_so_no' : source.odoo_so_no or False,
+                                'sap_so_no': source.sap_so_no or False,
+                                'sap_dr_no': source.sap_dr_no or False,
+                                'shp_no' : source.shp_no or False,
                                 'dmpi_inv_no': row[5],
                                 'dms_inv_no': row[6],
                                 'sbfti_inv_no': row[7],
@@ -1242,22 +1238,18 @@ class DmpiCrmConfig(models.Model):
 
                             inv_lines.append((0,0,inv_line))
 
-
-
                     inv['inv_lines'] = inv_lines
 
-                    pprint.pprint(inv, width=4)
+                    #pprint.pprint(inv, width=4)
 
                     exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
                     if exist:
                         exist.inv_lines.unlink()
                         exist.write(inv)
-                        print("EXIST WRITE")
                     else:
                         new_dr = self.env['dmpi.crm.invoice'].create(inv) 
-                        print("NOT EXIST NEW")
                         
-                    execute(transfer_files,f, outbound_path_success)
+                    #execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
