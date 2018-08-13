@@ -34,3 +34,10 @@ access_user_dmpi_crm_template_line,user.dmpi.crm.template.line,model_dmpi_crm_te
 access_user_dmpi_crm_factor,user.dmpi.crm.factor,model_dmpi_crm_factor,base.group_user,1,1,1,1
 access_user_dmpi_crm_preship_report,user.dmpi.crm.preship.report,model_dmpi_crm_preship_report,base.group_user,1,1,1,1
 access_user_dmpi_crm_template,user.dmpi.crm.template,model_dmpi_crm_template,base.group_user,1,1,1,1
+access_user_dmpi_crm_product_price_list,user.dmpi.crm.product.price.list,model_dmpi_crm_product_price_list,base.group_user,1,1,1,1
+access_user_dmpi_crm_product_price_list_item,user.dmpi.crm.product.price.list.item,model_dmpi_crm_product_price_list_item,base.group_user,1,1,1,1
+access_user_dmpi_crm_sale_contract_group,user.dmpi.crm.sale.contract.group,model_dmpi_crm_sale_contract_group,base.group_user,1,1,1,1
+access_user_dmpi_crm_product_code,user.dmpi.crm.product.code,model_dmpi_crm_product_code,base.group_user,1,1,1,1
+access_user_dmpi_crm_channel_group,user.dmpi.crm.channel.group,model_dmpi_crm_channel_group,base.group_user,1,1,1,1
+access_user_customer_crm_sale_order,user.customer.crm.sale.order,model_customer_crm_sale_order,base.group_user,1,1,1,1
+access_user_customer_crm_sale_order_line,user.customer.crm.sale.order.line,model_customer_crm_sale_order_line,base.group_user,1,1,1,1
