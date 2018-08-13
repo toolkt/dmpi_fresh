@@ -199,6 +199,12 @@ class DmpiCrmConfig(models.Model):
         self.search([('default','=',True)],limit=1)[0].process_ar()
 
 
+    @api.model
+    def _cron_process_contract(self):
+        print("CRON JOB WORKING")
+        self.search([('default','=',True)],limit=1)[0].process_contract()
+
+
     @api.multi
     def test(self):
         print("TEST")
@@ -229,6 +235,7 @@ class DmpiCrmConfig(models.Model):
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
 
+            contract_id = False
             try:
                 files = execute(list_dir,outbound_path,'L_ODOO_PO_')
                 for f in files[host_string]:
@@ -244,47 +251,156 @@ class DmpiCrmConfig(models.Model):
                         contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)])
                         cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
                         contract.write({'sap_cn_no':cn_no})
-                        print("-------%s-------" % contract)
-                        print(row)
 
                     execute(transfer_files,f, outbound_path_success)
+                    contract_id = contract
             except:
                 print("GET SUCCESS - FAILED")
                 pass
 
+            if contract_id:
+#--AUTOMATICALLY CREATE SO UPON RECEIVE-------------------------------------------------------------------------------------------------------
+                rec = contract_id
+                for so in rec.sale_order_ids:
+                    lines = []
+                    for sol in so.order_ids:
+
+                        ref_po_no = rec.name
+                        if rec.customer_ref != '':
+                            ref_po_no = rec.customer_ref
+
+                        po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
+                        po_date = po_date.strftime('%Y%m%d')
+
+                        valid_from = datetime.strptime(rec.valid_from, '%Y-%m-%d')
+                        valid_from = valid_from.strftime('%Y%m%d')
+
+                        valid_to = datetime.strptime(rec.valid_to, '%Y-%m-%d')
+                        valid_to =   valid_to.strftime('%Y%m%d')
+
+
+                        line = {
+                            'odoo_po_no' : rec.name,
+                            'sap_cn_no' : rec.sap_cn_no,
+                            'odoo_so_no' : so.name,
+                            'sap_doc_type' : so.sap_doc_type,  
+                            'sales_org' : so.sales_org,
+                            'dist_channel' : rec.partner_id.dist_channel,
+                            'division' : rec.partner_id.division,  
+                            'sold_to' : rec.partner_id.customer_code,
+                            'ship_to' : so.ship_to_id.ship_to_code, 
+                            'ref_po_no' : ref_po_no,  
+                            'po_date' : po_date,
+                            'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD 
+                            'po_line_no' : so.contract_line_no,  
+                            'so_line_no' : sol.so_line_no,  
+                            'material' : sol.product_id.sku,    
+                            'qty' : sol.qty,
+                            'uom' : 'CAS', 
+                            'plant' : so.plant,
+                            'reject_reason' : '',
+                            'so_alt_item' : '',
+                            'usage' : '',
+                            'original_ship_to' : ''
+                        }
+
+                        if rec.partner_id.alt_customer_code:
+                            line['sold_to'] = rec.partner_id.alt_customer_code
+                            line['ship_to'] = rec.partner_id.alt_customer_code
+                            line['sap_doc_type'] = 'ZKM3'
+                            line['original_ship_to'] = so.ship_to_id.ship_to_code
+                        if rec.partner_id.alt_dist_channel:
+                            line['dist_channel'] = rec.partner_id.alt_dist_channel
+                        if rec.partner_id.alt_division:
+                            line['division'] = rec.partner_id.alt_division
+                        if rec.partner_id.alt_customer_code:
+                            line['sold_to'] = rec.partner_id.alt_customer_code
+                        
+                        lines.append(line)
+                        print (lines)
+
+                    filename = 'ODOO_SO_%s_%s.csv' % (so.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+                    path = '/tmp/%s' % filename
+
+                    with open(path, 'w') as f:
+                        writer = csv.writer(f, delimiter='\t')
+                        for l in lines:
+                            if 'original_ship_to' in l: 
+                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                            l['odoo_so_no'],l['sap_doc_type'],
+                                            l['sales_org'],l['dist_channel'],
+                                            l['division'],l['sold_to'],
+                                            l['ship_to'],l['ref_po_no'],
+                                            l['po_date'],l['rdd'],
+                                            l['po_line_no'],l['so_line_no'],
+                                            l['material'],l['qty'],
+                                            l['uom'],l['plant'],l['original_ship_to']
+                                        ])
+                            else:
+                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                            l['odoo_so_no'],l['sap_doc_type'],
+                                            l['sales_org'],l['dist_channel'],
+                                            l['division'],l['sold_to'],
+                                            l['ship_to'],l['ref_po_no'],
+                                            l['po_date'],l['rdd'],
+                                            l['po_line_no'],l['so_line_no'],
+                                            l['material'],l['qty'],
+                                            l['uom'],l['plant']
+                                        ])
+
+
+
+                    #TRANSFER TO REMOTE SERVER
+                    h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+                    host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+                    env.hosts.append(host_string)
+                    env.passwords[host_string] = h.ssh_pass
+
+                    localpath = path
+
+                    path = '%s/%s' % (h.inbound_so,filename)
+                    remotepath = path
+
+                    execute(file_send,localpath,remotepath)
+                    # rec.sent_to_sap = True
+                    # rec.state = 'approved'
+
+#-------------------------------------------------------------------------------------------------------
+
+    
 
             #GET FAIL
 
-            outbound_path_fail= rec.inbound_k_log_fail
-            outbound_path_fail_sent= rec.inbound_k_log_fail_sent
+            # outbound_path_fail= rec.inbound_k_log_fail
+            # outbound_path_fail_sent= rec.inbound_k_log_fail_sent
 
-            try:
-                print("GET FAIL")
-                files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_')
-                for f in files[host_string]:
-                    result = execute(read_file,f)[host_string]
+            # try:
+            #     print("GET FAIL")
+            #     files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_')
+            #     for f in files[host_string]:
+            #         result = execute(read_file,f)[host_string]
 
-                    #Extract the PO number from the Filename
-                    po_no = f.split('/')[-1:][0].split('_')[3]
-                    # print(po_no)
+            #         #Extract the PO number from the Filename
+            #         po_no = f.split('/')[-1:][0].split('_')[3]
+            #         # print(po_no)
 
-                    line = result.split('\r\n')
-                    errors = ""
-                    for l in line:
-                        errors = "%s\n%s" % (errors,l)
+            #         line = result.split('\r\n')
+            #         errors = ""
+            #         for l in line:
+            #             errors = "%s\n%s" % (errors,l)
 
-                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
-                    errors = "%s\n%s" % (contract.sap_errors,errors)
-                    contract.write({'sap_errors':errors})
-                    print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_fail_sent))
-                    print(f)
-                    print(outbound_path_fail_sent)
+            #         contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
+            #         errors = "%s\n%s" % (contract.sap_errors,errors)
+            #         contract.write({'sap_errors':errors})
+            #         print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_fail_sent))
+            #         print(f)
+            #         print(outbound_path_fail_sent)
 
 
-                    execute(transfer_files,f, outbound_path_fail_sent)
-            except:
-                print("GET FAIL - FAILED")
-                pass
+            #         execute(transfer_files,f, outbound_path_fail_sent)
+            # except:
+            #     print("GET FAIL - FAILED")
+            #     pass
 
 
 

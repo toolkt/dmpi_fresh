@@ -111,7 +111,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
     def process_upload(self):
         for rec in self:
             sale_orders = []
-            sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)],limit=1)[0].id
+            sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)],limit=1)[0].name
+            print (sap_doc_type)
             for l in rec.upload_line_ids:
                 so_lines = []
                 so_line_no = 0
@@ -219,6 +220,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'sales_org': l.ship_to_id.partner_id.sales_org or "",
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
+                        'plant': rec.contract_id.partner_id.plant,
                         'p5': l.p5,
                         'p6': l.p6,
                         'p7': l.p7,

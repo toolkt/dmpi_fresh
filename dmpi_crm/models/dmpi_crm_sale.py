@@ -35,6 +35,7 @@ import base64
 from tempfile import TemporaryFile
 import tempfile
 import re
+import json
 
 
 #@parallel
@@ -94,6 +95,7 @@ CONTRACT_STATE = [
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
         ('approved','Approved'),
+        ('processing','Processing'),
         ('processed','Processed'),
         ('enroute','Enroute'),
         ('received','Received'),
@@ -1062,7 +1064,69 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_submit_contract(self):
         for rec in self:
+            #Finalize Contract Line Numbers
+            contract_line_no = 0
+            sale_orders = []
+            for l in rec.customer_order_ids:
+                contract_line_no += 10
+                l.contract_line_no = contract_line_no
+
+                so_lines = []
+                for sl in l.order_ids:
+
+                    vals = { 
+                                'name':sl.name, 
+                                'so_line_no':sl.so_line_no, 
+                                'product_code': sl.product_code, 
+                                'product_id': sl.product_id.id,
+                                'uom': 'CAS', 
+                                'qty': sl.qty
+                            }
+
+                    so_lines.append((0,0,vals))
+
+
+                order = {
+                        'contract_line_no':l.contract_line_no,
+                        'ship_to_id': l.ship_to_id.id,
+                        'notify_id': l.notify_id.id,
+                        'sap_doc_type': l.sap_doc_type,
+                        'sales_org': l.sales_org,
+                        'shell_color': l.shell_color,
+                        'ship_line': l.ship_line,
+                        'plant': l.plant,
+                        'p5': l.p5,
+                        'p6': l.p6,
+                        'p7': l.p7,
+                        'p8': l.p8,
+                        'p9': l.p9,
+                        'p10': l.p10,
+                        'p12': l.p12,
+                        'p5c7': l.p5c7,
+                        'p6c8': l.p6c8,
+                        'p7c9': l.p7c9,
+                        'p8c10': l.p8c10,
+                        'p9c11': l.p9c11,
+                        'p10c12': l.p10c12,
+                        'p12c20': l.p12c20,
+                        'order_ids': so_lines,
+                    }
+
+                sale_orders.append((0,0,order))
+
+            print (sale_orders)
+            rec.sale_order_ids.unlink()
+            rec.sale_order_ids = sale_orders
+
+
+
             rec.write({'state':'submitted'})
+
+
+    @api.multi
+    def action_request_confirmation(self):
+        for rec in self:
+            rec.write({'state':'confirm'})
 
 
     @api.multi
@@ -1072,16 +1136,128 @@ class DmpiCrmSaleContract(models.Model):
 
 
     @api.multi
-    def action_send_contract_to_sap(self):
+    def action_approve_contract(self):
         for rec in self:
-            print (rec)
+            for so in rec.sale_order_ids:
+                if so.name == 'Draft' or '':
+                    seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
+                    so.write({'name': seq})
+            rec.write({'state':'approved'})
 
 
     @api.multi
-    def action_send_so_to_sap(self):
+    def action_release_contract(self):
         for rec in self:
-            print (rec)
+            rec.write({'state':'confirmed'})
 
+
+    @api.multi
+    def action_send_contract_to_sap(self):
+        for rec in self:
+
+            filename = 'ODOO_PO_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+            path = '/tmp/%s' % filename
+
+            lines = []
+            for so in rec.sale_order_ids:
+                for sol in so.order_ids:
+
+                    ref_po_no = rec.name
+                    if rec.customer_ref != '':
+                        ref_po_no = rec.customer_ref
+
+                    po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
+                    po_date = po_date.strftime('%Y%m%d')
+
+                    valid_from = datetime.strptime(rec.valid_from, '%Y-%m-%d')
+                    valid_from = valid_from.strftime('%Y%m%d')
+
+                    valid_to = datetime.strptime(rec.valid_to, '%Y-%m-%d')
+                    valid_to =   valid_to.strftime('%Y%m%d')
+
+
+                    line = {
+                        'odoo_po_no' : rec.name,
+                        'sap_doc_type' : rec.contract_type.name,
+                        'sales_org' : rec.partner_id.sales_org,
+                        'dist_channel' : rec.partner_id.dist_channel,
+                        'division' : rec.partner_id.division,
+                        'sold_to' : rec.partner_id.customer_code,
+                        'ship_to' : so.ship_to_id.ship_to_code,
+                        'ref_po_no' : ref_po_no,
+                        'po_date' : po_date,
+                        'valid_from' : valid_from,
+                        'valid_to' : valid_to,
+                        'ship_to_dest' : so.ship_to_id.ship_to_code,
+                        'po_line_no' : so.contract_line_no,
+                        'material' : sol.product_id.sku,
+                        'qty' : sol.qty,
+                        'uom' : 'CAS',
+                    }
+
+                    #SBFTI SCENARIO
+                    # 1.       If key-user uses the customer sold-to as 13046 and any related ship-to, kindly send in the csv file the sold to and ship-to as 14067.
+                    # 2.       In this scenario sale organization is 1050 distribution channel is 35 and division is 01.
+                    # 3.       The value of the “Final Ship-to” column which is “Your Reference” field i.e. VBKD-IHREZ in SAP should be the related ship-to chosen by the key-user from point 1 above.
+                    # 4.       The sales order document type sent in the csv file should be ZKM3 instead of ZXSO when this is the scenario (i.e. sold-to customer is 13046).  
+
+                    if rec.partner_id.alt_customer_code:
+                        line['sold_to'] = rec.partner_id.alt_customer_code
+                        line['ship_to'] = rec.partner_id.alt_customer_code
+                        line['ship_to_dest'] = rec.partner_id.alt_customer_code 
+                    if rec.partner_id.alt_dist_channel:
+                        line['dist_channel'] = rec.partner_id.alt_dist_channel
+                    if rec.partner_id.alt_division:
+                        line['division'] = rec.partner_id.alt_division
+                    if rec.partner_id.alt_customer_code:
+                        line['sold_to'] = rec.partner_id.alt_customer_code
+
+
+                    lines.append(line)
+
+
+            with open(path, 'w') as f:
+                writer = csv.writer(f, delimiter='\t')
+                for l in lines:
+                    writer.writerow([
+                            l['odoo_po_no'],
+                            l['sap_doc_type'],
+                            l['sales_org'],
+                            l['dist_channel'],
+                            l['division'],
+                            l['sold_to'],
+                            l['ship_to'],
+                            l['ref_po_no'],
+                            l['po_date'],
+                            l['valid_from'],
+                            l['valid_to'],
+                            l['ship_to_dest'],
+                            l['po_line_no'],
+                            l['material'],
+                            l['qty'],
+                            l['uom']
+                        ])
+
+
+            #TRANSFER TO REMOTE SERVER
+            h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+
+            localpath = path
+            path = '%s/%s' % (h.inbound_k,filename)
+            remotepath = path
+
+            execute(file_send,localpath,remotepath)
+            rec.sent_to_sap = True
+
+            # if rec.ar_status > 0 or rec.credit_after_sale < 0:
+            #     rec.state = 'soa'
+            # else:
+            #     rec.state = 'submitted'            
+
+            # rec.write({'state':'processing'})
 
 
 
@@ -1300,6 +1476,7 @@ class DmpiCrmSaleOrder(models.Model):
     def on_change_ship_to(self):
         self.notify_id = self.ship_to_id.id
         self.sales_org = self.contract_id.partner_id.sales_org
+        self.plant = self.contract_id.partner_id.plant
         # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
         # if sales_org:
         #     self.sales_org = sales_org
@@ -1343,8 +1520,9 @@ class DmpiCrmSaleOrder(models.Model):
         return res
 
     name = fields.Char("CRM SO No.", default="Draft")
+    plant = fields.Char("Plant")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    contract_line_no = fields.Integer("Contract Lini No.")
+    contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
     sap_doc_type = fields.Selection(_get_doc_types,"Doc Type",default=_get_default_doc_types)

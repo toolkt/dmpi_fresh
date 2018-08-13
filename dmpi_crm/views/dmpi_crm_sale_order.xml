@@ -57,13 +57,13 @@
                                 <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
+                                <field name="plant" required="1"/>
                             </group>
                             <group>
                                 <field name="valid" />
                                 <field name="shell_color" />
                                 <field name="requested_deivery_date" />
                                 <field name="estimated_date" />
-                                <field name="sap_so_no" />
                                 <field name="total_amount" />
                             </group>
                         </group>
@@ -112,6 +112,7 @@
                                 <group>
                                     <group>
                                         <field name="so_no"/>
+                                        <field name="sap_so_no" />
                                     </group>
                                     <group>
                                         <field name="contract_id" />
@@ -201,6 +202,7 @@
                                 <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
+                                <field name="plant" required="1"/>
                             </group>
                             <group>
                                 <field name="valid" />

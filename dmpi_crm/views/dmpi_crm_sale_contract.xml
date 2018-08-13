@@ -47,17 +47,23 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <header>
-                        <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit the PO?"/>
-                        <button name="action_approve" states="submitted" string="Approve" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Approve the PO?"/>
+                        <button name="action_submit" states="draft" string="xxSubmit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit the PO?"/>
+                        <button name="action_approve" states="submitted" string="xxApprove" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Approve the PO?"/>
                         <button name="action_release" states="soa" string="Release" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Release the PO?"/>
 
 
                         <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-                        <button name="action_confirm_contract" states="submitted" string="Confirm Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-                        <button name="action_send_contract_to_sap" states="draft" string="Send Contract to SAP" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                        <button name="action_request_confirmation" states="submitted" string="Request Customer Confirmation" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_confirm_contract" states="submitted,confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_approve_contract" states="confirmed" string="Approve Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                        <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,processed,enroute,received" statusbar_colors='{"approved":"blue"}'/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
 
 
                     </header>
