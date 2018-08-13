@@ -1191,7 +1191,7 @@ class DmpiCrmConfig(models.Model):
                         row = l.split('\t')
 
                         if row[0] != '':
-
+                            print (row)
                             inv_no = []
                             inv_no.append('570')
                             if row[5] != '':
