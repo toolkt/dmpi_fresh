@@ -186,6 +186,13 @@ class DmpiCrmConfig(models.Model):
     outbound_inv2_fail_sent               = fields.Char("INV2 Fail Snt") 
 
 
+    #INV
+    outbound_inv1_success                 = fields.Char("INV1 Success")
+    outbound_inv1_success_sent            = fields.Char("INV1 Success Sent")
+    outbound_inv1_fail                    = fields.Char("INV1 Fail")
+    outbound_inv1_fail_sent               = fields.Char("INV1 Fail Snt") 
+
+
     #PRC
     outbound_prc_success                 = fields.Char("PRC Success")
     outbound_prc_success_sent            = fields.Char("PRC Success Sent")
@@ -1150,6 +1157,112 @@ class DmpiCrmConfig(models.Model):
             except Exception as e:
                 print(e)
                 pass
+
+
+    @api.multi
+    def process_inv1(self):
+        print("Read Inv")
+
+        for rec in self:
+
+
+            outbound_path= rec.outbound_inv_success
+            outbound_path_success= rec.outbound_inv_success_sent
+
+            h = self.search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+
+            try:
+                files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
+                
+                for f in files[host_string]:
+                    result = execute(read_file,f)[host_string]
+
+                    line = result.split('\n')
+
+
+                    inv_lines = []
+                    inv = {}
+                    name = ''
+
+                    for l in line:
+                        row = l.split('\t')
+
+                        if row[0] != '':
+
+                            inv_no = []
+                            inv_no.append('570')
+                            if row[5] != '':
+                                inv_no.append(row[5])
+                            if row[6] != '':
+                                inv_no.append(row[6])
+                            if row[7] != '':
+                                inv_no.append(row[7])
+
+                            name = "/".join(inv_no)
+
+                                # inv_no
+                                # dmpi_sap_inv_no
+                                # contract_id
+                                # raw
+
+
+                            contract_id = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1).id
+                            if not contract_id:
+                                contract_id = ""
+
+                            inv = {
+                                'contract_id' : contract_id,
+                                'source':'500',
+                                'name': name,
+                                'odoo_po_no' : row[0],
+                                'odoo_so_no' : row[1],
+                                'sap_so_no': row[2],
+                                'sap_dr_no': row[3],
+                                'shp_no' : row[4],
+                                'dmpi_inv_no': row[5],
+                                'dms_inv_no': row[6],
+                                'sbfti_inv_no': row[7],
+                                'payer': row[8],
+                                'inv_create_date': row[9],
+                                'header_net': row[10],
+                            }
+
+
+                            inv_line = {
+                                'so_line_no' : row[11], 
+                                'inv_line_no' : row[12],
+                                'material' : row[13], 
+                                'qty' : row[14],
+                                'uom' : row[15],
+                                'line_net_value' : row[16],
+                            }
+
+                            inv_lines.append((0,0,inv_line))
+
+
+
+                    inv['inv_lines'] = inv_lines
+
+                    pprint.pprint(inv, width=4)
+
+                    exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
+                    if exist:
+                        exist.inv_lines.unlink()
+                        exist.write(inv)
+                        print("EXIST WRITE")
+                    else:
+                        new_dr = self.env['dmpi.crm.invoice'].create(inv) 
+                        print("NOT EXIST NEW")
+                        
+                    execute(transfer_files,f, outbound_path_success)
+
+            except Exception as e:
+                print(e)
+                pass
+
 
 
     @api.multi

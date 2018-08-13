@@ -134,6 +134,13 @@
                                         <button name="process_inv" string="Process Invoice" type="object" class="oe_highlight" />
                                     </group>
                                     <group>
+                                        <field name="outbound_inv1_success" />
+                                        <field name="outbound_inv1_success_sent" />
+                                        <field name="outbound_inv1_fail" />
+                                        <field name="outbound_inv1_fail_sent" />
+                                        <button name="process_inv1" string="Process Invoice" type="object" class="oe_highlight" />
+                                    </group>                                    
+                                    <group>
                                         <field name="outbound_inv2_success" />
                                         <field name="outbound_inv2_success_sent" />
                                         <field name="outbound_inv2_fail" />
