@@ -407,36 +407,22 @@ class DmpiCrmConfig(models.Model):
 
             #GET FAIL
 
-            # outbound_path_fail= rec.inbound_k_log_fail
-            # outbound_path_fail_sent= rec.inbound_k_log_fail_sent
+            outbound_path_fail= rec.inbound_k_log_fail
+            outbound_path_fail_sent= rec.inbound_k_log_fail_sent
 
-            # try:
-            #     print("GET FAIL")
-            #     files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_')
-            #     for f in files[host_string]:
-            #         result = execute(read_file,f)[host_string]
-
-            #         #Extract the PO number from the Filename
-            #         po_no = f.split('/')[-1:][0].split('_')[3]
-            #         # print(po_no)
-
-            #         line = result.split('\r\n')
-            #         errors = ""
-            #         for l in line:
-            #             errors = "%s\n%s" % (errors,l)
-
-            #         contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
-            #         errors = "%s\n%s" % (contract.sap_errors,errors)
-            #         contract.write({'sap_errors':errors})
-            #         print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_fail_sent))
-            #         print(f)
-            #         print(outbound_path_fail_sent)
-
-
-            #         execute(transfer_files,f, outbound_path_fail_sent)
-            # except:
-            #     print("GET FAIL - FAILED")
-            #     pass
+            try:
+                print("GET FAIL")
+                files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_')
+                for f in files[host_string]:
+                    result = execute(read_file,f)[host_string]
+                    po_no = f.split('/')[-1:][0].split('_')[3]
+                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
+                    contract.message_post("ERROR: <br/>%s" % result)
+                    # print(contract)
+                    # execute(transfer_files,f, outbound_path_fail_sent)
+            except:
+                print("GET FAIL - FAILED")
+                pass
 
 
 
