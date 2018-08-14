@@ -1529,6 +1529,12 @@ class DmpiCrmSaleOrder(models.Model):
         res = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)])[0].name
         return res
 
+    @api.depends('name','sap_so_no')
+    def _get_name_disp(self):
+        self.name_disp = "%s/%s" % (self.name, self.sap_so_no)
+
+
+    name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft")
     plant = fields.Char("Plant")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")

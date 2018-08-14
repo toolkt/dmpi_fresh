@@ -48,7 +48,7 @@
                         </div>
                         <div class="oe_title">
                             <h1>
-                                <field name="name" readonly="1"/>
+                                <field name="name_disp"/>
                             </h1>
                         </div>
                         <group>
@@ -112,6 +112,7 @@
                                 <group>
                                     <group>
                                         <field name="so_no"/>
+                                        <field name="name"/>
                                         <field name="sap_so_no" />
                                         <field name="sap_so_date" />
                                     </group>
@@ -191,11 +192,6 @@
                                 icon="fa-pencil-square-o"
                                 string="Submit SO">
                             </button>
-                        </div>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" readonly="1"/>
-                            </h1>
                         </div>
                         <group>
                             <group>
