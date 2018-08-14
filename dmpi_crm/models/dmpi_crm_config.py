@@ -275,7 +275,7 @@ class DmpiCrmConfig(models.Model):
                 files = execute(list_dir,outbound_path,'L_ODOO_PO_')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
-
+                    print(result)
                     #Extract the PO number from the Filename
                     po_no = f.split('/')[-1:][0].split('_')[3]
                     print(po_no)
@@ -287,7 +287,7 @@ class DmpiCrmConfig(models.Model):
                         cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
                         contract.write({'sap_cn_no':cn_no})
 
-                    execute(transfer_files,f, outbound_path_success)
+                    # execute(transfer_files,f, outbound_path_success)
                     contract_id = contract
             except:
                 print("GET SUCCESS - FAILED")
