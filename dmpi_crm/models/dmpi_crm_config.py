@@ -317,9 +317,8 @@ class DmpiCrmConfig(models.Model):
 
 
 
+            #--AUTOMATICALLY CREATE SO UPON RECEIVE------------------------------------
             if contract_id:
-
-            #--AUTOMATICALLY CREATE SO UPON RECEIVE-------------------------------------------------------------------------------------------------------
                 rec = contract_id
                 for so in rec.sale_order_ids:
                     lines = []
@@ -364,17 +363,13 @@ class DmpiCrmConfig(models.Model):
                             'original_ship_to' : ''
                         }
 
-                        if rec.partner_id.alt_customer_code:
-                            line['sold_to'] = rec.partner_id.alt_customer_code
-                            line['ship_to'] = rec.partner_id.alt_customer_code
+                        if rec.sold_via_id.customer_code:
+                            line['sold_to'] = rec.sold_via_id.customer_code
+                            line['ship_to'] = rec.sold_via_id.customer_code
                             line['sap_doc_type'] = 'ZKM3'
                             line['original_ship_to'] = so.ship_to_id.ship_to_code
-                        if rec.partner_id.alt_dist_channel:
-                            line['dist_channel'] = rec.partner_id.alt_dist_channel
-                        if rec.partner_id.alt_division:
-                            line['division'] = rec.partner_id.alt_division
-                        if rec.partner_id.alt_customer_code:
-                            line['sold_to'] = rec.partner_id.alt_customer_code
+                            line['dist_channel'] = rec.sold_via_id.dist_channel
+                            line['division'] = rec.sold_via_id.division
                         
                         lines.append(line)
                         print (lines)

@@ -1211,16 +1211,16 @@ class DmpiCrmSaleContract(models.Model):
                     # 3.       The value of the “Final Ship-to” column which is “Your Reference” field i.e. VBKD-IHREZ in SAP should be the related ship-to chosen by the key-user from point 1 above.
                     # 4.       The sales order document type sent in the csv file should be ZKM3 instead of ZXSO when this is the scenario (i.e. sold-to customer is 13046).  
 
-                    if rec.partner_id.alt_customer_code:
-                        line['sold_to'] = rec.partner_id.alt_customer_code
-                        line['ship_to'] = rec.partner_id.alt_customer_code
-                        line['ship_to_dest'] = rec.partner_id.alt_customer_code 
-                    if rec.partner_id.alt_dist_channel:
-                        line['dist_channel'] = rec.partner_id.alt_dist_channel
-                    if rec.partner_id.alt_division:
-                        line['division'] = rec.partner_id.alt_division
-                    if rec.partner_id.alt_customer_code:
-                        line['sold_to'] = rec.partner_id.alt_customer_code
+                    # if rec.partner_id.alt_customer_code:
+                    #     line['sold_to'] = rec.partner_id.alt_customer_code
+                    #     line['ship_to'] = rec.partner_id.alt_customer_code
+                    #     line['ship_to_dest'] = rec.partner_id.alt_customer_code 
+                    # if rec.partner_id.alt_dist_channel:
+                    #     line['dist_channel'] = rec.partner_id.alt_dist_channel
+                    # if rec.partner_id.alt_division:
+                    #     line['division'] = rec.partner_id.alt_division
+                    # if rec.partner_id.alt_customer_code:
+                    #     line['sold_to'] = rec.partner_id.alt_customer_code
 
 
                     lines.append(line)
@@ -1536,10 +1536,15 @@ class DmpiCrmSaleOrder(models.Model):
 
     @api.multi
     def toggle_valid(self):
-        self.write({'valid': not self.valid})
-        return True
+        for rec in self:
+            if rec.valid_disp:
+                print ("TOGGLE VALID")
+                rec.write({'valid':False})
+            else:
+                print ("TOGGLE INVALID")
+                rec.write({'valid':True})
 
-        
+
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft")
     plant = fields.Char("Plant")
@@ -1551,6 +1556,7 @@ class DmpiCrmSaleOrder(models.Model):
     sap_doc_type = fields.Selection(_get_doc_types,"Doc Type",default=_get_default_doc_types)
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs')
     valid = fields.Boolean("Valid Order", default=True)
+    valid_disp = fields.Boolean("Valid Order", related='valid')
 
 
     p5              = fields.Integer(string="P5", compute='get_totals')
