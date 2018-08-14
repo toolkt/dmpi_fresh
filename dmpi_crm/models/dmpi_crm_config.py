@@ -419,7 +419,7 @@ class DmpiCrmConfig(models.Model):
                     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
                     contract.message_post("ERROR: <br/>%s" % result)
                     # print(contract)
-                    # execute(transfer_files,f, outbound_path_fail_sent)
+                    execute(transfer_files,f, outbound_path_fail_sent)
             except:
                 print("GET FAIL - FAILED")
                 pass
