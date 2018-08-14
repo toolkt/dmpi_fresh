@@ -129,6 +129,9 @@ class DmpiCrmConfig(models.Model):
     ssh_host    = fields.Char("Host")
 
 
+    # FCL configuration
+    fcl_config_ids = fields.One2many('dmpi.crm.fcl.config','config_id','FCL Config Ids')
+
     #CONTRACT
     inbound_k                           = fields.Char("Contract")
     inbound_k_success                   = fields.Char("Contract Success")
@@ -1538,3 +1541,13 @@ class DmpiCrmConfigContractState(models.Model):
 
     name = fields.Char("State")
 
+
+
+
+class DmpiCRMFCLConfig(models.Model):
+    _name = 'dmpi.crm.fcl.config'
+
+    pallet = fields.Float('Pallet')
+    cases_van = fields.Float('Cases/Van')
+    active = fields.Boolean('Active')
+    config_id = fields.Many2one('dmpi.crm.config',string='Config ID')

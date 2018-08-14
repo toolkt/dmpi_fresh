@@ -77,6 +77,17 @@
                                     </group>
                                 </group>
                             </page>
+                            <page string="Ship-to Codes">
+                                <field name="ship_to_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="ship_to_code"/>
+                                        <field name="customer_name"/>
+                                        <field name="customer_code"/>
+                                        <field name="destination"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Accounts Receivables">
                                 <field name="ar_records" />
                             </page>

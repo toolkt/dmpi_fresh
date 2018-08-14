@@ -961,7 +961,7 @@ class DmpiCrmSaleContract(models.Model):
                     #     'dest_country_id' :
                     #     'order_date' :
                     #     'estimated_date' :
-                    #     'requested_deivery_date' :
+                    #     'requested_delivery_date' :
 
                     #     'total_amount' :
                     # }
@@ -1102,6 +1102,7 @@ class DmpiCrmSaleContract(models.Model):
                         'sales_org': l.sales_org,
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
+                        'requested_delivery_date': l.requested_delivery_date,
                         'plant': l.plant,
                         'p5': l.p5,
                         'p6': l.p6,
@@ -1607,7 +1608,7 @@ class DmpiCrmSaleOrder(models.Model):
     estimated_date = fields.Date("Estimated Date")
     shell_color = fields.Char("Shell Color")
     ship_line = fields.Char("Ship Line")
-    requested_deivery_date = fields.Date("Req. Date")
+    requested_delivery_date = fields.Date("Req. Date")
     notes = fields.Text("Notes/Remarks", compute='display_summary')
 
     total_amount = fields.Float('Total', compute='get_totals')

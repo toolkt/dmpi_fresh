@@ -16,7 +16,8 @@
                     <notebook>
                         <page string="Sale Lines">
                             <field name="upload_line_ids">
-                                <tree editable="bottom"> 
+                                <tree editable="bottom" decoration-danger="error_count > 0">
+                                    <field name="line_no" />
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
                                     <field name="p5" />
@@ -36,13 +37,15 @@
                                     <field name="total_qty" />
                                     <field name="ship_line" />
                                     <field name="shell_color" />
+                                    <field name="requested_delivery_date" />
                                     <field name="errors" />
+                                    <field name="error_count" />
                                 </tree>
                             </field>
                         </page>
                     </notebook>
                     <footer>
-                        <button name="process_upload" string="UPLOAD FILE" type="object" class="oe_highlight"/>
+                        <button name="process_upload" string="UPLOAD FILE" type="object" class="oe_highlight" attrs="{'invisible':[('error_count','&gt;',0)]}"/>
                         <button string="CANCEL" special="cancel"/>
                     </footer>           
                 </form>

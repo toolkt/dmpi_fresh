@@ -104,6 +104,7 @@ class DmpiCrmPartner(models.Model):
     dist_channel    = fields.Char("Distribution Channel")
     division        = fields.Char("Division")
     plant           = fields.Char("Plant")
+    ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
 
 
     #DEFAULTS
@@ -557,12 +558,3 @@ class MailMail(models.Model):
     @api.onchange('email_temp_id')
     def onchange_email_temp_id(self):
         self.body_html = self.email_temp_id.body_html
-        
-
-
-
-
-
-
-
-

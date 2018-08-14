@@ -72,6 +72,15 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="FCL Config">
+                                <field name="fcl_config_ids">
+                                    <tree editable="bottom">
+                                        <field name="pallet"/>
+                                        <field name="cases_van"/>
+                                        <field name="active"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Directory">
                                 <group>
                                     <field name="ssh_user" />
@@ -176,7 +185,7 @@
             <field name="res_model">dmpi.crm.config</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_filter_active':1}"/>
+            <field name="context" eval="{'search_default_filter_active':1,'active_test':False}"/>
         </record>
 
         <menuitem id="menu_dmpi_crm_config" action="action_dmpi_crm_config" parent="menu_dmpi_crm_settings_top" />
