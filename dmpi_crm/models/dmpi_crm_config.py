@@ -421,9 +421,7 @@ class DmpiCrmConfig(models.Model):
 
                     execute(file_send,localpath,remotepath)
                     # rec.sent_to_sap = True
-                    # rec.state = 'approved'
-
-
+                    rec.write({'state':'processed'})
 
 
 

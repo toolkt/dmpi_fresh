@@ -9,10 +9,11 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="sap_so_no" />
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
-                    <field name="sap_doc_type" />
-                    <field name="sales_org"/>
+                    <field name="ship_line" />
+                    <field name="shell_color" />
                 </search>
             </field>
         </record>
@@ -23,10 +24,31 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="sap_so_no" />
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
-                    <field name="sap_doc_type" />
-                    <field name="sales_org"/>
+
+                    <field name="p5" sum="Total"/>
+                    <field name="p6" sum="Total"/>
+                    <field name="p7" sum="Total"/>
+                    <field name="p8" sum="Total"/>
+                    <field name="p9" sum="Total"/>
+                    <field name="p10" sum="Total"/>
+                    <field name="p12" sum="Total"/>
+                    <field name="p5c7" sum="Total"/>
+                    <field name="p6c8" sum="Total"/>
+                    <field name="p7c9" sum="Total"/>
+                    <field name="p8c10" sum="Total"/>
+                    <field name="p9c11" sum="Total"/>
+                    <field name="p10c12" sum="Total"/>
+                    <field name="p12c20" sum="Total"/>
+                    <field name="total_qty" sum="Total"/>
+                    <field name="total_amount" sum="Total"/>
+                    
+                    <field name="ship_line" />
+                    <field name="shell_color" />
+
+
                 </tree>
             </field>
         </record>
@@ -48,7 +70,10 @@
 
                             <button name="toggle_valid" class="oe_stat_button" type="object" icon="fa-globe">
                                 <field name="valid" widget="boolean_button"
-                                    options='{"terminology": {"string_true": "Valid", "hover_false": "Hold"}}'/>
+                                    options='{"terminology": {
+                                    "string_true": "Valid", 
+                                    "string_false": "Hold"
+                                    }}'/>
                             </button>
 
                         </div>

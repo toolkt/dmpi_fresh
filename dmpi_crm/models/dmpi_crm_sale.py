@@ -133,31 +133,13 @@ class DmpiCrmSaleContract(models.Model):
     #     return res
 
     def _get_contract_type(self):
-        group = 'contract_type'
-        query = """SELECT cs.select_name,cs.select_value
-                from dmpi_crm_config_selection cs
-                left join dmpi_crm_config cc on cc.id = cs.config_id
-                where select_group = '%s'  and cc.active is True and cc.default is True
-                order by sequence 
-                """ % group
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-        res = [(r['select_value'],r['select_name']) for r in result]
+        result = self.env['dmpi.crm.contract.type'].search([])
+        res = [(r.name,r.description) for r in result]
         return res
 
     def _get_contract_type_default(self):
-        group = 'contract_type'
-        query = """SELECT cs.select_name,cs.select_value
-                from dmpi_crm_config_selection cs
-                left join dmpi_crm_config cc on cc.id = cs.config_id
-                where cs.select_group = '%s'  and cc.active is True and cc.default is True and cs.default is True
-                order by sequence 
-                limit 1 
-                """ % group
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchone()
-        print (result)
-        return result['select_name']
+        result = self.env['dmpi.crm.contract.type'].search([('default','=',True)], limit=1)[0]
+        return result.name
 
 
     @api.depends('name','sap_cn_no')
@@ -180,7 +162,7 @@ class DmpiCrmSaleContract(models.Model):
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
 
-    contract_type = fields.Many2one("dmpi.crm.contract.type","Contract Type")
+    contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
@@ -294,227 +276,6 @@ class DmpiCrmSaleContract(models.Model):
     #     return errors,error_count
 
 
-    @api.onchange('upload_file')
-    def onchange_data(self):
-        if self.upload_file:
-            # file = base64.decodestring(self.upload_file)
-            file = base64.b64decode(self.upload_file).decode('utf-8')
-            file.split('\n')
-
-            print(file)
-            # for row in line:
-            #     print (row)
-
-
-
-    @api.multi
-    def import_po(self):
-        for rec in self:
-            if rec.upload_file:
-                fileobj = TemporaryFile("w+")
-                fileobj.write(base64.b64decode(rec.upload_file).decode('utf-8'))
-                fileobj.seek(0)
-                
-                line = csv.reader(fileobj, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
-                # for l in line:
-                #     print (l)
-
-                
-                new_credit_list = []
-                contract_lines = []
-                import_errors = []
-                line_counter = 0
-                for row in line:
-                    line_counter += 1
-                    # row = l.split(',')
-                    if row[0] != '' and line_counter > 1:
-                        print (row)
-                        partner = self.env['dmpi.crm.partner'].search([('name','like',row[0]),('active','=',True)], limit=1)[0]
-                        #destination = self.env['dmpi.crm.partner'].search([('name','like',row[1]),('active','=',True)], limit=1)[0]
-                        #ship_to = self.env['dmpi.crm.partner'].search([('name','like',row[2]),('active','=',True)], limit=1)[0]
-                        #notify_party = self.env['dmpi.crm.partner'].search([('name','like',row[3]),('active','=',True)], limit=1)[0]
-
-
-                        #TEMPORARY: Populate contract
-                        if partner:
-                            rec.partner_id = partner.id
-                            rec.contract_type = self.env['dmpi.crm.config.selection'].search([('select_group','=','contract_type'),('default','=',True)], limit=1)[0].select_value
-                            rec.on_change_partner_id()
-
-                        if row[5] == '':
-                            rec.po_date = fields.date.today()
-                            rec.valid_from = fields.date.today()
-                            rec.valid_to =  fields.date.today() + timedelta(days=7)
-
-
-                        
-                        contract_line = {}
-
-                        # P5  P6  P7  P8  P9  P10 P12
-                        if row[0]:
-                            contract_line['partner_id'] = self.env['dmpi.crm.partner'].search([('name','like',row[0]),('active','=',True)], limit=1)[0].id
-
-                        if row[7]:
-                            contract_line['p5'] = re.sub('[^0-9]','', row[7])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P5'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P5")
-                        if row[8]:
-                            contract_line['p6'] = re.sub('[^0-9]','', row[8])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P6'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P6")
-                        if row[9]:
-                            contract_line['p7'] = re.sub('[^0-9]','', row[9])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P7'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P7")
-                        if row[10]:
-                            contract_line['p8'] = re.sub('[^0-9]','', row[10])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P8'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P8")
-                        if row[11]:
-                            contract_line['p9'] = re.sub('[^0-9]','', row[11])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P9'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P9")
-                        if row[12]:
-                            contract_line['p10'] = re.sub('[^0-9]','', row[12])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P10'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P10")
-                        if row[13]:
-                            contract_line['p12'] = re.sub('[^0-9]','', row[13])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P12'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P12")
-
-
-                        if row[15]:
-                            contract_line['p5c7'] = re.sub('[^0-9]','', row[15])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P5C7'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P5C7")
-                        if row[16]:
-                            contract_line['p6c8'] = re.sub('[^0-9]','', row[16])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P6C8'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P6C8")
-                        if row[17]:
-                            contract_line['p7c9'] = re.sub('[^0-9]','', row[17])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P7C9'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P7C9")
-                        if row[18]:
-                            contract_line['p8c10'] = re.sub('[^0-9]','', row[18])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P8C10'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P8C10")
-                        if row[19]:
-                            contract_line['p9c11'] = re.sub('[^0-9]','', row[19])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P9C11'),('partner_id','=',partner.id)])
-                            print("Product:",product_code.name)
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P9C11")
-                        if row[20]:
-                            contract_line['p10c12'] = re.sub('[^0-9]','', row[20])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P10C12'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P10C12")
-                        if row[21]:
-                            contract_line['p12c20'] = re.sub('[^0-9]','', row[21])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P12C20'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P12C20")
-
-                        contract_lines.append((0,0,contract_line))
-
-                        #update scripter
-                        # vals = {
-                        #     'partner_id' : partner.id,
-                        #     'destination' : destination.id,
-                        #     'ship_to' : ship_to.id,
-                        #     'notify_party' : notify_party.id,
-
-
-                        # }
-                        print (import_errors)
-                        if len(import_errors):
-                            rec.write({'import_errors':'\n'.join(i for i in import_errors)})
-                        else:
-                            rec.write({'import_errors':''})
-                        print(contract_line)
-
-                if len(contract_lines)>0:
-                    rec.contract_line_ids.unlink()
-
-                    rec.contract_line_ids = contract_lines
-                    rec.on_change_contract_line_ids()
-        
-
-
-
-    @api.multi
-    def import_so(self):
-        for rec in self:
-            if rec.upload_file:
-                file = base64.decodestring(rec.upload_file_so).decode('utf-8')
-                line = file.split('\n')
-
-
-                line = csv.reader(line, quotechar='"', delimiter=',',
-                     quoting=csv.QUOTE_ALL, skipinitialspace=True)
-                # for l in line:
-                #     print (l)
-
-                
-                sale_orders = []
-                import_errors = []
-                line_counter = 0
-                for row in line:
-                    line_counter += 1
-                    # row = l.split(',')
-                    if row[0] != '' and line_counter > 1:
-                        print (row)
-                        partner = self.env['dmpi.crm.partner'].search([('name','like',row[0]),('active','=',True)], limit=1)[0]
-                        destination = self.env['dmpi.crm.partner'].search([('name','like',row[1]),('active','=',True)], limit=1)[0]
-                        ship_to = self.env['dmpi.crm.partner'].search([('name','like',row[2]),('active','=',True)], limit=1)[0]
-                        notify_party = self.env['dmpi.crm.partner'].search([('name','like',row[3]),('active','=',True)], limit=1)[0]
-
-
-                        #TEMPORARY: Populate contract
-                        if partner:
-                            rec.partner_id = partner.id
-                            rec.contract_type = self.env['dmpi.crm.config.selection'].search([('select_group','=','contract_type'),('default','=',True)], limit=1)[0].select_value
-                            rec.on_change_partner_id()
-
-                        if row[5] == '':
-                            rec.po_date = fields.date.today()
-                            rec.valid_from = fields.date.today()
-                            rec.valid_to =  fields.date.today() + timedelta(days=7)
-
-
-                        
-                        so = {
-                            'partner_id': ''
-                        }
-
-
-                        # P5  P6  P7  P8  P9  P10 P12
-                        if row[0]:
-                            contract_line['partner_id'] = self.env['dmpi.crm.partner'].search([('name','like',row[0]),('active','=',True)], limit=1)[0].id
-
-                        if row[7]:
-                            contract_line['p5'] = re.sub('[^0-9]','', row[7])
-                            product_code = self.env['dmpi.crm.product'].search([('code','=','P5'),('partner_id','=',partner.id)])
-                            if not product_code.name:
-                                import_errors.append("PRODUCT NOT DEFINED: P5")
-
-
-
-
-
 
     @api.depends('sale_order_ids')
     def _compute_totals(self):
@@ -533,12 +294,6 @@ class DmpiCrmSaleContract(models.Model):
             rec.remaining_credit = rec.credit_limit - rec.credit_exposure
             rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales
 
-
-
-    @api.multi
-    def action_view_sheet(self):
-        for rec in self:
-            print (rec)
 
     @api.onchange('partner_id')
     def on_change_partner_id(self):
@@ -623,450 +378,12 @@ class DmpiCrmSaleContract(models.Model):
             self.valid_to =  datetime.strptime(self.po_date, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=validity)
 
 
-    @api.onchange('sale_order_ids')
-    def on_change_sale_order_ids(self):
-        for rec in self:
-            print(rec)
-
-
-    @api.onchange('contract_line_ids')
-    def on_change_contract_line_ids(self):
-        lines = []
-        contract_lines = []
-        errors = []
-        error_count = 0
-        po_line_no = 0
-
-        contract_total = 0.0
-
-        for rec in self:
-            for l in rec.contract_line_ids:
-                items = []
-
-                odoo_po_no  = rec.name
-                sap_doc_type  =  rec.contract_type.name
-                sales_org =  rec.partner_id.sales_org
-                dist_channel =   rec.partner_id.dist_channel
-                division =   rec.partner_id.division
-
-                sold_to = rec.partner_id.customer_code
-                ship_to = l.partner_id.customer_code
-                ship_to_dest = l.partner_id.customer_code
-
-                plant = rec.partner_id.plant
-                original_ship_to = ""
-
-                try:
-                    if rec.partner_id.alt_customer_code:
-                        sold_to = rec.partner_id.alt_customer_code
-                        ship_to_dest = rec.partner_id.alt_customer_code 
-                        ship_to = l.partner_id.alt_customer_code
-                        original_ship_to = rec.partner_id.final_ship_to 
-                    if rec.partner_id.alt_dist_channel:
-                        dist_channel = rec.partner_id.alt_dist_channel
-                    if rec.partner_id.alt_division:
-                        division = rec.partner_id.alt_division
-                    if rec.partner_id.alt_customer_code:
-                        sold_to = rec.partner_id.alt_customer_code
-
-                except:
-                    pass
-                    # print("SBFTI PASS")
-                
-                ref_po_no =  rec.customer_ref
-
-                po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
-                po_date = po_date.strftime('%Y%m%d')
-
-                valid_from = datetime.strptime(rec.valid_from, '%Y-%m-%d')
-                valid_from = valid_from.strftime('%Y%m%d')
-
-                valid_to = datetime.strptime(rec.valid_to, '%Y-%m-%d')
-                valid_to =   valid_to.strftime('%Y%m%d')
-
-
-
-                so_no = l.so_no
-
-                rdd = datetime.strptime(l.rdd, '%Y-%m-%d')
-                rdd =   rdd.strftime('%Y%m%d')
-
-
-                
-
-                material = False
-                so_line_no = 0
-
-                if l.p5 > 0:
-
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P5'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p5
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-
-                if l.p6 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P6'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p6
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p7 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P7'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p7
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p8 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P8'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p8
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p9 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P9'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p9
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p10 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P10'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                        print(material)
-                    except:
-                        pass
-                    qty = l.p10
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-
-                if l.p12 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P12'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p12
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-
-
-                if l.p5c7 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P5C7'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p5c7
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p6c8 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P6C8'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p6c8
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p7c9 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P7C9'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p7c9
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p8c10 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P8C10'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p8c10
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p9c11 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P9C11'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p9c11
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p10c12 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P10C12'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p10c12
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-                if l.p12c20 > 0:
-                    po_line_no += 10
-                    so_line_no += 10
-                    try:
-                        material = self.env['dmpi.crm.product'].search([('code','=','P12C20'),('partner_id','=',rec.partner_id.id)],limit=1)[0].sku or False
-                    except:
-                        pass
-                    qty = l.p12c20
-                    uom = 'CAS'
-                    items.append((odoo_po_no,sap_doc_type,sales_org,dist_channel,division,sold_to,ship_to,
-                        ref_po_no,po_date,valid_from,valid_to,ship_to_dest,po_line_no,material,qty,uom,
-                        so_no,rdd,so_line_no,plant,original_ship_to))
-
-                lines.append(items)
-
-                crown_total = l.p5+l.p6+l.p7+l.p8+l.p9+l.p10+l.p12
-                crownless_total = l.p5c7+l.p6c8+l.p7c9+l.p8c10+l.p9c11+l.p10c12+l.p12c20
-
-                contract_total +=  (crown_total+crownless_total)*10
-
-                crown_totals = crown_total+crownless_total
-                if crown_totals > 1500:
-                    error_count += 1
-                    errors.append("%s Exceeded the 1500 limit" % crown_totals)
-
-            rec.worksheet_item_text = lines
-            rec.contract_total = contract_total
-            rec.credit_after_sale = rec.credit_limit - rec.contract_total 
-            if error_count > 0:
-                rec.error_count = error_count
-                rec.errors = errors
-            else:
-                rec.error_count = 0
-                rec.errors = ""               
-
 
 
     @api.multi
     def action_release(self):
         for rec in self:
             rec.state = 'submitted'
-
-
-    @api.multi
-    def action_approve(self):
-        for rec in self:
-            sheet = eval(rec.worksheet_item_text)
-
-            for so in sheet:
-                lines = []
-                so_no = ""
-
-
-                #so = {}
-                so_line = []
-                total_amount = 0.0
-
-                for l in so:
-                    so_no = "SO00000%s" % l[16]
-
-                    line = [l[0],rec.sap_cn_no,so_no,'ZXSO',l[2],l[3],l[4],l[5],l[6],l[7],l[8],l[17],l[12],l[18],l[13],l[14],l[15],l[19]]
-                    if l[20] != '':
-                        line = [l[0],rec.sap_cn_no,so_no,'ZKM3',l[2],l[3],l[4],l[5],l[6],l[7],l[8],l[17],l[12],l[18],l[13],l[14],l[15],l[19],l[20]]
-
-                    lines.append(line)
-                    
-                    print (l)
-                    # odoo_po_no  
-                    # sap_contract_no 
-                    # odoo_so_no  
-                    # sap_doc_type    
-                    # sales_org   
-                    # dist_channel    
-                    # division    
-                    # sold_to 
-                    # ship_to 
-                    # ref_po_no   
-                    # po_date 
-                    # rdd 
-                    # po_line_no  
-                    # so_line_no  
-                    # material    
-                    # qty 
-                    # uom 
-                    # plant   
-                    # reject_reason   
-                    # so_alt_item 
-                    # usage
-
-
-                    # so = {
-                    #     'name' : so_no,
-                    #     'so_no' : so_no,
-                    #     #'sap_so_no' :
-                    #     'sap_doc_type' : 'ZXSO',
-                    #     'contract_id' :
-                    #     #'order_ids' :
-
-                    #     'partner_id' :
-                    #     'dest_country_id' :
-                    #     'order_date' :
-                    #     'estimated_date' :
-                    #     'requested_delivery_date' :
-
-                    #     'total_amount' :
-                    # }
-
-
-
-                print(lines)
-
-            # rec.state = 'approved'
-
-
-                filename = 'ODOO_SO_%s_%s.csv' % (so_no,datetime.now().strftime("%Y%m%d_%H%M%S"))
-                path = '/tmp/%s' % filename
-
-                with open(path, 'w') as f:
-                    writer = csv.writer(f, delimiter='\t')
-                    for l in lines:
-                        writer.writerow(l)
-
-
-                #TRANSFER TO REMOTE SERVER
-                h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
-                host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-                env.hosts.append(host_string)
-                env.passwords[host_string] = h.ssh_pass
-
-                localpath = path
-
-                path = '%s/%s' % (h.inbound_so,filename)
-                remotepath = path
-
-                execute(file_send,localpath,remotepath)
-                rec.sent_to_sap = True
-                rec.state = 'approved'
-                # rec.worksheet_item_text = contract
-
-
-
-
-    @api.multi
-    def action_submit(self):
-        for rec in self:
-
-            #Sort the sale order line ids
-            for so in rec.sale_order_ids:
-                line_no = 0
-                for sol in so.order_ids:
-                    line_no += 10
-                    sol.so_line_no = line_no
-
-
-
-
-            #OLD Contract style
-            sheet = eval(rec.worksheet_item_text)
-            lines = []
-
-            for so in sheet:
-                for l in so:
-                    lines.append(l)
-
-            print(lines)
-            
-
-            if rec.name == 'Draft':
-                self._cr.execute("""SELECT string_agg (DISTINCT q1.pr,''),MAX (cn_no)+1 FROM (SELECT*FROM (
-                    SELECT cn_no_prefix AS pr,0 AS cn_no FROM dmpi_crm_config WHERE "default" IS TRUE AND active IS TRUE ORDER BY create_date DESC LIMIT 1) AS pref UNION ALL 
-                    SELECT '' AS pr,MAX (cn_no) cn_no FROM dmpi_crm_sale_contract) AS q1 LIMIT 1
-                """)
-                prefix,cn_no = self._cr.fetchone()
-                name = "%s%s" % (prefix,'{0:08d}'.format(cn_no))
-                rec.cn_no = cn_no
-                rec.name = name
-
-
-            filename = 'ODOO_PO_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
-            path = '/tmp/%s' % filename
-
-            with open(path, 'w') as f:
-                writer = csv.writer(f, delimiter='\t')
-                for l in lines:
-                    writer.writerow([l[0],l[1],l[2],l[3],l[4],l[5],l[6],l[7],l[8],l[9],l[10],l[11],l[12],l[13],l[14],l[15]])
-
-
-            #TRANSFER TO REMOTE SERVER
-            h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
-            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-            env.hosts.append(host_string)
-            env.passwords[host_string] = h.ssh_pass
-
-            localpath = path
-            path = '%s/%s' % (h.inbound_k,filename)
-            remotepath = path
-
-            execute(file_send,localpath,remotepath)
-            rec.sent_to_sap = True
-
-            if rec.ar_status > 0 or rec.credit_after_sale < 0:
-                rec.state = 'soa'
-            else:
-                rec.state = 'submitted'
-            # rec.worksheet_item_text = contract
-
-
-
 
 
     @api.multi
@@ -1189,7 +506,7 @@ class DmpiCrmSaleContract(models.Model):
 
                     line = {
                         'odoo_po_no' : rec.name,
-                        'sap_doc_type' : rec.contract_type.name,
+                        'sap_doc_type' : rec.contract_type,
                         'sales_org' : rec.partner_id.sales_org,
                         'dist_channel' : rec.partner_id.dist_channel,
                         'division' : rec.partner_id.division,
@@ -1268,7 +585,7 @@ class DmpiCrmSaleContract(models.Model):
             # else:
             #     rec.state = 'submitted'            
 
-            # rec.write({'state':'processing'})
+            rec.write({'state':'processing'})
 
 
 
@@ -1532,18 +849,20 @@ class DmpiCrmSaleOrder(models.Model):
 
     @api.depends('name','sap_so_no')
     def _get_name_disp(self):
-        self.name_disp = "%s/%s" % (self.name, self.sap_so_no)
+        name = []
+        if self.name:
+            name.append(self.name)
+        if self.sap_so_no:
+            name.append(self.sap_so_no)
+
+        self.name_disp = '/'.join(name)
 
 
     @api.multi
     def toggle_valid(self):
         for rec in self:
-            if rec.valid_disp:
-                print ("TOGGLE VALID")
-                rec.write({'valid':False})
-            else:
-                print ("TOGGLE INVALID")
-                rec.write({'valid':True})
+            rec.write({'valid': not rec.valid})
+            return True
 
 
     name_disp = fields.Char("Display No.", compute='_get_name_disp')

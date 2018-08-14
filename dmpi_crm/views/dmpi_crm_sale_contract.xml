@@ -47,11 +47,6 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <header>
-                        <!-- 
-                        <button name="action_submit" states="draft" string="xxSubmit" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to submit the PO?"/>
-                        <button name="action_approve" states="submitted" string="xxApprove" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Approve the PO?"/>
-                        <button name="action_release" states="soa" string="Release" type="object" class="oe_highlight" groups="base.group_user" confirm="Are you sure you want to Release the PO?"/> -->
-
 
                         <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
@@ -64,7 +59,7 @@
                         <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
                         <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-
+s
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
 
 
@@ -112,7 +107,7 @@
                         <group>
                             <group>
                                 <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
-                                <field name="contract_type"  required="1"/>
+                                <field name="contract_type"/>
                                 <field name="customer_ref" />
                                 <field name="po_date" required="1"/>
                                 <field name="valid_from" required="1"/>
@@ -139,51 +134,6 @@
                         <span style="color:red"><field name="errors_disp" readonly="1"/></span>
                     </center>
                     <notebook>
-                        <page string="Purchase Worksheet" invisible="1">
-                            <field name="contract_line_ids">
-                                <tree editable="bottom" colors="blue:total == 1500;red:total > 1500">
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
-                                    <field name="p5" attrs="{'readonly':[('p5_visible','!=',True)]}"/>
-                                    <field name="p6"  attrs="{'readonly':[('p6_visible','!=',True)]}"/>
-                                    <field name="p7"  attrs="{'readonly':[('p7_visible','!=',True)]}"/>
-                                    <field name="p8"  attrs="{'readonly':[('p8_visible','!=',True)]}"/>
-                                    <field name="p9"  attrs="{'readonly':[('p9_visible','!=',True)]}"/>
-                                    <field name="p10"  attrs="{'readonly':[('p10_visible','!=',True)]}"/>
-                                    <field name="p12"  attrs="{'readonly':[('p12_visible','!=',True)]}"/>
-                                    <field name="total_crown" />
-                                    <field name="p5c7"  attrs="{'readonly':[('p5c7_visible','!=',True)]}"/>
-                                    <field name="p6c8"  attrs="{'readonly':[('p6c8_visible','!=',True)]}"/>
-                                    <field name="p7c9"  attrs="{'readonly':[('p7c9_visible','!=',True)]}"/>
-                                    <field name="p8c10"  attrs="{'readonly':[('p8c10_visible','!=',True)]}"/>
-                                    <field name="p9c11"  attrs="{'readonly':[('p9c11_visible','!=',True)]}"/>
-                                    <field name="p10c12"  attrs="{'readonly':[('p10c12_visible','!=',True)]}"/>
-                                    <field name="p12c20"  attrs="{'readonly':[('p12c20_visible','!=',True)]}"/>
-                                    <field name="total_crownless" />
-                                    <field name="rdd" />
-                                    <field name="total"/>
-                                    <field name="so"/>
-                                    <field name="so_no"/>
-
-                                    <field name="p5_visible" invisible="1"/>
-                                    <field name="p6_visible" invisible="1" />
-                                    <field name="p7_visible" invisible="1" />
-                                    <field name="p8_visible" invisible="1" />
-                                    <field name="p9_visible" invisible="1" />
-                                    <field name="p10_visible" invisible="1" />
-                                    <field name="p12_visible" invisible="1" />
-                                    <field name="p5c7_visible" invisible="1" />
-                                    <field name="p6c8_visible" invisible="1" />
-                                    <field name="p7c9_visible" invisible="1" />
-                                    <field name="p8c10_visible" invisible="1" />
-                                    <field name="p9c11_visible" invisible="1" />
-                                    <field name="p10c12_visible" invisible="1" />
-                                    <field name="p12c20_visible" invisible="1" />
-
-                                </tree>
-                            </field>
-                            
-                        </page>
                         <page string="Customer Orders">
                             <field name="customer_order_ids">
                                 <tree>
