@@ -202,25 +202,25 @@ class DmpiCrmConfig(models.Model):
 
     @api.model
     def _cron_execute_queue(self):
-        print("CRON JOB WORKING")
+        print("AR CRON JOB WORKING")
         self.search([('default','=',True)],limit=1)[0].process_ar()
 
 
     @api.model
     def _cron_process_contract(self):
-        print("CRON JOB WORKING")
+        print("CONTRACT CRON JOB WORKING")
         self.search([('default','=',True)],limit=1)[0].process_contract()
 
 
     @api.model
     def _cron_process_so(self):
-        print("CRON JOB WORKING")
+        print("SO CRON JOB WORKING")
         self.search([('default','=',True)],limit=1)[0].process_so()
 
 
     @api.model
     def _cron_process_dr(self):
-        print("CRON JOB WORKING")
+        print("DR & SHIPMENT CRON JOB WORKING")
         self.search([('default','=',True)],limit=1)[0].process_dr()
         self.search([('default','=',True)],limit=1)[0].process_shp()
 
@@ -228,10 +228,12 @@ class DmpiCrmConfig(models.Model):
 
     @api.model
     def _cron_process_invoice(self):
-        print("CRON JOB WORKING")
+        print("INVOICE CRON JOB WORKING")
         self.search([('default','=',True)],limit=1)[0].process_inv()
         self.search([('default','=',True)],limit=1)[0].process_inv1()
         self.search([('default','=',True)],limit=1)[0].process_inv2()
+        self.search([('default','=',True)],limit=1)[0].process_inv2_pdf()
+
 
 
 

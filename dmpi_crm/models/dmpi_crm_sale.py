@@ -124,13 +124,13 @@ class DmpiCrmSaleContract(models.Model):
     _inherit = ['mail.thread']
 
 
-    @api.model
-    def create(self, vals):
-        contract_seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.contract')
-        vals['name'] = contract_seq
-        print(contract_seq)
-        res = super(DmpiCrmSaleContract, self).create(vals)
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     contract_seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.contract')
+    #     vals['name'] = contract_seq
+    #     print(contract_seq)
+    #     res = super(DmpiCrmSaleContract, self).create(vals)
+    #     return res
 
     def _get_contract_type(self):
         group = 'contract_type'
@@ -1068,6 +1068,7 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
+
     @api.multi
     def action_submit_contract(self):
         for rec in self:
@@ -1125,10 +1126,12 @@ class DmpiCrmSaleContract(models.Model):
             rec.sale_order_ids.unlink()
             rec.sale_order_ids = sale_orders
 
-
+            
+            if rec.name == 'Draft' or rec.name == '':
+                contract_seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.contract')
+                rec.write({'name':contract_seq})
 
             rec.write({'state':'submitted'})
-
 
     @api.multi
     def action_request_confirmation(self):
