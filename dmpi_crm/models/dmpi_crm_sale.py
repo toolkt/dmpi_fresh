@@ -1534,6 +1534,12 @@ class DmpiCrmSaleOrder(models.Model):
         self.name_disp = "%s/%s" % (self.name, self.sap_so_no)
 
 
+    @api.multi
+    def toggle_valid(self):
+        self.write({'valid': not self.valid})
+        return True
+
+        
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft")
     plant = fields.Char("Plant")
@@ -1587,6 +1593,7 @@ class DmpiCrmSaleOrder(models.Model):
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
     ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
     notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
+    sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
     # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
     sales_org = fields.Char("Sales Org")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')

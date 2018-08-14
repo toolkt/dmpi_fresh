@@ -355,7 +355,7 @@ class DmpiCrmConfig(models.Model):
                             'po_line_no' : so.contract_line_no,  
                             'so_line_no' : sol.so_line_no,  
                             'material' : sol.product_id.sku,    
-                            'qty' : sol.qty,
+                            'qty' : int(sol.qty),
                             'uom' : 'CAS', 
                             'plant' : so.plant,
                             'reject_reason' : '',
