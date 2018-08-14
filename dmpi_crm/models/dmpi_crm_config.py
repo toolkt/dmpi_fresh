@@ -287,7 +287,7 @@ class DmpiCrmConfig(models.Model):
                         cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
                         contract.write({'sap_cn_no':cn_no})
 
-                    # execute(transfer_files,f, outbound_path_success)
+                    execute(transfer_files,f, outbound_path_success)
                     contract_id = contract
             except:
                 print("GET SUCCESS - FAILED")
