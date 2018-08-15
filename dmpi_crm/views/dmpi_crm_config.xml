@@ -47,40 +47,6 @@
                             
                         </group>
                         <notebook>
-                            <page string="Document Control">
-                                <group>
-                                    <group>
-                                        <field name="cn_no_prefix" />
-                                        <field name="po_no_prefix" />
-                                        <field name="so_no_prefix" />
-                                        <field name="dr_no_prefix" />
-                                        <field name="inv_no_prefix" />
-                                    </group>
-                                    <group>
-                                        <field name="default_validity" />
-                                    </group>
-                                </group>
-                            </page>
-                            <page string="Selection Defaults">
-                                <field name="selection_ids">
-                                    <tree editable="bottom">
-                                        <field name="sequence" widget="handle"/>
-                                        <field name="select_group" />
-                                        <field name="select_name" />
-                                        <field name="select_value" />
-                                        <field name="default" />
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="FCL Config">
-                                <field name="fcl_config_ids">
-                                    <tree editable="bottom">
-                                        <field name="pallet"/>
-                                        <field name="cases_van"/>
-                                        <field name="active"/>
-                                    </tree>
-                                </field>
-                            </page>
                             <page string="Directory">
                                 <group>
                                     <field name="ssh_user" />
@@ -98,7 +64,10 @@
                                         <field name="inbound_k_log_success_error_send" />
                                         <field name="inbound_k_log_fail" />
                                         <field name="inbound_k_log_fail_sent" />
+                                        <button name="process_success_contract" string="Process Success and SO" type="object" class="oe_highlight" />
                                         <button name="process_contract" string="Process Contract" type="object" class="oe_highlight" />
+
+                                        
                                     </group>
 
                                     <group>
@@ -166,8 +135,40 @@
                                     </group>
                                 </group>
 
-
-
+                            </page>
+                            <page string="Document Control">
+                                <group>
+                                    <group>
+                                        <field name="cn_no_prefix" />
+                                        <field name="po_no_prefix" />
+                                        <field name="so_no_prefix" />
+                                        <field name="dr_no_prefix" />
+                                        <field name="inv_no_prefix" />
+                                    </group>
+                                    <group>
+                                        <field name="default_validity" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Selection Defaults">
+                                <field name="selection_ids">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="select_group" />
+                                        <field name="select_name" />
+                                        <field name="select_value" />
+                                        <field name="default" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="FCL Config">
+                                <field name="fcl_config_ids">
+                                    <tree editable="bottom">
+                                        <field name="pallet"/>
+                                        <field name="cases_van"/>
+                                        <field name="active"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>

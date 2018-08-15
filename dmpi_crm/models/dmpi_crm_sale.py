@@ -519,7 +519,7 @@ class DmpiCrmSaleContract(models.Model):
                         'ship_to_dest' : so.ship_to_id.ship_to_code,
                         'po_line_no' : so.contract_line_no,
                         'material' : sol.product_id.sku,
-                        'qty' : sol.qty,
+                        'qty' : int(sol.qty),
                         'uom' : 'CAS',
                     }
 
