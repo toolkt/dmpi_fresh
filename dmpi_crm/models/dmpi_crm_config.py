@@ -408,28 +408,14 @@ class DmpiCrmConfig(models.Model):
             outbound_path_fail_sent= rec.inbound_so_log_fail_sent
 
             try:
-                files = execute(list_dir,outbound_path_fail,'')
+                files = execute(list_dir,outbound_path_fail,'L_ODOO_SO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
 
-                    #Extract the PO number from the Filename
-                    po_no = f.split('/')[-1:][0].split('_')[2]
-                    print(po_no)
-
-                    line = result.split('\r\n')
-                    errors = ""
-                    for l in line:
-                        errors = "%s\n%s" % (errors,l)
-                        print (errors)
-
-
-                    po_no = "PO00000001"
-                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
-                    errors = "%s\n%s" % (contract.sap_errors,errors)
-                    contract.write({'sap_errors':errors})
-                    print("-------%s-------\n%s\n%s" % (contract,f,outbound_path_fail_sent))
-                    print(f)
-                    print(outbound_path_fail_sent)
+                    #Extract the PO number from the Filename 
+                    so_no = f.split('/')[-1:][0].split('_')[3]
+                    contract = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)],limit=1).contract_id
+                    contract.message_post("ERROR: <br/>%s" % result)
 
 
                     execute(transfer_files,f, outbound_path_fail_sent)
