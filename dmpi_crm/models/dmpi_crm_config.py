@@ -307,8 +307,9 @@ class DmpiCrmConfig(models.Model):
                             lines = []
                             for sol in so.order_ids:
                                 ref_po_no = cid.name
+                                
                                 if cid.customer_ref != '':
-                                    ref_po_no = cid.customer_ref
+                                    ref_po_no = cid.customer_ref + '-W%s' % cid.week_id.week_no
 
                                 po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
                                 po_date = po_date.strftime('%Y%m%d')
