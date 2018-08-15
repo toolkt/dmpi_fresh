@@ -131,12 +131,28 @@ class DmpiCrmSaleContract(models.Model):
                 sap_cn_no = "/%s" % self.sap_cn_no
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
+
+    @api.depends('customer_ref','week_id')
+    def _get_customer_ref_to_sap(self):
+        ref = []
+        if self.customer_ref:
+            ref.append(self.customer_ref)
+        else:
+            ref.append(self.name)
+        if self.week_id:
+            ref.append("-W%s" % self.week_id.week_no)
+
+        self.customer_ref_to_sap = ''.join(ref)
+
+
+
     po_display_number = fields.Char("PO Numbers", compute="_get_po_display_number")
     name = fields.Char("ContractNo", default="Draft", copy=False)
     active = fields.Boolean("Active", default=True)
     cn_no = fields.Integer("CRM Contract no.", copy=False)
     sap_cn_no = fields.Char("SAP Contract no.", copy=False)
     customer_ref = fields.Char("Customer Reference", copy=False)
+    customer_ref_to_sap = fields.Char("Customer Reference", compute="_get_customer_ref_to_sap")
 
     sheet_settings = fields.Text("Settings")
     sheet_data = fields.Text("Data")
@@ -478,10 +494,7 @@ class DmpiCrmSaleContract(models.Model):
             for so in rec.sale_order_ids:
                 for sol in so.order_ids:
 
-                    ref_po_no = rec.name
-                    if rec.customer_ref != '':
-                        ref_po_no = rec.customer_ref
-                    ref_po_no = ref_po_no + '-W%s' % rec.week_id.week_no
+                    ref_po_no = rec.customer_ref_to_sap
 
                     po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
                     po_date = po_date.strftime('%Y%m%d')
@@ -787,6 +800,114 @@ class DmpiCrmSaleOrder(models.Model):
     def action_submit_so(self):
         for rec in self:
             print("SUBMIT SO to SAP")
+
+
+            if rec.contract_id.sap_cn_no:
+                print ("Good To Send")
+                print('PROCESS SO UPON RECEIVE %s' % rec.contract_id)
+                cid = rec.contract_id
+                for so in cid.sale_order_ids:
+
+                    lines = []
+                    for sol in so.order_ids:
+
+                        ref_po_no = cid.customer_ref_to_sap
+
+                        po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
+                        po_date = po_date.strftime('%Y%m%d')
+
+                        valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
+                        valid_from = valid_from.strftime('%Y%m%d')
+
+                        valid_to = datetime.strptime(cid.valid_to, '%Y-%m-%d')
+                        valid_to =   valid_to.strftime('%Y%m%d')
+
+
+                        line = {
+                            'odoo_po_no' : cid.name,
+                            'sap_cn_no' : cid.sap_cn_no,
+                            'odoo_so_no' : so.name,
+                            'sap_doc_type' : so.sap_doc_type,  
+                            'sales_org' : so.sales_org,
+                            'dist_channel' : cid.partner_id.dist_channel,
+                            'division' : cid.partner_id.division,  
+                            'sold_to' : cid.partner_id.customer_code,
+                            'ship_to' : so.ship_to_id.ship_to_code, 
+                            'ref_po_no' : ref_po_no,  
+                            'po_date' : po_date,
+                            # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
+                            'rdd' : so.create_date,
+                            'po_line_no' : so.contract_line_no,
+                            'so_line_no' : sol.so_line_no,  
+                            'material' : sol.product_id.sku,    
+                            'qty' : int(sol.qty),
+                            'uom' : 'CAS', 
+                            'plant' : so.plant,
+                            'reject_reason' : '',
+                            'so_alt_item' : '',
+                            'usage' : '',
+                            'original_ship_to' : ''
+                        }
+
+                        if so.sold_via_id:
+                            line['sold_to'] = so.sold_via_id.customer_code
+                            line['ship_to'] = so.sold_via_id.customer_code
+                            line['sap_doc_type'] = 'ZKM3'
+                            line['original_ship_to'] = so.ship_to_id.ship_to_code
+                            line['dist_channel'] = so.sold_via_id.dist_channel
+                            line['division'] = so.sold_via_id.division
+                        
+                        lines.append(line)
+                    # print (lines)
+
+                    filename = 'ODOO_SO_%s_%s.csv' % (so.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+                    path = '/tmp/%s' % filename
+
+                    with open(path, 'w') as f:
+                        writer = csv.writer(f, delimiter='\t')
+                        for l in lines:
+                            if 'original_ship_to' in l: 
+                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                            l['odoo_so_no'],l['sap_doc_type'],
+                                            l['sales_org'],l['dist_channel'],
+                                            l['division'],l['sold_to'],
+                                            l['ship_to'],l['ref_po_no'],
+                                            l['po_date'],l['rdd'],
+                                            l['po_line_no'],l['so_line_no'],
+                                            l['material'],l['qty'],
+                                            l['uom'],l['plant'],l['original_ship_to']
+                                        ])
+                            else:
+                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                            l['odoo_so_no'],l['sap_doc_type'],
+                                            l['sales_org'],l['dist_channel'],
+                                            l['division'],l['sold_to'],
+                                            l['ship_to'],l['ref_po_no'],
+                                            l['po_date'],l['rdd'],
+                                            l['po_line_no'],l['so_line_no'],
+                                            l['material'],l['qty'],
+                                            l['uom'],l['plant']
+                                        ])
+
+
+
+                    #TRANSFER TO REMOTE SERVER
+                    h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+                    host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+                    env.hosts.append(host_string)
+                    env.passwords[host_string] = h.ssh_pass
+
+                    localpath = path
+
+                    path = '%s/%s' % (h.inbound_so,filename)
+                    remotepath = path
+
+                    execute(file_send,localpath,remotepath)
+                    # rec.sent_to_sap = True
+                    
+
+
+
 
 
     @api.onchange('ship_to_id')

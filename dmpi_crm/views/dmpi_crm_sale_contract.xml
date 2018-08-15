@@ -218,6 +218,7 @@
                             <group>
                                 <group>
                                     <field name="cn_no"/>
+                                    <field name="customer_ref_to_sap"/>
                                     <field name="sent_to_sap"/>
                                     <field name="sent_to_sap_time"/>
                                 </group>

@@ -125,7 +125,6 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                                 continue
 
 
-
                             # CHECK PALLET ROUNDING
                             round_1 = fcl_config_pallet[0]
                             round_2 = fcl_config_pallet[1]
