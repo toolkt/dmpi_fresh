@@ -243,6 +243,8 @@
 
         <menuitem action="dmpi_crm_preship_report_action" id="dmpi_crm_preship_report" parent="dmpi_reports_menu"/>
 
+
+        <!-- LOADED VANS SUMARRY -->
         <record id="dmpi_crm_preship_summary_form" model="ir.ui.view">
             <field name="name">dmpi.crm.preship.summary.form</field>
             <field name="model">dmpi.crm.preship.summary</field>

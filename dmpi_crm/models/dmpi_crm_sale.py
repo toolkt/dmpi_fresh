@@ -1,24 +1,5 @@
 # -*- coding: utf-8 -*-
 
-###################################################################################
-# 
-#    Copyright (C) 2017 MuK IT GmbH
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-###################################################################################
-
 from odoo import _
 from odoo.osv import expression
 from odoo import models, api, fields
@@ -211,7 +192,8 @@ class DmpiCrmSaleContract(models.Model):
     # import_errors_disp = fields.Text("Import Errors", related='import_errors')
 
     sap_errors = fields.Text("SAP Errors")
-    week_no = fields.Char("Week No")
+    # week_no = fields.Char("Week No")
+    week_id = fields.Many2one('dmpi.crm.week',"Week No")
 
     
 
@@ -460,6 +442,8 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_confirm_contract(self):
         for rec in self:
+            if not rec.week_id:
+                raise UserError(_("No Set Week Number!"))
             rec.write({'state':'confirmed'})
 
 
@@ -493,6 +477,7 @@ class DmpiCrmSaleContract(models.Model):
                     ref_po_no = rec.name
                     if rec.customer_ref != '':
                         ref_po_no = rec.customer_ref
+                    ref_po_no = ref_po_no + '-W%s' % rec.week_id.week_no
 
                     po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
                     po_date = po_date.strftime('%Y%m%d')
@@ -1148,7 +1133,36 @@ class DmpiCrmDr(models.Model):
     port_discharge = fields.Char("Port of discharge")
     sto_no = fields.Char("STO No")
 
-                          
+
+    @api.multi
+    def action_generate_preship(self):
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        customer = self.contract_id.partner_id.name
+        print ('customer',customer)
+
+        preship = self.env['dmpi.crm.preship.report'].create({
+                    'dr_id': self.id ,
+                    'container': self.van_no,
+                    'customer': customer,
+                })
+
+        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
+        action['res_id'] = preship.id
+
+        return action
+
+    # @api.multi
+    # def action_view_invoice(self):
+    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
+
+    #     invoices = self.mapped('invoice_ids')
+    #     if len(invoices) > 1:
+    #         action['domain'] = [('id', 'in', invoices.ids)]
+    #     elif invoices:
+    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
+    #         action['res_id'] = invoices.id
+    #     return action
 
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'
