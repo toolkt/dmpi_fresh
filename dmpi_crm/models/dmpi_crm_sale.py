@@ -132,11 +132,11 @@ class DmpiCrmSaleContract(models.Model):
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
     po_display_number = fields.Char("PO Numbers", compute="_get_po_display_number")
-    name = fields.Char("ContractNo", default="Draft")
+    name = fields.Char("ContractNo", default="Draft", copy=False)
     active = fields.Boolean("Active", default=True)
-    cn_no = fields.Integer("CRM Contract no.")
-    sap_cn_no = fields.Char("SAP Contract no.")
-    customer_ref = fields.Char("Customer Reference")
+    cn_no = fields.Integer("CRM Contract no.", copy=False)
+    sap_cn_no = fields.Char("SAP Contract no.", copy=False)
+    customer_ref = fields.Char("Customer Reference", copy=False)
 
     sheet_settings = fields.Text("Settings")
     sheet_data = fields.Text("Data")
@@ -152,7 +152,7 @@ class DmpiCrmSaleContract(models.Model):
     credit_exposure = fields.Float("Credit Exposure")
     remaining_credit = fields.Float("Remaining Credit", compute='_compute_credit')
     ar_status = fields.Float("AR Status")
-    state = fields.Selection(CONTRACT_STATE,string="State", default='draft')
+    state = fields.Selection(CONTRACT_STATE,string="State", default='draft', track_visibility='onchange')
     state_disp = fields.Selection(CONTRACT_STATE,related='state',string="State", default='draft')
 
     contract_total = fields.Float("Contract Total")
@@ -166,8 +166,8 @@ class DmpiCrmSaleContract(models.Model):
 
     #ONE2MANY RELATIONSHIPTS
     contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
-    sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders')
-    customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders')
+    sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders', copy=True)
+    customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders', copy=True)
     invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
     # dmpi_invoice_ids = fields.One2many('dmpi.crm.invoice.dmpi','contract_id','Invoice (DMPI)')
     # dms_invoice_ids = fields.One2many('dmpi.crm.invoice.dms','contract_id','Invoice (DMS)')
@@ -223,6 +223,10 @@ class DmpiCrmSaleContract(models.Model):
             print(rec)
 
 
+    @api.multi
+    def action_cancel_po(self):
+        for rec in self:
+            rec.state = 'cancel'
 
     @api.multi
     def send_email(self):
@@ -851,7 +855,7 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
-    name = fields.Char("CRM SO No.", default="Draft")
+    name = fields.Char("CRM SO No.", default="Draft", copy=False)
     plant = fields.Char("Plant")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
     contract_line_no = fields.Integer("Contract Line No.")
@@ -859,7 +863,7 @@ class DmpiCrmSaleOrder(models.Model):
     sap_so_no = fields.Char("SAP SO no.")
     sap_so_date = fields.Date("SAP SO Date")
     sap_doc_type = fields.Selection(_get_doc_types,"Doc Type",default=_get_default_doc_types)
-    order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs')
+    order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs', copy=True)
     valid = fields.Boolean("Valid Order", default=True)
     valid_disp = fields.Boolean("Valid Order", related='valid')
 
@@ -1085,7 +1089,7 @@ class CustomerCrmSaleOrder(models.Model):
     _display_summary = 'Customer Sale Contract'
     _inherit = ['dmpi.crm.sale.order']
 
-    order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs')
+    order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True)
 
 
 
