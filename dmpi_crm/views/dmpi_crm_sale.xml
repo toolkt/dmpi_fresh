@@ -42,6 +42,9 @@
             <field name="model">dmpi.crm.dr</field>
             <field name="arch" type="xml">
                 <form class="o_form_document">
+                    <header>
+                        <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight"/>
+                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h1>
@@ -172,6 +175,8 @@
                         <page string="CLP">
                             <field name="clp_ids">
                                 <tree>
+                                    <button name="action_view_clp" type="object" icon="fa-external-link text-success"/>
+                                    <field name="dr_id"/>
                                     <field name="control_no"/>
                                     <field name="container_no"/>
                                     <field name="seal_no"/>

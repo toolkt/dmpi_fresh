@@ -1042,4 +1042,66 @@
         </record>
 
 
+        <!-- WEEK NUMBER -->
+        <record id="view_dmpi_crm_fiscal_year_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.fiscal.year.tree</field>
+            <field name="model">dmpi.crm.fiscal.year</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Fiscal Year">
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_fiscal_year_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.fiscal.year.form</field>
+            <field name="model">dmpi.crm.fiscal.year</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal Year">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="status"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Weeks">
+                                <field name="week_ids">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="week_no"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_fiscal_year" model="ir.actions.act_window">
+            <field name="name">Fiscal Year</field>
+            <field name="res_model">dmpi.crm.fiscal.year</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!-- <field name="contxet">{'active_test':False}</field> -->
+        </record>
+
+        <menuitem id="menu_dmpi_crm_fiscal_year" action="action_dmpi_crm_fiscal_year" parent="menu_dmpi_crm_master_top"/>
+
 </odoo>

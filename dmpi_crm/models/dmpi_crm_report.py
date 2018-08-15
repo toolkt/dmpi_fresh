@@ -131,7 +131,7 @@ class DmpiCrmPreshipReport(models.Model):
 	pre_pc = fields.Char('Before PC')
 	post_pc = fields.Char('After PC')
 	cold_store = fields.Char('Cold Storage')
-	pulp_temp_first = fields.Float('Pulp Temp 1st')
+	pulp_temp_first = fields.Float('Pulp Temp First')
 	pulp_temp_mid = fields.Float('Pulp Temp Mid')
 	pulp_temp_last = fields.Float('Pulp Temp Last')
 	no_pallet = fields.Integer('No of Pallets')
@@ -149,6 +149,9 @@ class DmpiCrmPreshipReport(models.Model):
 
 
 	def print_preship_report(self):
+		if not self.tmpl_id:
+			raise UserError(_('No Pre-shipment Template Selected'))
+
 		user = self.env.user
 
 		values = {

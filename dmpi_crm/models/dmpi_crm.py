@@ -1,24 +1,5 @@
 # -*- coding: utf-8 -*-
 
-###################################################################################
-# 
-#    Copyright (C) 2017 MuK IT GmbH
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-###################################################################################
-
 from odoo import _
 from odoo import models, api, fields
 from odoo.osv import expression
@@ -558,3 +539,28 @@ class MailMail(models.Model):
     @api.onchange('email_temp_id')
     def onchange_email_temp_id(self):
         self.body_html = self.email_temp_id.body_html
+
+
+class DmpiCRMFiscalYear(models.Model):
+    _name = 'dmpi.crm.fiscal.year'
+
+    name = fields.Char('Description')
+    code = fields.Char('Code')
+    date_from = fields.Date('Date From')
+    date_to = fields.Date('Date To')
+    status = fields.Selection([('open','Open'),('close','Close')], default='open', string="State")
+    week_ids = fields.One2many('dmpi.crm.week','fiscal_year_id', string="Week Ids")
+
+
+class DmpiCRMWeek(models.Model):
+    _name = 'dmpi.crm.week'
+
+    name = fields.Char('Description')
+    week_no = fields.Integer('Week No.')
+    date_from = fields.Date('Date From')
+    date_to = fields.Date('Date To')
+    fiscal_year_id = fields.Many2one('dmpi.crm.fiscal.year', string="Fiscal Year ID")
+
+
+
+
