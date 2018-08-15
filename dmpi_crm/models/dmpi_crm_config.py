@@ -333,8 +333,9 @@ class DmpiCrmConfig(models.Model):
                                     'ship_to' : so.ship_to_id.ship_to_code, 
                                     'ref_po_no' : ref_po_no,  
                                     'po_date' : po_date,
-                                    'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD 
-                                    'po_line_no' : so.contract_line_no,  
+                                    # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
+                                    'rdd' : so.create_date,
+                                    'po_line_no' : so.contract_line_no,
                                     'so_line_no' : sol.so_line_no,  
                                     'material' : sol.product_id.sku,    
                                     'qty' : int(sol.qty),
