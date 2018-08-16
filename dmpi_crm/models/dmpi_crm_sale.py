@@ -635,8 +635,10 @@ class DmpiCrmSaleOrder(models.Model):
                 print ("Contract Not Draft")
                 lines = []
                 cid = rec.contract_id
+                line_no = 0
                 for sol in rec.order_ids:
-
+                    line_no += 10
+                    sol.so_line_no = line_no
                     ref_po_no = cid.customer_ref_to_sap
 
                     po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
