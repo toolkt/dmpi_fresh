@@ -839,35 +839,53 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     #Crown
-    p101 = fields.Integer(string="P5", compute='get_p101')
-    p102 = fields.Integer(string="P6", compute='get_p102')
-    p103 = fields.Integer(string="P7", compute='get_P103')
-    p104 = fields.Integer(string="P8", compute='get_p104')
-    p105 = fields.Integer(string="P9", compute='get_p105')
-    p106 = fields.Integer(string="P10", compute='get_p106')
-    p107 = fields.Integer(string="P12", compute='get_p107')
-    p108 = fields.Integer(string="UA", compute='get_p108')
-    p109 = fields.Integer(string="UA", compute='get_p109')
-    p110 = fields.Integer(string="UA", compute='get_p110')
-    total_p100 = fields.Integer(string="Total", compute='get_total_p100')
+    p101 = fields.Integer(string="P5", compute='_get_product_qty')
+    p102 = fields.Integer(string="P6", compute='_get_product_qty')
+    p103 = fields.Integer(string="P7", compute='_get_product_qty')
+    p104 = fields.Integer(string="P8", compute='_get_product_qty')
+    p105 = fields.Integer(string="P9", compute='_get_product_qty')
+    p106 = fields.Integer(string="P10", compute='_get_product_qty')
+    p107 = fields.Integer(string="P12", compute='_get_product_qty')
+    p108 = fields.Integer(string="UA", compute='_get_product_qty')
+    p109 = fields.Integer(string="UA", compute='_get_product_qty')
+    p110 = fields.Integer(string="UA", compute='_get_product_qty')
+    total_p100 = fields.Integer(string="Total", compute='_get_product_qty')
 
     #Crownless
-    p201 = fields.Integer(string="P5C7", compute='get_p201')
-    p202 = fields.Integer(string="P6C8", compute='get_p202')
-    p203 = fields.Integer(string="P7C9", compute='get_P203')
-    p204 = fields.Integer(string="P8C10", compute='get_p204')
-    p205 = fields.Integer(string="P9C11", compute='get_p205')
-    p206 = fields.Integer(string="P10C12", compute='get_p206')
-    p207 = fields.Integer(string="P12C20", compute='get_p207')
-    p208 = fields.Integer(string="UA", compute='get_p208')
-    p209 = fields.Integer(string="UA", compute='get_p209')
-    p210 = fields.Integer(string="UA", compute='get_p210')
-    total_p200 = fields.Integer(string="Total", compute='get_total_p200')
+    p201 = fields.Integer(string="P5C7", compute='_get_product_qty')
+    p202 = fields.Integer(string="P6C8", compute='_get_product_qty')
+    p203 = fields.Integer(string="P7C9", compute='_get_product_qty')
+    p204 = fields.Integer(string="P8C10", compute='_get_product_qty')
+    p205 = fields.Integer(string="P9C11", compute='_get_product_qty')
+    p206 = fields.Integer(string="P10C12", compute='_get_product_qty')
+    p207 = fields.Integer(string="P12C20", compute='_get_product_qty')
+    p208 = fields.Integer(string="UA", compute='_get_product_qty')
+    p209 = fields.Integer(string="UA", compute='_get_product_qty')
+    p210 = fields.Integer(string="UA", compute='_get_product_qty')
+    total_p200 = fields.Integer(string="Total", compute='_get_product_qty')
 
 
+    @api.depends('order_ids')
+    def _get_product_qty(self):
+        self.ensure_one()
+        total_amount = 0.0
+        for l in self.order_ids:
+            total_amount += l.total
+            if l.product_code == 'P5': self.p101 += l.qty
+            if l.product_code == 'P6': self.p101 += l.qty
+            if l.product_code == 'P7': self.p101 += l.qty
+            if l.product_code == 'P8': self.p101 += l.qty
+            if l.product_code == 'P9': self.p101 += l.qty
+            if l.product_code == 'P10': self.p101 += l.qty
+            if l.product_code == 'P12': self.p101 += l.qty
+            if l.product_code == 'P5C7': self.p101 += l.qty
+            if l.product_code == 'P6C8': self.p101 += l.qty
+            if l.product_code == 'P7C9': self.p101 += l.qty
+            if l.product_code == 'P8C10': self.p101 += l.qty
+            if l.product_code == 'P9C11': self.p101 += l.qty
+            if l.product_code == 'P10C12': self.p1012 += l.qty
+            if l.product_code == 'P12C20': self.p101 += l.qty
 
-    def get_p101(self):
-        self.p101 = 1
 
 
 
@@ -1140,6 +1158,36 @@ class DmpiCrmDr(models.Model):
     port_discharge = fields.Char("Port of discharge")
     sto_no = fields.Char("STO No")
 
+
+    @api.multi
+    def action_generate_preship(self):
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        customer = self.contract_id.partner_id.name
+        print ('customer',customer)
+
+        preship = self.env['dmpi.crm.preship.report'].create({
+                    'dr_id': self.id ,
+                    'container': self.van_no,
+                    'customer': customer,
+                })
+
+        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
+        action['res_id'] = preship.id
+
+        return action
+
+    # @api.multi
+    # def action_view_invoice(self):
+    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
+
+    #     invoices = self.mapped('invoice_ids')
+    #     if len(invoices) > 1:
+    #         action['domain'] = [('id', 'in', invoices.ids)]
+    #     elif invoices:
+    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
+    #         action['res_id'] = invoices.id
+    #     return action
 
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'

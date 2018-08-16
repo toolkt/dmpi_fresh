@@ -336,7 +336,7 @@ class DmpiCrmConfig(models.Model):
                         
 
                     execute(transfer_files,f, outbound_path_success)
-                rec.write({'state':'processed'})
+                    contract.write({'state':'processed'})
                 print("Sync Success")
             except:
                 print("GET SUCCESS - FAILED")
