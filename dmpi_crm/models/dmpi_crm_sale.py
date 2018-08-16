@@ -535,6 +535,7 @@ class DmpiCrmSaleContract(models.Model):
                     if rec.sold_via_id:
                         line['sold_to'] = rec.sold_via_id.customer_code
                         line['ship_to'] = rec.sold_via_id.customer_code
+                        line['sales_org'] = rec.sold_via_id.sales_org
                         line['ship_to_dest'] = rec.sold_via_id.customer_code 
                     if rec.partner_id.alt_dist_channel:
                         line['dist_channel'] = rec.sold_via_id.dist_channel
@@ -824,27 +825,31 @@ class DmpiCrmSaleOrder(models.Model):
     valid_disp = fields.Boolean("Valid Order", related='valid')
 
 
+    #Crown
+    p101 = fields.Integer(string="P5", compute='get_p101')
+    p102 = fields.Integer(string="P6", compute='get_p102')
+    p103 = fields.Integer(string="P7", compute='get_P103')
+    p104 = fields.Integer(string="P8", compute='get_p104')
+    p105 = fields.Integer(string="P9", compute='get_p105')
+    p106 = fields.Integer(string="P10", compute='get_p106')
+    p107 = fields.Integer(string="P12", compute='get_p107')
+    p108 = fields.Integer(string="UA", compute='get_p108')
+    p109 = fields.Integer(string="UA", compute='get_p109')
+    p110 = fields.Integer(string="UA", compute='get_p110')
+    total_p100 = fields.Integer(string="Total", compute='get_total_p100')
 
-    p01 = fields.Integer(string="P5", compute='get_p01')
-    p02 = fields.Integer(string="P6", compute='get_p02')
-    p03 = fields.Integer(string="P7", compute='get_P03')
-    p04 = fields.Integer(string="P8", compute='get_p04')
-    p05 = fields.Integer(string="P9", compute='get_p05')
-    p06 = fields.Integer(string="P10", compute='get_p06')
-    p07 = fields.Integer(string="P12", compute='get_p07')
-    p08 = fields.Integer(string="P5C7", compute='get_p08')
-    p09 = fields.Integer(string="P6C8", compute='get_p09')
-    p10 = fields.Integer(string="P7C9", compute='get_p10')
-    p11 = fields.Integer(string="P8C10", compute='get_p11')
-    p12 = fields.Integer(string="P9C11", compute='get_p12')
-    p13 = fields.Integer(string="P10C12", compute='get_p13')
-    p14 = fields.Integer(string="P12C20", compute='get_p14')
-    p15 = fields.Integer(string="P15", compute='get_p15')
-    p16 = fields.Integer(string="P16", compute='get_p16')
-    p17 = fields.Integer(string="P17", compute='get_p17')
-    p18 = fields.Integer(string="P18", compute='get_p18')
-    p19 = fields.Integer(string="P19", compute='get_p19')
-    p20 = fields.Integer(string="P20", compute='get_p20')
+    #Crownless
+    p201 = fields.Integer(string="P5C7", compute='get_p201')
+    p202 = fields.Integer(string="P6C8", compute='get_p202')
+    p203 = fields.Integer(string="P7C9", compute='get_P203')
+    p204 = fields.Integer(string="P8C10", compute='get_p204')
+    p205 = fields.Integer(string="P9C11", compute='get_p205')
+    p206 = fields.Integer(string="P10C12", compute='get_p206')
+    p207 = fields.Integer(string="P12C20", compute='get_p207')
+    p208 = fields.Integer(string="UA", compute='get_p208')
+    p209 = fields.Integer(string="UA", compute='get_p209')
+    p210 = fields.Integer(string="UA", compute='get_p210')
+    total_p200 = fields.Integer(string="Total", compute='get_total_p200')
 
 
 
