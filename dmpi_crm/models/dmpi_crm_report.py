@@ -193,8 +193,11 @@ class DmpiCrmPreshipReport(models.Model):
 	@api.multi
 	def action_confirm_preship_report(self):
 		for rec in self:
-			rec.status = 'confirmed'
-			rec.clp_id.status = 'preship_confirmed'
+			if rec.clp_id:
+				rec.status = 'confirmed'
+				rec.clp_id.status = 'preship_confirmed'
+			else:
+				raise UserError(_("No CLP reference!"))
 
 
 
