@@ -235,7 +235,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 						else:
 							pqty.append(0)
 					else:
-						pass
+						pqty.append(0)
 
 				print (pqty)
 
