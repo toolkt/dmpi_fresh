@@ -120,10 +120,10 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			# REPORT HEADERS
 			# (column name, sub header, row detail format)
 			header_vals = [
-				('PH', '(Manual)', dname),
+				('PH', '(from Pre-shipment certificate)', dname),
 				('Date Loaded', '(from Pre-shipment certificate)', ddate),
 				('Date Packed', '(from Pre-shipment certificate)', dname),
-				('Start \n Pack Date', '(Manual)', ddate),
+				('Start \n Pack Date', '(from Pre-shipment certificate)', ddate),
 				('Container No.', '(from Pre-shipment certificate)', dname),
 				('Series Number', '(from Pre-shipment certificate)', dname),
 				('Remarks', '(from Pre-shipment certificate)', dname),
@@ -144,15 +144,15 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				('PS 20 / \n C20', '(Manual)', dname),
 				('Score, %', '(from Pre-shipment certificate)', dpercent),
 				('Class', '(from Pre-shipment certificate)', dname),
-				('Van Loading QA', '(Manual)', dname),
-				('Clerk', '(Manual)', dname),
-				('Supervisor', '(Manual)', dname),
-				('No. of Boxes', '(Manual)', dname),
-				('Simul Pack Date', '(Manual)', dname),
-				('Simul box No.', '(Manual)', dname),
-				('Vessel ETD', '(Manual)', ddate),
+				('Van Loading QA', '(from Pre-shipment certificate)', dname),
+				('Data Analyst', '(from Pre-shipment certificate)', dname),
+				('Supervisor', '(from Pre-shipment certificate)', dname),
+				('No. of Boxes', '(from Pre-shipment certificate)', dname),
+				('Simul Pack Date', '(from Pre-shipment certificate)', dname),
+				('Simul box No.', '(from Pre-shipment certificate)', dname),
+				('Vessel ETD', '(from Pre-shipment certificate)', ddate),
 				('AOP @ ETD', '(Manual)', dname),
-				('ETA @ POD', '(Manual)', ddate),
+				('ETA @ POD', '(from Pre-shipment certificate)', ddate),
 				('Transit Time', '(Manual)', dname),
 				('AOP @ ETA', '(Manual)', dname),
 			]
@@ -170,8 +170,10 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			query = """
 				SELECT
-					to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
+					cp.plant
+					,to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
 					,ps.date_pack
+					,to_char(to_timestamp(cp.date_start, 'yyyymmdd/hhmiss')::TIMESTAMP, 'dd/mm/yyyy') date_start
 					,ps.container
 					,ps.series_no
 					,ps.remarks
@@ -182,10 +184,37 @@ class PreShipmentCertificateReport(models.AbstractModel):
 					,ps.no_box
 					,ps.total_score
 					,ps.total_class
+					,ps.inspector_name
+					,ps.issuer_name
+					,ps.supervisor_name
+					,cp.boxes
+					,to_char(cp.simul_pack_date::TIMESTAMP, 'dd/mm/yyyy') simul_pack_date
+					,cp.simul_no
+					,to_char(to_timestamp(cp.date_depart, 'yyyymmdd')::TIMESTAMP, 'dd/mm/yyyy') date_depart
+					,to_char(to_timestamp(cp.date_arrive, 'yyyymmdd')::TIMESTAMP, 'dd/mm/yyyy') date_arrive
 				from dmpi_crm_preship_report ps
+				left join dmpi_crm_clp cp on cp.id = ps.clp_id
 				where ps.date_load between '%s'::DATE and '%s'::DATE
 					and ps.tmpl_id in %s
 			""" % (o.date_start, o.date_end, str(tmpl_ids))
+			# query = """
+			# 	SELECT
+			# 		to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
+			# 		,ps.date_pack
+			# 		,ps.container
+			# 		,ps.series_no
+			# 		,ps.remarks
+			# 		,ps.customer
+			# 		,ps.market
+			# 		,ps.shell_color
+			# 		,ps.pack_size
+			# 		,ps.no_box
+			# 		,ps.total_score
+			# 		,ps.total_class
+			# 	from dmpi_crm_preship_report ps
+			# 	where ps.date_load between '%s'::DATE and '%s'::DATE
+			# 		and ps.tmpl_id in %s
+			# """ 
 
 			print(query)
 			self._cr.execute(query)

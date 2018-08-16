@@ -59,8 +59,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			int_r = 21
 			pack_r = 28
 			foot_r = 35
-			img_attach_r = 40
-			
+			img_attach_r = 35
 
 			# SET ROW HEIGHTS
 			for i in range(1,52):
@@ -497,6 +496,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			# ADD ATTACHMENT
 			
+			r = img_attach_r
 			try:
 				img = o.img
 				img = codecs.decode(img, 'base64')

@@ -786,6 +786,7 @@
                                         <h3><strong style="color:#79717D;">Container Temp</strong></h3>
                                         <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                         <field name="simul_no" string="Simul No."/>
+                                        <field name="simul_pack_date" string="Simul Pack Date"/>
                                         <field name="first_temp" string="First"/>
                                         <field name="mid_temp" string="Mid"/>
                                         <field name="last_temp" string="Last"/>

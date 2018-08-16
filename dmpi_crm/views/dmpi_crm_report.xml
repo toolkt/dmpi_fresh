@@ -161,50 +161,62 @@
                     </header>
                     <sheet>
                         <h1>
-                            <field name="dr_no"/>/<field name="series_no"/></h1>
+                            <field name="dr_no" readonly="1"/>/<field name="series_no"/></h1>
                         <group>
                             <group>
                                 <field name="dr_id" invisible="1"/>
                                 <field name="container"/>
-                                <field name="tmpl_id" string="Template" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                <field name="tmpl_id" string="Template" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}" required="1"/>
                                 <field name="img"/>
+                                <field name="clp_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                             </group>
                             <group>
                                 <field name="date_issue"/>
-                                <field name="issuer"/>
+                                <field name="date_load"/>
+                                <field name="issuer" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}"/>
                                 <field name="customer"/>
+                                <field name="market"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="General">
-                                <group col="4" string="Product Specifications">
-                                    <!-- <field name="product_sc"/> -->
-                                    <field name="shell_color"/>
-                                    <field name="date_load"/>
+                                <group>
+                                    <group>
+                                        <field name="shell_color"/>
+                                        <field name="pack_size"/>
+                                        <field name="date_pack"/>
+                                        <field name="no_box"/>
+                                        <field name="field_source"/>
+                                    </group>
+                                    <group>
+                                        <field name="inspector" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}"/>
+                                        <field name="supervisor" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}"/>
+                                        <field name="remarks" class="oe_inline" placeholder="Remarks..."/>
 
-                                    <!-- <field name="product_ps"/> -->
-                                    <field name="pack_size"/>
-                                    <field name="inspector"/>
-
-                                    <field name="date_pack"/>
-                                    <field name="no_box"/>
-
-                                    <field name="market"/>
-                                    <field name="field_source"/>
+                                        <field name="issuer_name" invisible="1"/>
+                                        <field name="supervisor_name" invisible="1"/>
+                                        <field name="inspector_name" invisible="1"/>
+                                    </group>
                                 </group>
-                                <group col="4" string="FG Certification">
-                                    <field name="variety" required="0"/>
-                                    <field name="allergen"/>
-                                    <field name="supervisor"/>
+                                <group string="FG Certification">
+                                    <group>
+                                        <field name="variety" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}"/>
+                                        <field name="allergen"/>
+                                    </group>
+                                    <group>
+                                    </group>
                                 </group>
 
-                                <group col="4" string="Score">
-                                    <field name="total_score" readonly="1"/>
-                                    <field name="total_class" readonly="1"/>
+                                <group string="Score">
+                                    <group>
+                                        <field name="total_score" readonly="1"/>
+                                        <field name="total_class" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
                                 </group>
-
                             </page>
-                            <page string="Others">
+                            <page string="Production">
                                 <group>
                                     <group>
                                         <field name="temp_start" string="Supply Temp Start"/>
@@ -214,22 +226,16 @@
                                         <field name="van_temp_start" string="Van Temp Before"/>
                                         <field name="van_temp_end" string="Van Temp After"/>
                                     </group>
-                                    <group>
-                                        <field name="pre_pc"/>
-                                        <field name="post_pc"/>
-                                        <field name="cold_store"/>
-                                    </group>
-                                    <group>
-                                        <field name="pulp_temp_first"/>
-                                        <field name="pulp_temp_mid"/>
-                                        <field name="pulp_temp_last"/>
-                                    </group>
-                                    <group>
-                                        <field name="no_pallet"/>
-                                    </group>
                                 </group>
-                                <separator/>
-                                <field name="remarks" class="oe_inline" placeholder="Remarks..."/>
+                                <field name="pc_line_ids">
+                                    <tree string="PC Line Ids" editable="bottom">
+                                        <field name="pack_date"/>
+                                        <field name="before_pc"/>
+                                        <field name="after_pc"/>
+                                        <field name="cold_storage"/>
+                                        <field name="no_pallet"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Settings">
                                 <group>

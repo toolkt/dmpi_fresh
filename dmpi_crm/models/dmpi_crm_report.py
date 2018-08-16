@@ -106,7 +106,7 @@ class DmpiCrmPreshipReport(models.Model):
 
 	date_issue = fields.Datetime('Date Issue', default=fields.Datetime.now())
 	# issuer = fields.Char('Issued By')
-	issuer = fields.Many2one('res.users','Issued By', default=lambda self: self.env.user and self.env.user.id or False)
+	
 	# container = fields.Char('Container No', compute='_get_container', store=True) # COMPUTED AUTOMATIC VALUE ONCHANGE FROM DR
 	container = fields.Char('Container No') # COMPUTED AUTOMATIC VALUE ONCHANGE FROM DR
 	customer = fields.Char('Customer')
@@ -121,7 +121,7 @@ class DmpiCrmPreshipReport(models.Model):
 
 	series_no = fields.Char('Series No', default=_("New"), readonly=True)
 	date_load = fields.Date('Date Loaded')
-	inspector = fields.Many2one('res.users','QA Inspector')
+	
 	no_box = fields.Integer('No. of Boxes')
 
 	field_source = fields.Char('Field Source')
@@ -131,26 +131,38 @@ class DmpiCrmPreshipReport(models.Model):
 	van_temp_start = fields.Float('Van Temp Before Stuffing')
 	van_temp_end = fields.Float('Van Temp Setting')
 
-	pre_pc = fields.Char('Before PC')
-	post_pc = fields.Char('After PC')
-	cold_store = fields.Char('Cold Storage')
+	# pre_pc = fields.Char('Before PC')
+	# post_pc = fields.Char('After PC')
+	# cold_store = fields.Char('Cold Storage')
 	pulp_temp_first = fields.Float('Pulp Temp First')
 	pulp_temp_mid = fields.Float('Pulp Temp Mid')
 	pulp_temp_last = fields.Float('Pulp Temp Last')
-	no_pallet = fields.Integer('No of Pallets')
+	# no_pallet = fields.Integer('No of Pallets')
 	remarks = fields.Text('Remarks')
 
 	# FG certificate
 	# variety = fields.Char('Variety')
 	variety = fields.Many2one('dmpi.crm.variety', string='Variety')
 	allergen = fields.Char('Allergen Declaration', default="SOY")
+
+	issuer = fields.Many2one('res.users','Issued By', default=lambda self: self.env.user and self.env.user.id or False)
 	supervisor = fields.Many2one('res.users','QA Supervisor')
+	inspector = fields.Many2one('res.users','QA Inspector')
+
+	issuer_name = fields.Char('Issuer Name', related="issuer.name", store=True)
+	supervisor_name = fields.Char('QA Supervisor Name', related="supervisor.name", store=True)
+	inspector_name = fields.Char('Inspector Supervisor Name', related="inspector.name", store=True)
 
 	status = fields.Selection([('draft','Draft'),('confirmed','Confrimed'),('cancel','Cancelled')], default='draft', string="Status")
 	status_disp = fields.Selection(string='Status', related="status")
 
 	total_score = fields.Float('Score')
 	total_class = fields.Char('Class')
+
+	pc_line_ids = fields.One2many('dmpi.crm.preship.pc.line','preship_id','PC Line Ids')
+
+
+
 
 
 	def print_preship_report(self):
@@ -183,6 +195,19 @@ class DmpiCrmPreshipReport(models.Model):
 		for rec in self:
 			rec.status = 'confirmed'
 			rec.clp_id.status = 'preship_confirmed'
+
+
+
+class DmpiCRMPreshipPCLine(models.Model):
+	_name = 'dmpi.crm.preship.pc.line'
+
+	pack_date = fields.Date('Pack Date')
+	before_pc = fields.Text('Before PC')
+	after_pc = fields.Text('After PC')
+	cold_storage = fields.Text('Cold Storage')
+	no_pallet = fields.Integer('No. of Pallets')
+
+	preship_id = fields.Many2one('dmpi.crm.preship.report','Preshipment Report')
 
 class DmpiCrmClp(models.Model):
     _name = 'dmpi.crm.clp'
@@ -220,7 +245,7 @@ class DmpiCrmClp(models.Model):
         return values
 
     # headers
-    control_no = fields.Char('Control No', default="/")
+    control_no = fields.Char('Control No')
     logo = fields.Binary('Logo')
     layout_name = fields.Char('Layout Name')
 
@@ -267,6 +292,7 @@ class DmpiCrmClp(models.Model):
     # container temperatures
     # container_temp = fields.Text('Container Temp Details')
     simul_no = fields.Char('Simulation No')
+    simul_pack_date = fields.Date('Simulation Pack Date')
     first_temp = fields.Char('First Temp')
     mid_temp = fields.Char('Mid Temp')
     last_temp = fields.Char('Last Temp')
@@ -380,7 +406,6 @@ class DmpiCrmClpLine(models.Model):
     pack_size = fields.Char('Pack Size')
 
     clp_id = fields.Many2one('dmpi.crm.clp', 'CLP ID', ondelete='cascade')
-
 
 
 class DmpiCrmPreshipSummary(models.TransientModel):
