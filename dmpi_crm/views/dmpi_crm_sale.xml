@@ -42,9 +42,6 @@
             <field name="model">dmpi.crm.dr</field>
             <field name="arch" type="xml">
                 <form class="o_form_document">
-                    <header>
-                        <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight"/>
-                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h1>

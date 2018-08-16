@@ -86,7 +86,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			sheet.write('F8','PRODUCT CERTIFICATE', dtitle)
 			sheet.write('F9','(This form is uncontrolled when printed)', dtitle_blue)
 
-			s = "This is to certify that products of this shipment, %s Fresh Pineapples, with Container # " % (o.variety or '')
+			s = "This is to certify that products of this shipment, %s Fresh Pineapples, with Container # " % (o.variety.name or '')
 			s2 = ", contain traces of "
 			s3 = """\n\nThe said food additives are approved for use by Food and Drug Administration (of the US, Philippines and Japan) and are judiciously used according to approved specified application and handling. \n
 Further, planting, growing, harvesting and packing of this product are in accrodance with  Global G.A.P. (Good Agricultural Practices) and standard protocols to avoid the risk of biological, chemical and physical contaminations.\n\n
@@ -103,7 +103,7 @@ Certified true and correct: """
 
 			# FOOTER
 			sheet.write('B34','Fresh Fruit Quality Assurance', footer)
-			sheet.write('B33',o.supervisor or ' ', footer_supervisor)
+			sheet.write('B33',o.supervisor.name or ' ', footer_supervisor)
 
 			for i in range(2,4):
 				sheet.write(cols[i]+'33','', footer_line)

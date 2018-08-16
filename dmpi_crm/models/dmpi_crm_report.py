@@ -99,11 +99,14 @@ class DmpiCrmPreshipReport(models.Model):
 			pass
 
 	dr_id = fields.Many2one('dmpi.crm.dr', 'DR Reference')
+	dr_no = fields.Char('DR Number', related="dr_id.sap_so_no")
+	clp_id = fields.Many2one('dmpi.crm.clp', 'CLP Reference')
 	tmpl_id = fields.Many2one('dmpi.crm.template', 'Pre-Shipment Template')
 	img = fields.Binary('Image Attachment')
 
 	date_issue = fields.Datetime('Date Issue', default=fields.Datetime.now())
-	issuer = fields.Char('Issued By')
+	# issuer = fields.Char('Issued By')
+	issuer = fields.Many2one('res.users','Issued By', default=lambda self: self.env.user and self.env.user.id or False)
 	# container = fields.Char('Container No', compute='_get_container', store=True) # COMPUTED AUTOMATIC VALUE ONCHANGE FROM DR
 	container = fields.Char('Container No') # COMPUTED AUTOMATIC VALUE ONCHANGE FROM DR
 	customer = fields.Char('Customer')
@@ -118,7 +121,7 @@ class DmpiCrmPreshipReport(models.Model):
 
 	series_no = fields.Char('Series No', default=_("New"), readonly=True)
 	date_load = fields.Date('Date Loaded')
-	inspector = fields.Char('QA Inspector')
+	inspector = fields.Many2one('res.users','QA Inspector')
 	no_box = fields.Integer('No. of Boxes')
 
 	field_source = fields.Char('Field Source')
@@ -138,11 +141,13 @@ class DmpiCrmPreshipReport(models.Model):
 	remarks = fields.Text('Remarks')
 
 	# FG certificate
-	variety = fields.Char('Variety')
-	allergen = fields.Char('Allergen Declaration')
-	supervisor = fields.Char('QA Supervisor')
+	# variety = fields.Char('Variety')
+	variety = fields.Many2one('dmpi.crm.variety', string='Variety')
+	allergen = fields.Char('Allergen Declaration', default="SOY")
+	supervisor = fields.Many2one('res.users','QA Supervisor')
 
-	state = fields.Selection([('draft','Draft'),('confirm','Confrimed'),('cancel','Cancelled')], default='draft')
+	status = fields.Selection([('draft','Draft'),('confirmed','Confrimed'),('cancel','Cancelled')], default='draft', string="Status")
+	status_disp = fields.Selection(string='Status', related="status")
 
 	total_score = fields.Float('Score')
 	total_class = fields.Char('Class')
@@ -172,6 +177,12 @@ class DmpiCrmPreshipReport(models.Model):
 			'name': 'FG Certificate',
 		}
 		return values
+
+	@api.multi
+	def action_confirm_preship_report(self):
+		for rec in self:
+			rec.status = 'confirmed'
+			rec.clp_id.status = 'preship_confirmed'
 
 class DmpiCrmClp(models.Model):
     _name = 'dmpi.crm.clp'
@@ -223,6 +234,7 @@ class DmpiCrmClp(models.Model):
 
     week = fields.Integer('Week')
     brand = fields.Char('Brand')
+    shell_color = fields.Char('Shell Color')
     description = fields.Char('Description')
     boxes = fields.Integer('Boxes')
     installed = fields.Boolean('Is Installed?')
@@ -267,8 +279,29 @@ class DmpiCrmClp(models.Model):
     remarks = fields.Text('Remarks')
 
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
+    dr_no = fields.Char(string='DR Number', related="dr_id.name")
     clp_line_ids = fields.One2many('dmpi.crm.clp.line', 'clp_id', "CLP Line Ids")
+    preship_ids = fields.One2many('dmpi.crm.preship.report','clp_id','Pre-Shipment Certificates')
 
+    status = fields.Selection([
+    	('sap_generated','SAP Generated'),
+    	('qa_confirmed','QA Confirmed'),
+    	('preship_generated','Pre-shipment Generted'),
+    	('preship_confirmed','Pre-shipment Confirmed')] ,default='sap_generated')
+
+    status_disp = fields.Selection(string='Status Disp', related="status")
+
+    @api.multi
+    def action_confirm_clp(self):
+    	for rec in self:
+
+    		dr = rec.dr_id
+    		if len(dr.insp_lots) <= 0:
+    			raise UserError("No Inspection Lots Received from DR. Cannot confirm CLP")
+    		elif len(self.clp_line_ids) <= 0:
+    			raise UserError("No CLP Line Items")
+    		else:
+    			rec.status = 'qa_confirmed'
 
     def action_view_clp(self):
 
@@ -279,6 +312,54 @@ class DmpiCrmClp(models.Model):
     	})
 
     	return action
+
+
+    @api.multi
+    def action_generate_preship(self):
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        clp = self
+        dr = self.dr_id
+        so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=', dr.sap_so_no)])
+        contract = dr.contract_id
+
+        # prepare pack size
+        ps = list(set(clp.clp_line_ids.mapped('pack_size')))
+        ps = ','.join(ps)
+
+
+
+        dr_id = dr.id
+        container = dr.van_no
+        customer = contract.partner_id.name
+        shell_color = so.shell_color
+        market = dr.port_destination
+        date_load = datetime.today()
+        no_box = clp.boxes
+        inspector_id = clp.inspector_id.id
+        pack_size = ps
+        # pack_date = 
+
+        preship = self.env['dmpi.crm.preship.report'].create({
+            'dr_id': dr.id,
+            'clp_id': clp.id,
+            'container': container,
+            'customer': customer,
+            'shell_color': shell_color,
+            'market': market,
+            'date_load': date_load,
+            'no_box': no_box,
+            'inspector': inspector_id,
+            'pack_size': pack_size,
+        })
+
+        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
+        action['res_id'] = preship.id
+
+        clp.status = 'preship_generated'
+        return action
+
+
 
 class DmpiCrmClpLine(models.Model):
     _name = 'dmpi.crm.clp.line'

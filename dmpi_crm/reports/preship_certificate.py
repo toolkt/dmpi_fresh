@@ -104,9 +104,10 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			sheet.write('I1','F-QUA-008,02', phead)
 			sheet.write('I2','Effectivity date:', phead)
 
-			img = self.env['ir.attachment'].search([('datas_fname','like','philpack_logo.png')]).datas
+			
 
 			try:
+				img = self.env['ir.attachment'].search([('datas_fname','like','philpack_logo.png')]).datas
 				img = codecs.decode(img, 'base64')
 				image_data = BytesIO(img)
 				sheet.insert_image('B1', '', {'image_data':image_data, 'x_offset':-25.0, 'x_scale':0.865, 'y_scale':1})
@@ -274,7 +275,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				name = rec['factor']
 				col_end = rec['count']
 				no_defect = int(rec['no_defect'] or 0)
-				total_sample = int(rec['total_sample'] or 0)
+				total_sample = int(rec['total_sample'] or 1)
 				percent_defect = no_defect / total_sample
 				avg = float(rec['average'] or 0)
 				weight = float(rec['weight'] or 0) / 100.
@@ -429,7 +430,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 						total_score += grp_score
 
-			# WRITE TOTALS
+			# # WRITE TOTALS
 			total_weight = o.tmpl_id.total_weight / 100.
 			overall_rule = o.tmpl_id.overall_rule
 			print (total_clss, total_weight, total_score)
@@ -441,16 +442,14 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			# update record
 			# o.total_score = total_score
 			# o.total_class = total_clss
-			o.update({
-				'total_score': round(total_score,3),
-				'total_class': total_clss,
-			})
+			o.total_score = round(total_score,3)
+			o.total_class = total_clss
 
 			# total_clss = '=IF(OR(C14="HOLD",D14="HOLD"),"HOLD",(IF(B13>=94%%*%s%%,"AA",IF(B13>88%%*%s%%,"A","C"))))' % (total_weight,total_weight)
 			sheet.write('B13', '=SUM(C13:E13)', head_tot_val)
 			sheet.write('B14', total_clss, head_tot_class)
 
-			# OTHERS
+			# # OTHERS
 			d = datetime.strptime(o.date_issue, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone('UTC'))
 			d_local = d.astimezone(timezone(o.create_uid.tz or 'Asia/Manila'))
 			date_issue = datetime.strftime(d_local, '%d/%m/%Y')
@@ -458,7 +457,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			sheet.write('B6', date_issue or '', head_name)
 			sheet.write('B7', time_issue or '', head_name)
-			sheet.write('B8', o.issuer or '', head_name)
+			sheet.write('B8', o.issuer.name or '', head_name)
 			sheet.write('B9', o.container or '', head_dash)
 			sheet.write('B10', o.customer or '', head_dash)
 
@@ -471,7 +470,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			sheet.write('I7', o.series_no or '', head_name)
 			sheet.write('I8', o.date_load or '', head_name)
-			sheet.write('I9', o.inspector or '', head_name)
+			sheet.write('I9', o.inspector.name or '', head_name)
 			sheet.write('I10', o.no_box or '', head_name)
 
 			sheet.merge_range('G13:H13',o.field_source or '', head_mrg_bot)
@@ -497,8 +496,9 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			# 	sheet.merge_range('%s%s:%s%s'%(c,r+10,c,r+11),'', mrg_center)
 
 			# ADD ATTACHMENT
-			img = o.img
+			
 			try:
+				img = o.img
 				img = codecs.decode(img, 'base64')
 				image_data = BytesIO(img)
 				# sheet.insert_image('A%s' % (r+13), '', {'image_data':image_data})
