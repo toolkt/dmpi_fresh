@@ -133,15 +133,20 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				('Pack Size', '(from Pre-shipment certificate)', dname),
 				('No. of Boxes', '(from Pre-shipment certificate)', dname),
 				('# of Pallets or Boxes per pack date', '(Manual)', dname),
-				('PS 5 / \n C7', '(Manual)', dname),
-				('PS 6 / \n C8', '(Manual)', dname),
-				('PS 7 / \n C9', '(Manual)', dname),
-				('PS 8 / \n C10', '(Manual)', dname),
-				('PS 9 / \n C11', '(Manual)', dname),
-				('PS 10 / \n C12', '(Manual)', dname),
-				('PS 12', '(Manual)', dname),
-				('PS 14', '(Manual)', dname),
-				('PS 20 / \n C20', '(Manual)', dname),
+				('P5', '(PManual)', dname),
+				('P6', '(PManual)', dname),
+				('P7', '(PManual)', dname),
+				('P8', '(PManual)', dname),
+				('P9', '(PManual)', dname),
+				('P10', '(PManual)', dname),
+				('P12', '(PManual)', dname),
+				('P5/C7', '(PManual)', dname),
+				('P6/C8', '(PManual)', dname),
+				('P7/C9', '(PManual)', dname),
+				('P8/C10', '(PManual)', dname),
+				('P9/C11', '(PManual)', dname),
+				('P10/C12', '(PManual)', dname),
+				('P12/C20', '(PManual)', dname),
 				('Score, %', '(from Pre-shipment certificate)', dpercent),
 				('Class', '(from Pre-shipment certificate)', dname),
 				('Van Loading QA', '(from Pre-shipment certificate)', dname),
@@ -170,7 +175,8 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			query = """
 				SELECT
-					cp.plant
+					cp.dr_id
+					,cp.plant
 					,to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
 					,ps.date_pack
 					,to_char(to_timestamp(cp.date_start, 'yyyymmdd/hhmiss')::TIMESTAMP, 'dd/mm/yyyy') date_start
@@ -197,25 +203,6 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				where ps.date_load between '%s'::DATE and '%s'::DATE
 					and ps.tmpl_id in %s
 			""" % (o.date_start, o.date_end, str(tmpl_ids))
-			# query = """
-			# 	SELECT
-			# 		to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
-			# 		,ps.date_pack
-			# 		,ps.container
-			# 		,ps.series_no
-			# 		,ps.remarks
-			# 		,ps.customer
-			# 		,ps.market
-			# 		,ps.shell_color
-			# 		,ps.pack_size
-			# 		,ps.no_box
-			# 		,ps.total_score
-			# 		,ps.total_class
-			# 	from dmpi_crm_preship_report ps
-			# 	where ps.date_load between '%s'::DATE and '%s'::DATE
-			# 		and ps.tmpl_id in %s
-			# """ 
-
 			print(query)
 			self._cr.execute(query)
 			result = self._cr.fetchall()
@@ -223,7 +210,32 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			row = 6
 			for rec in result:
 				# set row values
-				rec = iter(rec)
+				dr_id = rec[0]
+				# dr = self.env['dmpi.crm.dr'].search([('id','=',dr_id)], limit=1)
+
+				pqty = []
+				psd = ['P5' ,'P6' ,'P7' ,'P8' ,'P9' ,'P10' ,'P12' ,'P5C7' ,'P6C8' ,'P7C9' ,'P8C10' ,'P9C11' ,'P10C12' ,'P12C20']
+				for p in psd:
+					query = """
+						SELECT sum(dl.qty), pp.code
+						from dmpi_crm_dr_line dl
+						left join dmpi_crm_product pp on pp.sku = dl.material
+						where dl.dr_id = %s and pp.code = '%s'
+						group by pp.code
+						LIMIT 1
+					""" % (dr_id, p)
+					self._cr.execute(query)
+					result = self._cr.fetchall()
+
+					if result:
+						pqty.append(result[0][0])
+					else:
+						pqty.append(0)
+
+				print (pqty)
+
+				pqty = iter(pqty)
+				rec = iter(rec[1:])
 				col = 0
 
 				aop_etd = '=AE%s-D%s' % (row+1, row+1)
@@ -241,6 +253,9 @@ class PreShipmentCertificateReport(models.AbstractModel):
 							sheet.write(row, col, aop_eta_time, h[2])
 						else:
 							sheet.write(row, col, '', h[2])
+
+					elif h[1] == '(PManual)':
+						sheet.write(row, col, next(pqty), h[2])
 
 					else:
 						sheet.write(row, col, next(rec), h[2])
