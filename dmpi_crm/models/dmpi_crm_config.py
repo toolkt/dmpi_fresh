@@ -333,10 +333,8 @@ class DmpiCrmConfig(models.Model):
                             for so in contract.sale_order_ids:
                                 so[0].action_submit_so()
 
-                        
-
-                        execute(transfer_files,f, outbound_path_success)
-                        contract.write({'state':'processed'})
+                    execute(transfer_files,f, outbound_path_success)
+                # rec.write({'state':'processed'})
                 print("Sync Success")
             except:
                 print("GET SUCCESS - FAILED")
@@ -768,11 +766,6 @@ class DmpiCrmConfig(models.Model):
                                 except:
                                     pass
 
-                                try:
-                                    so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])])
-                                except:
-                                    pass
-
 
                             if row[0] == 'Item':
                                 line = {
@@ -856,7 +849,6 @@ class DmpiCrmConfig(models.Model):
 
                                 clp['week'] = row[1]
                                 clp['brand'] = row[2]
-                                clp['shell_color'] = so.shell_color
                                 clp['description'] = row[3]
                                 clp['boxes'] = float(row[4])
 
