@@ -132,15 +132,15 @@ class DmpiCrmSaleContract(models.Model):
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
 
-    @api.depends('customer_ref','week_id')
+    @api.depends('customer_ref','week_no')
     def _get_customer_ref_to_sap(self):
         ref = []
         if self.customer_ref:
             ref.append(self.customer_ref)
         else:
             ref.append(self.name)
-        if self.week_id:
-            ref.append("-W%s" % self.week_id.week_no)
+        if self.week_no:
+            ref.append("-W%s" % self.week_no)
 
         self.customer_ref_to_sap = ''.join(ref)
 
@@ -158,6 +158,7 @@ class DmpiCrmSaleContract(models.Model):
     sheet_data = fields.Text("Data")
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
+    sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
 
     contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
@@ -208,8 +209,8 @@ class DmpiCrmSaleContract(models.Model):
     # import_errors_disp = fields.Text("Import Errors", related='import_errors')
 
     sap_errors = fields.Text("SAP Errors")
-    # week_no = fields.Char("Week No")
-    week_id = fields.Many2one('dmpi.crm.week',"Week No")
+    week_no = fields.Char("Week No")
+    #week_id = fields.Many2one('dmpi.crm.week',"Week No")
 
     
 
@@ -462,7 +463,7 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_confirm_contract(self):
         for rec in self:
-            if not rec.week_id:
+            if not rec.week_no:
                 raise UserError(_("No Set Week Number!"))
             rec.write({'state':'confirmed'})
 
@@ -531,16 +532,16 @@ class DmpiCrmSaleContract(models.Model):
                     # 3.       The value of the “Final Ship-to” column which is “Your Reference” field i.e. VBKD-IHREZ in SAP should be the related ship-to chosen by the key-user from point 1 above.
                     # 4.       The sales order document type sent in the csv file should be ZKM3 instead of ZXSO when this is the scenario (i.e. sold-to customer is 13046).  
 
-                    # if rec.partner_id.alt_customer_code:
-                    #     line['sold_to'] = rec.partner_id.alt_customer_code
-                    #     line['ship_to'] = rec.partner_id.alt_customer_code
-                    #     line['ship_to_dest'] = rec.partner_id.alt_customer_code 
-                    # if rec.partner_id.alt_dist_channel:
-                    #     line['dist_channel'] = rec.partner_id.alt_dist_channel
-                    # if rec.partner_id.alt_division:
-                    #     line['division'] = rec.partner_id.alt_division
-                    # if rec.partner_id.alt_customer_code:
-                    #     line['sold_to'] = rec.partner_id.alt_customer_code
+                    if rec.sold_via_id:
+                        line['sold_to'] = rec.sold_via_id.customer_code
+                        line['ship_to'] = rec.sold_via_id.customer_code
+                        line['ship_to_dest'] = rec.sold_via_id.customer_code 
+                    if rec.partner_id.alt_dist_channel:
+                        line['dist_channel'] = rec.sold_via_id.dist_channel
+                    if rec.partner_id.alt_division:
+                        line['division'] = rec.sold_via_id.division
+                    if rec.partner_id.alt_customer_code:
+                        line['sold_to'] = rec.sold_via_id.customer_code
 
 
                     lines.append(line)
@@ -673,13 +674,13 @@ class DmpiCrmSaleOrder(models.Model):
                         'original_ship_to' : ''
                     }
 
-                    if rec.sold_via_id:
-                        line['sold_to'] = rec.sold_via_id.customer_code
-                        line['ship_to'] = rec.sold_via_id.customer_code
+                    if cid.sold_via_id:
+                        line['sold_to'] = cid.sold_via_id.customer_code
+                        line['ship_to'] = cid.sold_via_id.customer_code
                         line['sap_doc_type'] = 'ZKM3'
                         line['original_ship_to'] = rec.ship_to_id.ship_to_code
-                        line['dist_channel'] = rec.sold_via_id.dist_channel
-                        line['division'] = rec.sold_via_id.division
+                        line['dist_channel'] = cid.sold_via_id.dist_channel
+                        line['division'] = cid.sold_via_id.division
                     
                     lines.append(line)
                 # print (lines)
@@ -727,8 +728,9 @@ class DmpiCrmSaleOrder(models.Model):
                 remotepath = path
 
                 execute(file_send,localpath,remotepath)
-                # rec.sent_to_sap = True
                 raise Warning("SO was Successfully Created")
+
+
             else:
                 #TODO Create real Warning
                 print ("Not Created")
@@ -823,27 +825,26 @@ class DmpiCrmSaleOrder(models.Model):
 
 
 
-    p01              = fields.Integer(string="P5", compute='get_totals')
-    p02              = fields.Integer(string="P6", compute='get_totals')
-    p03              = fields.Integer(string="P7", compute='get_totals')
-    p04              = fields.Integer(string="P8", compute='get_totals')
-    p05              = fields.Integer(string="P9", compute='get_totals')
-    p06              = fields.Integer(string="P6", compute='get_totals')
-    p07              = fields.Integer(string="P6", compute='get_totals')
-    p08              = fields.Integer(string="P6", compute='get_totals')
-    p09              = fields.Integer(string="P6", compute='get_totals')
-    p10              = fields.Integer(string="P6", compute='get_totals')
-    p11              = fields.Integer(string="P6", compute='get_totals')
-    p12              = fields.Integer(string="P6", compute='get_totals')
-    p13              = fields.Integer(string="P6", compute='get_totals')
-    p14              = fields.Integer(string="P6", compute='get_totals')
-    p15              = fields.Integer(string="P6", compute='get_totals')
-    p16              = fields.Integer(string="P6", compute='get_totals')
-    p17              = fields.Integer(string="P6", compute='get_totals')
-    p18              = fields.Integer(string="P6", compute='get_totals')
-    p19              = fields.Integer(string="P6", compute='get_totals')
-    p20              = fields.Integer(string="P6", compute='get_totals')
-
+    p01 = fields.Integer(string="P5", compute='get_p01')
+    p02 = fields.Integer(string="P6", compute='get_p02')
+    p03 = fields.Integer(string="P7", compute='get_P03')
+    p04 = fields.Integer(string="P8", compute='get_p04')
+    p05 = fields.Integer(string="P9", compute='get_p05')
+    p06 = fields.Integer(string="P10", compute='get_p06')
+    p07 = fields.Integer(string="P12", compute='get_p07')
+    p08 = fields.Integer(string="P5C7", compute='get_p08')
+    p09 = fields.Integer(string="P6C8", compute='get_p09')
+    p10 = fields.Integer(string="P7C9", compute='get_p10')
+    p11 = fields.Integer(string="P8C10", compute='get_p11')
+    p12 = fields.Integer(string="P9C11", compute='get_p12')
+    p13 = fields.Integer(string="P10C12", compute='get_p13')
+    p14 = fields.Integer(string="P12C20", compute='get_p14')
+    p15 = fields.Integer(string="P15", compute='get_p15')
+    p16 = fields.Integer(string="P16", compute='get_p16')
+    p17 = fields.Integer(string="P17", compute='get_p17')
+    p18 = fields.Integer(string="P18", compute='get_p18')
+    p19 = fields.Integer(string="P19", compute='get_p19')
+    p20 = fields.Integer(string="P20", compute='get_p20')
 
 
 
@@ -887,7 +888,6 @@ class DmpiCrmSaleOrder(models.Model):
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
     ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
     notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
-    sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
     # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
     sales_org = fields.Char("Sales Org")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')

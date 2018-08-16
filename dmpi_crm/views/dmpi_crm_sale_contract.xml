@@ -116,8 +116,8 @@
                                 <field name="po_date" required="1"/>
                                 <field name="valid_from" required="1"/>
                                 <field name="valid_to" required="1"/>   
-                                <!-- <field name="week_no" /> -->
-                                <field name="week_id" />
+                                <field name="week_no" />
+                                <field name="sold_via_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                             </group>
                             <group>
 
