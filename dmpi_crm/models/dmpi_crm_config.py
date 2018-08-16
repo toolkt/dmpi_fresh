@@ -333,10 +333,11 @@ class DmpiCrmConfig(models.Model):
                             for so in contract.sale_order_ids:
                                 so[0].action_submit_so()
 
-                        rec.write({'state':'processed'})
+                        
 
                     execute(transfer_files,f, outbound_path_success)
-
+                rec.write({'state':'processed'})
+                print("Sync Success")
             except:
                 print("GET SUCCESS - FAILED")
                 pass
@@ -359,9 +360,6 @@ class DmpiCrmConfig(models.Model):
             env.passwords[host_string] = h.ssh_pass
 
 
-
-            #-------------------------------------------------------------------------------------------------------
-
             #GET FAIL
 
             outbound_path_fail= rec.inbound_k_log_fail
@@ -376,6 +374,7 @@ class DmpiCrmConfig(models.Model):
                     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
                     contract.message_post("ERROR: <br/>%s" % result)
                     # print(contract)
+                    rec.write({'state':'hold'})
                     execute(transfer_files,f, outbound_path_fail_sent)
             except:
                 print("GET FAIL - FAILED")

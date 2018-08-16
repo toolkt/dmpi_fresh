@@ -23,43 +23,75 @@
             <field name="description">P5</field>
             <field name="field_name">p101</field>
             <field name="sequence">10</field>
+            <field name="active">1</field>
+
         </record>
         <record id="crm_product_code_p102" model="dmpi.crm.product.code">
             <field name="name">P6</field>
             <field name="description">P6</field>
             <field name="field_name">p102</field>
             <field name="sequence">20</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p103" model="dmpi.crm.product.code">
             <field name="name">P7</field>
             <field name="description">P7</field>
             <field name="field_name">p103</field>
             <field name="sequence">30</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p104" model="dmpi.crm.product.code">
             <field name="name">P8</field>
             <field name="description">P8</field>
             <field name="field_name">p104</field>
             <field name="sequence">40</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p105" model="dmpi.crm.product.code">
             <field name="name">P9</field>
             <field name="description">P9</field>
             <field name="field_name">p105</field>
             <field name="sequence">50</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p106" model="dmpi.crm.product.code">
             <field name="name">P10</field>
             <field name="description">P10</field>
             <field name="field_name">p106</field>
             <field name="sequence">60</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p107" model="dmpi.crm.product.code">
             <field name="name">P12</field>
             <field name="description">P12</field>
             <field name="field_name">p107</field>
             <field name="sequence">70</field>
+            <field name="active">1</field>
         </record>
+        <!-- UNASSIGNED -->
+        <record id="crm_product_code_p108" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p108</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
+        <record id="crm_product_code_p109" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p109</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
+        <record id="crm_product_code_p110" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p110</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
+
+
 
         <!-- PRODUCT TYPES crownless-->
         <record id="crm_product_code_p201" model="dmpi.crm.product.code">
@@ -67,44 +99,72 @@
             <field name="description">P5C7</field>
             <field name="field_name">p201</field>
             <field name="sequence">80</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_P6C8" model="dmpi.crm.product.code">
             <field name="name">P6C8</field>
             <field name="description">P6C8</field>
             <field name="field_name">p202</field>
             <field name="sequence">90</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_P7C9" model="dmpi.crm.product.code">
             <field name="name">P7C9</field>
             <field name="description">P7C9</field>
             <field name="field_name">p203</field>
             <field name="sequence">100</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p204" model="dmpi.crm.product.code">
             <field name="name">P8C10</field>
             <field name="description">P8C10</field>
             <field name="field_name">p204</field>
             <field name="sequence">110</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p205" model="dmpi.crm.product.code">
             <field name="name">P9C11</field>
             <field name="description">P9C11</field>
             <field name="field_name">p205</field>
             <field name="sequence">120</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p206" model="dmpi.crm.product.code">
             <field name="name">P10C12</field>
             <field name="description">P10C12</field>
             <field name="field_name">p206</field>
             <field name="sequence">130</field>
+            <field name="active">1</field>
         </record>
         <record id="crm_product_code_p207" model="dmpi.crm.product.code">
             <field name="name">P12C20</field>
             <field name="description">P12C20</field>
             <field name="field_name">p207</field>
             <field name="sequence">140</field>
+            <field name="active">1</field>
         </record>
-
+        <!-- UNASSIGNED -->
+        <record id="crm_product_code_p208" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p208</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
+        <record id="crm_product_code_p209" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p209</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
+        <record id="crm_product_code_p210" model="dmpi.crm.product.code">
+            <field name="name">UA</field>
+            <field name="description">UNASSIGNED</field>
+            <field name="field_name">p210</field>
+            <field name="sequence">0</field>
+            <field name="active">0</field>
+        </record>
 
     </data>
 </odoo>

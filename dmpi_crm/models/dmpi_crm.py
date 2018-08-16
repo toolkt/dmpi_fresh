@@ -475,6 +475,7 @@ class DmpiCRMProductCode(models.Model):
     description = fields.Char("Description")
     sequence = fields.Integer("Sequence")
     field_name = fields.Char("Field Name")
+    active = fields.Boolean("Active")
 
 
 class DmpiCRMPaymentTerms(models.Model):

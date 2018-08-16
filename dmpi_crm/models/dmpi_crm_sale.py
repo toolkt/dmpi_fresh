@@ -76,6 +76,7 @@ CONTRACT_STATE = [
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
         ('approved','Approved'),
+        ('hold','Hold'),
         ('processing','Processing'),
         ('processed','Processed'),
         ('enroute','Enroute'),
@@ -484,7 +485,7 @@ class DmpiCrmSaleContract(models.Model):
                 for sol in so.order_ids:
                     sol_line_no += 10
                     sol.write({'so_line_no':sol_line_no})
-                    
+
             rec.write({'state':'approved'})
 
 
@@ -862,6 +863,12 @@ class DmpiCrmSaleOrder(models.Model):
     p209 = fields.Integer(string="UA", compute='get_p209')
     p210 = fields.Integer(string="UA", compute='get_p210')
     total_p200 = fields.Integer(string="Total", compute='get_total_p200')
+
+
+
+    def get_p101(self):
+        self.p101 = 1
+
 
 
 
