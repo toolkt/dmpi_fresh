@@ -1134,36 +1134,6 @@ class DmpiCrmDr(models.Model):
     sto_no = fields.Char("STO No")
 
 
-    @api.multi
-    def action_generate_preship(self):
-        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
-
-        customer = self.contract_id.partner_id.name
-        print ('customer',customer)
-
-        preship = self.env['dmpi.crm.preship.report'].create({
-                    'dr_id': self.id ,
-                    'container': self.van_no,
-                    'customer': customer,
-                })
-
-        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
-        action['res_id'] = preship.id
-
-        return action
-
-    # @api.multi
-    # def action_view_invoice(self):
-    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
-
-    #     invoices = self.mapped('invoice_ids')
-    #     if len(invoices) > 1:
-    #         action['domain'] = [('id', 'in', invoices.ids)]
-    #     elif invoices:
-    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
-    #         action['res_id'] = invoices.id
-    #     return action
-
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'
     _rec_name = 'sku'

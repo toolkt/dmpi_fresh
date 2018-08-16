@@ -682,8 +682,28 @@
 
 
         <!-- CONTAINER LOAD PLAN -->
+        <record id="view_dmpi_crm_clp_search" model="ir.ui.view">
+            <field name="name">dmpi.crm.clp.search</field>
+            <field name="model">dmpi.crm.clp</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="container_no"/>
+                    <field name="control_no"/>
+                    <field name="dr_id"/>
+                    <field name="customer"/>
+
+                    <separator/>
+
+                    <filter name="sap_generated" string="Sap Generated" domain="[('status', '=', 'sap_generated')]"/>
+                    <filter name="qa_confirmed" string="QA Confirmed" domain="[('status', '=', 'qa_confirmed')]"/>
+                    <filter name="preship_generated" string="Pre-shipment Generated" domain="[('status', '=', 'preship_generated')]"/>
+                    <filter name="preship_confirmed" string="Pre-shipment Confimred" domain="[('status', '=', 'preship_confirmed')]"/>
+                </search>
+            </field>
+        </record>
+
         <record id="view_dmpi_crm_clp_tree" model="ir.ui.view">
-            <field name="name">Container Load Plan</field>
+            <field name="name">dmpi.crm.clp.tree</field>
             <field name="model">dmpi.crm.clp</field>
             <field name="arch" type="xml">
                 <tree string="Container Load Plan">
@@ -696,6 +716,7 @@
                     <field name="customer"/>
                     <field name="boxes" sum="Total Boxes"/>
                     <field name="week"/>
+                    <field name="status"/>
                 </tree>
             </field>
         </record>
@@ -706,12 +727,19 @@
             <field name="arch" type="xml">
                 <form string="Container Load Plan">
                     <header>
-                        <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight"/>
+                        <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
+
+                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?"/>
+
+                        <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/>
+
+                        <field name="status" widget="statusbar" statusbar_visible="sap_generated,qa_confirmed,preship_generated,preship_confirmed"/>
                     </header>
                     <sheet>
-                        <h1><field name="dr_id" options="{'no_quick_create':True,'no_create_edit':True, 'no_open':True}"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
+                        <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                         <group>
                             <group>
+                                <field name="dr_id" invisible="1"/>
                                 <field name="container_no"/>
                                 <field name="seal_no"/>
                                 <field name="vessel_name"/>
@@ -723,6 +751,7 @@
                             <group>
                                 <field name="week"/>
                                 <field name="brand"/>
+                                <field name="shell_color"/>
                                 <field name="description"/>
                                 <field name="boxes"/>
                                 <field name="installed" string="Installed Already?"/>
@@ -789,6 +818,14 @@
                                     </group>
                                 </group>
                             </page>
+                            <page string="Pre-Shipment Certificates">
+                                <field name="preship_ids"/>
+                            </page>
+                            <page string="Settings">
+                                <group>
+                                    <field name="status_disp"/>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -801,6 +838,7 @@
             <field name="res_model">dmpi.crm.clp</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
+            <field name="context" eval="{'search_default_sap_generated':1}"/>
         </record>
 
         <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/>
@@ -1104,4 +1142,39 @@
 
         <menuitem id="menu_dmpi_crm_fiscal_year" action="action_dmpi_crm_fiscal_year" parent="menu_dmpi_crm_master_top"/>
 
+
+        <!-- VARIETY VIEW -->
+        <record id="view_dmpi_crm_variety_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.variety.form</field>
+            <field name="model">dmpi.crm.variety</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Variety">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_variety" model="ir.actions.act_window">
+            <field name="name">Variety</field>
+            <field name="res_model">dmpi.crm.variety</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="contxet">{'active_test':False}</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>        
+
+        <record id="dmpi_crm_variety_s16" model="dmpi.crm.variety">
+            <field name="name">S16</field>
+            <field name="description">S16</field>
+        </record>
+
+        <record id="dmpi_crm_variety_c74" model="dmpi.crm.variety">
+            <field name="name">C74</field>
+            <field name="description">C74</field>
+        </record>
 </odoo>

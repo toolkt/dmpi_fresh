@@ -563,5 +563,14 @@ class DmpiCRMWeek(models.Model):
     fiscal_year_id = fields.Many2one('dmpi.crm.fiscal.year', string="Fiscal Year ID")
 
 
+class DmpiCRMVariety(models.Model):
+    _name = 'dmpi.crm.variety'
+
+    name = fields.Char('Name')
+    description = fields.Char('Description')
+    active = fields.Boolean('Active', default=True)
+
+
+
 
 
