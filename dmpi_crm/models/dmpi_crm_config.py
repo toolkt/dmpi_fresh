@@ -142,6 +142,8 @@ class DmpiCrmConfig(models.Model):
     inbound_k_log_fail                  = fields.Char("Contract Log Fail")
     inbound_k_log_fail_sent             = fields.Char("Contract Log Fail Sent")
 
+    inbound_k_success_offline           = fields.Char("Contract Success Offline")
+
 
     #SO
     inbound_so                          = fields.Char("SO")
@@ -152,6 +154,8 @@ class DmpiCrmConfig(models.Model):
     inbound_so_log_success_error_send   = fields.Char("SO Log Success Error Send")
     inbound_so_log_fail                 = fields.Char("SO Log Fail")
     inbound_so_log_fail_sent            = fields.Char("SO Log Fail Sent")
+
+    inbound_so_success_offline           = fields.Char("SO Success Offline")
 
 
     #AR
@@ -259,6 +263,36 @@ class DmpiCrmConfig(models.Model):
                 pass
 
 
+
+
+    @api.multi
+    def process_offline_contract(self):
+        print("Create Offline Contract")
+
+        for rec in self:
+            print("GET SUCCESS")
+            outbound_path= rec.inbound_k_success
+            outbound_path_success= rec.inbound_k_success_offline
+
+
+            h = self.search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+
+
+            try:
+                files = execute(list_dir,outbound_path,'ODOO_PO_PU')
+                for f in files[host_string]:
+                    result = execute(read_file,f)[host_string]
+                    print(result)
+                    #Extract the PO number from the Filename
+                    po_no = f.split('/')[-1:][0].split('_')[3]
+                    print(po_no)
+
+            except:
+                print("ERROR OFFLINE SYNC")
+                pass
 
 
 

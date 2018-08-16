@@ -10,7 +10,6 @@ access_user_dmpi_crm_shp_line,user.dmpi.crm.shp.line,model_dmpi_crm_shp_line,bas
 access_user_dmpi_crm_invoice,user.dmpi.crm.invoice,model_dmpi_crm_invoice,base.group_user,1,1,1,1
 access_user_dmpi_crm_config,user.dmpi.crm.config,model_dmpi_crm_config,base.group_user,1,1,1,1
 access_user_dmpi_crm_config_selection,user.dmpi.crm.config.selection,model_dmpi_crm_config_selection,base.group_user,1,1,1,1
-access_user_dmpi_crm_sale_contract_line,user.dmpi.crm.sale.contract.line,model_dmpi_crm_sale_contract_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_sale_order,user.dmpi.crm.sale.order,model_dmpi_crm_sale_order,base.group_user,1,1,1,1
 access_user_dmpi_crm_clp,user.dmpi.crm.clp,model_dmpi_crm_clp,base.group_user,1,1,1,1
 access_user_dmpi_crm_clp_line,user.dmpi.crm.clp.line,model_dmpi_crm_clp_line,base.group_user,1,1,1,1

@@ -66,6 +66,7 @@
                                         <field name="inbound_k_log_fail_sent" />
                                         <button name="process_success_contract" string="Process Success and SO" type="object" class="oe_highlight" />
                                         <button name="process_contract" string="Process Contract" type="object" class="oe_highlight" />
+                                        <button name="process_offline_contract" string="Process Offline Contract" type="object" class="oe_highlight" />
 
                                         
                                     </group>

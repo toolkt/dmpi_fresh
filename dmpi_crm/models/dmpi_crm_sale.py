@@ -3,7 +3,7 @@
 from odoo import _
 from odoo.osv import expression
 from odoo import models, api, fields
-from odoo.exceptions import ValidationError, AccessError, UserError
+from odoo.exceptions import  Warning, RedirectWarning, ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
@@ -181,7 +181,7 @@ class DmpiCrmSaleContract(models.Model):
     worksheet_item_text = fields.Text("Worksheet Items")
 
     #ONE2MANY RELATIONSHIPTS
-    contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
+    # contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
     sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders', copy=True)
     customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders', copy=True)
     invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
@@ -591,176 +591,6 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
-class DmpiCrmSaleContractLine(models.Model):
-    _name = 'dmpi.crm.sale.contract.line'
-    _order = 'sequence'
-
-
-    def _get_totals(self):
-        for rec in self:
-            rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
-            rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
-            rec.total = rec.total_crown + rec.total_crownless
-
-    @api.onchange('destination_id','p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20')
-    def _on_change_qty(self):
-        for rec in self:
-
-            if rec.p5 != 0:
-                rec.p5 = round_qty(75,rec.p5)
-            if rec.p6 != 0:
-                rec.p6 = round_qty(75,rec.p6)
-            if rec.p7 != 0:
-                rec.p7 = round_qty(75,rec.p7)
-            if rec.p8 != 0:
-                rec.p8 = round_qty(75,rec.p8)
-            if rec.p9 != 0:
-                rec.p9 = round_qty(75,rec.p9)
-            if rec.p10 != 0:
-                rec.p10 = round_qty(75,rec.p10)
-            if rec.p12 != 0:
-                rec.p12 = round_qty(75,rec.p12)
-
-            if rec.p5c7 != 0:
-                rec.p5c7 = round_qty(75,rec.p5c7)
-            if rec.p6c8 != 0:
-                rec.p6c8 = round_qty(75,rec.p6c8)
-            if rec.p7c9 != 0:
-                rec.p7c9 = round_qty(75,rec.p7c9)
-            if rec.p8c10 != 0:
-                rec.p8c10 = round_qty(75,rec.p8c10)
-            if rec.p9c11 != 0:
-                rec.p9c11 = round_qty(75,rec.p9c11)
-            if rec.p10c12 != 0:
-                rec.p10c12 = round_qty(75,rec.p10c12)
-            if rec.p12c20 != 0:
-                rec.p12c20 = round_qty(75,rec.p12c20)
-
-            rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
-            rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
-            rec.total = rec.total_crown + rec.total_crownless
-
-
-
-            
-
-    contract_id     = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    sequence        = fields.Integer('Sequence')
-    partner_id      = fields.Many2one('dmpi.crm.partner', "Destination")
-    p5              = fields.Integer(string="P5")
-    p6              = fields.Integer(string="P6")
-    p7              = fields.Integer(string="P7")
-    p8              = fields.Integer(string="P8")
-    p9              = fields.Integer(string="P9")
-    p10             = fields.Integer(string="P10")
-    p12             = fields.Integer(string="P12")
-    p5c7            = fields.Integer(string="P5C7")
-    p6c8            = fields.Integer(string="P6C8")
-    p7c9            = fields.Integer(string="P7C9")
-    p8c10           = fields.Integer(string="P8C10")
-    p9c11           = fields.Integer(string="P9C11")
-    p10c12          = fields.Integer(string="P10C12")
-    p12c20          = fields.Integer(string="P12C20")
-    total_crown     = fields.Integer(string="Total", compute='_get_totals')
-    total_crownless = fields.Integer(string="Total", compute='_get_totals')
-    total           = fields.Integer(string="Total", compute='_get_totals')
-    rdd             = fields.Date(string="RDD", default=lambda *a:datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    so              = fields.Boolean(string="SO", default=True)
-    so_no           = fields.Integer(string="SO No")
-
-    p5_visible              = fields.Boolean(string="P5",compute='_compute_visible')
-    p6_visible              = fields.Boolean(string="P6",compute='_compute_visible')
-    p7_visible              = fields.Boolean(string="P7",compute='_compute_visible')
-    p8_visible              = fields.Boolean(string="P8",compute='_compute_visible')
-    p9_visible              = fields.Boolean(string="P9",compute='_compute_visible')
-    p10_visible             = fields.Boolean(string="P10",compute='_compute_visible')
-    p12_visible             = fields.Boolean(string="P12",compute='_compute_visible')
-    p5c7_visible            = fields.Boolean(string="P5C7",compute='_compute_visible')
-    p6c8_visible            = fields.Boolean(string="P6C8",compute='_compute_visible')
-    p7c9_visible            = fields.Boolean(string="P7C9",compute='_compute_visible')
-    p8c10_visible           = fields.Boolean(string="P8C10",compute='_compute_visible')
-    p9c11_visible           = fields.Boolean(string="P9C11",compute='_compute_visible')
-    p10c12_visible          = fields.Boolean(string="P10C12",compute='_compute_visible')
-    p12c20_visible          = fields.Boolean(string="P12C20",compute='_compute_visible')
-
-
-    @api.one
-    @api.depends(
-        'contract_id.partner_id',
-    )
-    def _compute_visible(self):
-        active_products = [x.code for x in self.env['dmpi.crm.product'].search([('partner_id','=',self.contract_id.partner_id.id)])]
-        print(active_products)
-        if 'P5' in active_products:
-            self.p5_visible = True
-        else:
-            self.p5_visible = False
-
-        if 'P6' in active_products:
-            self.p6_visible = True
-        else:
-            self.p6_visible = False
-
-        if 'P7' in active_products:
-            self.p7_visible = True
-        else:
-            self.p7_visible = False
-
-        if 'P8' in active_products:
-            self.p8_visible = True
-        else:
-            self.p8_visible = False
-
-        if 'P9' in active_products:
-            self.p9_visible = True
-        else:
-            self.p9_visible = False
-
-        if 'P10' in active_products:
-            self.p10_visible = True
-        else:
-            self.p10_visible = False
-
-        if 'P12' in active_products:
-            self.p12_visible = True
-        else:
-            self.p12_visible = False
-
-        if 'P5C7' in active_products:
-            self.p5c7_visible = True
-        else:
-            self.p5c7_visible = False
-
-        if 'P6C8' in active_products:
-            self.p6c8_visible = True
-        else:
-            self.p6c8_visible = False
-
-        if 'P7C9' in active_products:
-            self.p7c9_visible = True
-        else:
-            self.p7c9_visible = False
-
-        if 'P8C10' in active_products:
-            self.p8c10_visible = True
-        else:
-            self.p8c10_visible = False
-
-        if 'P9C11' in active_products:
-            self.p9c11_visible = True
-        else:
-            self.p9c11_visible = False
-
-        if 'P10C12' in active_products:
-            self.p10c12_visible = True
-        else:
-            self.p10c12_visible = False
-
-        if 'P12C20' in active_products:
-            self.p12c20_visible = True
-        else:
-            self.p12c20_visible = False
-
 
 class DmpiCrmSaleOrder(models.Model):
     _name = 'dmpi.crm.sale.order'
@@ -799,112 +629,111 @@ class DmpiCrmSaleOrder(models.Model):
     @api.multi
     def action_submit_so(self):
         for rec in self:
-            print("SUBMIT SO to SAP")
-
-
-            if rec.contract_id.sap_cn_no:
-                print ("Good To Send")
-                print('PROCESS SO UPON RECEIVE %s' % rec.contract_id)
+            if rec.contract_id.sap_cn_no and rec.name != 'Draft':
+                print ("Contract Not Draft")
+                lines = []
                 cid = rec.contract_id
-                for so in cid.sale_order_ids:
+                for sol in rec.order_ids:
 
-                    lines = []
-                    for sol in so.order_ids:
+                    ref_po_no = cid.customer_ref_to_sap
 
-                        ref_po_no = cid.customer_ref_to_sap
+                    po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
+                    po_date = po_date.strftime('%Y%m%d')
 
-                        po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
-                        po_date = po_date.strftime('%Y%m%d')
+                    valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
+                    valid_from = valid_from.strftime('%Y%m%d')
 
-                        valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
-                        valid_from = valid_from.strftime('%Y%m%d')
-
-                        valid_to = datetime.strptime(cid.valid_to, '%Y-%m-%d')
-                        valid_to =   valid_to.strftime('%Y%m%d')
+                    valid_to = datetime.strptime(cid.valid_to, '%Y-%m-%d')
+                    valid_to =   valid_to.strftime('%Y%m%d')
 
 
-                        line = {
-                            'odoo_po_no' : cid.name,
-                            'sap_cn_no' : cid.sap_cn_no,
-                            'odoo_so_no' : so.name,
-                            'sap_doc_type' : so.sap_doc_type,  
-                            'sales_org' : so.sales_org,
-                            'dist_channel' : cid.partner_id.dist_channel,
-                            'division' : cid.partner_id.division,  
-                            'sold_to' : cid.partner_id.customer_code,
-                            'ship_to' : so.ship_to_id.ship_to_code, 
-                            'ref_po_no' : ref_po_no,  
-                            'po_date' : po_date,
-                            # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
-                            'rdd' : so.create_date,
-                            'po_line_no' : so.contract_line_no,
-                            'so_line_no' : sol.so_line_no,  
-                            'material' : sol.product_id.sku,    
-                            'qty' : int(sol.qty),
-                            'uom' : 'CAS', 
-                            'plant' : so.plant,
-                            'reject_reason' : '',
-                            'so_alt_item' : '',
-                            'usage' : '',
-                            'original_ship_to' : ''
-                        }
+                    line = {
+                        'odoo_po_no' : cid.name,
+                        'sap_cn_no' : cid.sap_cn_no,
+                        'odoo_so_no' : rec.name,
+                        'sap_doc_type' : rec.sap_doc_type,  
+                        'sales_org' : rec.sales_org,
+                        'dist_channel' : cid.partner_id.dist_channel,
+                        'division' : cid.partner_id.division,  
+                        'sold_to' : cid.partner_id.customer_code,
+                        'ship_to' : rec.ship_to_id.ship_to_code, 
+                        'ref_po_no' : ref_po_no,  
+                        'po_date' : po_date,
+                        # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
+                        'rdd' : rec.create_date,
+                        'po_line_no' : rec.contract_line_no,
+                        'so_line_no' : sol.so_line_no,  
+                        'material' : sol.product_id.sku,    
+                        'qty' : int(sol.qty),
+                        'uom' : 'CAS', 
+                        'plant' : rec.plant,
+                        'reject_reason' : '',
+                        'so_alt_item' : '',
+                        'usage' : '',
+                        'original_ship_to' : ''
+                    }
 
-                        if so.sold_via_id:
-                            line['sold_to'] = so.sold_via_id.customer_code
-                            line['ship_to'] = so.sold_via_id.customer_code
-                            line['sap_doc_type'] = 'ZKM3'
-                            line['original_ship_to'] = so.ship_to_id.ship_to_code
-                            line['dist_channel'] = so.sold_via_id.dist_channel
-                            line['division'] = so.sold_via_id.division
-                        
-                        lines.append(line)
-                    # print (lines)
-
-                    filename = 'ODOO_SO_%s_%s.csv' % (so.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
-                    path = '/tmp/%s' % filename
-
-                    with open(path, 'w') as f:
-                        writer = csv.writer(f, delimiter='\t')
-                        for l in lines:
-                            if 'original_ship_to' in l: 
-                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
-                                            l['odoo_so_no'],l['sap_doc_type'],
-                                            l['sales_org'],l['dist_channel'],
-                                            l['division'],l['sold_to'],
-                                            l['ship_to'],l['ref_po_no'],
-                                            l['po_date'],l['rdd'],
-                                            l['po_line_no'],l['so_line_no'],
-                                            l['material'],l['qty'],
-                                            l['uom'],l['plant'],l['original_ship_to']
-                                        ])
-                            else:
-                                writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
-                                            l['odoo_so_no'],l['sap_doc_type'],
-                                            l['sales_org'],l['dist_channel'],
-                                            l['division'],l['sold_to'],
-                                            l['ship_to'],l['ref_po_no'],
-                                            l['po_date'],l['rdd'],
-                                            l['po_line_no'],l['so_line_no'],
-                                            l['material'],l['qty'],
-                                            l['uom'],l['plant']
-                                        ])
-
-
-
-                    #TRANSFER TO REMOTE SERVER
-                    h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
-                    host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-                    env.hosts.append(host_string)
-                    env.passwords[host_string] = h.ssh_pass
-
-                    localpath = path
-
-                    path = '%s/%s' % (h.inbound_so,filename)
-                    remotepath = path
-
-                    execute(file_send,localpath,remotepath)
-                    # rec.sent_to_sap = True
+                    if rec.sold_via_id:
+                        line['sold_to'] = rec.sold_via_id.customer_code
+                        line['ship_to'] = rec.sold_via_id.customer_code
+                        line['sap_doc_type'] = 'ZKM3'
+                        line['original_ship_to'] = rec.ship_to_id.ship_to_code
+                        line['dist_channel'] = rec.sold_via_id.dist_channel
+                        line['division'] = rec.sold_via_id.division
                     
+                    lines.append(line)
+                # print (lines)
+
+                filename = 'ODOO_SO_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+                path = '/tmp/%s' % filename
+
+                with open(path, 'w') as f:
+                    writer = csv.writer(f, delimiter='\t')
+                    for l in lines:
+                        if 'original_ship_to' in l: 
+                            writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                        l['odoo_so_no'],l['sap_doc_type'],
+                                        l['sales_org'],l['dist_channel'],
+                                        l['division'],l['sold_to'],
+                                        l['ship_to'],l['ref_po_no'],
+                                        l['po_date'],l['rdd'],
+                                        l['po_line_no'],l['so_line_no'],
+                                        l['material'],l['qty'],
+                                        l['uom'],l['plant'],l['original_ship_to']
+                                    ])
+                        else:
+                            writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                        l['odoo_so_no'],l['sap_doc_type'],
+                                        l['sales_org'],l['dist_channel'],
+                                        l['division'],l['sold_to'],
+                                        l['ship_to'],l['ref_po_no'],
+                                        l['po_date'],l['rdd'],
+                                        l['po_line_no'],l['so_line_no'],
+                                        l['material'],l['qty'],
+                                        l['uom'],l['plant']
+                                    ])
+
+
+
+                #TRANSFER TO REMOTE SERVER
+                h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+                host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+                env.hosts.append(host_string)
+                env.passwords[host_string] = h.ssh_pass
+
+                localpath = path
+
+                path = '%s/%s' % (h.inbound_so,filename)
+                remotepath = path
+
+                execute(file_send,localpath,remotepath)
+                # rec.sent_to_sap = True
+                raise Warning("SO was Successfully Created")
+            else:
+                #TODO Create real Warning
+                print ("Not Created")
+                raise Warning("State is in Draft. The SO was NOT Created")
+                
 
 
 
@@ -919,6 +748,10 @@ class DmpiCrmSaleOrder(models.Model):
         # if sales_org:
         #     self.sales_org = sales_org
         # print("Onchange Partner")
+
+
+
+
 
 
     @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20','order_ids')
@@ -987,6 +820,31 @@ class DmpiCrmSaleOrder(models.Model):
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs', copy=True)
     valid = fields.Boolean("Valid Order", default=True)
     valid_disp = fields.Boolean("Valid Order", related='valid')
+
+
+
+    p01              = fields.Integer(string="P5", compute='get_totals')
+    p02              = fields.Integer(string="P6", compute='get_totals')
+    p03              = fields.Integer(string="P7", compute='get_totals')
+    p04              = fields.Integer(string="P8", compute='get_totals')
+    p05              = fields.Integer(string="P9", compute='get_totals')
+    p06              = fields.Integer(string="P6", compute='get_totals')
+    p07              = fields.Integer(string="P6", compute='get_totals')
+    p08              = fields.Integer(string="P6", compute='get_totals')
+    p09              = fields.Integer(string="P6", compute='get_totals')
+    p10              = fields.Integer(string="P6", compute='get_totals')
+    p11              = fields.Integer(string="P6", compute='get_totals')
+    p12              = fields.Integer(string="P6", compute='get_totals')
+    p13              = fields.Integer(string="P6", compute='get_totals')
+    p14              = fields.Integer(string="P6", compute='get_totals')
+    p15              = fields.Integer(string="P6", compute='get_totals')
+    p16              = fields.Integer(string="P6", compute='get_totals')
+    p17              = fields.Integer(string="P6", compute='get_totals')
+    p18              = fields.Integer(string="P6", compute='get_totals')
+    p19              = fields.Integer(string="P6", compute='get_totals')
+    p20              = fields.Integer(string="P6", compute='get_totals')
+
+
 
 
     p5              = fields.Integer(string="P5", compute='get_totals')

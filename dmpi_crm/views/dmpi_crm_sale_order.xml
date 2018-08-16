@@ -65,7 +65,8 @@
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-pencil-square-o"
-                                string="Submit SO">
+                                string="Submit SO"
+                                confirm="Are you sure you want to send the SO, If you have sent this before it will create another Record?">
                             </button>
 
                             <button name="toggle_valid" class="oe_stat_button" type="object" icon="fa-globe">
