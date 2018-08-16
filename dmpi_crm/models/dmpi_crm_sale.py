@@ -471,10 +471,20 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_approve_contract(self):
         for rec in self:
+            contract_line_no = 0
             for so in rec.sale_order_ids:
+                contract_line_no += 10
+                so.write({'contract_line_no':contract_line_no})
+
                 if so.name == 'Draft' or '':
                     seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
                     so.write({'name': seq})
+
+                sol_line_no = 0
+                for sol in so.order_ids:
+                    sol_line_no += 10
+                    sol.write({'so_line_no':sol_line_no})
+                    
             rec.write({'state':'approved'})
 
 
