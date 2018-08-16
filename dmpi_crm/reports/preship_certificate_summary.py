@@ -211,19 +211,21 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			for rec in result:
 				# set row values
 				dr_id = rec[0]
-				# dr = self.env['dmpi.crm.dr'].search([('id','=',dr_id)], limit=1)
+				dr = self.env['dmpi.crm.dr'].search([('id','=',dr_id)], limit=1)
+				customer = dr.contract_id.partner_id
 
 				pqty = []
 				psd = ['P5' ,'P6' ,'P7' ,'P8' ,'P9' ,'P10' ,'P12' ,'P5C7' ,'P6C8' ,'P7C9' ,'P8C10' ,'P9C11' ,'P10C12' ,'P12C20']
 				for p in psd:
 					query = """
-						SELECT sum(dl.qty), pp.code
-						from dmpi_crm_dr_line dl
-						left join dmpi_crm_product pp on pp.sku = dl.material
-						where dl.dr_id = %s and pp.code = '%s'
-						group by pp.code
+						SELECT max(dl.qty) as qty, pp.code, dl.dr_line_item_no
+							from dmpi_crm_dr_line dl
+							left join dmpi_crm_product pp on pp.sku = dl.material
+							where dl.dr_id = %s and pp.code = '%s' and pp.partner_id = %s
+						group by pp.code, dl.dr_line_item_no
 						LIMIT 1
-					""" % (dr_id, p)
+					""" % (dr_id, p, customer.id)
+					print (query)
 					self._cr.execute(query)
 					result = self._cr.fetchall()
 
