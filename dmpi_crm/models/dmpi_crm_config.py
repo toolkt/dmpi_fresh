@@ -328,14 +328,16 @@ class DmpiCrmConfig(models.Model):
                         contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)])
                         cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
                         contract.sap_cn_no = cn_no
-                        contract.state = 'processed'
-                        print ("A")
+
                         if contract:
                             for so in contract.sale_order_ids:
-                                so[0].action_submit_so()
+                                so.submit_so_file(so)
+
                         
+
                     execute(transfer_files,f, outbound_path_success)
-                    print ("B")
+                rec.write({'state':'processed'})
+                print("Sync Success")
             except:
                 print("GET SUCCESS - FAILED")
                 pass

@@ -639,120 +639,123 @@ class DmpiCrmSaleOrder(models.Model):
             return result['select_name']
 
 
+
+    def submit_so_file(self,rec):
+        if rec.contract_id.sap_cn_no and rec.name != 'Draft':
+            print ("Contract Not Draft")
+            lines = []
+            cid = rec.contract_id
+            line_no = 0
+            for sol in rec.order_ids:
+                line_no += 10
+                sol.so_line_no = line_no
+                ref_po_no = cid.customer_ref_to_sap
+
+                po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
+                po_date = po_date.strftime('%Y%m%d')
+
+                valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
+                valid_from = valid_from.strftime('%Y%m%d')
+
+                valid_to = datetime.strptime(cid.valid_to, '%Y-%m-%d')
+                valid_to =   valid_to.strftime('%Y%m%d')
+
+
+                line = {
+                    'odoo_po_no' : cid.name,
+                    'sap_cn_no' : cid.sap_cn_no,
+                    'odoo_so_no' : rec.name,
+                    'sap_doc_type' : rec.sap_doc_type,  
+                    'sales_org' : rec.sales_org,
+                    'dist_channel' : cid.partner_id.dist_channel,
+                    'division' : cid.partner_id.division,  
+                    'sold_to' : cid.partner_id.customer_code,
+                    'ship_to' : rec.ship_to_id.ship_to_code, 
+                    'ref_po_no' : ref_po_no,  
+                    'po_date' : po_date,
+                    # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
+                    'rdd' : rec.create_date,
+                    'po_line_no' : rec.contract_line_no,
+                    'so_line_no' : sol.so_line_no,  
+                    'material' : sol.product_id.sku,    
+                    'qty' : int(sol.qty),
+                    'uom' : 'CAS', 
+                    'plant' : rec.plant,
+                    'reject_reason' : '',
+                    'so_alt_item' : '',
+                    'usage' : '',
+                    'original_ship_to' : ''
+                }
+
+                if cid.sold_via_id:
+                    line['sold_to'] = cid.sold_via_id.customer_code
+                    line['ship_to'] = cid.sold_via_id.customer_code
+                    line['sap_doc_type'] = 'ZKM3'
+                    line['original_ship_to'] = rec.ship_to_id.ship_to_code
+                    line['dist_channel'] = cid.sold_via_id.dist_channel
+                    line['division'] = cid.sold_via_id.division
+                
+                lines.append(line)
+            # print (lines)
+
+            filename = 'ODOO_SO_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+            path = '/tmp/%s' % filename
+
+            with open(path, 'w') as f:
+                writer = csv.writer(f, delimiter='\t')
+                for l in lines:
+                    if 'original_ship_to' in l: 
+                        writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                    l['odoo_so_no'],l['sap_doc_type'],
+                                    l['sales_org'],l['dist_channel'],
+                                    l['division'],l['sold_to'],
+                                    l['ship_to'],l['ref_po_no'],
+                                    l['po_date'],l['rdd'],
+                                    l['po_line_no'],l['so_line_no'],
+                                    l['material'],l['qty'],
+                                    l['uom'],l['plant'],l['original_ship_to']
+                                ])
+                    else:
+                        writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
+                                    l['odoo_so_no'],l['sap_doc_type'],
+                                    l['sales_org'],l['dist_channel'],
+                                    l['division'],l['sold_to'],
+                                    l['ship_to'],l['ref_po_no'],
+                                    l['po_date'],l['rdd'],
+                                    l['po_line_no'],l['so_line_no'],
+                                    l['material'],l['qty'],
+                                    l['uom'],l['plant']
+                                ])
+
+
+
+            #TRANSFER TO REMOTE SERVER
+            h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+
+            localpath = path
+
+            path = '%s/%s' % (h.inbound_so,filename)
+            remotepath = path
+
+            execute(file_send,localpath,remotepath)
+
+            return True
+        else:
+            #TODO Create real Warning
+            return False
+
+
     @api.multi
     def action_submit_so(self):
         for rec in self:
-            if rec.contract_id.sap_cn_no and rec.name != 'Draft':
-                print ("Contract Not Draft")
-                lines = []
-                cid = rec.contract_id
-                line_no = 0
-                for sol in rec.order_ids:
-                    line_no += 10
-                    sol.so_line_no = line_no
-                    ref_po_no = cid.customer_ref_to_sap
-
-                    po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
-                    po_date = po_date.strftime('%Y%m%d')
-
-                    valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
-                    valid_from = valid_from.strftime('%Y%m%d')
-
-                    valid_to = datetime.strptime(cid.valid_to, '%Y-%m-%d')
-                    valid_to =   valid_to.strftime('%Y%m%d')
-
-
-                    line = {
-                        'odoo_po_no' : cid.name,
-                        'sap_cn_no' : cid.sap_cn_no,
-                        'odoo_so_no' : rec.name,
-                        'sap_doc_type' : rec.sap_doc_type,  
-                        'sales_org' : rec.sales_org,
-                        'dist_channel' : cid.partner_id.dist_channel,
-                        'division' : cid.partner_id.division,  
-                        'sold_to' : cid.partner_id.customer_code,
-                        'ship_to' : rec.ship_to_id.ship_to_code, 
-                        'ref_po_no' : ref_po_no,  
-                        'po_date' : po_date,
-                        # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
-                        'rdd' : rec.create_date,
-                        'po_line_no' : rec.contract_line_no,
-                        'so_line_no' : sol.so_line_no,  
-                        'material' : sol.product_id.sku,    
-                        'qty' : int(sol.qty),
-                        'uom' : 'CAS', 
-                        'plant' : rec.plant,
-                        'reject_reason' : '',
-                        'so_alt_item' : '',
-                        'usage' : '',
-                        'original_ship_to' : ''
-                    }
-
-                    if cid.sold_via_id:
-                        line['sold_to'] = cid.sold_via_id.customer_code
-                        line['ship_to'] = cid.sold_via_id.customer_code
-                        line['sap_doc_type'] = 'ZKM3'
-                        line['original_ship_to'] = rec.ship_to_id.ship_to_code
-                        line['dist_channel'] = cid.sold_via_id.dist_channel
-                        line['division'] = cid.sold_via_id.division
-                    
-                    lines.append(line)
-                # print (lines)
-
-                filename = 'ODOO_SO_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
-                path = '/tmp/%s' % filename
-
-                with open(path, 'w') as f:
-                    writer = csv.writer(f, delimiter='\t')
-                    for l in lines:
-                        if 'original_ship_to' in l: 
-                            writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
-                                        l['odoo_so_no'],l['sap_doc_type'],
-                                        l['sales_org'],l['dist_channel'],
-                                        l['division'],l['sold_to'],
-                                        l['ship_to'],l['ref_po_no'],
-                                        l['po_date'],l['rdd'],
-                                        l['po_line_no'],l['so_line_no'],
-                                        l['material'],l['qty'],
-                                        l['uom'],l['plant'],l['original_ship_to']
-                                    ])
-                        else:
-                            writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
-                                        l['odoo_so_no'],l['sap_doc_type'],
-                                        l['sales_org'],l['dist_channel'],
-                                        l['division'],l['sold_to'],
-                                        l['ship_to'],l['ref_po_no'],
-                                        l['po_date'],l['rdd'],
-                                        l['po_line_no'],l['so_line_no'],
-                                        l['material'],l['qty'],
-                                        l['uom'],l['plant']
-                                    ])
-
-
-
-                #TRANSFER TO REMOTE SERVER
-                h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
-                host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-                env.hosts.append(host_string)
-                env.passwords[host_string] = h.ssh_pass
-
-                localpath = path
-
-                path = '%s/%s' % (h.inbound_so,filename)
-                remotepath = path
-
-                execute(file_send,localpath,remotepath)
+            submitted = rec.submit_so_file(rec)
+            if submitted:
                 raise Warning("SO was Successfully Created")
-
-
             else:
-                #TODO Create real Warning
-                print ("Not Created")
                 raise Warning("State is in Draft. The SO was NOT Created")
-                
-
-
-
 
 
     @api.onchange('ship_to_id')
