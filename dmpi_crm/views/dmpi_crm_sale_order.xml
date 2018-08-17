@@ -68,6 +68,13 @@
                                 string="Submit SO">
                             </button>
                         </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name_disp" readonly="1"/>
+                            </h1>
+                        </div>
+
+
                         <group>
                             <group>
                                 <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
@@ -228,7 +235,8 @@
                             <page string="Settings">
                                 <group>
                                     <group>
-                                        <field name="so_no"/>
+                                        <field name="sap_so_no"/>
+                                        <field name="sap_so_date"/>
                                     </group>
                                     <group>
                                         <field name="contract_id" />
