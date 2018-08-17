@@ -305,19 +305,19 @@ class DmpiCrmSaleContract(models.Model):
         if self.partner_id:
             credit = self.env['dmpi.crm.partner.credit.limit'].search([('customer_code','=',self.partner_id.customer_code)], order="write_date desc, id desc", limit=1)
 
-            query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float) as ar from dmpi_crm_partner_ar ar
-                        where ar.active is True and ltrim(ar.customer_no,'0') = '%s'
-                    """ % self.partner_id.customer_code
+            # query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float) as ar from dmpi_crm_partner_ar ar
+            #             where ar.active is True and ltrim(ar.customer_no,'0') = '%s'
+            #         """ % self.partner_id.customer_code
 
 
-            # query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
-            #                          case
-            #            when (NOW()::date-ar.base_line_date::date)>(pt.days+14) then 1
-            #            else 0
-            #            end) as ar
-            #                              from dmpi_crm_partner_ar ar
-            #            left join dmpi_crm_payment_terms pt on pt.name = ar.terms
-            #            where ar.active is True and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
+            query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
+                                     case
+                       when (NOW()::date-ar.base_line_date::date)>(pt.days+14) then 1
+                       else 0
+                       end) as ar
+                                         from dmpi_crm_partner_ar ar
+                       left join dmpi_crm_payment_terms pt on pt.name = ar.terms
+                       where ar.active is True and ar.debit_credit = 'H' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
 
             print(query)        
