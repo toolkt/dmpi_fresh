@@ -142,7 +142,7 @@ class DmpiCrmPartnerAR(models.Model):
     customer_code       = fields.Char("Customer Code")
     amount              = fields.Float("Amount")
     currency            = fields.Char("Currency")
-    partner_id          = fields.Many2one('dmpi.crm.partner',"Partner")
+    partner_id          = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner')
     payment_term_days   = fields.Integer("Payment Term (Days)")
     days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
     

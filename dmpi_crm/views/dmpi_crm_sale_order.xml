@@ -14,6 +14,9 @@
                     <field name="notify_id"/>
                     <field name="ship_line" />
                     <field name="shell_color" />
+                    <field name="sales_org"/>
+                    <field name="plant"/>
+                    <field name="week_no"/>
                 </search>
             </field>
         </record>
@@ -27,6 +30,7 @@
                     <field name="sap_so_no" />
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
+                    <field name="week_no"/>
 
                     <field name="p101" sum="Total"/>
                     <field name="p102" sum="Total"/>
@@ -47,7 +51,7 @@
                     
                     <field name="ship_line" />
                     <field name="shell_color" />
-
+                    <field name="state" />
 
                 </tree>
             </field>
@@ -59,6 +63,9 @@
             <field name="model">dmpi.crm.sale.order</field>
             <field name="arch" type="xml">
                 <form class="o_form_document">
+                    <header>
+                        <field name="state" widget="statusbar" clickable="1" />
+                    </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="action_submit_so"
@@ -82,6 +89,7 @@
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
                                 <field name="plant" required="1"/>
+                                <field name="week_no" required="1"/>
                             </group>
                             <group>
                                 <field name="valid" />

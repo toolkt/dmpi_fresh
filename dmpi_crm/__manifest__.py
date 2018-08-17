@@ -51,6 +51,7 @@
         "views/dmpi_crm_sale_contract.xml",
         "views/dmpi_crm_report.xml",
         "views/dmpi_crm_sale_upload.xml",
+        "views/dmpi_crm_dialogue.xml",
 
         #"views/dmpi_crm_contract.xml",
         #"views/dmpi_crm_web.xml",

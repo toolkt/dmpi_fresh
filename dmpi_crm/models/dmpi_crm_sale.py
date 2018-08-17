@@ -424,7 +424,7 @@ class DmpiCrmSaleContract(models.Model):
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
                         'requested_delivery_date': l.requested_delivery_date,
-                        # 'plant': l.plant,
+                        'plant': l.plant,
                         # 'p5': l.p5,
                         # 'p6': l.p6,
                         # 'p7': l.p7,
@@ -464,8 +464,10 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_confirm_contract(self):
         for rec in self:
-            if not rec.week_no:
-                raise UserError(_("No Set Week Number!"))
+            if not rec.week_no or not rec.customer_ref:
+                raise UserError(_("No Customer Ref or Week Number!"))
+            for so in rec.sale_order_ids:
+                so.write({'state':'confirmed', 'week_no': rec.week_no})
             rec.write({'state':'confirmed'})
 
 
@@ -475,6 +477,8 @@ class DmpiCrmSaleContract(models.Model):
             contract_line_no = 0
             for so in rec.sale_order_ids:
                 # so.write({'contract_line_no':contract_line_no})
+                if rec.week_no:
+                    so.week_no = rec.week_no
                 for sol in so.order_ids:
                     contract_line_no += 10
                     sol.write({'contract_line_no':contract_line_no})
@@ -741,7 +745,7 @@ class DmpiCrmSaleOrder(models.Model):
             remotepath = path
 
             execute(file_send,localpath,remotepath)
-
+            rec.write({'state':'process'})
             return True
         else:
             #TODO Create real Warning
@@ -874,7 +878,7 @@ class DmpiCrmSaleOrder(models.Model):
                 SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 
                 SELECT 0 AS seq,P.code,P.sku,sol.qty,sol.price*sol.qty AS amount FROM dmpi_crm_sale_order_line sol LEFT JOIN dmpi_crm_product P ON P.ID=sol.product_id WHERE sol.order_id=%s) AS Q1 GROUP BY code ORDER BY seq
             """ % rec[0].id
-            print (query)
+            # print (query)
             self.env.cr.execute(query)
             result = self.env.cr.dictfetchall()
 
@@ -942,7 +946,8 @@ class DmpiCrmSaleOrder(models.Model):
     total_qty = fields.Float('Total', compute='_get_product_qty')
     total_amount = fields.Float('Total', compute='_get_product_qty')
 
-    state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('cancelled','Cancelled')])
+    week_no = fields.Char("Week No")
+    state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
 
     # @api.model
     # def create(self, vals):
@@ -1032,6 +1037,64 @@ class CustomerCrmSaleOrder(models.Model):
 
     order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True)
 
+    @api.multi
+    def _get_product_qty(self):
+        for rec in self:
+            query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
+                SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 
+                SELECT 0 AS seq,P.code,P.sku,sol.qty,sol.price*sol.qty AS amount FROM customer_crm_sale_order_line sol LEFT JOIN dmpi_crm_product P ON P.ID=sol.product_id WHERE sol.order_id=%s) AS Q1 GROUP BY code ORDER BY seq
+            """ % rec[0].id
+            # print (query)
+            self.env.cr.execute(query)
+            result = self.env.cr.dictfetchall()
+
+            headers = []
+            skus = []
+            rows = []
+            total_amount = 0
+            total_qty = 0
+            for l in result:
+                total_amount += l['amount'] or 0
+                total_qty += l['qty'] or 0
+
+                if l['code'] == 'P5': rec.p101 = l['qty'] 
+                if l['code'] == 'P6': rec.p102 = l['qty']
+                if l['code'] == 'P7': rec.p103 = l['qty']
+                if l['code'] == 'P8': rec.p104 = l['qty']
+                if l['code'] == 'P9': rec.p105 = l['qty']
+                if l['code'] == 'P10': rec.p106 = l['qty']
+                if l['code'] == 'P12': rec.p107 = l['qty']
+                if l['code'] == 'P': rec.p108 = l['qty']
+                if l['code'] == 'P': rec.p109 = l['qty']
+                if l['code'] == 'P': rec.p110 = l['qty']
+
+                if l['code'] == 'P5C7': rec.p201 = l['qty']
+                if l['code'] == 'P6C8': rec.p202 = l['qty']
+                if l['code'] == 'P7C9': rec.p203 = l['qty']
+                if l['code'] == 'P8C10': rec.p204 = l['qty']
+                if l['code'] == 'P9C11': rec.p205 = l['qty']
+                if l['code'] == 'P10C12': rec.p206 = l['qty']
+                if l['code'] == 'P12C20': rec.p207 = l['qty']
+                if l['code'] == 'P': rec.p208 = l['qty']
+                if l['code'] == 'P': rec.p209 = l['qty']
+                if l['code'] == 'P': rec.p210 = l['qty']
+
+                headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % l['code'])
+                # skus.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #999999;" >%s</th>""" % '7AOB19912')# l['sku'])
+                rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
+
+            rec.notes = """
+                <h3>SUMMARY</h3>
+                <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
+                    <thead><tr> %s </tr></thead>
+                    <tbody> <tr class="o_data_row"> %s </tr> </tbody>
+                </table>
+            """ %(''.join(headers),''.join(rows))
+
+            rec.total_p100 = 1#self.p101,self.p102,self.p103,self.p104,self.p105,self.p106,self.p107,self.p108,self.p109,self.p110
+            rec.total_p200 = 1#self.p201,self.p202,self.p203,self.p204,self.p205,self.p206,self.p207,self.p208,self.p209,self.p210
+            rec.total_amount = total_amount
+            rec.total_qty = total_qty
 
 
 class CustomerCrmSaleOrderLine(models.Model):
