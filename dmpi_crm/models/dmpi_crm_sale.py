@@ -170,8 +170,8 @@ class DmpiCrmSaleContract(models.Model):
     credit_exposure = fields.Float("Credit Exposure")
     remaining_credit = fields.Float("Remaining Credit", compute='_compute_credit')
     ar_status = fields.Float("AR Status")
-    state = fields.Selection(CONTRACT_STATE,string="State", default='draft', track_visibility='onchange')
-    state_disp = fields.Selection(CONTRACT_STATE,related='state',string="State", default='draft')
+    state = fields.Selection(CONTRACT_STATE,string="Status", default='draft', track_visibility='onchange')
+    state_disp = fields.Selection(CONTRACT_STATE,related='state',string="Status Display", default='draft')
 
     contract_total = fields.Float("Contract Total")
 
@@ -424,21 +424,21 @@ class DmpiCrmSaleContract(models.Model):
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
                         'requested_delivery_date': l.requested_delivery_date,
-                        'plant': l.plant,
-                        'p5': l.p5,
-                        'p6': l.p6,
-                        'p7': l.p7,
-                        'p8': l.p8,
-                        'p9': l.p9,
-                        'p10': l.p10,
-                        'p12': l.p12,
-                        'p5c7': l.p5c7,
-                        'p6c8': l.p6c8,
-                        'p7c9': l.p7c9,
-                        'p8c10': l.p8c10,
-                        'p9c11': l.p9c11,
-                        'p10c12': l.p10c12,
-                        'p12c20': l.p12c20,
+                        # 'plant': l.plant,
+                        # 'p5': l.p5,
+                        # 'p6': l.p6,
+                        # 'p7': l.p7,
+                        # 'p8': l.p8,
+                        # 'p9': l.p9,
+                        # 'p10': l.p10,
+                        # 'p12': l.p12,
+                        # 'p5c7': l.p5c7,
+                        # 'p6c8': l.p6c8,
+                        # 'p7c9': l.p7c9,
+                        # 'p8c10': l.p8c10,
+                        # 'p9c11': l.p9c11,
+                        # 'p10c12': l.p10c12,
+                        # 'p12c20': l.p12c20,
                         'order_ids': so_lines,
                     }
 
@@ -694,6 +694,7 @@ class DmpiCrmSaleOrder(models.Model):
                     line['original_ship_to'] = rec.ship_to_id.ship_to_code
                     line['dist_channel'] = cid.sold_via_id.dist_channel
                     line['division'] = cid.sold_via_id.division
+                    line['sales_org'] = cid.sold_via_id.sales_org
                 
                 lines.append(line)
             # print (lines)
@@ -773,32 +774,32 @@ class DmpiCrmSaleOrder(models.Model):
 
 
 
-    @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20','order_ids')
-    def get_totals(self):
+    # @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20','order_ids')
+    # def get_totals(self):
         
-        for rec in self:
-            total_amount = 0.0
-            for l in rec.order_ids:
-                total_amount += l.total
-                if l.product_code == 'P5': rec.p5 += l.qty
-                if l.product_code == 'P6': rec.p6 += l.qty
-                if l.product_code == 'P7': rec.p7 += l.qty
-                if l.product_code == 'P8': rec.p8 += l.qty
-                if l.product_code == 'P9': rec.p9 += l.qty
-                if l.product_code == 'P10': rec.p10 += l.qty
-                if l.product_code == 'P12': rec.p12 += l.qty
-                if l.product_code == 'P5C7': rec.p5c7 += l.qty
-                if l.product_code == 'P6C8': rec.p6c8 += l.qty
-                if l.product_code == 'P7C9': rec.p7c9 += l.qty
-                if l.product_code == 'P8C10': rec.p8c10 += l.qty
-                if l.product_code == 'P9C11': rec.p9c11 += l.qty
-                if l.product_code == 'P10C12': rec.p10c12 += l.qty
-                if l.product_code == 'P12C20': rec.p12c20 += l.qty
+    #     for rec in self:
+    #         total_amount = 0.0
+    #         for l in rec.order_ids:
+    #             total_amount += l.total
+    #             if l.product_code == 'P5': rec.p5 += l.qty
+    #             if l.product_code == 'P6': rec.p6 += l.qty
+    #             if l.product_code == 'P7': rec.p7 += l.qty
+    #             if l.product_code == 'P8': rec.p8 += l.qty
+    #             if l.product_code == 'P9': rec.p9 += l.qty
+    #             if l.product_code == 'P10': rec.p10 += l.qty
+    #             if l.product_code == 'P12': rec.p12 += l.qty
+    #             if l.product_code == 'P5C7': rec.p5c7 += l.qty
+    #             if l.product_code == 'P6C8': rec.p6c8 += l.qty
+    #             if l.product_code == 'P7C9': rec.p7c9 += l.qty
+    #             if l.product_code == 'P8C10': rec.p8c10 += l.qty
+    #             if l.product_code == 'P9C11': rec.p9c11 += l.qty
+    #             if l.product_code == 'P10C12': rec.p10c12 += l.qty
+    #             if l.product_code == 'P12C20': rec.p12c20 += l.qty
 
-            rec.total_amount = total_amount
-            rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
-            rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
-            rec.total_qty = rec.total_crown + rec.total_crownless
+    #         rec.total_amount = total_amount
+    #         rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
+    #         rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
+    #         rec.total_qty = rec.total_crown + rec.total_crownless
 
         
     def _get_doc_types(self):
@@ -867,68 +868,64 @@ class DmpiCrmSaleOrder(models.Model):
     p210 = fields.Integer(string="UA", compute='_get_product_qty')
     total_p200 = fields.Integer(string="Total", compute='_get_product_qty')
 
-
-    @api.depends('order_ids')
+    @api.multi
     def _get_product_qty(self):
-        self.ensure_one()
-        total_amount = 0.0
-        for l in self.order_ids:
-            total_amount += l.total
-            if l.product_code == 'P5': self.p101 += l.qty
-            if l.product_code == 'P6': self.p101 += l.qty
-            if l.product_code == 'P7': self.p101 += l.qty
-            if l.product_code == 'P8': self.p101 += l.qty
-            if l.product_code == 'P9': self.p101 += l.qty
-            if l.product_code == 'P10': self.p101 += l.qty
-            if l.product_code == 'P12': self.p101 += l.qty
-            if l.product_code == 'P5C7': self.p101 += l.qty
-            if l.product_code == 'P6C8': self.p101 += l.qty
-            if l.product_code == 'P7C9': self.p101 += l.qty
-            if l.product_code == 'P8C10': self.p101 += l.qty
-            if l.product_code == 'P9C11': self.p101 += l.qty
-            if l.product_code == 'P10C12': self.p1012 += l.qty
-            if l.product_code == 'P12C20': self.p101 += l.qty
+        for rec in self:
+            query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
+                SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 
+                SELECT 0 AS seq,P.code,P.sku,sol.qty,sol.price*sol.qty AS amount FROM dmpi_crm_sale_order_line sol LEFT JOIN dmpi_crm_product P ON P.ID=sol.product_id WHERE sol.order_id=%s) AS Q1 GROUP BY code ORDER BY seq
+            """ % rec[0].id
+            print (query)
+            self.env.cr.execute(query)
+            result = self.env.cr.dictfetchall()
 
+            headers = []
+            skus = []
+            rows = []
+            total_amount = 0
+            total_qty = 0
+            for l in result:
+                total_amount += l['amount'] or 0
+                total_qty += l['qty'] or 0
 
+                if l['code'] == 'P5': rec.p101 = l['qty'] 
+                if l['code'] == 'P6': rec.p102 = l['qty']
+                if l['code'] == 'P7': rec.p103 = l['qty']
+                if l['code'] == 'P8': rec.p104 = l['qty']
+                if l['code'] == 'P9': rec.p105 = l['qty']
+                if l['code'] == 'P10': rec.p106 = l['qty']
+                if l['code'] == 'P12': rec.p107 = l['qty']
+                if l['code'] == 'P': rec.p108 = l['qty']
+                if l['code'] == 'P': rec.p109 = l['qty']
+                if l['code'] == 'P': rec.p110 = l['qty']
 
+                if l['code'] == 'P5C7': rec.p201 = l['qty']
+                if l['code'] == 'P6C8': rec.p202 = l['qty']
+                if l['code'] == 'P7C9': rec.p203 = l['qty']
+                if l['code'] == 'P8C10': rec.p204 = l['qty']
+                if l['code'] == 'P9C11': rec.p205 = l['qty']
+                if l['code'] == 'P10C12': rec.p206 = l['qty']
+                if l['code'] == 'P12C20': rec.p207 = l['qty']
+                if l['code'] == 'P': rec.p208 = l['qty']
+                if l['code'] == 'P': rec.p209 = l['qty']
+                if l['code'] == 'P': rec.p210 = l['qty']
 
+                headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % l['code'])
+                # skus.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #999999;" >%s</th>""" % '7AOB19912')# l['sku'])
+                rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
 
-    p5              = fields.Integer(string="P5", compute='get_totals')
-    p6              = fields.Integer(string="P6", compute='get_totals')
-    p7              = fields.Integer(string="P7", compute='get_totals')
-    p8              = fields.Integer(string="P8", compute='get_totals')
-    p9              = fields.Integer(string="P9", compute='get_totals')
-    p10             = fields.Integer(string="P10", compute='get_totals')
-    p12             = fields.Integer(string="P12", compute='get_totals')
-    p5c7            = fields.Integer(string="P5C7", compute='get_totals')
-    p6c8            = fields.Integer(string="P6C8", compute='get_totals')
-    p7c9            = fields.Integer(string="P7C9", compute='get_totals')
-    p8c10           = fields.Integer(string="P8C10", compute='get_totals')
-    p9c11           = fields.Integer(string="P9C11", compute='get_totals')
-    p10c12          = fields.Integer(string="P10C12", compute='get_totals')
-    p12c20          = fields.Integer(string="P12C20", compute='get_totals')
-    total_crown     = fields.Integer(string="w/Crown", compute='get_totals')
-    total_crownless = fields.Integer(string="Crownlesss", compute='get_totals')
-    total_qty       = fields.Integer(string="Total", compute='get_totals')
+            rec.notes = """
+                <h3>SUMMARY</h3>
+                <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
+                    <thead><tr> %s </tr></thead>
+                    <tbody> <tr class="o_data_row"> %s </tr> </tbody>
+                </table>
+            """ %(''.join(headers),''.join(rows))
 
-
-
-    p5_id              = fields.Many2one("dmpi.crm.product", string="P5", compute='_get_product_codes')
-    p6_id              = fields.Many2one("dmpi.crm.product", string="P6", compute='_get_product_codes')
-    p7_id              = fields.Many2one("dmpi.crm.product", string="P7", compute='_get_product_codes')
-    p8_id              = fields.Many2one("dmpi.crm.product", string="P8", compute='_get_product_codes')
-    p9_id              = fields.Many2one("dmpi.crm.product", string="P9", compute='_get_product_codes')
-    p10_id             = fields.Many2one("dmpi.crm.product", string="P10", compute='_get_product_codes')
-    p12_id             = fields.Many2one("dmpi.crm.product", string="P12", compute='_get_product_codes')
-    p5c7_id            = fields.Many2one("dmpi.crm.product", string="P5C7", compute='_get_product_codes')
-    p6c8_id            = fields.Many2one("dmpi.crm.product", string="P6C8", compute='_get_product_codes')
-    p7c9_id            = fields.Many2one("dmpi.crm.product", string="P7C9", compute='_get_product_codes')
-    p8c10_id           = fields.Many2one("dmpi.crm.product", string="P8C10", compute='_get_product_codes')
-    p9c11_id           = fields.Many2one("dmpi.crm.product", string="P9C11", compute='_get_product_codes')
-    p10c12_id          = fields.Many2one("dmpi.crm.product", string="P10C12", compute='_get_product_codes')
-    p12c20_id          = fields.Many2one("dmpi.crm.product", string="P12C20", compute='_get_product_codes')
-
-
+            rec.total_p100 = 1#self.p101,self.p102,self.p103,self.p104,self.p105,self.p106,self.p107,self.p108,self.p109,self.p110
+            rec.total_p200 = 1#self.p201,self.p202,self.p203,self.p204,self.p205,self.p206,self.p207,self.p208,self.p209,self.p210
+            rec.total_amount = total_amount
+            rec.total_qty = total_qty
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
     ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
@@ -941,93 +938,12 @@ class DmpiCrmSaleOrder(models.Model):
     shell_color = fields.Char("Shell Color")
     ship_line = fields.Char("Ship Line")
     requested_delivery_date = fields.Date("Req. Date")
-    notes = fields.Text("Notes/Remarks", compute='display_summary')
+    notes = fields.Text("Notes/Remarks", compute='_get_product_qty')
 
-    total_amount = fields.Float('Total', compute='get_totals')
+    total_qty = fields.Float('Total', compute='_get_product_qty')
+    total_amount = fields.Float('Total', compute='_get_product_qty')
 
-    @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20',
-        'p5_id','p6_id','p7_id','p8_id','p9_id','p10_id','p12_id','p5c7_id','p6c8_id','p7c9_id','p8c10_id','p9c11_id','p10c12_id','p12c20_id')
-    def display_summary(self):
-
-        headers = """ 
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P5</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P6</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P7</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P8</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P9</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P10</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P12</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P5C7</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P6C8</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P7C9</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P8C10</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P9C11</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P10C12</th>
-            <th data-original-title="" title="" style="text-align: right; color:#FFF; background-color: #78717e;" >P12C20</th>
-        """ 
-
-        rows = """
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-            <td class="o_data_cell o_list_number">%s</td>
-        """ % (self.p5, self.p6, self.p7, self.p8, self.p9, self.p10, self.p12, 
-            self.p5c7, self.p6c8, self.p7c9, self.p8c10, self.p9c11, self.p10c12, self.p12c20)
-
-
-        self.notes = """
-            <h3>SUMMARY</h3>
-            <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
-                <thead>
-                    <tr>
-                        %s
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="o_data_row">
-                        %s
-                    </tr>
-                </tbody>
-            </table>
-        """ %(headers,rows)
-
-
-
-    @api.depends('contract_id')
-    def _get_product_codes(self):
-        if self.contract_id.partner_id.id:
-            query = """SELECT p.id, p.code, p.sku from dmpi_crm_product p
-                        where p.code != '' and p.partner_id = %s""" % self.contract_id.partner_id.id
-
-            self.env.cr.execute(query)
-            result = self.env.cr.dictfetchall()
-
-            for r in result:
-                if r['code'].upper() == 'P5': self.p5_id = r['id']
-                if r['code'].upper() == 'P6': self.p6_id = r['id']
-                if r['code'].upper() == 'P7': self.p7_id = r['id']
-                if r['code'].upper() == 'P8': self.p8_id = r['id']
-                if r['code'].upper() == 'P9': self.p9_id = r['id']
-                if r['code'].upper() == 'P10': self.p10_id = r['id']
-                if r['code'].upper() == 'P12': self.p12_id = r['id']
-                if r['code'].upper() == 'P5C7': self.p5c7_id = r['id']
-                if r['code'].upper() == 'P6C8': self.p6c8_id = r['id']
-                if r['code'].upper() == 'P7C9': self.p7c9_id = r['id']
-                if r['code'].upper() == 'P8C10': self.p8c10_id = r['id']
-                if r['code'].upper() == 'P9C11': self.p9c11_id = r['id']
-                if r['code'].upper() == 'P10C12': self.p10c12_id = r['id']
-                if r['code'].upper() == 'P12C20': self.p12c20_id = r['id']
-
+    state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('cancelled','Cancelled')])
 
     # @api.model
     # def create(self, vals):
@@ -1161,6 +1077,37 @@ class DmpiCrmDr(models.Model):
     port_discharge = fields.Char("Port of discharge")
     sto_no = fields.Char("STO No")
 
+
+    @api.multi
+    def action_generate_preship(self):
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        customer = self.contract_id.partner_id.name
+        print ('customer',customer)
+
+        preship = self.env['dmpi.crm.preship.report'].create({
+                    'dr_id': self.id ,
+                    'container': self.van_no,
+                    'customer': customer,
+                })
+
+        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
+        action['res_id'] = preship.id
+
+        return action
+
+    # @api.multi
+    # def action_view_invoice(self):
+    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
+
+    #     invoices = self.mapped('invoice_ids')
+    #     if len(invoices) > 1:
+    #         action['domain'] = [('id', 'in', invoices.ids)]
+    #     elif invoices:
+    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
+    #         action['res_id'] = invoices.id
+    #     return action
+
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'
     _rec_name = 'sku'
@@ -1225,23 +1172,6 @@ class DmpiCrmInspectionLot(models.Model):
 
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
 
-
-class DmpiCrmPreshipInspectionLot(models.Model):
-    _name = 'dmpi.crm.preship.inspection.lot'
-
-    dr_line_item_no = fields.Char('Del Line item No.')
-    sap_so_no = fields.Char('SU  Material')
-    lot = fields.Char('Inspection Lot')
-    node_num = fields.Char('Node (Operation) Number')
-    type = fields.Char('Node (Operation) Description')
-    factor_num = fields.Char('Characteristic Number')
-    factor = fields.Char('Characteristic Short Text')  
-    no_sample = fields.Integer('No of Samples')
-    no_defect = fields.Integer('No of Defects') 
-    value = fields.Float('Mean Value')
-
-    # dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
-    preship_id = fields.Many2one('dmpi.crm.preship.report', 'Preshipment Report', ondelete='cascade')
 
 class DmpiCrmShp(models.Model):
     _name = 'dmpi.crm.shp'
