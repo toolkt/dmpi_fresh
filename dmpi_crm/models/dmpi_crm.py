@@ -91,12 +91,12 @@ class DmpiCrmPartner(models.Model):
     #DEFAULTS
     default_validity = fields.Integer("Default Validity")
 
-    #SBFTI          
-    alt_customer_code = fields.Char("ALT Code")
-    alt_sales_org       = fields.Char("ALT Sales Org")
-    alt_dist_channel    = fields.Char("ALT Distribution Channel")
-    alt_division        = fields.Char("ALT Division")
-    final_ship_to       = fields.Char("Final Ship to")
+    # #SBFTI          
+    # alt_customer_code = fields.Char("ALT Code")
+    # alt_sales_org       = fields.Char("ALT Sales Org")
+    # alt_dist_channel    = fields.Char("ALT Distribution Channel")
+    # alt_division        = fields.Char("ALT Division")
+    # final_ship_to       = fields.Char("Final Ship to")
 
 
     ar_records = fields.One2many('dmpi.crm.partner.ar','partner_id','AR Records')

@@ -474,8 +474,10 @@ class DmpiCrmSaleContract(models.Model):
         for rec in self:
             contract_line_no = 0
             for so in rec.sale_order_ids:
-                contract_line_no += 10
-                so.write({'contract_line_no':contract_line_no})
+                # so.write({'contract_line_no':contract_line_no})
+                for sol in so.order_ids:
+                    contract_line_no += 10
+                    sol.write({'contract_line_no':contract_line_no})
 
                 if so.name == 'Draft' or '':
                     seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
@@ -531,7 +533,7 @@ class DmpiCrmSaleContract(models.Model):
                         'valid_from' : valid_from,
                         'valid_to' : valid_to,
                         'ship_to_dest' : so.ship_to_id.ship_to_code,
-                        'po_line_no' : so.contract_line_no,
+                        'po_line_no' : sol.contract_line_no,
                         'material' : sol.product_id.sku,
                         'qty' : int(sol.qty),
                         'uom' : 'CAS',
@@ -547,14 +549,11 @@ class DmpiCrmSaleContract(models.Model):
                         line['sold_to'] = rec.sold_via_id.customer_code
                         line['ship_to'] = rec.sold_via_id.customer_code
                         line['sales_org'] = rec.sold_via_id.sales_org
-                        line['ship_to_dest'] = rec.sold_via_id.customer_code 
-                    if rec.partner_id.alt_dist_channel:
-                        line['dist_channel'] = rec.sold_via_id.dist_channel
-                    if rec.partner_id.alt_division:
+                        line['ship_to_dest'] = rec.sold_via_id.customer_code
+                        line['dist_channel'] = rec.sold_via_id.dist_channel 
                         line['division'] = rec.sold_via_id.division
-                    if rec.partner_id.alt_customer_code:
                         line['sold_to'] = rec.sold_via_id.customer_code
-
+                    
 
                     lines.append(line)
 
@@ -675,7 +674,7 @@ class DmpiCrmSaleOrder(models.Model):
                     'po_date' : po_date,
                     # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
                     'rdd' : rec.create_date,
-                    'po_line_no' : rec.contract_line_no,
+                    'po_line_no' : sol.contract_line_no,
                     'so_line_no' : sol.so_line_no,  
                     'material' : sol.product_id.sku,    
                     'qty' : int(sol.qty),
@@ -1013,8 +1012,10 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
     name = fields.Char("Description")
+    contract_line_no = fields.Integer('Contract Line No')
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')
+
     order_id = fields.Many2one('dmpi.crm.sale.order','Sale Order ID', ondelete='cascade')
     product_code = fields.Selection(_get_product_codes,"Code")
     product_id = fields.Many2one('dmpi.crm.product','SKU')

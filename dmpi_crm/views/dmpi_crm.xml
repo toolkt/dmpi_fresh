@@ -66,17 +66,6 @@
                         </group>
 
                         <notebook>
-                            <page string="SBFTI">
-                                <group>
-                                    <group>
-                                        <field name="alt_customer_code" />
-                                        <field name="alt_sales_org" />
-                                        <field name="alt_dist_channel" />
-                                        <field name="alt_division" />
-                                        <field name="final_ship_to" />
-                                    </group>
-                                </group>
-                            </page>
                             <page string="Ship-to Codes">
                                 <field name="ship_to_ids">
                                     <tree>
