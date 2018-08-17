@@ -1173,6 +1173,23 @@ class DmpiCrmInspectionLot(models.Model):
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
 
 
+class DmpiCrmPreshipInspectionLot(models.Model):
+    _name = 'dmpi.crm.preship.inspection.lot'
+
+    dr_line_item_no = fields.Char('Del Line item No.')
+    sap_so_no = fields.Char('SU  Material')
+    lot = fields.Char('Inspection Lot')
+    node_num = fields.Char('Node (Operation) Number')
+    type = fields.Char('Node (Operation) Description')
+    factor_num = fields.Char('Characteristic Number')
+    factor = fields.Char('Characteristic Short Text')  
+    no_sample = fields.Integer('No of Samples')
+    no_defect = fields.Integer('No of Defects') 
+    value = fields.Float('Mean Value')
+
+    # dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
+    preship_id = fields.Many2one('dmpi.crm.preship.report', 'Preshipment Report', ondelete='cascade')
+
 class DmpiCrmShp(models.Model):
     _name = 'dmpi.crm.shp'
     _rec_name = 'shp_no'
@@ -1272,6 +1289,10 @@ class DmpiCrmInvoiceDms(models.Model):
     dms_sap_inv_no = fields.Char("DMS Invoice No.")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
     raw = fields.Text("Raw")
+
+
+
+
 
 
 

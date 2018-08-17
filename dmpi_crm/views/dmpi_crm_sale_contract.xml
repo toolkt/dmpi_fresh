@@ -145,20 +145,20 @@
                                 <tree>
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
-                                    <field name="p5" sum="Total"/>
-                                    <field name="p6" sum="Total"/>
-                                    <field name="p7" sum="Total"/>
-                                    <field name="p8" sum="Total"/>
-                                    <field name="p9" sum="Total"/>
-                                    <field name="p10" sum="Total"/>
-                                    <field name="p12" sum="Total"/>
-                                    <field name="p5c7" sum="Total"/>
-                                    <field name="p6c8" sum="Total"/>
-                                    <field name="p7c9" sum="Total"/>
-                                    <field name="p8c10" sum="Total"/>
-                                    <field name="p9c11" sum="Total"/>
-                                    <field name="p10c12" sum="Total"/>
-                                    <field name="p12c20" sum="Total"/>
+                                    <field name="p101" sum="Total"/>
+                                    <field name="p102" sum="Total"/>
+                                    <field name="p103" sum="Total"/>
+                                    <field name="p104" sum="Total"/>
+                                    <field name="p105" sum="Total"/>
+                                    <field name="p106" sum="Total"/>
+                                    <field name="p107" sum="Total"/>
+                                    <field name="p201" sum="Total"/>
+                                    <field name="p202" sum="Total"/>
+                                    <field name="p203" sum="Total"/>
+                                    <field name="p204" sum="Total"/>
+                                    <field name="p205" sum="Total"/>
+                                    <field name="p206" sum="Total"/>
+                                    <field name="p207" sum="Total"/>
                                     <field name="total_qty" sum="Total"/>
                                     <field name="total_amount" sum="Total"/>
                                 </tree>
@@ -169,20 +169,20 @@
                                 <tree>
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
-                                    <field name="p5" sum="Total"/>
-                                    <field name="p6" sum="Total"/>
-                                    <field name="p7" sum="Total"/>
-                                    <field name="p8" sum="Total"/>
-                                    <field name="p9" sum="Total"/>
-                                    <field name="p10" sum="Total"/>
-                                    <field name="p12" sum="Total"/>
-                                    <field name="p5c7" sum="Total"/>
-                                    <field name="p6c8" sum="Total"/>
-                                    <field name="p7c9" sum="Total"/>
-                                    <field name="p8c10" sum="Total"/>
-                                    <field name="p9c11" sum="Total"/>
-                                    <field name="p10c12" sum="Total"/>
-                                    <field name="p12c20" sum="Total"/>
+                                    <field name="p101" sum="Total"/>
+                                    <field name="p102" sum="Total"/>
+                                    <field name="p103" sum="Total"/>
+                                    <field name="p104" sum="Total"/>
+                                    <field name="p105" sum="Total"/>
+                                    <field name="p106" sum="Total"/>
+                                    <field name="p107" sum="Total"/>
+                                    <field name="p201" sum="Total"/>
+                                    <field name="p202" sum="Total"/>
+                                    <field name="p203" sum="Total"/>
+                                    <field name="p204" sum="Total"/>
+                                    <field name="p205" sum="Total"/>
+                                    <field name="p206" sum="Total"/>
+                                    <field name="p207" sum="Total"/>
                                     <field name="total_qty" sum="Total"/>
                                     <field name="total_amount" sum="Total"/>
                                 </tree>

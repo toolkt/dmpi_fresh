@@ -28,20 +28,20 @@
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
 
-                    <field name="p5" sum="Total"/>
-                    <field name="p6" sum="Total"/>
-                    <field name="p7" sum="Total"/>
-                    <field name="p8" sum="Total"/>
-                    <field name="p9" sum="Total"/>
-                    <field name="p10" sum="Total"/>
-                    <field name="p12" sum="Total"/>
-                    <field name="p5c7" sum="Total"/>
-                    <field name="p6c8" sum="Total"/>
-                    <field name="p7c9" sum="Total"/>
-                    <field name="p8c10" sum="Total"/>
-                    <field name="p9c11" sum="Total"/>
-                    <field name="p10c12" sum="Total"/>
-                    <field name="p12c20" sum="Total"/>
+                    <field name="p101" sum="Total"/>
+                    <field name="p102" sum="Total"/>
+                    <field name="p103" sum="Total"/>
+                    <field name="p104" sum="Total"/>
+                    <field name="p105" sum="Total"/>
+                    <field name="p106" sum="Total"/>
+                    <field name="p107" sum="Total"/>
+                    <field name="p201" sum="Total"/>
+                    <field name="p202" sum="Total"/>
+                    <field name="p203" sum="Total"/>
+                    <field name="p204" sum="Total"/>
+                    <field name="p205" sum="Total"/>
+                    <field name="p206" sum="Total"/>
+                    <field name="p207" sum="Total"/>
                     <field name="total_qty" sum="Total"/>
                     <field name="total_amount" sum="Total"/>
                     
@@ -65,23 +65,8 @@
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-pencil-square-o"
-                                string="Submit SO"
-                                confirm="Are you sure you want to send the SO, If you have sent this before it will create another Record?">
+                                string="Submit SO">
                             </button>
-
-                            <button name="toggle_valid" class="oe_stat_button" type="object" icon="fa-globe">
-                                <field name="valid" widget="boolean_button"
-                                    options='{"terminology": {
-                                    "string_true": "Valid", 
-                                    "string_false": "Hold"
-                                    }}'/>
-                            </button>
-
-                        </div>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name_disp"/>
-                            </h1>
                         </div>
                         <group>
                             <group>
@@ -92,10 +77,12 @@
                                 <field name="plant" required="1"/>
                             </group>
                             <group>
+                                <field name="valid" />
                                 <field name="ship_line" />
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
                                 <field name="estimated_date" />
+                                <field name="sap_so_no" />
                                 <field name="total_amount" invisible="1"/>
                             </group>
                         </group>
@@ -106,7 +93,7 @@
                                 <field name="order_ids">
                                     <tree editable="bottom">
                                         <field name="so_line_no" readonly="1"/>
-                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_id', '=', parent.partner_id)]"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_id', '=', parent.partner_id)]"/> <!--  -->
                                         <field name="product_code"/>
                                         <field name="name" />
                                         <field name="price" />
@@ -115,43 +102,15 @@
                                         <field name="total"  sum='Total Amount'/>
                                     </tree>
                                 </field>                            
-                            </page>                            
-                            <page string="Summary">
-                                <group>
-                                    <group string="WITH CROWNS">
-                                        <field name="p5_id" nolabel="1"/><field name="p5" nolabel="1"/>
-                                        <field name="p6_id" nolabel="1"/><field name="p6" nolabel="1"/>
-                                        <field name="p7_id" nolabel="1"/><field name="p7" nolabel="1"/>
-                                        <field name="p8_id" nolabel="1"/><field name="p8" nolabel="1"/>
-                                        <field name="p9_id" nolabel="1"/><field name="p9" nolabel="1"/>
-                                        <field name="p10_id" nolabel="1"/><field name="p10" nolabel="1"/>
-                                        <field name="p12_id" nolabel="1"/><field name="p12" nolabel="1"/>
-                                        <field name="total_crown"/>
-                                    </group>
-                                    <group string="CROWNLESS">
-                                        <field name="p5c7_id" nolabel="1"/><field name="p5c7" nolabel="1"/>
-                                        <field name="p6c8_id" nolabel="1"/><field name="p6c8" nolabel="1"/>
-                                        <field name="p7c9_id" nolabel="1"/><field name="p7c9" nolabel="1"/>
-                                        <field name="p8c10_id" nolabel="1"/><field name="p8c10" nolabel="1"/>
-                                        <field name="p9c11_id" nolabel="1"/><field name="p9c11" nolabel="1"/>
-                                        <field name="p10c12_id" nolabel="1"/><field name="p10c12" nolabel="1"/>
-                                        <field name="p12c20_id" nolabel="1"/><field name="p12c20" nolabel="1"/>
-                                        <field name="total_crownless"/>
-                                    </group>
-                                </group>
-                            </page>
+                            </page>    
                             <page string="Settings">
                                 <group>
                                     <group>
                                         <field name="so_no"/>
-                                        <field name="name"/>
-                                        <field name="sap_so_no" />
-                                        <field name="sap_so_date" />
                                     </group>
                                     <group>
                                         <field name="contract_id" />
                                         <field name="partner_id" />
-                                        <field name="valid_disp" />
                                     </group>
                                 </group>
                             </page>
@@ -263,31 +222,7 @@
                                         <field name="total"  sum='Total Amount'/>
                                     </tree>
                                 </field>                            
-                            </page>                            
-                            <page string="Summary">
-                                <group>
-                                    <group string="WITH CROWNS">
-                                        <field name="p5_id" nolabel="1"/><field name="p5" nolabel="1"/>
-                                        <field name="p6_id" nolabel="1"/><field name="p6" nolabel="1"/>
-                                        <field name="p7_id" nolabel="1"/><field name="p7" nolabel="1"/>
-                                        <field name="p8_id" nolabel="1"/><field name="p8" nolabel="1"/>
-                                        <field name="p9_id" nolabel="1"/><field name="p9" nolabel="1"/>
-                                        <field name="p10_id" nolabel="1"/><field name="p10" nolabel="1"/>
-                                        <field name="p12_id" nolabel="1"/><field name="p12" nolabel="1"/>
-                                        <field name="total_crown"/>
-                                    </group>
-                                    <group string="CROWNLESS">
-                                        <field name="p5c7_id" nolabel="1"/><field name="p5c7" nolabel="1"/>
-                                        <field name="p6c8_id" nolabel="1"/><field name="p6c8" nolabel="1"/>
-                                        <field name="p7c9_id" nolabel="1"/><field name="p7c9" nolabel="1"/>
-                                        <field name="p8c10_id" nolabel="1"/><field name="p8c10" nolabel="1"/>
-                                        <field name="p9c11_id" nolabel="1"/><field name="p9c11" nolabel="1"/>
-                                        <field name="p10c12_id" nolabel="1"/><field name="p10c12" nolabel="1"/>
-                                        <field name="p12c20_id" nolabel="1"/><field name="p12c20" nolabel="1"/>
-                                        <field name="total_crownless"/>
-                                    </group>
-                                </group>
-                            </page>
+                            </page>    
                             <page string="Settings">
                                 <group>
                                     <group>
