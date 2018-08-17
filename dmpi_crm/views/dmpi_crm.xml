@@ -786,14 +786,14 @@
                                         <h3><strong style="color:#79717D;">Container Temp</strong></h3>
                                         <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                         <field name="simul_no" string="Simul No."/>
+                                        <field name="simul_pack_size" string="Simul Pack Size"/>
                                         <field name="simul_pack_date" string="Simul Pack Date"/>
                                         <field name="first_temp" string="First"/>
                                         <field name="mid_temp" string="Mid"/>
                                         <field name="last_temp" string="Last"/>
                                         <field name="van_temp" sring="Van Temp"/>
-
-                                        <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3>
-                                        <field name="pulp_room_temp" nolabel="1" colspan="2"/>
+                                        <!-- <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3> -->
+                                        <!-- <field name="pulp_room_temp" nolabel="1" colspan="2"/> -->
                                     </group>
                                 </group>
 
@@ -818,6 +818,28 @@
                                         <field name="remarks" placeholder="Add notes here..."/>
                                     </group>
                                 </group>
+                            </page>
+                            <page string="Production">
+                                <group>
+                                    <group>
+                                        <field name="temp_start" string="Supply Temp Start"/>
+                                        <field name="temp_end" string="Supply Temp Dep"/>
+                                    </group>
+                                    <group>
+                                        <field name="van_temp_start" string="Van Temp Before"/>
+                                        <field name="van_temp_end" string="Van Temp After"/>
+                                    </group>
+                                </group>
+                                <h3><strong style="color:#79717D;">Pulp Temperature</strong></h3>
+                                <field name="pc_line_ids">
+                                    <tree editable="bottom">
+                                        <field name="pack_date"/>
+                                        <field name="before_pc"/>
+                                        <field name="after_pc"/>
+                                        <field name="cold_storage"/>
+                                        <field name="no_pallet"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Pre-Shipment Certificates">
                                 <field name="preship_ids"/>

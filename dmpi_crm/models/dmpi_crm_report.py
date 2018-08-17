@@ -12,6 +12,7 @@ import json
 # REPORTS CONFIGURATIONS
 class DmpiCrmTemplate(models.Model):
 	_name = 'dmpi.crm.template'
+	_inherit = ['mail.thread']
 	_sql_constraints = [
 		('unique_template', 'UNIQUE (name)', _('Similar template already exists!'))
 	]
@@ -27,16 +28,16 @@ class DmpiCrmTemplate(models.Model):
 
 			print (rec.ext_weight, rec.int_weight, rec.pack_weight, rec.total_weight)
 
-	name = fields.Char('Template Name')
-	ext_rule = fields.Char('External')
-	int_rule = fields.Char('Internal')
-	pack_rule = fields.Char('Packaging')
-	overall_rule = fields.Char('Overall Rule')
-	ext_hold = fields.Boolean('External')
-	int_hold = fields.Boolean('Internal')
-	pack_hold = fields.Boolean('Packaging')
+	name = fields.Char('Template Name', track_visibility="onchange")
+	ext_rule = fields.Char('External', track_visibility="onchange")
+	int_rule = fields.Char('Internal', track_visibility="onchange")
+	pack_rule = fields.Char('Packaging', track_visibility="onchange")
+	overall_rule = fields.Char('Overall Rule', track_visibility="onchange")
+	ext_hold = fields.Boolean('External', track_visibility="onchange")
+	int_hold = fields.Boolean('Internal', track_visibility="onchange")
+	pack_hold = fields.Boolean('Packaging', track_visibility="onchange")
 	
-	active = fields.Boolean('Active', default=True)
+	active = fields.Boolean('Active', default=True, track_visibility="onchange")
 	tmpl_lines = fields.One2many('dmpi.crm.template.line','tmpl_id','Weight Factors')
 
 	ext_weight = fields.Float('Total External Weight', compute="_get_total")
@@ -44,6 +45,8 @@ class DmpiCrmTemplate(models.Model):
 	pack_weight = fields.Float('Total Packaging Weight', compute="_get_total")
 	total_weight = fields.Float('Total Weight', compute="_get_total")
 
+	doc_num = fields.Char('Document Number', track_visibility="onchange")
+	effective_date = fields.Date('Effectivity Date', track_visibility="onchange")
 
 class DmpiCrmTemplateLine(models.Model):
 	_name = 'dmpi.crm.template.line'
@@ -160,6 +163,7 @@ class DmpiCrmPreshipReport(models.Model):
 	total_class = fields.Char('Class')
 
 	pc_line_ids = fields.One2many('dmpi.crm.preship.pc.line','preship_id','PC Line Ids')
+	insp_lot_ids = fields.One2many('dmpi.crm.preship.inspection.lot','preship_id','INSP LOT IDS')
 
 
 
@@ -211,6 +215,18 @@ class DmpiCRMPreshipPCLine(models.Model):
 	no_pallet = fields.Integer('No. of Pallets')
 
 	preship_id = fields.Many2one('dmpi.crm.preship.report','Preshipment Report')
+
+class DmpiCRMCLPPCLine(models.Model):
+	_name = 'dmpi.crm.clp.pc.line'
+
+	pack_date = fields.Date('Pack Date')
+	before_pc = fields.Text('Before PC')
+	after_pc = fields.Text('After PC')
+	cold_storage = fields.Text('Cold Storage')
+	no_pallet = fields.Integer('No. of Pallets')
+
+	clp_id = fields.Many2one('dmpi.crm.clp','CLP ID')
+
 
 class DmpiCrmClp(models.Model):
     _name = 'dmpi.crm.clp'
@@ -271,7 +287,7 @@ class DmpiCrmClp(models.Model):
     # signatories
     encoder_id = fields.Many2one('res.users','Encoder')
     outbound_checker_id = fields.Many2one('res.users','Outbound Checker')
-    supervisor_id = fields.Many2one('res.users','Supervisor')
+    supervisor_id = fields.Many2one('res.users','QA Supervisor')
     prod_load_counter_id = fields.Many2one('res.users','Production Loading Counter')
     inspector_id = fields.Many2one('res.users','QA Inspector')
 
@@ -295,13 +311,18 @@ class DmpiCrmClp(models.Model):
     # container temperatures
     # container_temp = fields.Text('Container Temp Details')
     simul_no = fields.Char('Simulation No')
+    simul_pack_size = fields.Char('Simulation Pack Size')
     simul_pack_date = fields.Date('Simulation Pack Date')
     first_temp = fields.Char('First Temp')
     mid_temp = fields.Char('Mid Temp')
     last_temp = fields.Char('Last Temp')
     van_temp = fields.Char('Van Temp')
+    
+    temp_start = fields.Float('Supply Temp Starting')
+    temp_end = fields.Float('Supply Temp Upon Departure')
+    van_temp_start = fields.Float('Van Temp Before Stuffing')
+    van_temp_end = fields.Float('Van Temp Setting')
 
-    # container temperatures (manual input)
     pulp_room_temp = fields.Text('Pulp Room Temp Details')
 
 
@@ -310,6 +331,7 @@ class DmpiCrmClp(models.Model):
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
     dr_no = fields.Char(string='DR Number', related="dr_id.name")
     clp_line_ids = fields.One2many('dmpi.crm.clp.line', 'clp_id', "CLP Line Ids")
+    pc_line_ids = fields.One2many('dmpi.crm.clp.pc.line','clp_id','Pulp Temp Lines')
     preship_ids = fields.One2many('dmpi.crm.preship.report','clp_id','Pre-Shipment Certificates')
 
     status = fields.Selection([
@@ -361,13 +383,48 @@ class DmpiCrmClp(models.Model):
         dr_id = dr.id
         container = dr.van_no
         customer = contract.partner_id.name
-        shell_color = so.shell_color
+        # shell_color = so.shell_color
+        shell_color = clp.shell_color
         market = dr.port_destination
         date_load = datetime.today()
         no_box = clp.boxes
         inspector_id = clp.inspector_id.id
+        supervisor_id = clp.supervisor_id.id
         pack_size = ps
-        # pack_date = 
+        remarks = clp.remarks
+
+        temp_start = clp.temp_start
+        temp_end = clp.temp_end
+        van_temp_start = clp.van_temp_start
+        van_temp_end = clp.van_temp_end
+
+
+        pc_lines = []
+        for pc in clp.pc_line_ids:
+        	pc_lines.append((0,0,{
+        		'pack_date': pc.pack_date,
+        		'before_pc': pc.before_pc,
+        		'after_pc': pc.after_pc,
+        		'cold_storage': pc.cold_storage,
+        		'no_pallet': pc.no_pallet,
+        	}))
+
+        insp_lot_lines = []
+        for il in dr.insp_lots:
+        	insp_lot_lines.append((0,0,{
+        		'dr_line_item_no': il.dr_line_item_no,
+        		'sap_so_no': il.sap_so_no,
+        		'lot': il.lot,
+        		'node_num': il.node_num,
+        		'type': il.type,
+        		'factor_num': il.factor_num,
+        		'factor': il.factor,
+        		'no_sample': il.no_sample,
+        		'no_defect': il.no_defect,
+        		'value': il.value,
+        	}))
+
+
 
         preship = self.env['dmpi.crm.preship.report'].create({
             'dr_id': dr.id,
@@ -380,6 +437,14 @@ class DmpiCrmClp(models.Model):
             'no_box': no_box,
             'inspector': inspector_id,
             'pack_size': pack_size,
+            'remarks': remarks,
+            'supervisor': supervisor_id,
+            'temp_start': temp_start,
+            'temp_end': temp_end,
+            'van_temp_start': van_temp_start,
+            'van_temp_end': van_temp_end,
+            'pc_line_ids': pc_lines,
+            'insp_lot_ids': insp_lot_lines,
         })
 
         action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]

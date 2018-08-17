@@ -162,7 +162,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				('AOP @ ETA', '(Manual)', dname),
 			]
 			sheet.write_row('A5:AI5', [i[0] for i in header_vals], head_name)
-			sheet.write_row('A6:AI6', [i[1] for i in header_vals], sub_head_name)
+			# sheet.write_row('A6:AI6', [i[1] for i in header_vals], sub_head_name)
 
 
 			# INSERT DATA HERE
@@ -207,7 +207,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			self._cr.execute(query)
 			result = self._cr.fetchall()
 
-			row = 6
+			row = 5
 			for rec in result:
 				# set row values
 				dr_id = rec[0]
@@ -243,9 +243,10 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				rec = iter(rec[1:])
 				col = 0
 
-				aop_etd = '=AE%s-D%s' % (row+1, row+1)
-				trans_time = '=AG%s-AE%s' % (row+1, row+1)
-				aop_eta_time = '=AG%s-D%s' % (row+1, row+1)
+				aop_etd = '=AJ%s-D%s' % (row+1, row+1)
+				aop_eta_time = '=AL%s-D%s' % (row+1, row+1)
+				trans_time = '=AL%s-AJ%s' % (row+1, row+1)
+				
 
 				for h in header_vals:
 					if h[1] == '(Manual)':

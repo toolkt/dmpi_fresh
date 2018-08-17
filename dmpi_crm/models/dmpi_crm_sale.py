@@ -1161,37 +1161,6 @@ class DmpiCrmDr(models.Model):
     port_discharge = fields.Char("Port of discharge")
     sto_no = fields.Char("STO No")
 
-
-    @api.multi
-    def action_generate_preship(self):
-        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
-
-        customer = self.contract_id.partner_id.name
-        print ('customer',customer)
-
-        preship = self.env['dmpi.crm.preship.report'].create({
-                    'dr_id': self.id ,
-                    'container': self.van_no,
-                    'customer': customer,
-                })
-
-        action['views'] = [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')]
-        action['res_id'] = preship.id
-
-        return action
-
-    # @api.multi
-    # def action_view_invoice(self):
-    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
-
-    #     invoices = self.mapped('invoice_ids')
-    #     if len(invoices) > 1:
-    #         action['domain'] = [('id', 'in', invoices.ids)]
-    #     elif invoices:
-    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
-    #         action['res_id'] = invoices.id
-    #     return action
-
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'
     _rec_name = 'sku'
@@ -1256,6 +1225,23 @@ class DmpiCrmInspectionLot(models.Model):
 
     dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
 
+
+class DmpiCrmPreshipInspectionLot(models.Model):
+    _name = 'dmpi.crm.preship.inspection.lot'
+
+    dr_line_item_no = fields.Char('Del Line item No.')
+    sap_so_no = fields.Char('SU  Material')
+    lot = fields.Char('Inspection Lot')
+    node_num = fields.Char('Node (Operation) Number')
+    type = fields.Char('Node (Operation) Description')
+    factor_num = fields.Char('Characteristic Number')
+    factor = fields.Char('Characteristic Short Text')  
+    no_sample = fields.Integer('No of Samples')
+    no_defect = fields.Integer('No of Defects') 
+    value = fields.Float('Mean Value')
+
+    # dr_id = fields.Many2one('dmpi.crm.dr', 'DR ID', ondelete='cascade')
+    preship_id = fields.Many2one('dmpi.crm.preship.report', 'Preshipment Report', ondelete='cascade')
 
 class DmpiCrmShp(models.Model):
     _name = 'dmpi.crm.shp'
