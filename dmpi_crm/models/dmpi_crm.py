@@ -123,7 +123,7 @@ class DmpiCrmPartnerAR(models.Model):
     def _get_date_overdue(self):
         for rec in self:
             print(rec.payment_term_days)
-            date1 = datetime.strptime(rec.base_line_date, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=+7)
+            date1 = datetime.strptime(rec.base_line_date, "%m/%d/%Y") + timedelta(days=+7)
             date2 = datetime.now()
             # print ((date2-date1).days)
             rec.days_overdue = (date2-date1).days
@@ -142,7 +142,7 @@ class DmpiCrmPartnerAR(models.Model):
     customer_code       = fields.Char("Customer Code")
     amount              = fields.Float("Amount")
     currency            = fields.Char("Currency")
-    partner_id          = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner')
+    partner_id          = fields.Many2one('dmpi.crm.partner',"Partner",compute='_get_partner')
     payment_term_days   = fields.Integer("Payment Term (Days)")
     days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
     

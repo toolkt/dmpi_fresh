@@ -305,18 +305,19 @@ class DmpiCrmSaleContract(models.Model):
         if self.partner_id:
             credit = self.env['dmpi.crm.partner.credit.limit'].search([('customer_code','=',self.partner_id.customer_code)], order="write_date desc, id desc", limit=1)
 
-            # query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float) as ar from dmpi_crm_partner_ar ar
-            #             where ar.active is True and ltrim(ar.customer_no,'0') = '%s'
-            #         """ % self.partner_id.customer_code
+            query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float) as ar from dmpi_crm_partner_ar ar
+                        where ar.active is True and ltrim(ar.customer_no,'0') = '%s'
+                    """ % self.partner_id.customer_code
 
-            query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
-                                     case
-                       when (NOW()::date-ar.base_line_date::date)>(pt.days+14) then 1
-                       else 0
-                       end) as ar
-                                         from dmpi_crm_partner_ar ar
-                       left join dmpi_crm_payment_terms pt on pt.name = ar.terms
-                       where ar.active is True and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
+
+            # query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
+            #                          case
+            #            when (NOW()::date-ar.base_line_date::date)>(pt.days+14) then 1
+            #            else 0
+            #            end) as ar
+            #                              from dmpi_crm_partner_ar ar
+            #            left join dmpi_crm_payment_terms pt on pt.name = ar.terms
+            #            where ar.active is True and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
 
             print(query)        
@@ -474,31 +475,34 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_approve_contract(self):
         for rec in self:
-            contract_line_no = 0
-            for so in rec.sale_order_ids:
-                # so.write({'contract_line_no':contract_line_no})
-                if rec.week_no:
-                    so.week_no = rec.week_no
-                for sol in so.order_ids:
-                    contract_line_no += 10
-                    sol.write({'contract_line_no':contract_line_no})
+            if rec.ar_status > 0:
+                rec.write({'state':'soa'})
+            else:
+                contract_line_no = 0
+                for so in rec.sale_order_ids:
+                    # so.write({'contract_line_no':contract_line_no})
+                    if rec.week_no:
+                        so.week_no = rec.week_no
+                    for sol in so.order_ids:
+                        contract_line_no += 10
+                        sol.write({'contract_line_no':contract_line_no})
 
-                if so.name == 'Draft' or '':
-                    seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
-                    so.write({'name': seq})
+                    if so.name == 'Draft' or '':
+                        seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
+                        so.write({'name': seq})
 
-                sol_line_no = 0
-                for sol in so.order_ids:
-                    sol_line_no += 10
-                    sol.write({'so_line_no':sol_line_no})
+                    sol_line_no = 0
+                    for sol in so.order_ids:
+                        sol_line_no += 10
+                        sol.write({'so_line_no':sol_line_no})
 
-            rec.write({'state':'approved'})
+                rec.write({'state':'approved'})
 
 
     @api.multi
     def action_release_contract(self):
         for rec in self:
-            rec.write({'state':'confirmed'})
+            rec.write({'state':'approved'})
 
 
     @api.multi
