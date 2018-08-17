@@ -644,7 +644,7 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     def submit_so_file(self,rec):
-        if rec.contract_id.sap_cn_no and rec.name != 'Draft':
+        if rec.contract_id.sap_cn_no != '' and rec.name != 'Draft' and rec.state != 'hold':
             print ("Contract Not Draft")
             lines = []
             cid = rec.contract_id
@@ -759,7 +759,7 @@ class DmpiCrmSaleOrder(models.Model):
             if submitted:
                 raise Warning("SO was Successfully Created")
             else:
-                raise Warning("State is in Draft. The SO was NOT Created")
+                raise Warning("State is in Draft or on Hold. The SO was NOT Created")
 
 
     @api.onchange('ship_to_id')
@@ -948,6 +948,8 @@ class DmpiCrmSaleOrder(models.Model):
 
     week_no = fields.Char("Week No")
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
+    po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state')
+    
 
     # @api.model
     # def create(self, vals):
