@@ -53,7 +53,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
     contract_id = fields.Many2one("dmpi.crm.sale.contract","Contract")
     upload_line_ids = fields.One2many('dmpi.crm.sale.contract.upload.line','upload_id',"Upload Lines")
     error_count = fields.Integer("error_count")
-    upload_type = fields.Selection([('customer','Customer'),('commercial','Commercial')], "Upload Type", default='customer')
+    upload_type = fields.Selection([('customer','Customer Orders'),('commercial','Order Confirmation')], "Upload Type", default='customer')
 
     @api.onchange('upload_file')
     def onchange_upload_file(self):
