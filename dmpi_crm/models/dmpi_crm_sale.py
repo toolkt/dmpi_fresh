@@ -132,7 +132,7 @@ class DmpiCrmSaleContract(models.Model):
                 sap_cn_no = "/%s" % self.sap_cn_no
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
-
+    @api.one
     @api.depends('customer_ref','week_no')
     def _get_customer_ref_to_sap(self):
         ref = []
