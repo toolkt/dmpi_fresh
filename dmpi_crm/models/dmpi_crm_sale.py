@@ -292,11 +292,11 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
-    @api.depends('credit_limit','credit_exposure','total_sales')
+    @api.depends('credit_limit','credit_exposure','total_sales', 'open_so')
     def _compute_credit(self):
         for rec in self:
             rec.remaining_credit = rec.credit_limit - rec.credit_exposure
-            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales
+            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
 
 
     @api.onchange('partner_id')
