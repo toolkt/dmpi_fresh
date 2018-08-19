@@ -89,6 +89,7 @@
                                         <field name="outbound_ar_fail" />
                                         <field name="outbound_ar_fail_sent" />
                                         <button name="process_ar" string="Process AR" type="object" class="oe_highlight" />
+                                        <button name="process_cl" string="Process Credit Limit" type="object" class="oe_highlight" />
                                     </group>
 
                                     <group>

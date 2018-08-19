@@ -312,12 +312,12 @@ class DmpiCrmSaleContract(models.Model):
 
             query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
                                      case
-                       when (NOW()::date-ar.base_line_date::date)>(pt.days+14) then 1
+                       when (ar.base_line_date::date + pt.days + 14) <= NOW()::date then 1
                        else 0
                        end) as ar
                                          from dmpi_crm_partner_ar ar
                        left join dmpi_crm_payment_terms pt on pt.name = ar.terms
-                       where ar.active is True and ar.debit_credit = 'H' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
+                       where ar.active is True and ar.acct_type = 'D' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
 
             print(query)        
@@ -335,6 +335,9 @@ class DmpiCrmSaleContract(models.Model):
             where so.valid = True and inv.id is NULL and so.partner_id = %s
             group by so.partner_id
             """ % self.partner_id.id
+
+            print ("-----------OpenSO--------------")
+            print (query)
 
             self.env.cr.execute(query)
             result = self.env.cr.dictfetchall()
@@ -475,6 +478,7 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_approve_contract(self):
         for rec in self:
+            rec.on_change_partner_id()
             if rec.ar_status > 0:
                 rec.write({'state':'soa'})
             else:

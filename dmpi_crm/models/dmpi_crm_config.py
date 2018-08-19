@@ -478,87 +478,44 @@ class DmpiCrmConfig(models.Model):
 
                     line = result.split('\n')
 
-                    #Set to inactive
-                    self.env['dmpi.crm.partner.ar'].search([]).write({'active':False})
-
+                    vals = []
                     for l in line:
                         row = l.split('\t')
+                        val = ""
+                        if len(row) > 0: 
+                            if len(row) == 24:
+                                name = "%s-%s" % (row[16],row[4])
+                                val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
+                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s')""" % (name, row[0], row[1], 
+                                    row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                                    row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                                    row[19], row[20], row[21], row[22], row[23], True)
+                                vals.append(val)
 
-                        # print ("-----------ODOO_AR_OPENAR-------------")
-                        # print (row)
-                        # customer_code = int(row[1])
-                        # print (customer_code)
-                        # exist = self.env['dmpi.crm.partner.ar'].search([('customer_code','=',customer_code)],limit=1)
-                        # partner = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)],limit=1)[0]
-                        # print (exist,partner)
+                            if len(row) == 25:
+                                name = "%s-%s" % (row[16],row[4])
+                                val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s %s','%s','%s','%s','%s','%s','%s',
+                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')""" % (name, row[0], row[1], 
+                                    row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                                    row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                                    row[19], row[20], row[21], row[22], row[23], row[24], True)
+                                vals.append(val)
 
-                        # amount = sap_string_to_float(row[11].replace(',',''))
-                        # base_line_date = datetime.strptime(row[12], '%m/%d/%Y')
-                        # payment_term_days = row[14]
-                        if row[0] != '':
+                        
 
-                            name = "%s-%s" % (row[16],row[4])
+                    query = """INSERT INTO dmpi_crm_partner_ar (name, company_code, customer_no, assignment_no, fiscal_year,
+                        acct_doc_no, psting_date, doc_date, local_curr, ref_doc, doc_type, fiscal_period, 
+                        amt_in_loc_cur, base_line_date, terms,cash_disc_days, acct_doc_no2, acct_doc_num_line,
+                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, active
+                        ) VALUES %s""" % ','.join(vals)
 
-                            ar = {
-                                'name' : name,
-                                'company_code' : row[0],
-                                'customer_no' : row[1],
-                                'assignment_no' : row[2],
-                                'fiscal_year' : row[3],
-                                'acct_doc_no' : row[4],
-                                'psting_date' : row[5],
-                                'doc_date' : row[6],
-                                'local_curr' : row[7],
-                                'ref_doc' : row[8],
-                                'doc_type' : row[9],
-                                'fiscal_period' : row[10],
-                                'amt_in_loc_cur' : row[11],
-                                'base_line_date' : row[12],
-                                'terms' : row[13],
-                                'cash_disc_days' : row[14],
-                                'acct_doc_no' : row[15],
-                                'acct_doc_num_line' : row[16],
-                                'acct_type' : row[17],
-                                'debit_credit' : row[18],
-                                'amt_in_loc_cur2' : row[19],
-                                'assign_no' : row[20],
-                                'gl_acct_no' : row[21],
-                                'gl_acct_no2' : row[22],
-                                'customer_no' : row[23], 
-                                'active' : True,                    
-                            }
+                    # print (query)
+                    q1 = """DELETE from dmpi_crm_partner_ar;"""
+                    q2 = """SELECT setval('dmpi_crm_partner_ar_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_ar), 1), false);"""
 
-                            
-                            if row[1]:         
-                                customer = row[1].lstrip("0")
-                                partner = self.env['dmpi.crm.partner'].search([('customer_code','=',customer)],limit=1)
-                                if partner:
-                                    ar['partner_id'] = partner.id
-
-
-
-
-                            exist = self.env['dmpi.crm.partner.ar'].search([('name','=',name),('active','=',False)],limit=1)
-                            if exist:
-                                print("EXIST %s" % exist)
-                                exist.write(ar)
-                            else:
-                                ar_id = self.env['dmpi.crm.partner.ar'].create(ar)
-                                print("NEW %s" % ar_id)
-
-                            # print (ar)
-
-                        # if partner:
-                        #     data = {'partner_id':partner.id, 'customer_code':str(customer_code),'amount':amount, 'base_line_date':base_line_date,'payment_term_days':payment_term_days}
-                        # else:
-                        #     data = {'customer_code':str(customer_code),'amount':amount, 'base_line_date':base_line_date,'payment_term_days':payment_term_days}
-                        # print ("-----------ODOO_AR_OPENARDATA-------------")
-                        # print (data)
-                        # if exist:
-                        #     exist.write(data)
-                        # else:
-                        #     exist.create(data)
-
+                    self.env.cr.execute(q1)
+                    self.env.cr.execute(q2)
+                    self.env.cr.execute(query)
 
 
                     execute(transfer_files,f, outbound_path_success)
@@ -567,22 +524,36 @@ class DmpiCrmConfig(models.Model):
                 pass
 
 
+
+    @api.multi
+    def process_cl(self):
+        print("Read AR")
+
+        for rec in self:
+
+            outbound_path= rec.outbound_ar_success
+            outbound_path_success= rec.outbound_ar_success_sent
+
+            h = self.search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+
+
             try:
                 files = execute(list_dir,outbound_path,'ODOO_AR_CRDLMT')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
+
                     line = result.split('\n')
-                    print(line)
 
-                    new_credit_list = []
-
+                    vals = []
                     for l in line:
                         row = l.split('\t')
-                        if row[0] != '':
-                            # print ("-----------ODOO_AR_CRDLMT-------------")
-                            # print (row)
 
+                        if len(row) > 0 and row[0] != '':  
                             customer_code = int(row[0].lstrip("0"))
+                            print (customer_code)
 
                             print (customer_code,f)
                             exist = self.env['dmpi.crm.partner.credit.limit'].search([('customer_code','=',customer_code)],limit=1)
@@ -591,29 +562,33 @@ class DmpiCrmConfig(models.Model):
                             credit_exposure = sap_string_to_float(row[3].replace(',',''))
 
 
+
                             if partner:
-                                data = {'partner_id':partner.id, 'customer_code':str(customer_code),'credit_control_no':str(row[1]),'credit_limit':credit_limit,'credit_exposure':credit_exposure,'currency':row[4]}
+                                val = """(%s,'%s','%s',%s,%s,'%s')""" % (partner.id,str(customer_code),str(row[1]),credit_limit,credit_exposure,row[4])
+                                vals.append(val)
                             else:
-                                data = {'customer_code':str(customer_code),'credit_control_no':str(row[1]),'credit_limit':credit_limit,'credit_exposure':credit_exposure,'currency':row[4]}
-                            
+                                val = """(%s,'%s','%s',%s,%s,'%s')""" % (False,str(customer_code),str(row[1]),credit_limit,credit_exposure,row[4])
+                                vals.append(val)
 
-                            
-                            
-                            # print ("-----------ODOO_AR_CRDLMT_data-------------")
-                            # print (data)
-                            if exist:
-                                print ("EXIST %s", data)
-                                write = exist.write(data)
-                            else:
-                                print ("NOT EXIST %s", data)
-                                self.env['dmpi.crm.partner.credit.limit'].create(data)
 
-                    # print ("-----------Transfer Files-------------")
-                    # print(result)
+                    query = """INSERT INTO dmpi_crm_partner_credit_limit (partner_id,customer_code, credit_control_no,credit_limit,credit_exposure,currency) VALUES %s """ % ','.join(vals)
+
+                    print (query)
+
+                    # print (query)
+                    q1 = """DELETE from dmpi_crm_partner_credit_limit;"""
+                    q2 = """SELECT setval('dmpi_crm_partner_credit_limit_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_credit_limit), 1), false);"""
+
+                    self.env.cr.execute(q1)
+                    self.env.cr.execute(q2)
+                    self.env.cr.execute(query)
+
+
                     execute(transfer_files,f, outbound_path_success)
             except Exception as e:
                 print("ERROR %s" % e)
                 pass
+
 
 
     @api.multi

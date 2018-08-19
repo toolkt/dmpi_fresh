@@ -318,8 +318,21 @@
 
 
 
+
+        <record id="view_dmpi_crm_partner_credit_limit_search" model="ir.ui.view">
+            <field name="name">Credit Limit</field>
+            <field name="model">dmpi.crm.partner.credit.limit</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="customer_code"/>
+                </search>
+            </field>
+        </record>
+
+
         <record id="view_dmpi_crm_partner_credit_limit_tree" model="ir.ui.view">
-            <field name="name">Destination</field>
+            <field name="name">Credit Limit</field>
             <field name="model">dmpi.crm.partner.credit.limit</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
@@ -343,6 +356,21 @@
         </record>
 
         <menuitem id="menu_dmpi_crm_partner_credit_limit" action="action_dmpi_crm_partner_credit_limit" parent="menu_dmpi_crm_finance_account"/>       
+
+
+        <record id="view_dmpi_crm_partner_ar_search" model="ir.ui.view">
+            <field name="name">Accounts Receivable</field>
+            <field name="model">dmpi.crm.partner.ar</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="company_code"/>
+                    <field name="customer_no"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+
 
 
         <record id="view_dmpi_crm_partner_ar_tree" model="ir.ui.view">
