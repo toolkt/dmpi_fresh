@@ -330,10 +330,14 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
-            query = """SELECT so.partner_id, sum(coalesce(so.total_amount,0)) openso from dmpi_crm_sale_order so
-            left join dmpi_crm_invoice inv on inv.contract_id = so.contract_id and inv.odoo_so_no = so.name  
-            where so.valid = True and inv.id is NULL and so.partner_id = %s
-            group by so.partner_id
+            query = """SELECT sum(sol.price * sol.qty) as openso
+                from dmpi_crm_sale_order_line sol
+                left join dmpi_crm_sale_order so on so.id = sol.order_id
+                left join (select odoo_so_no from dmpi_crm_invoice 
+                                        where odoo_so_no is not null
+                                        group by odoo_so_no) inv_so on inv_so.odoo_so_no = so.name
+                left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+                where sc.partner_id = %s and so.state in ('confirmed','process','processed')
             """ % self.partner_id.id
 
             print ("-----------OpenSO--------------")
@@ -412,6 +416,7 @@ class DmpiCrmSaleContract(models.Model):
                                 'so_line_no':sl.so_line_no, 
                                 'product_code': sl.product_code, 
                                 'product_id': sl.product_id.id,
+                                'price': sl.price, 
                                 'uom': 'CAS', 
                                 'qty': sl.qty
                             }
