@@ -989,11 +989,12 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
     def compute_price(self,date,customer_code,material):
-        query = """SELECT sales_org, customer_code, material,freight_term,amount,currency,uom 
-                from dmpi_crm_product_price_list_item i
-                where '%s'::DATE between valid_from and valid_to
-                and customer_code = '%s' and material = '%s'
-                limit 1 """ % (date,customer_code,material)
+        query = """SELECT amount,currency,uom from dmpi_crm_product_price_list_item  
+                where material = '%s'
+                and '%s'::DATE between valid_from and valid_to
+                limit 1 """ % (material,date)
+
+        print("--------PRICE-------\n%s" % query)
         self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()
         if result:
