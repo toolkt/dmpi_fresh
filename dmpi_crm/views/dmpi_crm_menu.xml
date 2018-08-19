@@ -7,7 +7,7 @@
 
             <menuitem id="menu_dmpi_crm_commercial_top" name="Commercial" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="20"/>
 
-            <menuitem id="menu_dmpi_crm_finance_top" name="Finance" parent="menu_main_dmpi_crm" groups="group_custom_crm_finance_staff" sequence="20"/>
+            <menuitem id="menu_dmpi_crm_finance_top" name="Finance" parent="menu_main_dmpi_crm" sequence="20"/>
             	<menuitem id="menu_dmpi_crm_finance_account" name="Accounts" parent="menu_dmpi_crm_finance_top" sequence="10"/>
             	<menuitem id="menu_dmpi_crm_finance_configuration" name="Configuration" parent="menu_dmpi_crm_finance_top" sequence="20"/>
 
