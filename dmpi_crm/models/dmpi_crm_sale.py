@@ -485,7 +485,26 @@ class DmpiCrmSaleContract(models.Model):
         for rec in self:
             rec.on_change_partner_id()
             if rec.ar_status > 0:
+                contract_line_no = 0
+                for so in rec.sale_order_ids:
+                    # so.write({'contract_line_no':contract_line_no})
+                    if rec.week_no:
+                        so.week_no = rec.week_no
+                    for sol in so.order_ids:
+                        contract_line_no += 10
+                        sol.write({'contract_line_no':contract_line_no})
+
+                    if so.name == 'Draft' or '':
+                        seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
+                        so.write({'name': seq})
+
+                    sol_line_no = 0
+                    for sol in so.order_ids:
+                        sol_line_no += 10
+                        sol.write({'so_line_no':sol_line_no})
+
                 rec.write({'state':'soa'})
+
             else:
                 contract_line_no = 0
                 for so in rec.sale_order_ids:
