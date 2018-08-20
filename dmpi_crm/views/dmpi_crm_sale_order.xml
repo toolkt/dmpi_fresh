@@ -92,7 +92,7 @@
                                 <field name="week_no" required="1"/>
                             </group>
                             <group>
-                                <!-- <field name="valid" /> -->
+                                <field name="valid" />
                                 <field name="ship_line" />
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
