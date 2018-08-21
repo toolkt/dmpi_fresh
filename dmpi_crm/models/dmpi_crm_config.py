@@ -1336,7 +1336,7 @@ class DmpiCrmConfig(models.Model):
 
     @api.multi
     def process_inv2_pdf(self):
-        print("Read Inv2")
+        print("Read Inv2 PDF")
 
         for rec in self:
 
