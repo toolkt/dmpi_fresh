@@ -997,7 +997,7 @@ class DmpiCrmConfig(models.Model):
                                 'sap_so_no':row[1],
                                 'so_line_no':row[2],
                                 'material':row[3],
-                                'qty':row[4],
+                                'qty': float(re.sub('\,','',row[4])),
                                 'uom':row[5],
                                 'plant':row[6],
                                 'reject_reason':row[7],
