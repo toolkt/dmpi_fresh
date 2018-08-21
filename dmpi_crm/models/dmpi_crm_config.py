@@ -210,37 +210,72 @@ class DmpiCrmConfig(models.Model):
     @api.model
     def _cron_execute_queue(self):
         print("AR CRON JOB WORKING")
-        self.search([('default','=',True)],limit=1)[0].process_ar()
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_ar()
+        except:
+            pass
 
 
     @api.model
     def _cron_process_contract(self):
         print("CONTRACT CRON JOB WORKING")
-        self.search([('default','=',True)],limit=1)[0].process_contract()
-        self.search([('default','=',True)],limit=1)[0].process_success_contract()
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_contract()
+        except:
+            pass
+
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_success_contract()
+        except:
+            pass
 
 
     @api.model
     def _cron_process_so(self):
         print("SO CRON JOB WORKING")
-        self.search([('default','=',True)],limit=1)[0].process_so()
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_so()
+        except:
+            pass
 
 
     @api.model
     def _cron_process_dr(self):
         print("DR & SHIPMENT CRON JOB WORKING")
-        self.search([('default','=',True)],limit=1)[0].process_dr()
-        self.search([('default','=',True)],limit=1)[0].process_shp()
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_dr()
+        except:
+            pass
+
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_shp()
+        except:
+            pass
 
 
 
     @api.model
     def _cron_process_invoice(self):
         print("INVOICE CRON JOB WORKING")
-        self.search([('default','=',True)],limit=1)[0].process_inv()
-        self.search([('default','=',True)],limit=1)[0].process_inv1()
-        self.search([('default','=',True)],limit=1)[0].process_inv2()
-        self.search([('default','=',True)],limit=1)[0].process_inv2_pdf()
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_inv()
+        except:
+            pass
+        
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_inv1()
+        except:
+            pass
+
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_inv2()
+        except:
+            pass
+        
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_inv2_pdf()
+        except:
+            pass
 
 
 
