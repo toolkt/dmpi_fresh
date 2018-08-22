@@ -215,6 +215,11 @@ class DmpiCrmConfig(models.Model):
         except:
             pass
 
+        try:
+            self.search([('default','=',True)],limit=1)[0].process_cl()
+        except:
+            pass
+
 
     @api.model
     def _cron_process_contract(self):

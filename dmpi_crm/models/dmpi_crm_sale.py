@@ -1141,6 +1141,8 @@ class CustomerCrmSaleOrderLine(models.Model):
 
 class DmpiCrmDr(models.Model):
     _name = 'dmpi.crm.dr'
+    _inherit = ['mail.thread']
+
 
     name = fields.Char("CRM DR No.", related='sap_dr_no')
     sap_so_no = fields.Char("SAP So No.")
@@ -1175,6 +1177,19 @@ class DmpiCrmDr(models.Model):
     port_destination  = fields.Char("Port of destination")   
     port_discharge = fields.Char("Port of discharge")
     sto_no = fields.Char("STO No")
+    state = fields.Selection([('generated','SAP Generated'),('cancelled','Cancelled')], default="generated", string="Status", track_visibility='onchange')
+    
+
+    @api.multi
+    def action_cancel(self):
+        for rec in self:
+            rec.write({'state':'cancelled'})
+
+
+    @api.multi
+    def action_generated(self):
+        for rec in self:
+            rec.write({'state':'generated'})
 
 
     @api.multi

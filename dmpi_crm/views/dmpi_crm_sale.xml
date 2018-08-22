@@ -42,6 +42,17 @@
             <field name="model">dmpi.crm.dr</field>
             <field name="arch" type="xml">
                 <form class="o_form_document">
+                    <header>
+
+                        <button name="action_cancel" states="generated" string="Cancel DR" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm DR Cancellation"/>
+
+                        <button name="action_generated" states="cancelled" string="Set back to Generated" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm DR set to Generated"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="generated,cancelled" clickable="1"/>
+
+
+                    </header>
+
                     <sheet>
                         <div class="oe_title">
                             <h1>
@@ -84,118 +95,120 @@
                                 <field name="sto_no" />
                             </group>
                         </group>
-                    <notebook>
-                        <page string="DR Lines">
-                            <field name="dr_lines">
-                                <tree>
-                                    <field name="dr_line_item_no" />
-                                    <field name="sku" />
-                                    <field name="qty" />
-                                    <field name="uom" />
-                                    <field name="plant" />
-                                    <field name="wh_no" />
-                                    <field name="storage_loc" />
-                                    <field name="to_num" />
-                                    <field name="tr_order_item" />
-                                    <field name="material" />
-                                    <field name="plant2" />
-                                    <field name="batch" />
-                                    <field name="stock_category" />
-                                    <field name="source_su" />
-                                    <field name="sap_delivery_no" />
-                                </tree>
-                                <form>
-                                    <group>
+                        <notebook>
+                            <page string="DR Lines">
+                                <field name="dr_lines">
+                                    <tree>
+                                        <field name="dr_line_item_no" />
+                                        <field name="tr_order_item" string="TR#"/>
+                                        <!-- <field name="sku" /> -->
+                                        <field name="qty" />
+                                        <field name="uom" />
+                                        <field name="plant" />
+                                        <field name="wh_no" string="WH"/>
+                                        <field name="storage_loc" string="Storage"/>
+                                        <field name="to_num" />
+                                        <field name="material" />
+                                        <!-- <field name="plant2" /> -->
+                                        <field name="batch" />
+                                        <field name="stock_category" />
+                                        <!-- <field name="source_su" /> -->
+                                        <!-- <field name="sap_delivery_no" /> -->
+                                    </tree>
+                                    <form>
                                         <group>
-                                            <field name="dr_line_item_no" />
-                                            <field name="sku" />
-                                            <field name="qty" />
-                                            <field name="uom" />
-                                            <field name="plant" />
-                                            <field name="wh_no" />
-                                            <field name="storage_loc" />
-                                            <field name="to_num" />
-                                            <field name="tr_order_item" />
-                                            <field name="material" />
-                                            <field name="plant2" />
-                                            <field name="batch" />
-                                            <field name="stock_category" />
-                                            <field name="source_su" />
-                                            <field name="sap_delivery_no" />
+                                            <group>
+                                                <field name="dr_line_item_no" />
+                                                <field name="sku" />
+                                                <field name="qty" />
+                                                <field name="uom" />
+                                                <field name="plant" />
+                                                <field name="wh_no" />
+                                                <field name="storage_loc" />
+                                                <field name="to_num" />
+                                                <field name="tr_order_item" />
+                                                <field name="material" />
+                                                <field name="plant2" />
+                                                <field name="batch" />
+                                                <field name="stock_category" />
+                                                <field name="source_su" />
+                                                <field name="sap_delivery_no" />
+                                            </group>
+                                            <group>
+                                                <field name="container" />
+                                                <field name="partner" />
+                                                <field name="sku" />
+                                                <field name="lot" />
+                                                <field name="type" />
+                                                <field name="factor" />
+                                                <field name="no_sample" />
+                                                <field name="no_defect" />
+                                            </group>
                                         </group>
-                                        <group>
-                                            <field name="container" />
-                                            <field name="partner" />
-                                            <field name="sku" />
-                                            <field name="lot" />
-                                            <field name="type" />
-                                            <field name="factor" />
-                                            <field name="no_sample" />
-                                            <field name="no_defect" />
-                                        </group>
-                                    </group>
-                                </form>
-                            </field>    
-                        </page>
-                        <page string="Alt Items">
-                            <field name="alt_items">
-                                <tree editable="bottom">
-                                    <field name="sap_so_no" />
-                                    <field name="sap_so_line_no" />
-                                    <field name="material" />
-                                    <field name="qty" />
-                                    <field name="uom" />
-                                    <field name="plant" />
-                                    <field name="rejection_reason" />
-                                    <field name="alt_item" />
-                                    <field name="usage" />
-                                </tree>
-                            </field>                        
-                        </page>
-                        <page string="Inspection Lots">
-                            <field name="insp_lots">
-                                <tree editable="bottom">
-                                    <field name="dr_line_item_no" />
-                                    <field name="sap_so_no" />
-                                    <field name="lot" />
-                                    <field name="node_num" />
-                                    <field name="type" />
-                                    <field name="factor_num" />
-                                    <field name="factor" />
-                                    <field name="no_sample" />
-                                    <field name="no_defect" />
-                                    <field name="value" />
-                                </tree>
-                            </field>                        
-                        </page>
+                                    </form>
+                                </field>    
+                            </page>
+                            <page string="Alt Items">
+                                <field name="alt_items">
+                                    <tree editable="bottom">
+                                        <field name="sap_so_no" />
+                                        <field name="sap_so_line_no" />
+                                        <field name="material" />
+                                        <field name="qty" />
+                                        <field name="uom" />
+                                        <field name="plant" />
+                                        <field name="rejection_reason" />
+                                        <field name="alt_item" />
+                                        <field name="usage" />
+                                    </tree>
+                                </field>                        
+                            </page>
+                            <page string="Inspection Lots">
+                                <field name="insp_lots">
+                                    <tree editable="bottom">
+                                        <field name="dr_line_item_no" />
+                                        <field name="sap_so_no" />
+                                        <field name="lot" />
+                                        <field name="node_num" />
+                                        <field name="type" />
+                                        <field name="factor_num" />
+                                        <field name="factor" />
+                                        <field name="no_sample" />
+                                        <field name="no_defect" />
+                                        <field name="value" />
+                                    </tree>
+                                </field>                        
+                            </page>
 
-                        <page string="CLP">
-                            <field name="clp_ids">
-                                <tree>
-                                    <button name="action_view_clp" type="object" icon="fa-external-link text-success"/>
-                                    <field name="dr_id"/>
-                                    <field name="control_no"/>
-                                    <field name="container_no"/>
-                                    <field name="seal_no"/>
-                                    <field name="plant"/>
-                                    <field name="port_origin"/>
-                                    <field name="port_destination"/>
-                                    <button name="action_view_clp" type="object" class="oe_highlight" icon="fa-forward"/>
-                                </tree>
-                            </field>
-                        </page>
+                            <page string="CLP">
+                                <field name="clp_ids">
+                                    <tree>
+                                        <button name="action_view_clp" type="object" icon="fa-external-link text-success"/>
+                                        <field name="dr_id"/>
+                                        <field name="control_no"/>
+                                        <field name="container_no"/>
+                                        <field name="seal_no"/>
+                                        <field name="plant"/>
+                                        <field name="port_origin"/>
+                                        <field name="port_destination"/>
+                                        <button name="action_view_clp" type="object" class="oe_highlight" icon="fa-forward"/>
+                                    </tree>
+                                </field>
+                            </page>
 
-                        <page string="Certificate">
-                            <field name="preship_ids" />                        
-                        </page>
-                        
-                        <page string="Settings">
-                            <field name="raw" />                        
-                        </page>
-                    </notebook>
-
+                            <page string="Certificate">
+                                <field name="preship_ids" />                        
+                            </page>
+                            
+                            <page string="Settings">
+                                <field name="raw" />                        
+                            </page>
+                        </notebook>
                     </sheet>
-
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
