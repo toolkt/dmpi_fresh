@@ -872,7 +872,9 @@ class DmpiCrmConfig(models.Model):
                                     'tag_no' : row[1],
                                     'pack_code' : row[2],
                                     'pack_size' : row[3],
-                                    'position'  : row[4],
+                                    # 'position'  : row[4],
+                                    # 'position'  : row[5],
+                                    'position'  : row[6],
                                 }
 
 
