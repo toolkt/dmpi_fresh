@@ -103,7 +103,7 @@
                                         <field name="dr_line_item_no" />
                                         <field name="tr_order_item" string="TR#"/>
                                         <!-- <field name="sku" /> -->
-                                        <field name="qty" />
+                                        <field name="qty" sum="Total"/>
                                         <field name="uom" />
                                         <field name="plant" />
                                         <field name="wh_no" string="WH"/>

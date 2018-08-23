@@ -743,6 +743,7 @@ class DmpiCrmConfig(models.Model):
                     insp_lots = []
                     clp = {}
                     clp_lines =[]
+                    dr_tr_item = []
 
                     for l in line:
                         raw.append(l)
@@ -784,7 +785,7 @@ class DmpiCrmConfig(models.Model):
                                     pass
 
 
-                            if row[0] == 'Item':
+                            if row[0] == 'Item' and (row[1],row[9]) not in dr_tr_item:
                                 line = {
                                     'dr_line_item_no' : row[1],
                                     'sku' : row[2],
@@ -804,6 +805,7 @@ class DmpiCrmConfig(models.Model):
                                 }
 
                                 dr_lines.append((0,0,line))
+                                dr_tr_item.append((row[1], row[9]))
                                 #print(row)
 
                             if row[0].upper() == 'ALTTOITM':
