@@ -292,7 +292,7 @@
 
 
 
-        <record id="view_dmpi_crm_destination_tree" model="ir.ui.view">
+<!--         <record id="view_dmpi_crm_destination_tree" model="ir.ui.view">
             <field name="name">Destination</field>
             <field name="model">dmpi.crm.destination</field>
             <field name="arch" type="xml">
@@ -315,7 +315,7 @@
         </record>
 
         <menuitem id="menu_dmpi_crm_destination" action="action_dmpi_crm_destination" parent="menu_dmpi_crm_master_top"/>       
-
+ -->
 
 
 

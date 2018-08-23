@@ -255,13 +255,13 @@ class DmpiCrmCountry(models.Model):
     active      = fields.Boolean("Active", default=True)
 
 
-class DmpiCrmDestination(models.Model):
-    _name = 'dmpi.crm.destination'
+# class DmpiCrmDestination(models.Model):
+#     _name = 'dmpi.crm.destination'
 
-    name            = fields.Char("Name")
-    ship_to_code    = fields.Char("Ship to code")
-    dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
-    active          = fields.Boolean("Active", default=True)
+#     name            = fields.Char("Name")
+#     ship_to_code    = fields.Char("Ship to code")
+#     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
+#     active          = fields.Boolean("Active", default=True)
 
 
 
