@@ -42,6 +42,10 @@
         'bus',
     ],
     "data": [
+
+        "security/ir.model.access.csv",
+        "security/security.xml",
+
         "views/dmpi_crm_menu.xml",
         "views/dmpi_crm_config.xml",
         "views/dmpi_crm.xml",
@@ -57,8 +61,7 @@
 
         #"views/dmpi_crm_contract.xml",
         #"views/dmpi_crm_web.xml",
-        "security/ir.model.access.csv",
-        "security/security.xml",
+
 
         "data/schedule.xml",
         "data/sequence.xml",
