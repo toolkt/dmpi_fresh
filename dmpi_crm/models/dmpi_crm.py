@@ -231,7 +231,7 @@ class DmpiCrmPartnerARLine(models.Model):
     gl_acct_no= fields.Char("G/L Account Number")
     gl_acct_no2= fields.Char("G/L Account Number")
     customer_no2= fields.Char("Customer Number")
-
+    active=fields.Boolean("Active", default=True)
 
 class DmpiCrmShipTo(models.Model):
     _name = 'dmpi.crm.ship.to'
