@@ -762,6 +762,7 @@ class DmpiCrmConfig(models.Model):
                                 if not contract_id:
                                     contract_id = ""
 
+                                so = self.env['dmpi.crm.sale.order'].search([('name','=',row[3])], limit=1)
 
                                 dr = {
                                     'contract_id' : contract_id,
@@ -869,7 +870,9 @@ class DmpiCrmConfig(models.Model):
                                 clp['plant'] = row[5]
                                 clp['port_origin'] = row[6]
                                 clp['port_destination'] = row[7]
-                                clp['customer'] = row[8]                          
+                                clp['customer'] = row[8]
+                                clp['shell_color'] = so.shell_color
+
 
                             if row[0].upper() == 'CLPHEADER2':
 
