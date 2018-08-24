@@ -117,6 +117,7 @@
                                     <field name="p207" sum="Total"/>
                                     <field name="total_qty" sum="Total"/>
                                     <field name="total_amount" sum="Total"/>
+                                    <field name="state"/>
                                 </tree>
                             </field>
                             
