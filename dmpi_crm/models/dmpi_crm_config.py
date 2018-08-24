@@ -536,11 +536,11 @@ class DmpiCrmConfig(models.Model):
                                     # print("-24--%s" % row[17])
                                     name = "%s-%s" % (row[16],row[4])
                                     if row[18] == 'H':
-                                        amt_in_loc_cur = float(row[11]) * -1
-                                        amt_in_loc_cur2 = float(row[19]) * -1
+                                        amt_in_loc_cur = float(row[11].replace(',','')) * -1
+                                        amt_in_loc_cur2 = float(row[19].replace(',','')) * -1
                                     else:
-                                        amt_in_loc_cur = float(row[11])
-                                        amt_in_loc_cur2 = float(row[19])
+                                        amt_in_loc_cur = float(row[11].replace(',',''))
+                                        amt_in_loc_cur2 = float(row[19].replace(',',''))
                                     val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
                                         '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
                                         row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
@@ -550,11 +550,11 @@ class DmpiCrmConfig(models.Model):
                                 else:
                                     name = "%s-%s" % (row[16],row[4])
                                     if row[18] == 'H':
-                                        amt_in_loc_cur = float(row[11]) * -1
-                                        amt_in_loc_cur2 = float(row[19]) * -1
+                                        amt_in_loc_cur = float(row[11].replace(',','')) * -1
+                                        amt_in_loc_cur2 = float(row[19].replace(',','')) * -1
                                     else:
-                                        amt_in_loc_cur = float(row[11])
-                                        amt_in_loc_cur2 = float(row[19])
+                                        amt_in_loc_cur = float(row[11].replace(',',''))
+                                        amt_in_loc_cur2 = float(row[19].replace(',',''))
                                     val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
                                         '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
                                         row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
