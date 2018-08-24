@@ -216,7 +216,7 @@
             <field name="domain">[]</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_invoice_finance" action="action_dmpi_crm_invoice_finance" parent="menu_dmpi_crm_commercial_top"/>
+        <menuitem id="menu_dmpi_crm_invoice_finance" action="action_dmpi_crm_invoice_finance" parent="menu_dmpi_crm_finance_top"/>
 
 
 
