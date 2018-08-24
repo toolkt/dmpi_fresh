@@ -42,6 +42,22 @@
     </record>
 
 
+    <!-- VIEW ONLY -->
+    <record id="group_custom_crm_logistics_manager" model="res.groups">
+        <field name="name">Logistics Manager</field>
+        <field name="category_id" ref="module_category_custom_crm"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+
+    <!-- VIEW ONLY -->
+    <record id="group_custom_crm_logistics_staff" model="res.groups">
+        <field name="name">Logistics Staff</field>
+        <field name="category_id" ref="module_category_custom_crm"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+
 
 
 </data>

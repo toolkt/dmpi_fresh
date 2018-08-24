@@ -559,7 +559,7 @@ class DmpiCrmConfig(models.Model):
                                         '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
                                         row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
                                         amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id, True)
+                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id)
                                     line_vals.append(val)
 
                             # if len(row) == 25:
@@ -593,7 +593,7 @@ class DmpiCrmConfig(models.Model):
                     queryl = """INSERT INTO dmpi_crm_partner_ar_line (name, company_code, customer_no, assignment_no, fiscal_year,
                         acct_doc_no, psting_date, doc_date, local_curr, ref_doc, doc_type, fiscal_period, 
                         amt_in_loc_cur, base_line_date, terms,cash_disc_days, acct_doc_no2, acct_doc_num_line,
-                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id, active
+                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id
                         ) VALUES %s""" % ','.join(line_vals)
 
                     # print (query)
