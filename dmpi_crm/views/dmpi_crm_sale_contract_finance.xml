@@ -191,6 +191,14 @@
 
 
 
+        <record id="action_dmpi_crm_sale_order_finance" model="ir.actions.act_window">
+            <field name="name">Sales Order</field>
+            <field name="res_model">dmpi.crm.sale.order</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sale_order_finance" action="action_dmpi_crm_sale_order_finance" parent="menu_dmpi_crm_finance_top" sequence="8"/>
+
 
 
 
