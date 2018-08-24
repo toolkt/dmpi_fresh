@@ -311,7 +311,7 @@ class DmpiCrmSaleContract(models.Model):
             #         """ % self.partner_id.customer_code
 
 
-            query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float *
+            query = """SELECT sum(ar.amt_in_loc_cur *
                        case
                            when (ar.base_line_date::date + ar.cash_disc_days::INT + 14) <= NOW()::date then 1
                            else 0 end) as ar 

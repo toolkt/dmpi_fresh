@@ -160,6 +160,64 @@ class DmpiCrmPartnerAR(models.Model):
     ref_doc= fields.Char("Reference Document Number")
     doc_type= fields.Char("Document Type")
     fiscal_period= fields.Char("Fiscal Period")
+    amt_in_loc_cur= fields.Float("Amount in Local Currency")
+    base_line_date= fields.Char("Baseline Date for Due Date Calculation")
+    terms= fields.Char("Terms of Payment Key")
+    cash_disc_days= fields.Char("Cash Discount Days 1")
+    acct_doc_no2= fields.Char("Accounting Document Number")
+    acct_doc_num_line= fields.Char("Number of Line Item Within Accounting Document")
+    acct_type= fields.Char("Account Type")
+    debit_credit= fields.Char("Debit/Credit Indicator")
+    amt_in_loc_cur2= fields.Float("Amount in Local Currency")
+    assign_no= fields.Char("Assignment Number")
+    gl_acct_no= fields.Char("G/L Account Number")
+    gl_acct_no2= fields.Char("G/L Account Number")
+    customer_no2= fields.Char("Customer Number")
+
+    active=fields.Boolean("Active", default=True)
+    line_ids = fields.One2many('dmpi.crm.partner.ar.line','ar_id', "AR Line Items", compute="_line_ids")
+
+
+
+    @api.depends('acct_doc_no')
+    def _line_ids(self):
+        for rec in self:
+            rec.line_ids = self.env['dmpi.crm.partner.ar.line'].search([('acct_doc_no', '=', rec.acct_doc_no)])
+
+
+class DmpiCrmPartnerARLine(models.Model):
+    _name = 'dmpi.crm.partner.ar.line'
+
+    @api.depends('acct_doc_no')
+    def _get_ar_id(self):
+        self.ar_id = self.env['dmpi.crm.partner.ar'].search([('acct_doc_no','=',self.acct_doc_no)], limit=1)[0].id
+
+
+    ar_id = fields.Many2one('dmpi.crm.partner.ar', "AR Header")
+
+
+    name                = fields.Char("AR ID")
+    customer_code       = fields.Char("Customer Code")
+    amount              = fields.Float("Amount")
+    currency            = fields.Char("Currency")
+    partner_id          = fields.Many2one('dmpi.crm.partner',"Customer")
+    partner_id_get      = fields.Many2one('dmpi.crm.partner',"CustGet",compute='_get_partner')
+    payment_term_days   = fields.Integer("Payment Term (Days)")
+    days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
+    
+
+
+    company_code= fields.Char("Company Code")
+    customer_no= fields.Char("Customer Number")
+    assignment_no= fields.Char("Assignment Number")
+    fiscal_year= fields.Char("Fiscal Year")
+    acct_doc_no= fields.Char("Accounting Document Number")
+    psting_date= fields.Char("Posting Date in the Document")
+    doc_date= fields.Char("Document Date in Document")
+    local_curr= fields.Char("Local Currency")
+    ref_doc= fields.Char("Reference Document Number")
+    doc_type= fields.Char("Document Type")
+    fiscal_period= fields.Char("Fiscal Period")
     amt_in_loc_cur= fields.Char("Amount in Local Currency")
     base_line_date= fields.Char("Baseline Date for Due Date Calculation")
     terms= fields.Char("Terms of Payment Key")
@@ -173,8 +231,6 @@ class DmpiCrmPartnerAR(models.Model):
     gl_acct_no= fields.Char("G/L Account Number")
     gl_acct_no2= fields.Char("G/L Account Number")
     customer_no2= fields.Char("Customer Number")
-
-    active=fields.Boolean("Active", default=True)
 
 
 class DmpiCrmShipTo(models.Model):

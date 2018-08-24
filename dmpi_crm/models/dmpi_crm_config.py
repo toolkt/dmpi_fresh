@@ -519,6 +519,7 @@ class DmpiCrmConfig(models.Model):
                     line = result.split('\n')
 
                     vals = []
+                    line_vals = []
                     for l in line:
                         row = l.split('\t')
                         val = ""
@@ -531,22 +532,45 @@ class DmpiCrmConfig(models.Model):
 
 
                             if len(row) == 24:
-                                name = "%s-%s" % (row[16],row[4])
-                                val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-                                    '%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
-                                    row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
-                                    row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                    row[19], row[20], row[21], row[22], row[23], partner_id, True)
-                                vals.append(val)
+                                if row[17] and row[17] == 'D':
+                                    # print("-24--%s" % row[17])
+                                    name = "%s-%s" % (row[16],row[4])
+                                    if row[18] == 'H':
+                                        amt_in_loc_cur = float(row[11]) * -1
+                                        amt_in_loc_cur2 = float(row[19]) * -1
+                                    else:
+                                        amt_in_loc_cur = float(row[11])
+                                        amt_in_loc_cur2 = float(row[19])
+                                    val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
+                                        '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
+                                        row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                                        amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id, True)
+                                    vals.append(val)
+                                else:
+                                    name = "%s-%s" % (row[16],row[4])
+                                    if row[18] == 'H':
+                                        amt_in_loc_cur = float(row[11]) * -1
+                                        amt_in_loc_cur2 = float(row[19]) * -1
+                                    else:
+                                        amt_in_loc_cur = float(row[11])
+                                        amt_in_loc_cur2 = float(row[19])
+                                    val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
+                                        '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
+                                        row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                                        amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id, True)
+                                    line_vals.append(val)
 
-                            if len(row) == 25:
-                                name = "%s-%s" % (row[16],row[4])
-                                val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s %s','%s','%s','%s','%s','%s','%s',
-                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
-                                    row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
-                                    row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                    row[19], row[20], row[21], row[22], row[23], row[24], partner_id, True)
-                                vals.append(val)
+                            # if len(row) == 25:
+                            #     print("-25--%s" % row[19])
+                            #     name = "%s-%s" % (row[16],row[4])
+                            #     val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s %s','%s','%s','%s','%s','%s','%s',
+                            #         '%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
+                            #         row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                            #         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                            #         row[19], row[20], row[21], row[22], row[23], row[24], partner_id, True)
+                            #     vals.append(val)
 
                         
 
@@ -560,9 +584,27 @@ class DmpiCrmConfig(models.Model):
                     q1 = """DELETE from dmpi_crm_partner_ar;"""
                     q2 = """SELECT setval('dmpi_crm_partner_ar_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_ar), 1), false);"""
 
+
                     self.env.cr.execute(q1)
                     self.env.cr.execute(q2)
                     self.env.cr.execute(query)
+
+
+                    queryl = """INSERT INTO dmpi_crm_partner_ar_line (name, company_code, customer_no, assignment_no, fiscal_year,
+                        acct_doc_no, psting_date, doc_date, local_curr, ref_doc, doc_type, fiscal_period, 
+                        amt_in_loc_cur, base_line_date, terms,cash_disc_days, acct_doc_no2, acct_doc_num_line,
+                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id, active
+                        ) VALUES %s""" % ','.join(line_vals)
+
+                    # print (query)
+                    ql1 = """DELETE from dmpi_crm_partner_ar_line;"""
+                    ql2 = """SELECT setval('dmpi_crm_partner_ar_line_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_ar_line), 1), false);"""
+
+
+
+                    self.env.cr.execute(ql1)
+                    self.env.cr.execute(ql2)
+                    self.env.cr.execute(queryl)
 
 
                     execute(transfer_files,f, outbound_path_success)

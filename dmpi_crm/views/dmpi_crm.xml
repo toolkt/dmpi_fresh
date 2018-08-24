@@ -372,12 +372,11 @@
         </record>
 
 
-
         <record id="view_dmpi_crm_partner_ar_tree" model="ir.ui.view">
             <field name="name">AR</field>
             <field name="model">dmpi.crm.partner.ar</field>
             <field name="arch" type="xml">
-                <tree editable='bottom'>
+                <tree>
 
                     <!-- 
                     <field name="partner_id"/>
@@ -402,7 +401,7 @@
                     <field name="ref_doc"/>
                     <field name="doc_type"/>
                     <field name="fiscal_period"/>
-                    <field name="amt_in_loc_cur"/>
+                    <field name="amt_in_loc_cur" sum="Total"/>
                     <field name="base_line_date"/>
                     <field name="terms"/>
                     <field name="cash_disc_days"/>
@@ -410,7 +409,7 @@
                     <field name="acct_doc_num_line"/>
                     <field name="acct_type"/>
                     <field name="debit_credit"/>
-                    <field name="amt_in_loc_cur2"/>
+                    <field name="amt_in_loc_cur2" sum="Total"/>
                     <field name="assign_no"/>
                     <field name="gl_acct_no"/>
                     <field name="gl_acct_no2"/>
@@ -420,14 +419,153 @@
             </field>
         </record>
 
+
+        <record id="view_dmpi_crm_partner_ar_form" model="ir.ui.view">
+            <field name="name">Product Price List</field>
+            <field name="model">dmpi.crm.partner.ar</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                                <field name="company_code"/>
+                                <field name="customer_no"/>
+                                <field name="assignment_no"/>
+                                <field name="fiscal_year"/>
+                                <field name="acct_doc_no"/>
+                                <field name="psting_date"/>
+                                <field name="doc_date"/>
+                                <field name="local_curr"/>
+                            </group>
+
+                            <group>
+                                <field name="ref_doc"/>
+                                <field name="doc_type"/>
+                                <field name="fiscal_period"/>
+                                <field name="amt_in_loc_cur"/>
+                                <field name="base_line_date"/>
+                                <field name="terms"/>
+                                <field name="cash_disc_days"/>
+                                <field name="acct_doc_no"/>
+                                <field name="acct_doc_num_line"/>
+                                <field name="acct_type"/>
+                                <field name="debit_credit"/>
+                                <field name="amt_in_loc_cur2"/>
+                                <field name="assign_no"/>
+                                <field name="gl_acct_no"/>
+                                <field name="gl_acct_no2"/>
+                                <field name="customer_no"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="AR Line Items">
+                                <field name="line_ids" >
+                                    <tree editable="bottom">
+                                        <field name="terms"/>
+                                        <field name="cash_disc_days"/>
+                                        <field name="acct_doc_no"/>
+                                        <field name="acct_doc_num_line"/>
+                                        <field name="acct_type"/>
+                                        <field name="debit_credit"/>
+                                        <field name="amt_in_loc_cur2" sum="Total"/>
+                                        <field name="assign_no"/>
+                                        <field name="gl_acct_no"/>
+                                        <field name="gl_acct_no2"/>
+                                        <field name="customer_no"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
         <record id="action_dmpi_crm_partner_ar" model="ir.actions.act_window">
             <field name="name">AR</field>
             <field name="res_model">dmpi.crm.partner.ar</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_partner_ar" action="action_dmpi_crm_partner_ar" parent="menu_dmpi_crm_finance_account"/>  
+
+
+
+        <record id="view_dmpi_crm_partner_ar_line_search" model="ir.ui.view">
+            <field name="name">Accounts Receivable</field>
+            <field name="model">dmpi.crm.partner.ar.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="company_code"/>
+                    <field name="customer_no"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_partner_ar_line_tree" model="ir.ui.view">
+            <field name="name">AR Line</field>
+            <field name="model">dmpi.crm.partner.ar.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+
+                    <!-- 
+                    <field name="partner_id"/>
+                    <field name="customer_code"/>
+                    <field name="base_line_date"/>
+                    <field name="payment_term_days"/>
+                    <field name="amount"/>
+                    <field name="days_overdue"/>
+                    <field name="currency"/>
+                    -->
+                    <field name="name"/>
+                    <field name="company_code"/>
+                    <field name="customer_no"/>
+                    <field name="partner_id"/>
+                    <!-- <field name="partner_id_get"/> -->
+                    <field name="assignment_no"/>
+                    <field name="fiscal_year"/>
+                    <field name="acct_doc_no"/>
+                    <field name="psting_date"/>
+                    <field name="doc_date"/>
+                    <field name="local_curr"/>
+                    <field name="ref_doc"/>
+                    <field name="doc_type"/>
+                    <field name="fiscal_period"/>
+                    <field name="amt_in_loc_cur" sum="Total"/>
+                    <field name="base_line_date"/>
+                    <field name="terms"/>
+                    <field name="cash_disc_days"/>
+                    <field name="acct_doc_no"/>
+                    <field name="acct_doc_num_line"/>
+                    <field name="acct_type"/>
+                    <field name="debit_credit"/>
+                    <field name="amt_in_loc_cur2" sum="Total"/>
+                    <field name="assign_no"/>
+                    <field name="gl_acct_no"/>
+                    <field name="gl_acct_no2"/>
+                    <field name="customer_no"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="action_dmpi_crm_partner_ar_line" model="ir.actions.act_window">
+            <field name="name">AR Line</field>
+            <field name="res_model">dmpi.crm.partner.ar.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_partner_ar_line" action="action_dmpi_crm_partner_ar_line" parent="menu_dmpi_crm_finance_account"/> 
+
 
 
         <record id="view_dmpi_crm_plant_tree" model="ir.ui.view">
