@@ -135,14 +135,15 @@ class DmpiCrmPartnerAR(models.Model):
                 customer = rec.customer_no.lstrip("0")
                 partner = self.env['dmpi.crm.partner'].search([('customer_code','=',customer)],limit=1)
                 if partner:
-                    rec.partner_id = partner.id
+                    rec.partner_id_get = partner.id
 
 
     name                = fields.Char("AR ID")
     customer_code       = fields.Char("Customer Code")
     amount              = fields.Float("Amount")
     currency            = fields.Char("Currency")
-    partner_id          = fields.Many2one('dmpi.crm.partner',"Partner",compute='_get_partner')
+    partner_id          = fields.Many2one('dmpi.crm.partner',"Customer")
+    partner_id_get      = fields.Many2one('dmpi.crm.partner',"CustGet",compute='_get_partner')
     payment_term_days   = fields.Integer("Payment Term (Days)")
     days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
     
@@ -289,6 +290,11 @@ class DmpiCrmSalesOrg(models.Model):
 
 class DmpiCrmProduct(models.Model):
     _name = 'dmpi.crm.product'
+    _sql_constraints = [
+        ('unique_sku_customer', 'UNIQUE (sku,partner_id)', _('Similar Product Customer Combination Already Exist!'))
+    ]
+
+
 
     def _get_product_class(self):
         group = 'product_class'
@@ -573,5 +579,12 @@ class DmpiCRMVariety(models.Model):
 
 
 
+class DmpiCRMActivityLog(models.Model):
+    _name = 'dmpi.crm.activity.log'
+
+    model_id = fields.Many2one('ir.model',"Model")
+    record_id = fields.Integer("Record ID")
+    name = fields.Char("Activity")
+    description = fields.Text("Log")
 
 

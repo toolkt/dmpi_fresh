@@ -523,22 +523,29 @@ class DmpiCrmConfig(models.Model):
                         row = l.split('\t')
                         val = ""
                         if len(row) > 0: 
+                            partner_id = 0
+                            try:
+                                partner_id = self.env['dmpi.crm.partner'].search([('customer_code','=',int(row[1].lstrip('0')))], limit=1)[0].id
+                            except:
+                                pass
+
+
                             if len(row) == 24:
                                 name = "%s-%s" % (row[16],row[4])
                                 val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s')""" % (name, row[0], row[1], 
+                                    '%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
                                     row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
                                     row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                    row[19], row[20], row[21], row[22], row[23], True)
+                                    row[19], row[20], row[21], row[22], row[23], partner_id, True)
                                 vals.append(val)
 
                             if len(row) == 25:
                                 name = "%s-%s" % (row[16],row[4])
                                 val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s %s','%s','%s','%s','%s','%s','%s',
-                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')""" % (name, row[0], row[1], 
+                                    '%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
                                     row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
                                     row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                    row[19], row[20], row[21], row[22], row[23], row[24], True)
+                                    row[19], row[20], row[21], row[22], row[23], row[24], partner_id, True)
                                 vals.append(val)
 
                         
@@ -546,7 +553,7 @@ class DmpiCrmConfig(models.Model):
                     query = """INSERT INTO dmpi_crm_partner_ar (name, company_code, customer_no, assignment_no, fiscal_year,
                         acct_doc_no, psting_date, doc_date, local_curr, ref_doc, doc_type, fiscal_period, 
                         amt_in_loc_cur, base_line_date, terms,cash_disc_days, acct_doc_no2, acct_doc_num_line,
-                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, active
+                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id, active
                         ) VALUES %s""" % ','.join(vals)
 
                     # print (query)

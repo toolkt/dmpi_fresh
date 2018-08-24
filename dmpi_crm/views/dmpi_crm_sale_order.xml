@@ -64,7 +64,9 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <header>
-                        <field name="state" widget="statusbar" clickable="1" />
+
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">

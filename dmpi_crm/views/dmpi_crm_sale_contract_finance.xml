@@ -13,7 +13,6 @@
                     <field name="customer_ref"/>
                     <field name="partner_id"/>
                     <field name="week_no" />
-
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>

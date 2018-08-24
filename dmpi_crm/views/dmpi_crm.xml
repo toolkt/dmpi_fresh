@@ -387,11 +387,12 @@
                     <field name="amount"/>
                     <field name="days_overdue"/>
                     <field name="currency"/>
--->
+                    -->
                     <field name="name"/>
                     <field name="company_code"/>
                     <field name="customer_no"/>
                     <field name="partner_id"/>
+                    <!-- <field name="partner_id_get"/> -->
                     <field name="assignment_no"/>
                     <field name="fiscal_year"/>
                     <field name="acct_doc_no"/>
@@ -654,7 +655,7 @@
         <menuitem id="menu_dmpi_crm_product_price_list" action="action_dmpi_crm_product_price_list" parent="menu_dmpi_crm_finance_configuration"/>
 
 
-        <record id="view_dmpi_sap_price_upload_search" model="ir.ui.view">
+<!--         <record id="view_dmpi_sap_price_upload_search" model="ir.ui.view">
             <field name="name">SAP Price Upload</field>
             <field name="model">dmpi.sap.price.upload</field>
             <field name="arch" type="xml">
@@ -695,7 +696,7 @@
             <field name="domain">[]</field>
         </record>
 
-        <menuitem id="menu_dmpi_sap_price_upload" action="action_dmpi_sap_price_upload" parent="menu_dmpi_crm_finance_configuration"/>
+        <menuitem id="menu_dmpi_sap_price_upload" action="action_dmpi_sap_price_upload" parent="menu_dmpi_crm_finance_configuration"/> -->
 
 
         <!-- CONTAINER LOAD PLAN -->
