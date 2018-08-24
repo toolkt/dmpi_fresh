@@ -1,0 +1,44 @@
+        <!-- SALE ORDER FINANCE -->
+        <record id="view_dmpi_crm_sale_order_finance_search" model="ir.ui.view">
+            <field name="name">Sale Order</field>
+            <field name="model">dmpi.crm.sale.order</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="sap_so_no" />
+                    <field name="ship_to_id"/>
+                    <field name="notify_id"/>
+                    <field name="ship_line" />
+                    <field name="shell_color" />
+                    <field name="sales_org"/>
+                    <field name="plant"/>
+                    <field name="week_no"/>
+                    <filter name="filter_hold" string="Hold" domain="[('state', '=', 'hold')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_sale_order_tree_finance_view" model="ir.actions.act_window.view">
+            <field eval="50" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_dmpi_crm_sale_order_tree"/>
+            <field name="act_window_id" ref="action_dmpi_crm_sale_order_finance"/>
+        </record>
+
+        <record id="action_dmpi_crm_sale_contract_form_finance_view" model="ir.actions.act_window.view">
+            <field eval="60" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dmpi_crm_sale_order_form"/>
+            <field name="act_window_id" ref="action_dmpi_crm_sale_order_finance"/>
+        </record>
+
+        <record id="action_dmpi_crm_sale_order_finance" model="ir.actions.act_window">
+            <field name="name">Sales Order</field>
+            <field name="res_model">dmpi.crm.sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <!-- <field name="domain">[('state','=','soa')]</field> -->
+            <field name="context" eval="{'search_default_filter_hold':1}"/>
+            <field name="search_view_id" ref="view_dmpi_crm_sale_order_finance_search"/>
+        </record>
+
+        <menuitem id="menu_sale_order_finance" action="action_dmpi_crm_sale_order_finance" parent="menu_dmpi_crm_finance_top" sequence="8"/>
