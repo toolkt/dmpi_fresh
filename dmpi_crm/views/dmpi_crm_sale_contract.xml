@@ -169,7 +169,7 @@
                         <page string="Sales Order">
                             <!-- <field name="sale_order_ids" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"> -->
                             <field name="sale_order_ids">
-                                <tree>
+                                <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
                                     <field name="p101" sum="Total"/>
@@ -188,6 +188,7 @@
                                     <field name="p207" sum="Total"/>
                                     <field name="total_qty" sum="Total"/>
                                     <field name="total_amount" sum="Total"/>
+                                    <field name="error" invisible="1"/>
                                 </tree>
                             </field>
                             

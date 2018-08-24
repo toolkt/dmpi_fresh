@@ -474,6 +474,12 @@ class DmpiCrmSaleContract(models.Model):
         for rec in self:
             if not rec.week_no or not rec.customer_ref:
                 raise UserError(_("No Customer Ref or Week Number!"))
+
+            for so in rec.sale_order_ids:
+                if so.error > 0:
+                    raise UserError(_("Some items in sale orders have no price computation!"))
+
+
             for so in rec.sale_order_ids:
                 so.write({'state':'confirmed', 'week_no': rec.week_no})
             rec.write({'state':'confirmed'})
@@ -873,6 +879,26 @@ class DmpiCrmSaleOrder(models.Model):
             return True
 
 
+    @api.multi
+    @api.depends('order_ids')
+    def _get_no_price_error(self):
+        for so in self:
+            error = 0
+            error_msg = []
+            msg = ''
+
+            for l in so.order_ids:
+                if l.price == 0:
+                    error += 1
+                    print ('PASSED NO PRICE')
+                    s = 'No Price set for %s (%s)' % (l.product_id.code, l.product_id.sku)
+                    error_msg.append(s)
+
+            msg = '\n'.join(error_msg)
+            so.error = error
+            so.error_msg = msg
+
+
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft", copy=False)
     plant = fields.Char("Plant")
@@ -885,6 +911,8 @@ class DmpiCrmSaleOrder(models.Model):
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs', copy=True)
     valid = fields.Boolean("Valid Order", default=True)
     valid_disp = fields.Boolean("Valid Order", related='valid')
+    error = fields.Integer('Error Count', compute="_get_no_price_error")
+    error_msg = fields.Text('Error Message', compute="_get_no_price_error")
 
 
     #Crown
