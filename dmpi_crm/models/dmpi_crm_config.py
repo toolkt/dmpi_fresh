@@ -766,6 +766,7 @@ class DmpiCrmConfig(models.Model):
 
             outbound_path= rec.outbound_dr_success
             outbound_path_success= rec.outbound_dr_success_sent
+            outbound_path_fail= rec.outbound_dr_fail
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
@@ -953,31 +954,41 @@ class DmpiCrmConfig(models.Model):
                                 clp['summary_case_c'] = row[8]
 
 
+                    # do not create if no dr_lines
+                    success = True
+                    if len(dr_lines) == 0:
+                        success = False
 
-                    dr['dr_lines'] = dr_lines
-                    dr['alt_items'] = alt_items
-                    dr['insp_lots'] = insp_lots
 
-                    clp['clp_line_ids'] = clp_lines
-                    dr['clp_ids'] = [(0,0,clp)]
+                    if success:
+                        dr['dr_lines'] = dr_lines
+                        dr['alt_items'] = alt_items
+                        dr['insp_lots'] = insp_lots
 
-                    pprint.pprint(dr, width=4)
+                        clp['clp_line_ids'] = clp_lines
+                        dr['clp_ids'] = [(0,0,clp)]
 
-                    exist = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)],limit=1)
-                    if exist:
-                        exist.dr_lines.unlink()
-                        exist.alt_items.unlink()
-                        exist.insp_lots.unlink()
-                        exist.clp_ids.unlink()
+                        pprint.pprint(dr, width=4)
 
-                        exist.write(dr)
-                        dr_id = exist.id
+                        exist = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)],limit=1)
+                        if exist:
+                            exist.dr_lines.unlink()
+                            exist.alt_items.unlink()
+                            exist.insp_lots.unlink()
+                            exist.clp_ids.unlink()
+
+                            exist.write(dr)
+                            dr_id = exist.id
+                        else:
+                            new_dr = self.env['dmpi.crm.dr'].create(dr) 
+                            dr_id = new_dr.id  
+
+
+                        execute(transfer_files,f, outbound_path_success)
+
                     else:
-                        new_dr = self.env['dmpi.crm.dr'].create(dr) 
-                        dr_id = new_dr.id  
+                        execute(transfer_files,f, outbound_path_fail)
 
-
-                    execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
