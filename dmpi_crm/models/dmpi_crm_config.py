@@ -225,7 +225,7 @@ class DmpiCrmConfig(models.Model):
     def _cron_process_contract(self):
         print("CONTRACT CRON JOB WORKING")
         try:
-            self.search([('default','=',True)],limit=1)[0].process_contract()
+            self.search([('default','=',True)],limit=1)[0].process_fail_contract()
         except:
             pass
 
@@ -322,6 +322,7 @@ class DmpiCrmConfig(models.Model):
 
 
             try:
+                #Get Offline PO
                 files = execute(list_dir,outbound_path,'ODOO_PO_PU')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
@@ -329,6 +330,17 @@ class DmpiCrmConfig(models.Model):
                     #Extract the PO number from the Filename
                     po_no = f.split('/')[-1:][0].split('_')[3]
                     print(po_no)
+
+
+                #IF Offline PO Get Offline PO Success
+                
+
+                #If Offline PO Success Get Offline SO
+
+
+                #IF Offline SO Get Offline SO Success
+
+
 
             except:
                 print("ERROR OFFLINE SYNC")
@@ -353,7 +365,7 @@ class DmpiCrmConfig(models.Model):
 
 
             try:
-                files = execute(list_dir,outbound_path,'L_ODOO_PO_')
+                files = execute(list_dir,outbound_path,'L_ODOO_PO_PO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
                     print(result)
@@ -385,7 +397,7 @@ class DmpiCrmConfig(models.Model):
 
 
     @api.multi
-    def process_contract(self):
+    def process_fail_contract(self):
         print("Create Contract")
 
         for rec in self:
@@ -407,7 +419,7 @@ class DmpiCrmConfig(models.Model):
 
             try:
                 print("GET FAIL")
-                files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_')
+                files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_PO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
                     po_no = f.split('/')[-1:][0].split('_')[3]
@@ -442,7 +454,7 @@ class DmpiCrmConfig(models.Model):
 
 
             try:
-                files = execute(list_dir,outbound_path,'L_ODOO_SO')
+                files = execute(list_dir,outbound_path,'L_ODOO_SO_SO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
 
@@ -481,7 +493,7 @@ class DmpiCrmConfig(models.Model):
             outbound_path_fail_sent= rec.inbound_so_log_fail_sent
 
             try:
-                files = execute(list_dir,outbound_path_fail,'L_ODOO_SO')
+                files = execute(list_dir,outbound_path_fail,'L_ODOO_SO_SO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
 
@@ -505,15 +517,17 @@ class DmpiCrmConfig(models.Model):
 
             outbound_path= rec.outbound_ar_success
             outbound_path_success= rec.outbound_ar_success_sent
+            outbound_path_fail = rec.outbound_ar_fail
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
 
-            try:
-                files = execute(list_dir,outbound_path,'ODOO_AR_OPENAR')
-                for f in files[host_string]:
+            
+            files = execute(list_dir,outbound_path,'ODOO_AR_OPENAR')
+            for f in files[host_string]:
+                try:
                     result = execute(read_file,f)[host_string]
 
                     line = result.split('\n')
@@ -523,7 +537,9 @@ class DmpiCrmConfig(models.Model):
                     for l in line:
                         row = l.split('\t')
                         val = ""
-                        if len(row) > 0: 
+                        if len(row) and len(row) == 24: 
+                            print(row)
+                            print(len(row))
                             partner_id = 0
                             try:
                                 partner_id = self.env['dmpi.crm.partner'].search([('customer_code','=',int(row[1].lstrip('0')))], limit=1)[0].id
@@ -531,53 +547,31 @@ class DmpiCrmConfig(models.Model):
                                 pass
 
 
-                            if len(row) == 24:
-                                if row[17] and row[17] == 'D':
-                                    # print("-24--%s" % row[17])
-                                    name = "%s-%s" % (row[16],row[4])
-                                    if row[18] == 'H':
-                                        amt_in_loc_cur = float(row[11].replace(',','')) * -1
-                                        amt_in_loc_cur2 = float(row[19].replace(',','')) * -1
-                                    else:
-                                        amt_in_loc_cur = float(row[11].replace(',',''))
-                                        amt_in_loc_cur2 = float(row[19].replace(',',''))
-                                    val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
-                                        '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
-                                        row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
-                                        amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id, True)
-                                    vals.append(val)
-                                else:
-                                    name = "%s-%s" % (row[16],row[4])
-                                    if row[18] == 'H':
-                                        amt_in_loc_cur = float(row[11].replace(',','')) * -1
-                                        amt_in_loc_cur2 = float(row[19].replace(',','')) * -1
-                                    else:
-                                        amt_in_loc_cur = float(row[11].replace(',',''))
-                                        amt_in_loc_cur2 = float(row[19].replace(',',''))
-                                    val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
-                                        '%s','%s','%s',%s,'%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
-                                        row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
-                                        amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                                        amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id)
-                                    line_vals.append(val)
+                            name = "%s-%s" % (row[16],row[4])
+                            if row[18] == 'H':
+                                amt_in_loc_cur = float(row[11].replace(',','')) * -1
+                                amt_in_loc_cur2 = float(row[19].replace(',','')) * -1
+                            else:
+                                amt_in_loc_cur = float(row[11].replace(',',''))
+                                amt_in_loc_cur2 = float(row[19].replace(',',''))
 
-                            # if len(row) == 25:
-                            #     print("-25--%s" % row[19])
-                            #     name = "%s-%s" % (row[16],row[4])
-                            #     val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s %s','%s','%s','%s','%s','%s','%s',
-                            #         '%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s')""" % (name, row[0], row[1], 
-                            #         row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
-                            #         row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
-                            #         row[19], row[20], row[21], row[22], row[23], row[24], partner_id, True)
-                            #     vals.append(val)
+                            val = """('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s',
+                                '%s','%s','%s',%s,'%s','%s','%s','%s',%s)""" % (name, row[0], row[1], 
+                                row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], 
+                                amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
+                                amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id)
 
-                        
+                            
+                            if row[17] and row[17] == 'D':
+                                vals.append(val)
+                            else:
+                                line_vals.append(val)
+
 
                     query = """INSERT INTO dmpi_crm_partner_ar (name, company_code, customer_no, assignment_no, fiscal_year,
                         acct_doc_no, psting_date, doc_date, local_curr, ref_doc, doc_type, fiscal_period, 
                         amt_in_loc_cur, base_line_date, terms,cash_disc_days, acct_doc_no2, acct_doc_num_line,
-                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id, active
+                        acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id
                         ) VALUES %s""" % ','.join(vals)
 
                     # print (query)
@@ -585,9 +579,10 @@ class DmpiCrmConfig(models.Model):
                     q2 = """SELECT setval('dmpi_crm_partner_ar_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_ar), 1), false);"""
 
 
-                    self.env.cr.execute(q1)
-                    self.env.cr.execute(q2)
-                    self.env.cr.execute(query)
+                    if len(vals)>0:
+                        self.env.cr.execute(q1)
+                        self.env.cr.execute(q2)
+                        self.env.cr.execute(query)
 
 
                     queryl = """INSERT INTO dmpi_crm_partner_ar_line (name, company_code, customer_no, assignment_no, fiscal_year,
@@ -596,21 +591,33 @@ class DmpiCrmConfig(models.Model):
                         acct_type, debit_credit, amt_in_loc_cur2, assign_no, gl_acct_no, gl_acct_no2, customer_no2, partner_id
                         ) VALUES %s""" % ','.join(line_vals)
 
+
                     # print (query)
                     ql1 = """DELETE from dmpi_crm_partner_ar_line;"""
                     ql2 = """SELECT setval('dmpi_crm_partner_ar_line_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_ar_line), 1), false);"""
 
 
-
-                    self.env.cr.execute(ql1)
-                    self.env.cr.execute(ql2)
-                    self.env.cr.execute(queryl)
-
+                    if len(line_vals)>0:
+                        self.env.cr.execute(ql1)
+                        self.env.cr.execute(ql2)
+                        self.env.cr.execute(queryl)
 
                     execute(transfer_files,f, outbound_path_success)
-            except Exception as e:
-                print("-------%s-------\n" % e)
-                pass
+
+                    log = { 'name':"ODOO_AR_OPENAR", 'log_type':"success",
+                            'description':"Transferred %s to %s " % (f,outbound_path_success)
+                        }
+                    self.env['dmpi.crm.activity.log'].create(log)
+
+                except Exception as e:
+
+                    execute(transfer_files,f, outbound_path_fail)
+                    log = { 'name':"ODOO_AR_OPENAR", 'log_type':"fail",
+                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                        }
+                    self.env['dmpi.crm.activity.log'].create(log)
+                    print("-------%s-------\n" % (e))
+                    # pass
 
 
 

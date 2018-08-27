@@ -363,10 +363,10 @@
             <field name="model">dmpi.crm.partner.ar</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="name"/>
+                    <field name="partner_id"/>
                     <field name="company_code"/>
                     <field name="customer_no"/>
-                    <field name="partner_id"/>
+                    <!-- <field name="name"/> -->
                 </search>
             </field>
         </record>
@@ -378,6 +378,22 @@
             <field name="arch" type="xml">
                 <tree>
 
+                    <field name="company_code"/>
+                    <field name="customer_no"/>
+                    <field name="partner_id"/>
+                    <field name="acct_doc_no"/>
+                    <field name="fiscal_year"/>
+                    <field name="psting_date"/>
+                    <field name="doc_date"/>
+                    <field name="base_line_date"/>
+                    <field name="terms"/>
+                    <field name="cash_disc_days"/>
+                    <field name="local_curr"/>
+                    <field name="ref_doc"/>
+                    <field name="doc_type"/>
+                    <field name="fiscal_period"/>
+                    <field name="amt_in_loc_cur" sum="Total"/>
+                    <field name="gl_acct_no"/>
                     <!-- 
                     <field name="partner_id"/>
                     <field name="customer_code"/>
@@ -386,35 +402,17 @@
                     <field name="amount"/>
                     <field name="days_overdue"/>
                     <field name="currency"/>
-                    -->
                     <field name="name"/>
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <field name="partner_id"/>
-                    <!-- <field name="partner_id_get"/> -->
+                    <field name="partner_id_get"/>
                     <field name="assignment_no"/>
-                    <field name="fiscal_year"/>
-                    <field name="acct_doc_no"/>
-                    <field name="psting_date"/>
-                    <field name="doc_date"/>
-                    <field name="local_curr"/>
-                    <field name="ref_doc"/>
-                    <field name="doc_type"/>
-                    <field name="fiscal_period"/>
-                    <field name="amt_in_loc_cur" sum="Total"/>
-                    <field name="base_line_date"/>
-                    <field name="terms"/>
-                    <field name="cash_disc_days"/>
-                    <field name="acct_doc_no"/>
-                    <field name="acct_doc_num_line"/>
                     <field name="acct_type"/>
                     <field name="debit_credit"/>
-                    <field name="amt_in_loc_cur2" sum="Total"/>
                     <field name="assign_no"/>
-                    <field name="gl_acct_no"/>
                     <field name="gl_acct_no2"/>
-                    <field name="customer_no"/>
+                    <field name="acct_doc_num_line"/>
+                    <field name="amt_in_loc_cur2" sum="Total"/>
                     <field name="active"/>
+                    -->
                 </tree>
             </field>
         </record>
@@ -457,7 +455,6 @@
                                 <field name="gl_acct_no"/>
                                 <field name="gl_acct_no2"/>
                                 <field name="customer_no"/>
-                                <field name="active"/>
                             </group>
                         </group>
                         <notebook>
@@ -470,11 +467,10 @@
                                         <field name="acct_doc_num_line"/>
                                         <field name="acct_type"/>
                                         <field name="debit_credit"/>
-                                        <field name="amt_in_loc_cur2" sum="Total"/>
                                         <field name="assign_no"/>
                                         <field name="gl_acct_no"/>
-                                        <field name="gl_acct_no2"/>
-                                        <field name="customer_no"/>
+                                        <field name="amt_in_loc_cur2" sum="Total"/>
+                                        <field name="amt_in_loc_cur" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>
@@ -515,6 +511,22 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
 
+                    <field name="company_code"/>
+                    <field name="customer_no"/>
+                    <field name="partner_id"/>
+                    <field name="acct_doc_no"/>
+                    <field name="fiscal_year"/>
+                    <field name="psting_date"/>
+                    <field name="doc_date"/>
+                    <field name="base_line_date"/>
+                    <field name="terms"/>
+                    <field name="cash_disc_days"/>
+                    <field name="local_curr"/>
+                    <field name="ref_doc"/>
+                    <field name="doc_type"/>
+                    <field name="fiscal_period"/>
+                    <field name="amt_in_loc_cur2" sum="Total"/>
+                    <field name="gl_acct_no"/>
                     <!-- 
                     <field name="partner_id"/>
                     <field name="customer_code"/>
@@ -523,34 +535,17 @@
                     <field name="amount"/>
                     <field name="days_overdue"/>
                     <field name="currency"/>
-                    -->
                     <field name="name"/>
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <field name="partner_id"/>
-                    <!-- <field name="partner_id_get"/> -->
+                    <field name="partner_id_get"/>
                     <field name="assignment_no"/>
-                    <field name="fiscal_year"/>
-                    <field name="acct_doc_no"/>
-                    <field name="psting_date"/>
-                    <field name="doc_date"/>
-                    <field name="local_curr"/>
-                    <field name="ref_doc"/>
-                    <field name="doc_type"/>
-                    <field name="fiscal_period"/>
-                    <field name="amt_in_loc_cur" sum="Total"/>
-                    <field name="base_line_date"/>
-                    <field name="terms"/>
-                    <field name="cash_disc_days"/>
-                    <field name="acct_doc_no"/>
-                    <field name="acct_doc_num_line"/>
                     <field name="acct_type"/>
                     <field name="debit_credit"/>
-                    <field name="amt_in_loc_cur2" sum="Total"/>
                     <field name="assign_no"/>
-                    <field name="gl_acct_no"/>
                     <field name="gl_acct_no2"/>
-                    <field name="customer_no"/>
+                    <field name="acct_doc_num_line"/>
+                    <field name="amt_in_loc_cur" sum="Total"/>
+                    <field name="active"/>
+                    -->
                 </tree>
             </field>
         </record>
@@ -1356,4 +1351,30 @@
             <field name="name">C74</field>
             <field name="description">C74</field>
         </record>
+
+
+
+        <record id="view_dmpi_crm_activity_log_tree" model="ir.ui.view">
+            <field name="name">Activity Log</field>
+            <field name="model">dmpi.crm.activity.log</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="log_type"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_activity_log" model="ir.actions.act_window">
+            <field name="name">Activity Log</field>
+            <field name="res_model">dmpi.crm.activity.log</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_activity_log" action="action_dmpi_crm_activity_log" parent="menu_dmpi_crm_settings_top"/>
+
+
+
 </odoo>

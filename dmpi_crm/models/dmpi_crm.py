@@ -174,7 +174,7 @@ class DmpiCrmPartnerAR(models.Model):
     gl_acct_no2= fields.Char("G/L Account Number")
     customer_no2= fields.Char("Customer Number")
 
-    active=fields.Boolean("Active", default=True)
+    # active=fields.Boolean("Active", default=True)
     line_ids = fields.One2many('dmpi.crm.partner.ar.line','ar_id', "AR Line Items", compute="_line_ids")
 
 
@@ -187,6 +187,7 @@ class DmpiCrmPartnerAR(models.Model):
 
 class DmpiCrmPartnerARLine(models.Model):
     _name = 'dmpi.crm.partner.ar.line'
+    _inherit = 'dmpi.crm.partner.ar'
 
     @api.depends('acct_doc_no')
     def _get_ar_id(self):
@@ -194,44 +195,45 @@ class DmpiCrmPartnerARLine(models.Model):
 
 
     ar_id = fields.Many2one('dmpi.crm.partner.ar', "AR Header")
+    line_ids = fields.Boolean("Null Line IDs", default=False)
 
 
-    name                = fields.Char("AR ID")
-    customer_code       = fields.Char("Customer Code")
-    amount              = fields.Float("Amount")
-    currency            = fields.Char("Currency")
-    partner_id          = fields.Many2one('dmpi.crm.partner',"Customer")
-    partner_id_get      = fields.Many2one('dmpi.crm.partner',"CustGet",compute='_get_partner')
-    payment_term_days   = fields.Integer("Payment Term (Days)")
-    days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
+    # name                = fields.Char("AR ID")
+    # customer_code       = fields.Char("Customer Code")
+    # amount              = fields.Float("Amount")
+    # currency            = fields.Char("Currency")
+    # partner_id          = fields.Many2one('dmpi.crm.partner',"Customer")
+    # partner_id_get      = fields.Many2one('dmpi.crm.partner',"CustGet",compute='_get_partner')
+    # payment_term_days   = fields.Integer("Payment Term (Days)")
+    # days_overdue        = fields.Integer("Days Overdue", compute='_get_date_overdue')
     
 
 
-    company_code= fields.Char("Company Code")
-    customer_no= fields.Char("Customer Number")
-    assignment_no= fields.Char("Assignment Number")
-    fiscal_year= fields.Char("Fiscal Year")
-    acct_doc_no= fields.Char("Accounting Document Number")
-    psting_date= fields.Char("Posting Date in the Document")
-    doc_date= fields.Char("Document Date in Document")
-    local_curr= fields.Char("Local Currency")
-    ref_doc= fields.Char("Reference Document Number")
-    doc_type= fields.Char("Document Type")
-    fiscal_period= fields.Char("Fiscal Period")
-    amt_in_loc_cur= fields.Char("Amount in Local Currency")
-    base_line_date= fields.Char("Baseline Date for Due Date Calculation")
-    terms= fields.Char("Terms of Payment Key")
-    cash_disc_days= fields.Char("Cash Discount Days 1")
-    acct_doc_no2= fields.Char("Accounting Document Number")
-    acct_doc_num_line= fields.Char("Number of Line Item Within Accounting Document")
-    acct_type= fields.Char("Account Type")
-    debit_credit= fields.Char("Debit/Credit Indicator")
-    amt_in_loc_cur2= fields.Char("Amount in Local Currency")
-    assign_no= fields.Char("Assignment Number")
-    gl_acct_no= fields.Char("G/L Account Number")
-    gl_acct_no2= fields.Char("G/L Account Number")
-    customer_no2= fields.Char("Customer Number")
-    active=fields.Boolean("Active", default=True)
+    # company_code= fields.Char("Company Code")
+    # customer_no= fields.Char("Customer Number")
+    # assignment_no= fields.Char("Assignment Number")
+    # fiscal_year= fields.Char("Fiscal Year")
+    # acct_doc_no= fields.Char("Accounting Document Number")
+    # psting_date= fields.Char("Posting Date in the Document")
+    # doc_date= fields.Char("Document Date in Document")
+    # local_curr= fields.Char("Local Currency")
+    # ref_doc= fields.Char("Reference Document Number")
+    # doc_type= fields.Char("Document Type")
+    # fiscal_period= fields.Char("Fiscal Period")
+    # amt_in_loc_cur= fields.Char("Amount in Local Currency")
+    # base_line_date= fields.Char("Baseline Date for Due Date Calculation")
+    # terms= fields.Char("Terms of Payment Key")
+    # cash_disc_days= fields.Char("Cash Discount Days 1")
+    # acct_doc_no2= fields.Char("Accounting Document Number")
+    # acct_doc_num_line= fields.Char("Number of Line Item Within Accounting Document")
+    # acct_type= fields.Char("Account Type")
+    # debit_credit= fields.Char("Debit/Credit Indicator")
+    # amt_in_loc_cur2= fields.Char("Amount in Local Currency")
+    # assign_no= fields.Char("Assignment Number")
+    # gl_acct_no= fields.Char("G/L Account Number")
+    # gl_acct_no2= fields.Char("G/L Account Number")
+    # customer_no2= fields.Char("Customer Number")
+    # active=fields.Boolean("Active", default=True)
 
 class DmpiCrmShipTo(models.Model):
     _name = 'dmpi.crm.ship.to'
@@ -635,12 +637,20 @@ class DmpiCRMVariety(models.Model):
 
 
 
-class DmpiCRMActivityLog(models.Model):
+class DmpiCrmActivityLog(models.Model):
     _name = 'dmpi.crm.activity.log'
 
-    model_id = fields.Many2one('ir.model',"Model")
-    record_id = fields.Integer("Record ID")
+    # @api.model
+    # def create(self, vals):
+    #     self.env['ir.model'].search([('')])
+    #     vals['name'] = vals['model_id'],vals['record_id']
+    #     res = super(DmpiCrmActivityLog, self).create(vals)
+    #     return res
+
     name = fields.Char("Activity")
     description = fields.Text("Log")
+    log_type = fields.Selection([('success','Success'),('fail','Fail'),('warning','Warning'),('note','Note')],"Type")
+    model_id = fields.Many2one('ir.model',"Model")
+    record_id = fields.Integer("Record ID")
 
 
