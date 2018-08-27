@@ -5,6 +5,7 @@ from odoo.osv import expression
 from odoo import models, api, fields
 from odoo.exceptions import  Warning, RedirectWarning, ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
 from fabric.api import *
@@ -678,6 +679,80 @@ class DmpiCrmSaleOrder(models.Model):
         if result:
             return result['select_name']
 
+    @api.model
+    def _sale_order_demand_create_csv(self, so_ids):
+        csv = ''
+        headers = ['ODOO PO','ODOO SO','SOLD TO','SHIP TO','DESTINATION','WEEK','P5','P6','P7','P8','P9','P10','P12','P5C7',
+                'P6C8','P7C9','P8C10','P9C11','P10C12','P12C20','Total','Shipp Line','Shell Color','Delivery Date']
+
+        csv = u','.join(headers) + '\n'
+
+        # add row data
+        for sid in so_ids:
+            row = []
+            so = self.browse(sid)
+
+            odoo_po_no = so.contract_id.name or ''
+            odoo_so_no = so.name or ''
+            sold_to = so.contract_id.partner_id.name or ''
+            ship_to = so.ship_to_id.name or ''
+            destination = ''
+            week_no = '%s' % (so.week_no or '')
+            total = 0
+            ship_line = so.ship_line or ''
+            shell_color = so.shell_color or ''
+            delivery_date = so.requested_delivery_date or ''
+
+            if delivery_date:
+                delivery_date = datetime.strftime(parse(delivery_date), '%M/%d/%Y')
+
+            for l in so.order_ids:
+                p5  = l.qty if l.product_code == 'P5' else ''
+                p6  = l.qty if l.product_code == 'P6' else ''
+                p7  = l.qty if l.product_code == 'P7' else ''
+                p8  = l.qty if l.product_code == 'P8' else ''
+                p9  = l.qty if l.product_code == 'P9' else ''
+                p10 = l.qty if l.product_code == 'P10' else ''
+                p12 = l.qty if l.product_code == 'P12' else ''
+                p5c7    = l.qty if l.product_code == 'P5C7' else ''
+                p6c8    = l.qty if l.product_code == 'P6C8' else ''
+                p7c9    = l.qty if l.product_code == 'P7C9' else ''
+                p8c10   = l.qty if l.product_code == 'P8C10' else ''
+                p9c11   = l.qty if l.product_code == 'P9C11' else ''
+                p10c12  = l.qty if l.product_code == 'P10C12' else ''
+                p12c20  = l.qty if l.product_code == 'P12C20' else ''
+
+                total += l.qty
+
+            row = [odoo_po_no, odoo_so_no, sold_to, ship_to, destination, week_no, 
+                p5, p6, p7, p8, p9, p10, p12, p5c7, p6c8, p7c9, p8c10, p9c11, p10c12, p12c20,
+                total, ship_line, shell_color, delivery_date]
+
+            csv += ','.join(str(d) for d in row) + '\n'
+
+        return csv
+
+    @api.multi
+    def download_demand_sale_order(self):
+        print('EXPORT SALE ORDERS DEMAND')
+        active_ids = self.browse(self.env.context.get('active_ids'))
+
+        docids = []
+        for rec in active_ids:
+            docids.append(rec.id)
+
+        if docids:
+            values = {
+                'type': 'ir.actions.act_url',
+                'url': '/csv/download/dmpi_crm_sale_order/?docids=%s' % (json.dumps(docids)),
+                'target': 'current',
+            }
+
+            return values
+        
+        else:
+            raise UserError(_("Nothing to Download."))
+
 
 
     def submit_so_file(self,rec):
@@ -890,7 +965,6 @@ class DmpiCrmSaleOrder(models.Model):
             for l in so.order_ids:
                 if l.price == 0:
                     error += 1
-                    print ('PASSED NO PRICE')
                     s = 'No Price set for %s (%s)' % (l.product_id.code, l.product_id.sku)
                     error_msg.append(s)
 

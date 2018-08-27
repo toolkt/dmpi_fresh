@@ -49,5 +49,19 @@
             <field name="pentaho_report_model_id" ref="dmpi_crm.model_dmpi_crm_clp"/>
         </record>
 
+
+        <!-- CONTAINTER LOAD PLAN CUSTOMER -->
+        <record id="clp_report_customer" model="ir.actions.report">
+            <field name="name">Container Load Plan</field>
+            <field name="model">dmpi.crm.clp</field>
+            <field name="report_name">dmpi_crm.clp_report_customer</field>
+            <field name="auto" eval="False"/>
+            <field name="pentaho_filename">dmpi_crm/reports/clp_report_customer.prpt</field>
+            <field name="is_pentaho_report" eval="True"/>
+            <field name="report_type">pentaho</field>
+            <field name="pentaho_report_output_type">pdf</field>
+            <field name="pentaho_load_file" eval="True"/>
+            <field name="pentaho_report_model_id" ref="dmpi_crm.model_dmpi_crm_clp"/>
+        </record>
 	</data>
 </odoo>

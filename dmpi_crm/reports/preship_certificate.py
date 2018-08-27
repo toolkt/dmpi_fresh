@@ -183,62 +183,34 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			# sheet.write('G%s'%(r+5),'LAST', mrg_center)
 
 			# INSERT DATA HERE
-			# query = """
-			# 	SELECT f.id as factor_id, tl.sequence, a.*, sum(a.no_sample) OVER (PARTITION BY a.type) as total_sample, tl.rule,
-			# 		tl.weight, tl.is_hold, count(a.type) OVER (PARTITION BY a.type) as count
-			# 	FROM (
-			# 		SELECT
-			# 			CASE
-			# 				WHEN upper(trim(drl.type)) = 'EXTERNAL QUALITY' THEN 'external'
-			# 				WHEN upper(trim(drl.type)) = 'INTERNAL QUALITY' THEN 'internal'
-			# 				WHEN upper(trim(drl.type)) = 'PACKAGING QUALITY' THEN 'packaging'
-			# 			END as type,
-			# 			drl.factor, sum(drl.no_sample) as no_sample, sum(drl.no_defect) as no_defect, avg(drl.value) as average
-			# 		FROM dmpi_crm_inspection_lot drl
-			# 		WHERE drl.dr_id = %s GROUP BY drl.type, drl.factor) a
-			# 	LEFT JOIN dmpi_crm_factor f on (f.name = a.factor and f.type = a.type)
-			# 	INNER JOIN dmpi_crm_template_line tl on (tl.factor_id = f.id)
-			# 	WHERE tl.tmpl_id = %s
-			# 	ORDER BY f.type, tl.sequence """ % (o.dr_id.id, o.tmpl_id.id)
 			query = """
-				WITH totals as (
-								select b.type, sum(b.total_sample) as total_sample
-								from (
-											select a.lot, a.type, max(a.no_sample) as total_sample
-											from (
-														SELECT
-															CASE
-																WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
-																WHEN trim(dil.type) ilike '%%internal%%' THEN 'internal'
-																WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
-															END as type
-															,dil.lot, dil.factor, dil.factor_num, dil.no_sample
-														FROM dmpi_crm_inspection_lot dil
-														WHERE dil.dr_id = %s
-											) as a
-											group by a.lot, a.type
-											order by a.lot, a.type
-								) as b
-								group by b.type
-				)
+WITH totals as (
+				-- get total samples per operation type
+				-- problem may exist if no_sample
+				select b.type, sum(b.total_sample) as total_sample
+				from (
+							select a.lot, a.type, max(a.no_sample) as total_sample
+							from (
+										SELECT
+											CASE
+												WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
+												WHEN trim(dil.type) ilike '%%internal%%' THEN 'internal'
+												WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
+											END as type
+											,dil.lot, dil.factor, dil.factor_num, dil.no_sample
+										FROM dmpi_crm_inspection_lot dil
+										WHERE dil.dr_id = %s
+							) as a
+							group by a.lot, a.type
+							order by a.lot, a.type
+				) as b
+				group by b.type
+)
 
-
-				select f.id as factor_id
-					,tl.sequence
-					,f.type
-					,f.name as factor
-					,f.code as factor_code
-					,il.no_sample
-					,il.no_defect
-					,il.average
-					,tot.total_sample
-					,tl.rule
-					,tl.weight
-					,tl.is_hold
-					,count(f.*) over (partition by f.type) as count
-				from dmpi_crm_factor f
-				left join dmpi_crm_template_line tl on tl.factor_id = f.id
-				left join (
+,inspection_lots_mean as (
+			-- get inspections lots mean data
+			SELECT dil.*, f.is_mean, f.parent_id
+			FROM (
 							SELECT
 								CASE
 									WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
@@ -249,12 +221,59 @@ class PreShipmentCertificateReport(models.AbstractModel):
 							FROM dmpi_crm_inspection_lot dil
 							WHERE dil.dr_id = %s
 							GROUP BY dil.type, dil.factor, dil.factor_num
-				) il on (il.type = f.type and il.factor_num = f.code)
-				-- ) il on (il.type = f.type and il.factor = f.name )
-				left join totals tot on tot.type = f.type
-				where tl.tmpl_id = %s
-				order by type, factor_code
-			""" % (o.dr_id.id, o.dr_id.id, o.tmpl_id.id)
+			) as dil
+			LEFT JOIN dmpi_crm_factor f on (f.code = dil.factor_num and f.type = dil.type)
+			WHERE f.is_mean is true and f.parent_id is not null
+			ORDER BY dil.type, dil.factor_num
+)
+
+
+,inspection_lots as (
+			-- get inspections lots data
+			SELECT dil.*
+			FROM (
+							SELECT
+								CASE
+									WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
+									WHEN trim(dil.type) ilike '%%internal%%' THEN 'internal'
+									WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
+								END as type,
+								dil.factor_num, dil.factor, sum(dil.no_sample) as no_sample, sum(dil.no_defect) as no_defect
+							FROM dmpi_crm_inspection_lot dil
+							WHERE dil.dr_id = %s
+							GROUP BY dil.type, dil.factor, dil.factor_num
+			) as dil
+			LEFT JOIN dmpi_crm_factor f on (f.code = dil.factor_num and f.type = dil.type)
+			WHERE f.is_mean is false and f.parent_id is null
+			ORDER BY dil.type, dil.factor_num
+)
+
+select f.id as factor_id
+	,tl.sequence
+	,f.type
+	,f.name as factor
+	,f.code as factor_code
+	,il.no_sample
+	,il.no_defect
+-- 	,il.average
+	,case
+				when ilm.average is null then 0
+				else ilm.average
+	end average
+	,tot.total_sample
+	,tl.rule
+	,tl.weight
+	,tl.is_hold
+	,count(f.*) over (partition by f.type) as count
+from dmpi_crm_factor f
+left join dmpi_crm_template_line tl on tl.factor_id = f.id
+left join inspection_lots il on (il.type = f.type and il.factor_num = f.code)
+-- ) il on (il.type = f.type and il.factor = f.name )
+left join totals tot on tot.type = f.type
+left join inspection_lots_mean ilm on ilm.parent_id = f.id
+where tl.tmpl_id = %s
+order by type, factor_code
+			""" % (o.dr_id.id, o.dr_id.id, o.dr_id.id, o.tmpl_id.id)
 			print(query)
 			self._cr.execute(query)
 			result = self._cr.dictfetchall()

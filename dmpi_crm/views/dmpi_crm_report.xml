@@ -117,6 +117,8 @@
                     <field name="name"/>
                     <field name="code"/>
                     <field name="type"/>
+                    <field name="is_mean"/>
+                    <field name="parent_id"/>
                     <field name="active"/>
                 </tree>
            </field>
@@ -144,7 +146,7 @@
             <field name="model">dmpi.crm.preship.report</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Pre-Shipment Reports">
+                <tree string="Pre-Shipment Reports" create="false">
                     <field name="series_no"/>
                     <field name="dr_id"/>
                     <field name="container"/>
@@ -161,7 +163,7 @@
             <field name="model">dmpi.crm.preship.report</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Pre-Shipment Reports">
+                <form string="Pre-Shipment Reports" create="false">
                     <header>
 
                         <button name="action_confirm_preship_report" string="Confirm Pre-Shipment Certificate" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','draft')]}" confirm="Are sure you want to confirm the Pre-shipment report?"/>

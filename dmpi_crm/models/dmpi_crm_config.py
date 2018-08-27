@@ -956,9 +956,16 @@ class DmpiCrmConfig(models.Model):
                                 clp['date_depart'] = row[3]
                                 clp['date_arrive'] = row[4]
                                 clp['control_no'] = row[5]
-                                clp['summary_case_a'] = row[6]
-                                clp['summary_case_b'] = row[7]
-                                clp['summary_case_c'] = row[8]
+
+                                case_summary = []
+                                rl = len(row)
+                                for i in range(7,rl):
+                                    case_summary.append(row[i])
+
+                                clp['case_summary'] = '\n'.join(case_summary)
+                                # clp['summary_case_a'] = row[6]
+                                # clp['summary_case_b'] = row[7]
+                                # clp['summary_case_c'] = row[8]
 
 
                     # do not create if no dr_lines

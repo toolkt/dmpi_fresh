@@ -878,7 +878,9 @@
             <field name="arch" type="xml">
                 <form string="Container Load Plan">
                     <header>
-                        <button name="print_clp" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
+                        <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
+
+                        <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
 
                         <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?"/>
 
@@ -929,9 +931,10 @@
                                         <field name="date_arrive"/>
 
                                         <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
-                                        <field name="summary_case_a" string="A"/>
+<!--                                         <field name="summary_case_a" string="A"/>
                                         <field name="summary_case_b" string="B"/>
-                                        <field name="summary_case_c" string="C"/>
+                                        <field name="summary_case_c" string="C"/> -->
+                                        <field name="case_summary" nolabel="1" colspan="2"/>
                                     </group>
                                     <group>
                                         <h3><strong style="color:#79717D;">Container Temp</strong></h3>

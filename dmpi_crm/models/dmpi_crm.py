@@ -89,7 +89,7 @@ class DmpiCrmPartner(models.Model):
 
 
     #DEFAULTS
-    default_validity = fields.Integer("Default Validity")
+    default_validity = fields.Integer("Default Validity", default=30)
 
     # #SBFTI          
     # alt_customer_code = fields.Char("ALT Code")

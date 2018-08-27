@@ -66,15 +66,19 @@ class DmpiCrmTemplateLine(models.Model):
 
 
 class DmpiCrmFactor(models.Model):
-	_name = 'dmpi.crm.factor'
-	_description = 'Product Characteristics'
-	_order = 'type'
+    _name = 'dmpi.crm.factor'
+    _description = 'Product Characteristics'
+    _order = 'type, code'
+    _sql_constraints = [
+        ('unique_characteristic', 'UNIQUE (type, code)', _('Similar characteristic already exists!'))
+    ]
 
-	# sequence = fields.Integer('Sequence', help="Important! Determines order in Shipment Reports")
-	name = fields.Char(string='Factor')
-	code = fields.Char(string='Code')
-	type = fields.Selection([('external','External Quality'),('internal','Internal Quality'),('packaging','Packing Quality')], string='Operation')
-	active = fields.Boolean('Active', default=True)
+    name = fields.Char(string='Factor')
+    code = fields.Char(string='Code')
+    type = fields.Selection([('external','External Quality'),('internal','Internal Quality'),('packaging','Packing Quality')], string='Operation')
+    active = fields.Boolean('Active', default=True)
+    is_mean = fields.Boolean('Use as Mean', default=False)
+    parent_id = fields.Many2one('dmpi.crm.factor', string='Parent Characteristic', help='Use this when the characteristic is of Mean type only. Refers to the parent characteristic.')
 
 # REPORTS MODELS
 class DmpiCrmPreshipReport(models.Model):
@@ -102,7 +106,7 @@ class DmpiCrmPreshipReport(models.Model):
 			pass
 
 	dr_id = fields.Many2one('dmpi.crm.dr', 'DR Reference')
-	dr_no = fields.Char('DR Number', related="dr_id.sap_so_no")
+	dr_no = fields.Char('DR Number', related="dr_id.name")
 	clp_id = fields.Many2one('dmpi.crm.clp', 'CLP Reference')
 	tmpl_id = fields.Many2one('dmpi.crm.template', 'Pre-Shipment Template')
 	img = fields.Binary('Image Attachment')
@@ -245,9 +249,37 @@ class DmpiCrmClp(models.Model):
         report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report'),('report_type','=','pentaho')], limit=1)
         report_obj.name = 'CLP_%s_%s' % (self.container_no,self.date_start)
 
+        print('dr_id %s, ids %s' % (self.ids, self.dr_id.id))
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report',
+            'report_type': 'pentaho',
+            'name': 'Container Load Plan',
+            # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
+            'datas': {
+                'output_type': 'pdf',
+                'variables': {
+                    'user': user.name,
+                    'ids': self.ids,
+                    'dr_id': self.dr_id.id
+                },
+            },
+        }
+
+        return values
+
+
+
+    def print_clp_customer(self):
+        user = self.env.user
+
+        report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report_customer'),('report_type','=','pentaho')], limit=1)
+        report_obj.name = 'CLP_%s_%s' % (self.container_no,self.date_start)
+
+        print('dr_id %s, ids %s' % (self.dr_id.id, self.ids))
+        values = {
+            'type': 'ir.actions.report',
+            'report_name': 'dmpi_crm.clp_report_customer',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
             # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
@@ -304,9 +336,10 @@ class DmpiCrmClp(models.Model):
     date_arrive = fields.Char('ETA')
 
     # summary of cases
-    summary_case_a = fields.Char('Summary of Cases A')
-    summary_case_b = fields.Char('Summary of Cases B')
-    summary_case_c = fields.Char('Summary of Cases C')
+    # summary_case_a = fields.Char('Summary of Cases A')
+    # summary_case_b = fields.Char('Summary of Cases B')
+    # summary_case_c = fields.Char('Summary of Cases C')
+    case_summary = fields.Text('Summary of Cases')
 
     # container temperatures
     # container_temp = fields.Text('Container Temp Details')
@@ -364,9 +397,55 @@ class DmpiCrmClp(models.Model):
 
     	return action
 
+    def parse_pack_code(self):
+        print('parse pack code')
+        # sample code = 1180806031
+        # 1 = timecode (1-8) 8am - 6am 3 hours interval
+        # 18 = year
+        # 08 = month
+        # 06 = day
+        # 03 = packhing house code SB01/PL01
+        # 1 = lines 1-7
+        # timcode = []
+        query = """
+                SELECT
+                    cl.month || '/' || cl.day || '/' || cl.year as pack_date
+                from (
+                            select cl.year, cl.month, array_to_string(array_agg(cl.day), ',')  as day
+                            from (
+                                        select distinct
+                                            substring(cl.pack_code, 2, 2) as year,
+                                            substring(cl.pack_code, 4, 2) as month,
+                                            substring(cl.pack_code, 6, 2) as day
+                                        from (
+                                                select distinct (regexp_matches(cl.pack_code, '\d{10}', 'g')::VARCHAR [])[1] as pack_code
+                                                from dmpi_crm_clp_line cl
+                                                where cl.clp_id = %s
+                                        ) cl
+                            ) cl
+                            group by cl.year, cl.month
+                ) cl
+                -- LIMIT ONLY TO PREVIOUS UPTO NEXT YEAR, TO AVOID 000000
+                where cl.year in (
+                                        RIGHT(date_part('year', CURRENT_DATE)::VARCHAR,2),
+                                        RIGHT(date_part('year', (CURRENT_DATE + INTERVAL '1 year'))::VARCHAR,2),
+                                        RIGHT(date_part('year', (CURRENT_DATE - INTERVAL '1 year'))::VARCHAR,2)
+                                )
+        """ % self.id
+        self._cr.execute(query)
+        result = self._cr.fetchall()
+        dates = []
+
+        for r in result:
+            dates.append(r[0])
+        dates = ' , '.join(dates)
+
+        print (dates)
+        return dates
 
     @api.multi
     def action_generate_preship(self):
+        
         action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
 
         clp = self
@@ -391,6 +470,7 @@ class DmpiCrmClp(models.Model):
         inspector_id = clp.inspector_id.id
         supervisor_id = clp.supervisor_id.id
         pack_size = ps
+        date_pack = self.parse_pack_code()
         remarks = clp.remarks
 
         temp_start = clp.temp_start
@@ -437,6 +517,7 @@ class DmpiCrmClp(models.Model):
             'no_box': no_box,
             'inspector': inspector_id,
             'pack_size': pack_size,
+            'date_pack': date_pack,
             'remarks': remarks,
             'supervisor': supervisor_id,
             'temp_start': temp_start,
