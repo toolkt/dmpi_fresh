@@ -57,12 +57,14 @@ def change_permission(path):
 
 #@parallel
 def file_get(remotepath, localpath):
-    get(remotepath,localpath)
+    with settings(warn_only=True):
+        get(remotepath,localpath)
 
 #@parallel
 def transfer_files(from_path, to_path):
-    mv = "mv %s %s" % (from_path,to_path)
-    sudo(mv)
+    with settings(warn_only=True):
+        mv = "mv %s %s" % (from_path,to_path)
+        sudo(mv)
 
 #@parallel
 def test_remote():
@@ -72,25 +74,29 @@ def test_remote():
 
 def read_file(file_path, encoding='utf-8'):
     io_obj = BytesIO()
-    get(file_path, io_obj)
-    return io_obj.getvalue().decode(encoding)
+    with settings(warn_only=True):
+        get(file_path, io_obj)
+        return io_obj.getvalue().decode(encoding)
+    return False
 
 
 def read_file_pdf(file_path, encoding='utf-8'):
-    io_obj = BytesIO()
-    get(file_path, io_obj)
-    return io_obj.getvalue()
-
+    with settings(warn_only=True):
+        io_obj = BytesIO()
+        get(file_path, io_obj)
+        return io_obj.getvalue()
+    return False
 
 def list_dir(dir_=None,file_prefix=""):
     """returns a list of files in a directory (dir_) as absolute paths"""
-    with hide('output'):
-        if dir_ is not None and not dir_.endswith("/"):
-            dir_ += "/"
-        dir_ = dir_ or env.cwd
-        string_ = run("for i in %s%s*; do echo $i; done" % (dir_,file_prefix))
-        files = string_.replace("\r","").split("\n")
-    return files
+    with settings(warn_only=True):
+        with hide('output'):
+            if dir_ is not None and not dir_.endswith("/"):
+                dir_ += "/"
+            dir_ = dir_ or env.cwd
+            string_ = run("for i in %s%s*; do echo $i; done" % (dir_,file_prefix))
+            files = string_.replace("\r","").split("\n")
+        return files
 
 
 def sap_string_to_float(number_str):
@@ -141,8 +147,6 @@ class DmpiCrmConfig(models.Model):
     inbound_k_log_success_error_send    = fields.Char("Contract Log Success Error Send")
     inbound_k_log_fail                  = fields.Char("Contract Log Fail")
     inbound_k_log_fail_sent             = fields.Char("Contract Log Fail Sent")
-
-    inbound_k_success_offline           = fields.Char("Contract Success Offline")
 
 
     #SO
@@ -306,49 +310,6 @@ class DmpiCrmConfig(models.Model):
 
 
     @api.multi
-    def process_offline_contract(self):
-        print("Create Offline Contract")
-
-        for rec in self:
-            print("GET SUCCESS")
-            outbound_path= rec.inbound_k_success
-            outbound_path_success= rec.inbound_k_success_offline
-
-
-            h = self.search([('default','=',True)],limit=1)
-            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-            env.hosts.append(host_string)
-            env.passwords[host_string] = h.ssh_pass
-
-
-            try:
-                #Get Offline PO
-                files = execute(list_dir,outbound_path,'ODOO_PO_PU')
-                for f in files[host_string]:
-                    result = execute(read_file,f)[host_string]
-                    print(result)
-                    #Extract the PO number from the Filename
-                    po_no = f.split('/')[-1:][0].split('_')[3]
-                    print(po_no)
-
-
-                #IF Offline PO Get Offline PO Success
-                
-
-                #If Offline PO Success Get Offline SO
-
-
-                #IF Offline SO Get Offline SO Success
-
-
-
-            except:
-                print("ERROR OFFLINE SYNC")
-                pass
-
-
-
-    @api.multi
     def process_success_contract(self):
         print("Create Contract")
 
@@ -356,44 +317,51 @@ class DmpiCrmConfig(models.Model):
             print("GET SUCCESS")
             outbound_path= rec.inbound_k_log_success
             outbound_path_success= rec.inbound_k_log_success_sent
+            outbound_path_fail= rec.inbound_k_log_success_error_send
 
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            
+            files = execute(list_dir,outbound_path,'L_ODOO_PO_PO')
+            for f in files[host_string]:
 
-
-            try:
-                files = execute(list_dir,outbound_path,'L_ODOO_PO_PO')
-                for f in files[host_string]:
+                try:
                     result = execute(read_file,f)[host_string]
-                    print(result)
-                    #Extract the PO number from the Filename
-                    po_no = f.split('/')[-1:][0].split('_')[3]
-                    print(po_no)
+                    # print(result)
+                    if result:
+                        #Extract the PO number from the Filename
+                        po_no = f.split('/')[-1:][0].split('_')[3]
+                        print(po_no)
 
-                    contract = False
-                    line = result.split('\r\n')
-                    for l in line:
-                        row = l.split('\t')
-                        contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)])
-                        cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
-                        contract.sap_cn_no = cn_no
+                        contract = False
+                        line = result.split('\r\n')
+                        for l in line:
+                            row = l.split('\t')
+                            contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)])
+                            cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
+                            contract.sap_cn_no = cn_no
 
-                        if contract:
-                            for so in contract.sale_order_ids:
-                                so.submit_so_file(so)
+                            if contract:
+                                for so in contract.sale_order_ids:
+                                    so.submit_so_file(so)
 
-                        
+                            
 
-                    execute(transfer_files,f, outbound_path_success)
-                rec.write({'state':'processed'})
-                print("Sync Success")
-            except:
-                print("GET SUCCESS - FAILED")
-                pass
+                        execute(transfer_files,f, outbound_path_success)
+                        rec.write({'state':'processed'})
 
+                        log = { 'name':"CONTRACT SUCCESS", 'log_type':"success",
+                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                            }
+                        self.env['dmpi.crm.activity.log'].create(log)
+
+                except:
+                    print("GET FAIL - FAILED")
+                    pass
+                    
 
 
     @api.multi
@@ -422,18 +390,23 @@ class DmpiCrmConfig(models.Model):
                 files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_PO')
                 for f in files[host_string]:
                     result = execute(read_file,f)[host_string]
-                    po_no = f.split('/')[-1:][0].split('_')[3]
-                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
-                    contract.message_post("ERROR: <br/>%s" % result)
-                    # print(contract)
-                    rec.write({'state':'hold'})
-                    execute(transfer_files,f, outbound_path_fail_sent)
+                    if result:
+                        po_no = f.split('/')[-1:][0].split('_')[3]
+                        contract = self.env['dmpi.crm.sale.contract'].search([('name','=',po_no)],limit=1)
+                        contract.message_post("ERROR: <br/>%s" % result)
+                        # print(contract)
+                        rec.write({'state':'hold'})
+                        execute(transfer_files,f, outbound_path_fail_sent)
+
+
+                        log = { 'name':"CONTRACT FAIL", 'log_type':"success",
+                                'description':"Transferred %s to %s " % (f,outbound_path_fail_sent)
+                            }
+                        self.env['dmpi.crm.activity.log'].create(log)
+
             except:
                 print("GET FAIL - FAILED")
                 pass
-
-
-
 
 
 
@@ -524,8 +497,8 @@ class DmpiCrmConfig(models.Model):
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
 
-            
             files = execute(list_dir,outbound_path,'ODOO_AR_OPENAR')
+
             for f in files[host_string]:
                 try:
                     result = execute(read_file,f)[host_string]
@@ -539,7 +512,7 @@ class DmpiCrmConfig(models.Model):
                         val = ""
                         if len(row) and len(row) == 24: 
                             print(row)
-                            print(len(row))
+                            # print(len(row))
                             partner_id = 0
                             try:
                                 partner_id = self.env['dmpi.crm.partner'].search([('customer_code','=',int(row[1].lstrip('0')))], limit=1)[0].id
@@ -602,6 +575,7 @@ class DmpiCrmConfig(models.Model):
                         self.env.cr.execute(ql2)
                         self.env.cr.execute(queryl)
 
+
                     execute(transfer_files,f, outbound_path_success)
 
                     log = { 'name':"ODOO_AR_OPENAR", 'log_type':"success",
@@ -616,29 +590,29 @@ class DmpiCrmConfig(models.Model):
                             'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
-                    print("-------%s-------\n" % (e))
+                    # print("-------%s-------\n" % (e))
                     # pass
 
 
 
     @api.multi
     def process_cl(self):
-        print("Read AR")
+        print("Read Credit Limit")
 
         for rec in self:
-
             outbound_path= rec.outbound_ar_success
             outbound_path_success= rec.outbound_ar_success_sent
+            outbound_path_fail = rec.outbound_ar_fail
 
             h = self.search([('default','=',True)],limit=1)
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
 
-
-            try:
-                files = execute(list_dir,outbound_path,'ODOO_AR_CRDLMT')
-                for f in files[host_string]:
+            files = execute(list_dir,outbound_path,'ODOO_AR_CRDLMT')
+            
+            for f in files[host_string]:
+                try:
                     result = execute(read_file,f)[host_string]
 
                     line = result.split('\n')
@@ -675,91 +649,103 @@ class DmpiCrmConfig(models.Model):
                     q1 = """DELETE from dmpi_crm_partner_credit_limit;"""
                     q2 = """SELECT setval('dmpi_crm_partner_credit_limit_id_seq', COALESCE((SELECT MAX(id)+1 FROM dmpi_crm_partner_credit_limit), 1), false);"""
 
-                    self.env.cr.execute(q1)
-                    self.env.cr.execute(q2)
-                    self.env.cr.execute(query)
+                    if len(vals)>0:
+                        self.env.cr.execute(q1)
+                        self.env.cr.execute(q2)
+                        self.env.cr.execute(query)
+
+                        execute(transfer_files,f, outbound_path_success)
+
+                        log = { 'name':"ODOO_AR_CRDLMT", 'log_type':"success",
+                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                            }
+                        self.env['dmpi.crm.activity.log'].create(log)
+
+                except Exception as e:
+                    execute(transfer_files,f, outbound_path_fail)
+                    log = { 'name':"ODOO_AR_CRDLMT", 'log_type':"fail",
+                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                        }
+                    self.env['dmpi.crm.activity.log'].create(log)
+                    # print("-------%s-------\n" % (e))
+                    # pass
 
 
-                    execute(transfer_files,f, outbound_path_success)
-            except Exception as e:
-                print("ERROR %s" % e)
-                pass
 
 
+    # @api.multi
+    # def process_prc(self):
+    #     print("Process Price")
 
-    @api.multi
-    def process_prc(self):
-        print("Process Price")
+    #     for rec in self:
 
-        for rec in self:
+    #         outbound_path= rec.outbound_prc_success
+    #         outbound_path_success= rec.outbound_prc_success_sent
 
-            outbound_path= rec.outbound_prc_success
-            outbound_path_success= rec.outbound_prc_success_sent
+    #         h = self.search([('default','=',True)],limit=1)
+    #         host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+    #         env.hosts.append(host_string)
+    #         env.passwords[host_string] = h.ssh_pass
 
-            h = self.search([('default','=',True)],limit=1)
-            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-            env.hosts.append(host_string)
-            env.passwords[host_string] = h.ssh_pass
+    #         try:
+    #             files = execute(list_dir,outbound_path,'DMS_A910_PRICEDOWNLOAD')
+    #             for f in files[host_string]:
+    #                 result = execute(read_file,f)[host_string]
 
-            try:
-                files = execute(list_dir,outbound_path,'DMS_A910_PRICEDOWNLOAD')
-                for f in files[host_string]:
-                    result = execute(read_file,f)[host_string]
-
-                    line = result.split('\n')
+    #                 line = result.split('\n')
 
                 
-                    for l in line:
-                        row = l.split('\t')
+    #                 for l in line:
+    #                     row = l.split('\t')
 
-                        # print ("-----------ODOO_AR_OPENAR-------------")
-                        valid_to = False
-                        try:
-                            date = datetime.strptime(row[5], '%m/%d/%Y')
-                            print (date.year)
-                            if date.year > 2100:
-                                valid_to = datetime(2100, date.month, date.day)
-                            else:
-                                valid_to = date
-                        except:
-                            print("Date ERROR %s",row)
-                            pass
+    #                     # print ("-----------ODOO_AR_OPENAR-------------")
+    #                     valid_to = False
+    #                     try:
+    #                         date = datetime.strptime(row[5], '%m/%d/%Y')
+    #                         print (date.year)
+    #                         if date.year > 2100:
+    #                             valid_to = datetime(2100, date.month, date.day)
+    #                         else:
+    #                             valid_to = date
+    #                     except:
+    #                         print("Date ERROR %s",row)
+    #                         pass
                     
-                        if row[0] != '':
+    #                     if row[0] != '':
 
-                            name = "%s-%s-%s-%s%s%s%s" % (row[4],row[3],row[5],row[0],row[1],row[2],row[6])
-                            amount = row[7].replace(',', '')
+    #                         name = "%s-%s-%s-%s%s%s%s" % (row[4],row[3],row[5],row[0],row[1],row[2],row[6])
+    #                         amount = row[7].replace(',', '')
 
-                            prc = {
-                                'name' : name,
-                                'application' : row[0],
-                                'condition_type' : row[1],
-                                'sales_org' : row[2],
-                                'customer' : row[3],
-                                'material' : row[4],
-                                'valid_to' :  valid_to,
-                                'valid_to_sap' :  row[5],
-                                'condition_record' : row[6],
-                                'condition_rate' : amount,
-                                'condition_currency' : row[8],
-                                'uom' : row[9],
-                            }
+    #                         prc = {
+    #                             'name' : name,
+    #                             'application' : row[0],
+    #                             'condition_type' : row[1],
+    #                             'sales_org' : row[2],
+    #                             'customer' : row[3],
+    #                             'material' : row[4],
+    #                             'valid_to' :  valid_to,
+    #                             'valid_to_sap' :  row[5],
+    #                             'condition_record' : row[6],
+    #                             'condition_rate' : amount,
+    #                             'condition_currency' : row[8],
+    #                             'uom' : row[9],
+    #                         }
 
-                            #print(prc)
+    #                         #print(prc)
 
-                            exist = self.env['dmpi.sap.price.upload'].search([('name','=',name)],limit=1)
-                            if exist:
-                                print("EXIST %s" % exist)
-                                exist.write(prc)
-                            else:
-                                prc_id = self.env['dmpi.sap.price.upload'].create(prc)
-                                print("NEW %s" % prc_id)
+    #                         exist = self.env['dmpi.sap.price.upload'].search([('name','=',name)],limit=1)
+    #                         if exist:
+    #                             print("EXIST %s" % exist)
+    #                             exist.write(prc)
+    #                         else:
+    #                             prc_id = self.env['dmpi.sap.price.upload'].create(prc)
+    #                             print("NEW %s" % prc_id)
 
 
-                    execute(transfer_files,f, outbound_path_success)
-            except Exception as e:
-                print("-------%s-------\n" % e)
-                pass
+    #                 execute(transfer_files,f, outbound_path_success)
+    #         except Exception as e:
+    #             print("-------%s-------\n" % e)
+    #             pass
 
 
 
@@ -780,10 +766,9 @@ class DmpiCrmConfig(models.Model):
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
 
-            try:
-                files = execute(list_dir,outbound_path,'ODOO_DR')
-                
-                for f in files[host_string]:
+            files = execute(list_dir,outbound_path,'ODOO_DR')            
+            for f in files[host_string]:
+                try:
                     result = execute(read_file,f)[host_string]
 
                     line = result.split('\n')
@@ -1004,9 +989,9 @@ class DmpiCrmConfig(models.Model):
                         execute(transfer_files,f, outbound_path_fail)
 
 
-            except Exception as e:
-                print(e)
-                pass
+                except Exception as e:
+                    print(e)
+                    pass
 
 
 

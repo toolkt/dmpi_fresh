@@ -39,7 +39,7 @@
         'mail',
         'report_xlsx',
         'tk_pentaho_reports_odoo_v11',
-        'bus',
+        # 'bus',
     ],
     "data": [
 

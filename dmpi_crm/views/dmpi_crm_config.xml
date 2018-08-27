@@ -64,6 +64,10 @@
                                         <field name="inbound_k_log_success_error_send" />
                                         <field name="inbound_k_log_fail" />
                                         <field name="inbound_k_log_fail_sent" />
+
+                                        <field name="inbound_k_success_offline" />
+                                        <field name="inbound_k_log_success_offline" />
+
                                         <button name="process_success_contract" string="Process Success and SO" type="object" class="oe_highlight" />
                                         <button name="process_fail_contract" string="Process Fail Contract" type="object" class="oe_highlight" />
                                         <button name="process_offline_contract" string="Process Offline Contract" type="object" class="oe_highlight" />
@@ -80,7 +84,13 @@
                                         <field name="inbound_so_log_success_error_send" />
                                         <field name="inbound_so_log_fail" />
                                         <field name="inbound_so_log_fail_sent" />
+
+
+                                        <field name="inbound_so_success_offline" />
+                                        <field name="inbound_so_log_success_offline" />
+
                                         <button name="process_so" string="Process SO" type="object" class="oe_highlight" />
+                                        <button name="process_offline_so" string="Process Offline SO" type="object" class="oe_highlight" />
                                     </group>
 
                                     <group>
@@ -128,13 +138,13 @@
                                         <button name="process_inv2" string="Process DMS Invoice" type="object" class="oe_highlight" />
                                         <button name="process_inv2_pdf" string="Process DMS Invoice PDF" type="object" class="oe_highlight" />
                                     </group>
-                                    <group>
+                                    <!-- <group>
                                         <field name="outbound_prc_success" />
                                         <field name="outbound_prc_success_sent" />
                                         <field name="outbound_prc_fail" />
                                         <field name="outbound_prc_fail_sent" />
                                         <button name="process_prc" string="Process Price" type="object" class="oe_highlight" />
-                                    </group>
+                                    </group> -->
                                 </group>
 
                             </page>

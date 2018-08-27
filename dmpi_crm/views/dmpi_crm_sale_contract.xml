@@ -189,6 +189,8 @@
                                     <field name="total_qty" sum="Total"/>
                                     <field name="total_amount" sum="Total"/>
                                     <field name="error" invisible="1"/>
+                                    <field name="state"/>
+
                                 </tree>
                             </field>
                             
