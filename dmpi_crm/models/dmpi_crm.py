@@ -654,3 +654,10 @@ class DmpiCrmActivityLog(models.Model):
     record_id = fields.Integer("Record ID")
 
 
+
+class DmpiCrmDialogWizard(models.TransientModel):
+    _name = 'dmpi.crm.dialog.wizard'
+
+    name = fields.Char('Name')
+    description = fields.Char('Description')
+

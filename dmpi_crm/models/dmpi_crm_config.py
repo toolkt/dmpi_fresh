@@ -798,7 +798,7 @@ class DmpiCrmConfig(models.Model):
                                 if contract:
                                     contract_id = contract.id
                                     
-
+                                sap_dr_no = row[4]
                                 so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])], limit=1)
 
                                 dr = {

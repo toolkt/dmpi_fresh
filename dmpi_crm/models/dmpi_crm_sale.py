@@ -872,8 +872,12 @@ class DmpiCrmSaleOrder(models.Model):
         for rec in self:
             submitted = rec.submit_so_file(rec)
             if submitted:
+                msg = "SUCCESS: <br/>%s Retriggered the creation of SO: %s" % (self.env.user.partner_id.name,rec.name)
+                rec.message_post(msg)
                 raise Warning("SO was Successfully Created")
             else:
+                msg = "FAIL: <br/>USER %s Retriggered the creation of SO but the SO was NOT Created since state is in Draft or on Hold." % self.env.user.partner_id.name
+                rec.message_post(msg)
                 raise Warning("State is in Draft or on Hold. The SO was NOT Created")
 
 

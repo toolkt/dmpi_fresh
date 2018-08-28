@@ -74,6 +74,7 @@
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-pencil-square-o"
+                                confirm="Are you sure you want to manually trigger the creation of the SO? If the SO exist, doing this may create duplicate SO in SAP."
                                 string="Submit SO">
                             </button>
                         </div>
