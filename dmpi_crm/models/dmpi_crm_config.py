@@ -1189,10 +1189,11 @@ class DmpiCrmConfig(models.Model):
 
                     inv['inv_lines'] = inv_lines
 
-                    if contract_id > 0:
+                    if contract_id > 0 and len(inv_lines) > 0:
                         pprint.pprint(inv, width=4)
 
                         exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
+
                         if exist:
                             exist.inv_lines.unlink()
                             exist.write(inv)
@@ -1292,14 +1293,15 @@ class DmpiCrmConfig(models.Model):
 
                     pprint.pprint(inv, width=4)
 
-                    exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
-                    if exist:
-                        exist.inv_lines.unlink()
-                        exist.write(inv)
-                    else:
-                        new_dr = self.env['dmpi.crm.invoice'].create(inv) 
-                        
-                    execute(transfer_files,f, outbound_path_success)
+                    if len(inv_lines) > 0:
+                        exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
+                        if exist:
+                            exist.inv_lines.unlink()
+                            exist.write(inv)
+                        else:
+                            new_dr = self.env['dmpi.crm.invoice'].create(inv) 
+                            
+                        execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
@@ -1391,15 +1393,15 @@ class DmpiCrmConfig(models.Model):
                     inv['inv_lines'] = inv_lines
 
                     #pprint.pprint(inv, width=4)
-
-                    exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
-                    if exist:
-                        exist.inv_lines.unlink()
-                        exist.write(inv)
-                    else:
-                        new_dr = self.env['dmpi.crm.invoice'].create(inv) 
-                        
-                    execute(transfer_files,f, outbound_path_success)
+                    if inv['contract_id'] != '' and len(inv_lines) > 0:
+                        exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
+                        if exist:
+                            exist.inv_lines.unlink()
+                            exist.write(inv)
+                        else:
+                            new_dr = self.env['dmpi.crm.invoice'].create(inv) 
+                            
+                        execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
