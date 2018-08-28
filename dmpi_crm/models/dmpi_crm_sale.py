@@ -404,6 +404,7 @@ class DmpiCrmSaleContract(models.Model):
             #Finalize Contract Line Numbers
             contract_line_no = 0
             sale_orders = []
+            week_no = rec.week_no
             for l in rec.customer_order_ids:
                 contract_line_no += 10
                 l.contract_line_no = contract_line_no
@@ -434,6 +435,7 @@ class DmpiCrmSaleContract(models.Model):
                         'ship_line': l.ship_line,
                         'requested_delivery_date': l.requested_delivery_date,
                         'plant': l.plant,
+                        'week_no': week_no,
                         # 'p5': l.p5,
                         # 'p6': l.p6,
                         # 'p7': l.p7,
