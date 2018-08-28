@@ -685,7 +685,7 @@ class DmpiCrmSaleOrder(models.Model):
     def _sale_order_demand_create_csv(self, so_ids):
         csv = ''
         headers = ['ODOO PO','ODOO SO','SOLD TO','SHIP TO','DESTINATION','WEEK','P5','P6','P7','P8','P9','P10','P12','P5C7',
-                'P6C8','P7C9','P8C10','P9C11','P10C12','P12C20','Total','Shipp Line','Shell Color','Delivery Date']
+                'P6C8','P7C9','P8C10','P9C11','P10C12','P12C20','Total','Shipp Line','Shell Color','Delivery Date','STATUS']
 
         csv = u','.join(headers) + '\n'
 
@@ -704,6 +704,7 @@ class DmpiCrmSaleOrder(models.Model):
             ship_line = so.ship_line or ''
             shell_color = so.shell_color or ''
             delivery_date = so.requested_delivery_date or ''
+            status = so.state.upper()
 
             if delivery_date:
                 delivery_date = datetime.strftime(parse(delivery_date), '%M/%d/%Y')
@@ -728,7 +729,7 @@ class DmpiCrmSaleOrder(models.Model):
 
             row = [odoo_po_no, odoo_so_no, sold_to, ship_to, destination, week_no, 
                 p5, p6, p7, p8, p9, p10, p12, p5c7, p6c8, p7c9, p8c10, p9c11, p10c12, p12c20,
-                total, ship_line, shell_color, delivery_date]
+                total, ship_line, shell_color, delivery_date, status]
 
             csv += ','.join(str(d) for d in row) + '\n'
 
