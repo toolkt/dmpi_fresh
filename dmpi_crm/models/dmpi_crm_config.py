@@ -787,15 +787,17 @@ class DmpiCrmConfig(models.Model):
                     clp_lines =[]
                     dr_tr_item = []
 
+                    contract_id = ''
                     for l in line:
                         raw.append(l)
                         row = l.split('\t')
                         if row[0] != '':
                             if row[0] == 'Header':
 
-                                contract_id = self.env['dmpi.crm.sale.contract'].search([('name','=',row[1])],limit=1).id
-                                if not contract_id:
-                                    contract_id = ""
+                                contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[1])],limit=1)
+                                if contract:
+                                    contract_id = contract.id
+                                    
 
                                 so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])], limit=1)
 
@@ -953,40 +955,39 @@ class DmpiCrmConfig(models.Model):
                                 # clp['summary_case_c'] = row[8]
 
 
-                    # do not create if no dr_lines
-                    success = True
-                    if len(dr_lines) == 0:
-                        success = False
+                    if contract_id > 0:
+                        # do not create if no dr_lines
+                        success = True
+                        if len(dr_lines) == 0:
+                            success = False
+
+                        if success:
+                            dr['dr_lines'] = dr_lines
+                            dr['alt_items'] = alt_items
+                            dr['insp_lots'] = insp_lots
+
+                            clp['clp_line_ids'] = clp_lines
+                            dr['clp_ids'] = [(0,0,clp)]
+
+                            pprint.pprint(dr, width=4)
+
+                            exist = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)],limit=1)
+                            if exist:
+                                exist.dr_lines.unlink()
+                                exist.alt_items.unlink()
+                                exist.insp_lots.unlink()
+                                exist.clp_ids.unlink()
+
+                                exist.write(dr)
+                                dr_id = exist.id
+                            else:
+                                new_dr = self.env['dmpi.crm.dr'].create(dr) 
+                                dr_id = new_dr.id  
 
 
-                    if success:
-                        dr['dr_lines'] = dr_lines
-                        dr['alt_items'] = alt_items
-                        dr['insp_lots'] = insp_lots
-
-                        clp['clp_line_ids'] = clp_lines
-                        dr['clp_ids'] = [(0,0,clp)]
-
-                        pprint.pprint(dr, width=4)
-
-                        exist = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)],limit=1)
-                        if exist:
-                            exist.dr_lines.unlink()
-                            exist.alt_items.unlink()
-                            exist.insp_lots.unlink()
-                            exist.clp_ids.unlink()
-
-                            exist.write(dr)
-                            dr_id = exist.id
+                            execute(transfer_files,f, outbound_path_success)
                         else:
-                            new_dr = self.env['dmpi.crm.dr'].create(dr) 
-                            dr_id = new_dr.id  
-
-
-                        execute(transfer_files,f, outbound_path_success)
-
-                    else:
-                        execute(transfer_files,f, outbound_path_fail)
+                            execute(transfer_files,f, outbound_path_fail)
 
 
                 except Exception as e:
@@ -1025,16 +1026,14 @@ class DmpiCrmConfig(models.Model):
                     shp_no = ''
                     shp = {}
                     shp_lines = []
-
+                    contract_id = ''
                     for l in line:
                         raw.append(l)
                         row = l.split('\t')
 
                         if row[0].upper() == 'HEADER':
 
-
-
-                            contract_id = ""
+                            # contract_id = ''
                             contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[1])],limit=1)
                             if contract:
                                 contract_id = contract.id
@@ -1081,16 +1080,17 @@ class DmpiCrmConfig(models.Model):
 
                     shp['shp_lines'] = shp_lines
                     
-                    pprint.pprint(shp, width=4)
-                    exist = self.env['dmpi.crm.shp'].search([('shp_no','=',shp_no)],limit=1)
-                    if exist:
-                        exist.shp_lines.unlink()
-                        exist.write(shp)
-                    else:
-                        new_dr = self.env['dmpi.crm.shp'].create(shp) 
+                    if contract_id > 0:
+                        pprint.pprint(shp, width=4)
+                        exist = self.env['dmpi.crm.shp'].search([('shp_no','=',shp_no)],limit=1)
+                        if exist:
+                            exist.shp_lines.unlink()
+                            exist.write(shp)
+                        else:
+                            new_dr = self.env['dmpi.crm.shp'].create(shp) 
 
-                    contract.write({'state':'enroute'})
-                    execute(transfer_files,f, outbound_path_success)
+                        contract.write({'state':'enroute'})
+                        execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
@@ -1127,6 +1127,7 @@ class DmpiCrmConfig(models.Model):
                     inv_lines = []
                     inv = {}
                     name = ''
+                    contract_id = ''
 
                     for l in line:
                         row = l.split('\t')
@@ -1150,9 +1151,10 @@ class DmpiCrmConfig(models.Model):
                                 # raw
 
 
-                            contract_id = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1).id
-                            if not contract_id:
-                                contract_id = ""
+                            contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1)
+                            if contract:
+                                contract_id = contract.id
+
 
                             inv = {
                                 'contract_id' : contract_id,
@@ -1187,18 +1189,19 @@ class DmpiCrmConfig(models.Model):
 
                     inv['inv_lines'] = inv_lines
 
-                    pprint.pprint(inv, width=4)
+                    if contract_id > 0:
+                        pprint.pprint(inv, width=4)
 
-                    exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
-                    if exist:
-                        exist.inv_lines.unlink()
-                        exist.write(inv)
-                        print("EXIST WRITE")
-                    else:
-                        new_dr = self.env['dmpi.crm.invoice'].create(inv) 
-                        print("NOT EXIST NEW")
-                        
-                    execute(transfer_files,f, outbound_path_success)
+                        exist = self.env['dmpi.crm.invoice'].search([('name','=',name)],limit=1)
+                        if exist:
+                            exist.inv_lines.unlink()
+                            exist.write(inv)
+                            print("EXIST WRITE")
+                        else:
+                            new_dr = self.env['dmpi.crm.invoice'].create(inv) 
+                            print("NOT EXIST NEW")
+                            
+                        execute(transfer_files,f, outbound_path_success)
 
             except Exception as e:
                 print(e)
