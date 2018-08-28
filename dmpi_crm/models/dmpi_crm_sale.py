@@ -317,7 +317,7 @@ class DmpiCrmSaleContract(models.Model):
                            when (ar.base_line_date::date + ar.cash_disc_days::INT + 14) <= NOW()::date then 1
                            else 0 end) as ar 
                        from dmpi_crm_partner_ar ar
-                       where ar.active is True and ar.acct_type = 'D' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
+                       where ar.acct_type = 'D' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
 
             print(query)        
