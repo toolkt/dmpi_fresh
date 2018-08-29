@@ -258,10 +258,12 @@ class DmpiCrmConfig(models.Model):
                                         so['contract_id'] = contract.id
 
 
-                                    product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
-                                    print(product)
+                                    #product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
+                                    product = self.env['dmpi.crm.product'].search([('sku','=',row[14]),('partner_id','=',contract.partner_id.id)],limit=1)[0]
+                                    #print(product)
+                                    
                                     sol = {
-                                        'po_line_no' : row[12],
+                                        'contract_line_no' : row[12],
                                         'so_line_no' : row[13], 
                                         'product_id' : product.id,
                                         'product_code' : product.code,
@@ -274,35 +276,37 @@ class DmpiCrmConfig(models.Model):
                             
                             cust_so_exist = self.env['customer.crm.sale.order'].search([('name','=',so_no)],limit=1)
 
-                            print (so)
+                            #print (so)
                             if cust_so_exist:
-                                cust_so_exist.write(so)
-                                for o in cust_so_exist.order_ids:
-                                    o.onchange_product_id()
-                                print("Exist updated")
-                            else:
-                                po_id = cust_so_exist.create(so)
-                                for o in po_id.order_ids:
-                                    o.onchange_product_id()
-                                print("Does not Exist, Created PO %s" % po_id)
+                                cust_so_exist.unlink()
+                                # cust_so_exist.write(so)
+                                # for o in cust_so_exist.order_ids:
+                                #     o.onchange_product_id()
+                                # print("Exist updated")
+                            # else:
+                            po_id = cust_so_exist.create(so)
+                            for o in po_id.order_ids:
+                                o.onchange_product_id()
+                            #print("Does not Exist, Created PO %s" % po_id)
 
                             so_exist = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)],limit=1)
                             
                             if so_exist:
-                                so['state'] = 'confirmed'
-                                so_exist.write(so)
-                                for o in so_exist.order_ids:
-                                    o.onchange_product_id()
-                                print("Exist updated")
-                            else:
-                                so['state'] = 'confirmed'
-                                po_id = so_exist.create(so)
-                                for o in po_id.order_ids:
-                                    o.onchange_product_id()
-                                print("Does not Exist, Created PO %s" % po_id)
+                                so_exist.unlink()
+                            #     so['state'] = 'confirmed'
+                            #     so_exist.write(so)
+                            #     for o in so_exist.order_ids:
+                            #         o.onchange_product_id()
+                            #     print("Exist updated")
+                            # else:
+                            so['state'] = 'confirmed'
+                            po_id = so_exist.create(so)
+                            for o in po_id.order_ids:
+                                o.onchange_product_id()
+                            #print("Does not Exist, Created PO %s" % po_id)
 
-                    # execute(transfer_files,f_so_suc, rec.inbound_so_log_success_offline)
-                    # execute(transfer_files,f_so, rec.inbound_so_success_offline)
+                    execute(transfer_files,f_so_suc, rec.inbound_so_log_success_offline)
+                    execute(transfer_files,f_so, rec.inbound_so_success_offline)
                     # print(f_so+f_so_suc) 
 
                 except Exception as e:
