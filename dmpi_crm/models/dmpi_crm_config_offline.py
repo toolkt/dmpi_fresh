@@ -153,9 +153,9 @@ class DmpiCrmConfig(models.Model):
                                 if row[0] != '':
 
                                     partner = self.env['dmpi.crm.partner'].search([('customer_code','=',row[5])],limit=1)[0]
-                                    name = re.sub('[^ a-zA-Z0-9]','',row[0])
+                                    
                                     po = {
-                                        'name': name,
+                                        'name': row[0],
                                         # 'odoo_po_no' : row[0],
                                         'sap_doc_type' : row[1],
                                         'sales_org' : row[2],
@@ -238,18 +238,16 @@ class DmpiCrmConfig(models.Model):
                                 row = l.split('\t')
                                 if row[0] != '':     
                                     contract_id = 0
-                                    odoo_contract_no = re.sub('[^ a-zA-Z0-9]','',row[0])
-                                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',odoo_contract_no)],limit=1)[0]
+                                    contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1)[0]
                                     ship_to_id = 0
                                     ship_to = self.env['dmpi.crm.ship.to'].search([('ship_to_code','=',row[8])],limit=1)[0]
                                     
                                     if contract:
                                         # print(contract)
-                                        name = re.sub('[^ a-zA-Z0-9]','',row[2])
                                         so = {
                                             # 'odoo_po_no' : row[0],
                                             'sap_so_no' : sap_so_no,
-                                            'name' : name,
+                                            'name' : row[2],
                                             'sap_doc_type' : row[3],  
                                             'sales_org' : row[4],
                                             'plant' : row[17],
