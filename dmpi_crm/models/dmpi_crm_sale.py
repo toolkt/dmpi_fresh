@@ -987,6 +987,10 @@ class DmpiCrmSaleOrder(models.Model):
             so.error = error
             so.error_msg = msg
 
+    def _price_list_remarks(self):
+        res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
+        return res
+
 
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft", copy=False)
@@ -1496,9 +1500,9 @@ class DmpiCrmInvoiceLine(models.Model):
     so_line_no = fields.Char("SO Line item No.") 
     inv_line_no = fields.Char("Invoice Line item No.")
     material = fields.Char("Material")   
-    qty = fields.Char("Invoice Qty")
+    qty = fields.Float("Invoice Qty")
     uom = fields.Char("Invoice UOM")
-    line_net_value = fields.Char("Line item net value")
+    line_net_value = fields.Float("Line item net value")
 
     inv_id = fields.Many2one('dmpi.crm.invoice', 'SHP ID', ondelete='cascade')
 

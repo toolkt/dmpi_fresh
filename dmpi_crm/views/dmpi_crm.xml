@@ -1145,9 +1145,9 @@
                                         <field name="so_line_no"/>
                                         <field name="inv_line_no"/>
                                         <field name="material"/>
-                                        <field name="qty"/>
+                                        <field name="qty"  sum="Total"/>
                                         <field name="uom"/>
-                                        <field name="line_net_value"/>
+                                        <field name="line_net_value" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>

@@ -1178,9 +1178,9 @@ class DmpiCrmConfig(models.Model):
                                 'so_line_no' : row[11], 
                                 'inv_line_no' : row[12],
                                 'material' : row[13], 
-                                'qty' : row[14],
+                                'qty' : float(row[14].replace(',','')),
                                 'uom' : row[15],
-                                'line_net_value' : row[16],
+                                'line_net_value' : float(row[16].replace(',','')),
                             }
 
                             inv_lines.append((0,0,inv_line))
@@ -1282,10 +1282,11 @@ class DmpiCrmConfig(models.Model):
                                 'so_line_no' : row[11], 
                                 'inv_line_no' : row[12],
                                 'material' : row[13], 
-                                'qty' : row[14],
+                                'qty' : float(row[14].replace(',','')),
                                 'uom' : row[15],
-                                'line_net_value' : row[16],
+                                'line_net_value' : float(row[16].replace(',','')),
                             }
+
 
                             inv_lines.append((0,0,inv_line))
 
@@ -1383,9 +1384,9 @@ class DmpiCrmConfig(models.Model):
                                 'so_line_no' : row[11], 
                                 'inv_line_no' : row[12],
                                 'material' : row[13], 
-                                'qty' : row[14],
+                                'qty' : float(row[14].replace(',','')),
                                 'uom' : row[15],
-                                'line_net_value' : row[16],
+                                'line_net_value' : float(row[16].replace(',','')),
                             }
 
                             inv_lines.append((0,0,inv_line))
