@@ -1005,33 +1005,33 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     #Crown
-    p101 = fields.Integer(string="P5", compute='_get_product_qty')
-    p102 = fields.Integer(string="P6", compute='_get_product_qty')
-    p103 = fields.Integer(string="P7", compute='_get_product_qty')
-    p104 = fields.Integer(string="P8", compute='_get_product_qty')
-    p105 = fields.Integer(string="P9", compute='_get_product_qty')
-    p106 = fields.Integer(string="P10", compute='_get_product_qty')
-    p107 = fields.Integer(string="P12", compute='_get_product_qty')
-    p108 = fields.Integer(string="UA", compute='_get_product_qty')
-    p109 = fields.Integer(string="UA", compute='_get_product_qty')
-    p110 = fields.Integer(string="UA", compute='_get_product_qty')
-    total_p100 = fields.Integer(string="Total", compute='_get_product_qty')
+    p101 = fields.Integer(string="P5", compute='get_product_qty')
+    p102 = fields.Integer(string="P6", compute='get_product_qty')
+    p103 = fields.Integer(string="P7", compute='get_product_qty')
+    p104 = fields.Integer(string="P8", compute='get_product_qty')
+    p105 = fields.Integer(string="P9", compute='get_product_qty')
+    p106 = fields.Integer(string="P10", compute='get_product_qty')
+    p107 = fields.Integer(string="P12", compute='get_product_qty')
+    p108 = fields.Integer(string="UA", compute='get_product_qty')
+    p109 = fields.Integer(string="UA", compute='get_product_qty')
+    p110 = fields.Integer(string="UA", compute='get_product_qty')
+    total_p100 = fields.Integer(string="Total", compute='get_product_qty')
 
     #Crownless
-    p201 = fields.Integer(string="P5C7", compute='_get_product_qty')
-    p202 = fields.Integer(string="P6C8", compute='_get_product_qty')
-    p203 = fields.Integer(string="P7C9", compute='_get_product_qty')
-    p204 = fields.Integer(string="P8C10", compute='_get_product_qty')
-    p205 = fields.Integer(string="P9C11", compute='_get_product_qty')
-    p206 = fields.Integer(string="P10C12", compute='_get_product_qty')
-    p207 = fields.Integer(string="P12C20", compute='_get_product_qty')
-    p208 = fields.Integer(string="UA", compute='_get_product_qty')
-    p209 = fields.Integer(string="UA", compute='_get_product_qty')
-    p210 = fields.Integer(string="UA", compute='_get_product_qty')
-    total_p200 = fields.Integer(string="Total", compute='_get_product_qty')
+    p201 = fields.Integer(string="P5C7", compute='get_product_qty')
+    p202 = fields.Integer(string="P6C8", compute='get_product_qty')
+    p203 = fields.Integer(string="P7C9", compute='get_product_qty')
+    p204 = fields.Integer(string="P8C10", compute='get_product_qty')
+    p205 = fields.Integer(string="P9C11", compute='get_product_qty')
+    p206 = fields.Integer(string="P10C12", compute='get_product_qty')
+    p207 = fields.Integer(string="P12C20", compute='get_product_qty')
+    p208 = fields.Integer(string="UA", compute='get_product_qty')
+    p209 = fields.Integer(string="UA", compute='get_product_qty')
+    p210 = fields.Integer(string="UA", compute='get_product_qty')
+    total_p200 = fields.Integer(string="Total", compute='get_product_qty')
 
     @api.multi
-    def _get_product_qty(self):
+    def get_product_qty(self):
         for rec in self:
             if rec[0].id:
                 query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
@@ -1101,10 +1101,10 @@ class DmpiCrmSaleOrder(models.Model):
     shell_color = fields.Char("Shell Color")
     ship_line = fields.Char("Ship Line")
     requested_delivery_date = fields.Date("Req. Date")
-    notes = fields.Text("Notes/Remarks", compute='_get_product_qty')
+    notes = fields.Text("Notes/Remarks", compute='get_product_qty')
 
-    total_qty = fields.Float('Total', compute='_get_product_qty')
-    total_amount = fields.Float('Total', compute='_get_product_qty')
+    total_qty = fields.Float('Total', compute='get_product_qty', store=True)
+    total_amount = fields.Float('Total', compute='get_product_qty', store=True)
 
     week_no = fields.Char("Week No")
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
@@ -1201,7 +1201,7 @@ class CustomerCrmSaleOrder(models.Model):
     order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True)
 
     @api.multi
-    def _get_product_qty(self):
+    def get_product_qty(self):
         for rec in self:
             query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
                 SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 

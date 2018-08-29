@@ -14,6 +14,7 @@
                             <button string="Hold Selected Sales Orders" name="process_so_hold" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
                             <button string="Confirm Selected Sales Orders" name="process_so_confirm" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
                             <button string="Send Selected Sales Orders to SAP" name="process_so_send_to_sap" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
+                            <button string="Recompute Totals" name="process_recompute_totals" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
                         </group>
                         <group string="Purchasae Order Functions">
                             <button string="Confirm Parent PO" name="process_po_confirm" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
@@ -21,9 +22,6 @@
                             <button string="Send Parent PO to SAP" name="process_po_send_to_sap" type="object" default_focus="1" class="btn-primary" confirm="Are you sure?"/>
                         </group>
                     </group>
-
-
-
                     <footer>
                         <button string="Cancel" class="btn-default" special="cancel"/>
                     </footer>

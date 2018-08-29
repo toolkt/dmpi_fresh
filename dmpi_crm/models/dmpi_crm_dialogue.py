@@ -11,6 +11,17 @@ class CrmProcessSaleOrder(models.TransientModel):
     _name = "crm.process.sale.order"
     _description = "CRM Process Sale Order"
 
+
+
+    @api.multi
+    def process_recompute_totals(self):
+        context = dict(self._context or {})
+        active_ids = context.get('active_ids', []) or []
+        for record in self.env['dmpi.crm.sale.order'].browse(active_ids):
+            record.get_product_qty()
+        return {'type': 'ir.actions.act_window_close'}
+
+
     @api.multi
     def process_so_hold(self):
         context = dict(self._context or {})
