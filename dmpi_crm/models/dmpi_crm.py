@@ -438,9 +438,13 @@ class DmpiCrmProductPriceList(models.Model):
     upload_filename  = fields.Char("Filename")
     upload_file    = fields.Binary("Upload File")
     item_ids        = fields.One2many('dmpi.crm.product.price.list.item','version_id','Items', track_visibility='onchange')
-    state = fields.Selection([('draft','Draft'),('approved','Approved'),('cancelled','Cancelled')], "State", default='draft', track_visibility='onchange')
+    state = fields.Selection([('draft','Draft'),('submitted','Submitted'),('approved','Approved'),('cancelled','Cancelled')], "State", default='draft', track_visibility='onchange')
 
 
+    @api.multi
+    def action_submit(self):
+        for rec in self:
+            rec.write({'state':'submitted'})
 
     @api.multi
     def action_approve(self):
