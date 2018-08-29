@@ -281,7 +281,7 @@ class DmpiCrmConfig(models.Model):
                             else:
                                 po_id = cust_so_exist.create(so)
                                 for o in po_id.order_ids:
-                                    #o.onchange_product_id()
+                                    o.onchange_product_id()
                                 print("Does not Exist, Created PO %s" % po_id)
 
                             so_exist = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)],limit=1)
