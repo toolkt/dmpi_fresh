@@ -268,7 +268,7 @@ class DmpiCrmConfig(models.Model):
                                             'uom' : row[16], 
                                         }
 
-                                        so_line.append((0,0,sol))
+                                        so_line.append((0,0,sol.copy()))
                             so['order_ids'] = so_line
                             
                             cust_so_exist = self.env['customer.crm.sale.order'].search([('name','=',so_no)],limit=1)
