@@ -136,7 +136,7 @@ class DmpiCrmConfig(models.Model):
                     cn_no = False
                     line = result.split('\r\n')
                     for l in line:
-                        row = l.split('\t')
+                        row = l.replace('"', '').split('\t')
                         cn_no = re.sub('[^ a-zA-Z0-9]','',row[0])
 
                     #Get Equivalent PO in the success folder
@@ -145,7 +145,7 @@ class DmpiCrmConfig(models.Model):
                     for f_po in files[host_string]:
                         if result:
                             result = execute(read_file,f_po)[host_string]
-                            line = result.split('\r\n')
+                            line = result.replace('"', '').split('\r\n')
 
                             po = {}
                             for l in line:
@@ -221,7 +221,7 @@ class DmpiCrmConfig(models.Model):
                     sap_so_no = False
                     line = result.split('\r\n')
                     for l in line:
-                        row = l.split('\t')
+                        row = l.replace('"', '').split('\t')
                         sap_so_no = re.sub('[^ a-zA-Z0-9]','',row[0])
 
                     #Get Equivalent PO in the success folder
@@ -230,12 +230,12 @@ class DmpiCrmConfig(models.Model):
                     for f_so in files[host_string]:
                         if result:
                             result = execute(read_file,f_so)[host_string]
-                            line = result.split('\r\n')
+                            line = result.replace('"', '').split('\r\n')
 
                             so = {}
                             so_line = []
                             for l in line:
-                                row = l.split('\t')
+                                row = l.replace('"', '').split('\t')
                                 if row[0] != '':     
                                     contract_id = 0
                                     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1)[0]
