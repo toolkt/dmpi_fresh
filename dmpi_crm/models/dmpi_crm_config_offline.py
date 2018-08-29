@@ -274,7 +274,8 @@ class DmpiCrmConfig(models.Model):
                                     so_line.append((0,0,sol.copy()))
                             so['order_ids'] = so_line
                             
-                            cust_so_exist = self.env['customer.crm.sale.order'].search([('name','=',so_no)],limit=1)
+                            cust_so_obj = self.env['customer.crm.sale.order']
+                            cust_so_exist = cust_so_obj.search([('name','=',so_no)],limit=1)
 
                             #print (so)
                             if cust_so_exist:
@@ -284,12 +285,13 @@ class DmpiCrmConfig(models.Model):
                                 #     o.onchange_product_id()
                                 # print("Exist updated")
                             # else:
-                            po_id = cust_so_exist.create(so)
+                            po_id = cust_so_obj.create(so)
                             for o in po_id.order_ids:
                                 o.onchange_product_id()
                             #print("Does not Exist, Created PO %s" % po_id)
 
-                            so_exist = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)],limit=1)
+                            so_obj = self.env['dmpi.crm.sale.order']
+                            so_exist = so_obj.search([('name','=',so_no)],limit=1)
                             
                             if so_exist:
                                 so_exist.unlink()
@@ -300,7 +302,7 @@ class DmpiCrmConfig(models.Model):
                             #     print("Exist updated")
                             # else:
                             so['state'] = 'confirmed'
-                            po_id = so_exist.create(so)
+                            po_id = so_obj.create(so)
                             for o in po_id.order_ids:
                                 o.onchange_product_id()
                             #print("Does not Exist, Created PO %s" % po_id)
