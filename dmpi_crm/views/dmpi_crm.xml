@@ -728,7 +728,7 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <header>
-                        <button name="action_approve" states="draft" string="Approve Pricelist" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
+                        <button name="action_approve" states="submitted" string="Approve Pricelist" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
                         <button name="action_cancel" states="draft" string="Cancel Pricelist" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
                         <button name="action_draft" states="approved,cancelled" string="Set to Draft" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
                         <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>

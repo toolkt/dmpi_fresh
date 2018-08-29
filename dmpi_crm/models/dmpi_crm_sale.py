@@ -1006,6 +1006,7 @@ class DmpiCrmSaleOrder(models.Model):
     valid_disp = fields.Boolean("Valid Order", related='valid')
     error = fields.Integer('Error Count', compute="_get_no_price_error")
     error_msg = fields.Text('Error Message', compute="_get_no_price_error")
+    price_list = fields.Selection(_price_list_remarks)
 
 
     #Crown
