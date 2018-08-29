@@ -276,7 +276,7 @@ class DmpiCrmConfig(models.Model):
                             if cust_so_exist:
                                 cust_so_exist.write(so)
                                 for o in cust_so_exist.order_ids:
-                                    #o.onchange_product_id()
+                                    o.onchange_product_id()
                                 print("Exist updated")
                             else:
                                 po_id = cust_so_exist.create(so)
