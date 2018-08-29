@@ -243,21 +243,19 @@ class DmpiCrmConfig(models.Model):
                                     ship_to = self.env['dmpi.crm.ship.to'].search([('ship_to_code','=',row[8])],limit=1)[0]
                                     
                                     if contract:
-                                        # print(contract)
-                                        so = {
-                                            # 'odoo_po_no' : row[0],
-                                            'sap_so_no' : sap_so_no,
-                                            'name' : row[2],
-                                            'sap_doc_type' : row[3],  
-                                            'sales_org' : row[4],
-                                            'plant' : row[17],
-                                            'requested_delivery_date' : datetime.strptime(row[11], '%Y%m%d').strftime('%Y-%m-%d'),
-                                            'ship_to_id' : ship_to.id, 
-                                            'notify_id' : ship_to.id, 
-                                            # 'ref_po_no' : row[9],  
-                                            # 'po_date' : row[10],
-                                            'contract_id': contract.id,
-                                        }
+
+                                        so['sap_so_no'] = sap_so_no
+                                        so['name'] = row[2]
+                                        so['sap_doc_type'] = row[3] 
+                                        so['sales_org'] = row[4]
+                                        so['plant'] = row[17]
+                                        so['requested_delivery_date'] = datetime.strptime(row[11], '%Y%m%d').strftime('%Y-%m-%d')
+                                        so['ship_to_id'] = ship_to.id
+                                        so['notify_id'] = ship_to.id
+                                        # 'ref_po_no' : row[9],  
+                                        # 'po_date' : row[10],
+                                        so['contract_id'] = contract.id
+
 
                                         product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
                                         print(product)
