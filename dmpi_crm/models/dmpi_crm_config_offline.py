@@ -155,7 +155,7 @@ class DmpiCrmConfig(models.Model):
                                     partner = self.env['dmpi.crm.partner'].search([('customer_code','=',row[5])],limit=1)[0]
                                     
                                     po = {
-                                        'name': row[0],
+                                        'name': re.sub('[^ a-zA-Z0-9]','',row[0]),
                                         # 'odoo_po_no' : row[0],
                                         'sap_doc_type' : row[1],
                                         'sales_org' : row[2],
@@ -247,7 +247,7 @@ class DmpiCrmConfig(models.Model):
                                         so = {
                                             # 'odoo_po_no' : row[0],
                                             'sap_so_no' : sap_so_no,
-                                            'name' : row[2],
+                                            'name' : re.sub('[^ a-zA-Z0-9]','',row[2]),
                                             'sap_doc_type' : row[3],  
                                             'sales_org' : row[4],
                                             'plant' : row[17],
