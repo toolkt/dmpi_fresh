@@ -469,6 +469,14 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_request_confirmation(self):
         for rec in self:
+
+            # send mail
+            email_to = "<%s>" % rec.partner_id.email
+            
+            template = self.env.ref('dmpi_crm.commercial_send_for_confirmation')
+            template['email_to'] = email_to
+            template.send_mail(rec.id)
+
             rec.write({'state':'confirm'})
 
 
