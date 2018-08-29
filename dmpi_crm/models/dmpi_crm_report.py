@@ -218,7 +218,7 @@ class DmpiCRMPreshipPCLine(models.Model):
 	cold_storage = fields.Text('Cold Storage')
 	no_pallet = fields.Integer('No. of Pallets')
 
-	preship_id = fields.Many2one('dmpi.crm.preship.report','Preshipment Report')
+	preship_id = fields.Many2one('dmpi.crm.preship.report','Preshipment Report', ondelete='cascade')
 
 class DmpiCRMCLPPCLine(models.Model):
 	_name = 'dmpi.crm.clp.pc.line'

@@ -132,7 +132,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				('Shell Color', '(from Pre-shipment certificate)', dname),
 				('Pack Size', '(from Pre-shipment certificate)', dname),
 				('No. of Boxes', '(from Pre-shipment certificate)', dname),
-				('# of Pallets or Boxes per pack date', '(Manual)', dname),
+				('# of Pallets or Boxes per pack date', '(from Pre-shipment certificate)', dname),
 				('P5', '(PManual)', dname),
 				('P6', '(PManual)', dname),
 				('P7', '(PManual)', dname),
@@ -188,6 +188,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 					,ps.shell_color
 					,ps.pack_size
 					,ps.no_box
+					,pcl.no_pallet
 					,ps.total_score
 					,ps.total_class
 					,ps.inspector_name
@@ -200,6 +201,12 @@ class PreShipmentCertificateReport(models.AbstractModel):
 					,to_char(to_timestamp(cp.date_arrive, 'yyyymmdd')::TIMESTAMP, 'dd/mm/yyyy') date_arrive
 				from dmpi_crm_preship_report ps
 				left join dmpi_crm_clp cp on cp.id = ps.clp_id
+				left join (
+							select pcl.preship_id, array_to_string(array_agg(pcl.no_pallet),',') as no_pallet
+							from dmpi_crm_preship_pc_line pcl
+							where pcl.preship_id is not null
+							group by pcl.preship_id
+				) pcl on pcl.preship_id = ps.id
 				where ps.date_load between '%s'::DATE and '%s'::DATE
 					and ps.tmpl_id in %s
 			""" % (o.date_start, o.date_end, str(tmpl_ids))
