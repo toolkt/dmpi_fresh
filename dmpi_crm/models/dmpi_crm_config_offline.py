@@ -257,18 +257,18 @@ class DmpiCrmConfig(models.Model):
                                         so['contract_id'] = contract.id
 
 
-                                        product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
-                                        print(product)
-                                        sol = {
-                                            'po_line_no' : row[12],
-                                            'so_line_no' : row[13], 
-                                            'product_id' : product.id,
-                                            'product_code' : product.code,
-                                            'qty' : int(row[15]),
-                                            'uom' : row[16], 
-                                        }
+                                    product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
+                                    print(product)
+                                    sol = {
+                                        'po_line_no' : row[12],
+                                        'so_line_no' : row[13], 
+                                        'product_id' : product.id,
+                                        'product_code' : product.code,
+                                        'qty' : int(row[15]),
+                                        'uom' : row[16], 
+                                    }
 
-                                        so_line.append((0,0,sol.copy()))
+                                    so_line.append((0,0,sol))
                             so['order_ids'] = so_line
                             
                             cust_so_exist = self.env['customer.crm.sale.order'].search([('name','=',so_no)],limit=1)
@@ -276,12 +276,12 @@ class DmpiCrmConfig(models.Model):
                             if cust_so_exist:
                                 cust_so_exist.write(so)
                                 for o in cust_so_exist.order_ids:
-                                    o.onchange_product_id()
+                                    #o.onchange_product_id()
                                 print("Exist updated")
                             else:
                                 po_id = cust_so_exist.create(so)
                                 for o in po_id.order_ids:
-                                    o.onchange_product_id()
+                                    #o.onchange_product_id()
                                 print("Does not Exist, Created PO %s" % po_id)
 
                             so_exist = self.env['dmpi.crm.sale.order'].search([('name','=',so_no)],limit=1)
