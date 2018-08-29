@@ -213,6 +213,7 @@ class DmpiCrmConfig(models.Model):
             #outbound_path_success= rec.inbound_k_log_success_sent
             files = execute(list_dir,rec.inbound_so_log_success,'L_ODOO_SO_SU')
             for f_so_suc in files[host_string]:
+                #Get Successful SO from Suc File
                 try:
                     result = execute(read_file,f_so_suc)[host_string]
                     #Get PoNo from filename
@@ -230,7 +231,7 @@ class DmpiCrmConfig(models.Model):
                     for f_so in files[host_string]:
                         if result:
                             result = execute(read_file,f_so)[host_string]
-                            line = result.replace('"', '').split('\r\n')
+                            line = result.split('\n')
 
                             so = {}
                             so_line = []
@@ -273,6 +274,7 @@ class DmpiCrmConfig(models.Model):
                             
                             cust_so_exist = self.env['customer.crm.sale.order'].search([('name','=',so_no)],limit=1)
 
+                            print (so)
                             if cust_so_exist:
                                 cust_so_exist.write(so)
                                 for o in cust_so_exist.order_ids:
@@ -299,9 +301,9 @@ class DmpiCrmConfig(models.Model):
                                     o.onchange_product_id()
                                 print("Does not Exist, Created PO %s" % po_id)
 
-                    execute(transfer_files,f_so_suc, rec.inbound_so_log_success_offline)
-                    execute(transfer_files,f_so, rec.inbound_so_success_offline)
-                    print(f_so+f_so_suc) 
+                    # execute(transfer_files,f_so_suc, rec.inbound_so_log_success_offline)
+                    # execute(transfer_files,f_so, rec.inbound_so_success_offline)
+                    # print(f_so+f_so_suc) 
 
                 except Exception as e:
                     print("Error %s" % e)
