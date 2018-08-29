@@ -1203,7 +1203,7 @@ class CustomerCrmSaleOrder(models.Model):
     _display_summary = 'Customer Sale Contract'
     _inherit = ['dmpi.crm.sale.order']
 
-    order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True)
+    order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True, ondelete='cascade')
 
     @api.multi
     def get_product_qty(self):
