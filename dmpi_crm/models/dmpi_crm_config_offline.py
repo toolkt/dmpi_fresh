@@ -277,7 +277,7 @@ class DmpiCrmConfig(models.Model):
                             cust_so_obj = self.env['customer.crm.sale.order']
                             cust_so_exist = cust_so_obj.search([('name','=',so_no)],limit=1)
 
-                            #print (so)
+                            print (so)
                             if cust_so_exist:
                                 cust_so_exist.unlink()
                                 # cust_so_exist.write(so)
