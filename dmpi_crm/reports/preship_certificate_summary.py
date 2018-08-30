@@ -179,7 +179,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 					,cp.plant
 					,to_char(ps.date_load::TIMESTAMP, 'dd/mm/yyyy') date_load
 					,ps.date_pack
-					,to_char(to_timestamp(cp.date_start, 'yyyymmdd/hhmiss')::TIMESTAMP, 'dd/mm/yyyy') date_start
+					,to_char(to_timestamp(cp.date_start, 'yyyymmdd/hh24miss')::TIMESTAMP, 'dd/mm/yyyy') date_start
 					,ps.container
 					,ps.series_no
 					,ps.remarks
