@@ -955,7 +955,7 @@ class DmpiCrmConfig(models.Model):
                                 # clp['summary_case_c'] = row[8]
 
 
-                    if contract_id > 0:
+                    if contract_id:
                         # do not create if no dr_lines
                         success = True
                         if len(dr_lines) == 0:
