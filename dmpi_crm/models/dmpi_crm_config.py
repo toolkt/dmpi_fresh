@@ -946,7 +946,7 @@ class DmpiCrmConfig(models.Model):
 
                                 case_summary = []
                                 rl = len(row)
-                                for i in range(7,rl):
+                                for i in range(6,rl):
                                     case_summary.append(row[i])
 
                                 clp['case_summary'] = '\n'.join(case_summary)
