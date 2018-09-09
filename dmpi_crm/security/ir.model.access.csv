@@ -27,7 +27,6 @@ access_user_dmpi_crm_product,user.dmpi.crm.product,model_dmpi_crm_product,base.g
 access_user_dmpi_crm_partner_credit_limit,user.dmpi.crm.partner.credit.limit,model_dmpi_crm_partner_credit_limit,base.group_user,1,1,1,1
 access_user_dmpi_crm_partner_ar,user.dmpi.crm.partner.ar,model_dmpi_crm_partner_ar,base.group_user,1,1,1,1
 access_user_dmpi_crm_country,user.dmpi.crm.country,model_dmpi_crm_country,base.group_user,1,1,1,1
-access_user_dmpi_crm_destination,user.dmpi.crm.destination,model_dmpi_crm_destination,base.group_user,1,1,1,1
 access_user_dmpi_crm_plant,user.dmpi.crm.plant,model_dmpi_crm_plant,base.group_user,1,1,1,1
 access_user_dmpi_crm_template_line,user.dmpi.crm.template.line,model_dmpi_crm_template_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_factor,user.dmpi.crm.factor,model_dmpi_crm_factor,base.group_user,1,1,1,1
@@ -44,9 +43,3 @@ access_user_customer_crm_sale_order_line,user.customer.crm.sale.order.line,model
 access_dmpi_crm_fiscal_year,user.dmpi.crm.fiscal.year,model_dmpi_crm_fiscal_year,base.group_user,1,1,1,1
 access_dmpi_crm_week,user.dmpi.crm.week,model_dmpi_crm_week,base.group_user,1,1,1,1
 access_dmpi_crm_fcl_config,user.dmpi.crm.fcl.config,model_dmpi_crm_fcl_config,base.group_user,1,1,1,1
-access_dmpi_crm_product_type,user.dmpi.crm.product.type,model_dmpi_crm_product_type,base.group_user,1,1,1,1
-access_dmpi_crm_contract_line,user.dmpi.crm.contract.line,model_dmpi_crm_contract_line,base.group_user,1,1,1,1
-access_dmpi_crm_sale_contract_worksheet,user.dmpi.crm.sale.contract.worksheet,model_dmpi_crm_sale_contract_worksheet,base.group_user,1,1,1,1
-access_dmpi_crm_contract,user.dmpi.crm.contract,model_dmpi_crm_contract,base.group_user,1,1,1,1
-access_dmpi_crm_product_price_list_upload,user.dmpi.crm.product.price.list.upload,model_dmpi_crm_product_price_list_upload,base.group_user,1,1,1,1
-access_dmpi_crm_invoice_dmpi,user.dmpi.crm.invoice.dmpi,model_dmpi_crm_invoice_dmpi,base.group_user,1,1,1,1

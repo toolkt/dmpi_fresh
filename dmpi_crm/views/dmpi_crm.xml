@@ -1046,7 +1046,7 @@
             <field name="context" eval="{'search_default_sap_generated':1}"/>
         </record>
 
-        <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/>
+        <!-- <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/> -->
 
 
         <record id="view_dmpi_crm_shp_form" model="ir.ui.view">
