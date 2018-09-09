@@ -44,8 +44,8 @@
     "data": [
 
 
-        "security/security.xml",
-        "security/ir.model.access.csv",
+        # "security/security.xml",
+        # "security/ir.model.access.csv",
 
         # "views/dmpi_crm_menu.xml",
         # "views/dmpi_crm_config.xml",
