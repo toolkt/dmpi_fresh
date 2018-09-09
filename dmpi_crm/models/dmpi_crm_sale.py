@@ -1008,6 +1008,8 @@ class DmpiCrmSaleOrder(models.Model):
     error_msg = fields.Text('Error Message', compute="_get_no_price_error")
     price_list = fields.Selection(_price_list_remarks)
 
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
+
 
     #Crown
     p101 = fields.Integer(string="P5", compute='get_product_qty')
@@ -1204,6 +1206,8 @@ class CustomerCrmSaleOrder(models.Model):
     _inherit = ['dmpi.crm.sale.order']
 
     order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True, ondelete='cascade')
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'customer_order_tag_rel', 'order_id', 'tag_id', string='Price Tags', copy=True)
+
 
     @api.multi
     def get_product_qty(self):

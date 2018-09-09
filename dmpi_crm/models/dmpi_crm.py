@@ -19,6 +19,8 @@ import re
 from dateutil.parser import parse
 
 
+CROWN = [('C','w/Crown'),('CL','Crownless')]
+
 
 def read_data(data):
     if data:
@@ -86,6 +88,8 @@ class DmpiCrmPartner(models.Model):
     division        = fields.Char("Division")
     plant           = fields.Char("Plant")
     ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'partner_tag_rel', 'partner_id', 'tag_id', string='Default Price Tags', copy=True)
+
 
 
     #DEFAULTS
@@ -525,6 +529,15 @@ class DmpiCrmProductPriceListItem(models.Model):
     valid_to = fields.Date("Valid To")
     remarks = fields.Char("Remarks")
 
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'price_item_tag_rel', 'item_id', 'tag_id', string='Tags', copy=True)
+
+
+
+class DmpiCrmProductPriceTag(models.Model):
+    _name = 'dmpi.crm.product.price.tag'
+
+    name = fields.Char("Tag")
+    description = fields.Char("Description")
 
 class DmpiCRMSaleContractGroup(models.Model):
     _name = 'dmpi.crm.sale.contract.group'
@@ -541,6 +554,8 @@ class DmpiCRMProductCode(models.Model):
 
     name = fields.Char("Name")
     description = fields.Char("Description")
+    psd = fields.Integer("PSD")
+    product_crown   = fields.Selection(CROWN,'Crown')
     sequence = fields.Integer("Sequence")
     field_name = fields.Char("Field Name")
     active = fields.Boolean("Active")
@@ -664,4 +679,6 @@ class DmpiCrmDialogWizard(models.TransientModel):
 
     name = fields.Char('Name')
     description = fields.Char('Description')
+
+
 
