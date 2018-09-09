@@ -43,6 +43,9 @@
     ],
     "data": [
 
+
+        "security/security.xml",
+        "security/ir.model.access.csv",
         "views/dmpi_crm_menu.xml",
         "views/dmpi_crm_config.xml",
         "views/dmpi_crm.xml",
@@ -60,6 +63,7 @@
         #"views/dmpi_crm_web.xml",
 
 
+
         "data/schedule.xml",
         "data/sequence.xml",
         "data/crm_data.xml",
@@ -68,9 +72,10 @@
 
         "reports/report.xml",
         "views/dmpi_crm_mgt_report.xml",
+
         
-        "security/ir.model.access.csv",
-        "security/security.xml",
+
+
 
     ],
     "demo": [
