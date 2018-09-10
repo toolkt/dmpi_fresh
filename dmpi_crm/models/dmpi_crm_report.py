@@ -552,6 +552,8 @@ class DmpiCrmClpLine(models.Model):
                                                 Numbered 1 - 24.")
     tag_no = fields.Char('Tag No')
     pack_code = fields.Char('Pack Code')
+    product_crown = fields.Char('Product Crown')
+    qty = fields.Float('Quantity')
     pack_size = fields.Char('Pack Size')
 
     clp_id = fields.Many2one('dmpi.crm.clp', 'CLP ID', ondelete='cascade')

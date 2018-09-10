@@ -834,7 +834,7 @@ class DmpiCrmConfig(models.Model):
                                 line = {
                                     'dr_line_item_no' : row[1],
                                     'sku' : row[2],
-                                    'qty' : row[3],
+                                    'qty' : row[3].replace(',', ''),
                                     'uom' : row[4],
                                     'plant' : row[5],
                                     'wh_no' : row[6],
@@ -863,42 +863,43 @@ class DmpiCrmConfig(models.Model):
                                     'uom' : row[5],
                                     'plant' : row[6],
                                     'rejection_reason' : row[7],
-                                    'alt_usage' : row[8],
+                                    # 'alt_usage' : row[8],
                                 }
 
                                 alt_items.append((0,0,line))
 
-                                print("-------%s-------" % row[0])
-                                print(row)
+                                # print("-------%s-------" % row[0])
+                                # print(row)
 
 
                             #Inspection Lot
                             if row[0].upper() == 'IL': 
-                                print("-------%s-------" % row[0])
-                                print(row)
+                                # print("-------%s-------" % row[0])
+                                # print(row)
 
                                 line = {
                                     'dr_line_item_no' : row[1],
-                                    'sap_so_no' : row[2],
-                                    'sku' : row[3],
+                                    # 'sap_so_no' : row[2],
+                                    'stock_unit' : row[2],
+                                    # 'sku' : row[3],
                                     'lot' : row[4],
                                     'node_num' : row[5],
                                     'type' : row[6],
                                     'factor_num' : row[7],
                                     'factor' : row[8],
-                                    'no_sample' : row[9],
-                                    'no_defect' : row[10],
-                                    'value' : row[11],
+                                    'no_sample' : row[9].replace(',', ''),
+                                    'no_defect' : row[10].replace(',', ''),
+                                    'value' : row[11].replace(',', ''),
                                 }
 
                                 insp_lots.append((0,0,line))
 
-                                print("-------%s-------" % row[0])
-                                print(row)
+                                # print("-------%s-------" % row[0])
+                                # print(row)
 
                             
                             if row[0].upper() == 'CLPHEADER1':
-                                print("-------%s-------" % row[0])
+                                # print("-------%s-------" % row[0])
   
                                 clp['layout_name'] = row[1]
                                 clp['container_no'] = row[2]
@@ -916,7 +917,7 @@ class DmpiCrmConfig(models.Model):
                                 clp['week'] = row[1]
                                 clp['brand'] = row[2]
                                 clp['description'] = row[3]
-                                clp['boxes'] = float(row[4])
+                                clp['boxes'] = float(row[4].replace(',', ''))
 
 
 
@@ -926,8 +927,8 @@ class DmpiCrmConfig(models.Model):
                                     'tag_no' : row[1],
                                     'pack_code' : row[2],
                                     'pack_size' : row[3],
-                                    # 'position'  : row[4],
-                                    # 'position'  : row[5],
+                                    'product_crown'  : row[4],
+                                    'qty'  : row[5].replace(',', ''),
                                     'position'  : row[6],
                                 }
 
@@ -935,8 +936,8 @@ class DmpiCrmConfig(models.Model):
                                 clp_lines.append((0,0,line))                                               
 
                             if row[0].upper() == 'CLPFTR':
-                                print("-------%s-------" % row[0])
-                                print(row)
+                                # print("-------%s-------" % row[0])
+                                # print(row)
 
                                 clp['date_start'] = row[1]
                                 clp['date_end'] = row[2]
@@ -954,7 +955,6 @@ class DmpiCrmConfig(models.Model):
                                 # clp['summary_case_b'] = row[7]
                                 # clp['summary_case_c'] = row[8]
 
-
                     if contract_id:
                         # do not create if no dr_lines
                         success = True
@@ -969,7 +969,7 @@ class DmpiCrmConfig(models.Model):
                             clp['clp_line_ids'] = clp_lines
                             dr['clp_ids'] = [(0,0,clp)]
 
-                            pprint.pprint(dr, width=4)
+                            # pprint.pprint(dr, width=4)
 
                             exist = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)],limit=1)
                             if exist:
@@ -980,13 +980,17 @@ class DmpiCrmConfig(models.Model):
 
                                 exist.write(dr)
                                 dr_id = exist.id
+
+                                print ('DR ALREADY EXISTS')
                             else:
                                 new_dr = self.env['dmpi.crm.dr'].create(dr) 
-                                dr_id = new_dr.id  
+                                dr_id = new_dr.id
+                                print ('DR SUCCESSFULLY CREATED')
 
 
                             execute(transfer_files,f, outbound_path_success)
                         else:
+                            print ('NO DR LINES')
                             execute(transfer_files,f, outbound_path_fail)
 
 

@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="customer_code"/>
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
@@ -945,6 +946,8 @@
                                         <field name="position"/>
                                         <field name="tag_no"/>
                                         <field name="pack_code"/>
+                                        <field name="product_crown"/>
+                                        <field name="qty"/>
                                         <field name="pack_size"/>
                                     </tree>
                                 </field>

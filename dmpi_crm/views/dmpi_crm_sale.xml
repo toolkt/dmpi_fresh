@@ -168,7 +168,8 @@
                                 <field name="insp_lots">
                                     <tree editable="bottom">
                                         <field name="dr_line_item_no" />
-                                        <field name="sap_so_no" />
+                                        <!-- <field name="sap_so_no" /> -->
+                                        <field name="stock_unit"/>
                                         <field name="lot" />
                                         <field name="node_num" />
                                         <field name="type" />
@@ -192,7 +193,6 @@
                                         <field name="plant"/>
                                         <field name="port_origin"/>
                                         <field name="port_destination"/>
-                                        <button name="action_view_clp" type="object" class="oe_highlight" icon="fa-forward"/>
                                     </tree>
                                 </field>
                             </page>

@@ -105,6 +105,7 @@ class DmpiCrmSaleContract(models.Model):
     _name = 'dmpi.crm.sale.contract'
     _description = "Sale Contract"
     _inherit = ['mail.thread']
+    _order = 'po_date desc'
 
 
     # @api.model
@@ -1275,10 +1276,13 @@ class CustomerCrmSaleOrderLine(models.Model):
 
     order_id = fields.Many2one('customer.crm.sale.order','Sale Order ID', ondelete='cascade')
 
+# class DmpiCrmOrderSummaryWizard(models.Model):
+#     _name = 'dmpi.crm.order.summary.wizard'
 
 class DmpiCrmDr(models.Model):
     _name = 'dmpi.crm.dr'
     _inherit = ['mail.thread']
+    _order = 'id desc'
 
 
     name = fields.Char("CRM DR No.", related='sap_dr_no')
@@ -1392,7 +1396,8 @@ class DmpiCrmInspectionLot(models.Model):
     _name = 'dmpi.crm.inspection.lot'
 
     dr_line_item_no = fields.Char('Del Line item No.')  
-    sap_so_no = fields.Char('SU  Material')    
+    sap_so_no = fields.Char('SU Material')
+    stock_unit = fields.Char('Stock Unit')
     lot = fields.Char('Inspection Lot')  
     node_num = fields.Char('Node (Operation) Number') 
     type = fields.Char('Node (Operation) Description')    
