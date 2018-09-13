@@ -247,7 +247,7 @@ class DmpiCrmClp(models.Model):
         user = self.env.user
 
         report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report'),('report_type','=','pentaho')], limit=1)
-        report_obj.name = 'CLP_%s_%s' % (self.container_no,self.date_start)
+        report_obj.name = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
         print('dr_id %s, ids %s' % (self.ids, self.dr_id.id))
         values = {
@@ -274,7 +274,7 @@ class DmpiCrmClp(models.Model):
         user = self.env.user
 
         report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report_customer'),('report_type','=','pentaho')], limit=1)
-        report_obj.name = 'CLP_%s_%s' % (self.container_no,self.date_start)
+        report_obj.name = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
         print('dr_id %s, ids %s' % (self.dr_id.id, self.ids))
         values = {

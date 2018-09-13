@@ -1267,7 +1267,7 @@
             <field name="res_model">dmpi.crm.channel.group</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="contxet">{'active_test':False}</field>
+            <field name="context">{'active_test':False}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_channel_group" action="action_dmpi_crm_channel_group" parent="menu_dmpi_crm_master_top"/>
@@ -1345,7 +1345,7 @@
             <field name="res_model">dmpi.crm.fiscal.year</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <!-- <field name="contxet">{'active_test':False}</field> -->
+            <!-- <field name="context">{'active_test':False}</field> -->
         </record>
 
         <menuitem id="menu_dmpi_crm_fiscal_year" action="action_dmpi_crm_fiscal_year" parent="menu_dmpi_crm_master_top"/>
@@ -1371,7 +1371,7 @@
             <field name="res_model">dmpi.crm.variety</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="contxet">{'active_test':False}</field>
+            <field name="context">{'active_test':False}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>        
