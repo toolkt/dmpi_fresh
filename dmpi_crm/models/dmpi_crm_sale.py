@@ -894,7 +894,7 @@ class DmpiCrmSaleOrder(models.Model):
     def on_change_ship_to(self):
         self.notify_id = self.ship_to_id.id
         self.sales_org = self.contract_id.partner_id.sales_org
-        self.plant = self.contract_id.partner_id.plant
+        self.plant_id = self.contract_id.partner_id.default_plant
         # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
         # if sales_org:
         #     self.sales_org = sales_org
@@ -992,10 +992,16 @@ class DmpiCrmSaleOrder(models.Model):
         res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
         return res
 
+    @api.one
+    @api.depends('plant_id')
+    def _get_plant_name(self):
+        self.plant = self.plant_id.name
+
 
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft", copy=False)
-    plant = fields.Char("Plant")
+    plant = fields.Char("Plant", compute='_get_plant_name')
+    plant_id = fields.Many2one('dmpi.crm.plant')
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
     contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")

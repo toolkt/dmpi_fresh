@@ -27,7 +27,7 @@
                     <field name="sales_org" />
                     <field name="dist_channel" />
                     <field name="division" />
-                    <field name="plant" />
+                    <field name="default_plant" />
                     <field name="active" />
                     <field name="tag_ids" widget="many2many_tags"/>
                 </tree>
@@ -41,30 +41,33 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <sheet>
+                        <h1><field name="name"/></h1>
+                        <label for="active"/><field name="active"/>
                         <group>
                             <group>
-                                <field name="name" />
-                                <field name="default_plant" />
-                                <field name="customer_code" />
-                                <field name="function" />
+                                <field name="customer_code"/>
+                                <field name="default_plant"/>
+                                <!-- <field name="function" /> -->
                                 <field name="account_group" />
                                 <field name="default_validity" />
                                 <field name="tag_ids" widget="many2many_tags"/>
                             </group>
                             <group>
-                                <field name="city" />
-                                <field name="city_code" />
-                                <field name="street" />
-                                <field name="postal_code" />
-                                <field name="email" />
-                                <field name="phone" />
-                                <field name="fax" />
-                                <field name="sales_org" />
-                                <field name="dist_channel" />
-                                <field name="division" />
-                                <field name="plant" />
-                                <field name="active" />
-
+                            </group>
+                            <group string="Address">
+                                <field name="street"/>
+                                <field name="city"/>
+                                <field name="city_code"/>
+                                <field name="postal_code"/>
+                                <field name="email"/>
+                                <field name="phone"/>
+                                <field name="fax"/>
+                                <!-- <field name="plant" /> -->
+                            </group>
+                            <group string="Sales Area">
+                                <field name="sales_org"/>
+                                <field name="dist_channel"/>
+                                <field name="division"/>
                             </group>
                         </group>
 

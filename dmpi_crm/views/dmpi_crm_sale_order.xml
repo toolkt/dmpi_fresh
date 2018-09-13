@@ -27,7 +27,8 @@
                     <field name="ship_line" />
                     <field name="shell_color" />
                     <field name="sales_org"/>
-                    <field name="plant"/>
+                    <field name="plant_id"/>
+                    <field name="plant" invisible="1"/>
                     <field name="week_no"/>
                     <field name="tag_ids" widget="many2many_tags"/>
                 </search>
@@ -106,7 +107,8 @@
                                 <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
-                                <field name="plant" required="1"/>
+                                <field name="plant" invisible="1"/>
+                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                                 <field name="week_no" required="1"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
                             </group>
@@ -238,7 +240,8 @@
                                 <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
-                                <field name="plant" required="1"/>
+                                <field name="plant" invisible="1"/>
+                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
                             </group>
                             <group>

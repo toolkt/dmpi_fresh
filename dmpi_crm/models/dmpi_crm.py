@@ -86,7 +86,7 @@ class DmpiCrmPartner(models.Model):
     sales_org       = fields.Char("Sales Org")
     dist_channel    = fields.Char("Distribution Channel")
     division        = fields.Char("Division")
-    plant           = fields.Char("Plant")
+    # plant           = fields.Char("Plant")
     ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'partner_tag_rel', 'partner_id', 'tag_id', string='Default Price Tags', copy=True)
 
