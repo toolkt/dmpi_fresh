@@ -709,6 +709,7 @@
             <field name="res_model">dmpi.crm.product</field>
             <field name="view_mode">tree</field>
             <field name="domain">[]</field>
+            <field name="context">{'active_test':False}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_product" action="action_dmpi_crm_product" parent="menu_dmpi_crm_master_product_group"/>
