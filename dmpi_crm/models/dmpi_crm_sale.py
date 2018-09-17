@@ -663,7 +663,6 @@ class DmpiCrmSaleOrder(models.Model):
     _name = 'dmpi.crm.sale.order'
     _inherit = ['mail.thread']
 
-
     def _get_doc_type(self):
         group = 'doc_type'
         query = """SELECT cs.select_name,cs.select_value
@@ -941,24 +940,40 @@ class DmpiCrmSaleOrder(models.Model):
             rec.write({'valid': not rec.valid})
             return True
 
-
     @api.multi
     @api.depends('order_ids')
-    def _get_no_price_error(self):
+    def _get_error_msg(self):
         for so in self:
+            # error for no price
             error = 0
             error_msg = []
             msg = ''
+            total_qty = 0
+
 
             for l in so.order_ids:
+                # no price error
                 if l.price == 0 and l.product_id:
                     error += 1
                     s = 'No Price set for %s (%s)' % (l.product_id.code, l.product_id.sku)
                     error_msg.append(s)
 
+                # lcl total qty
+                total_qty += l.qty
+
+
+            if not ((total_qty == 1500) or (total_qty == 1560)):
+                s = 'Total orders is not Full Container Load'
+                error_msg.append(s)
+
+
+
             msg = '\n'.join(error_msg)
             so.error = error
             so.error_msg = msg
+
+
+
 
     def _price_list_remarks(self):
         res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
@@ -983,8 +998,8 @@ class DmpiCrmSaleOrder(models.Model):
     order_ids = fields.One2many('dmpi.crm.sale.order.line','order_id','Order IDs', copy=True)
     valid = fields.Boolean("Valid Order", default=True)
     valid_disp = fields.Boolean("Valid Order", related='valid')
-    error = fields.Integer('Error Count', compute="_get_no_price_error")
-    error_msg = fields.Text('Error Message', compute="_get_no_price_error")
+    error = fields.Integer('Error Count', compute="_get_error_msg")
+    error_msg = fields.Text('Error Message', compute="_get_error_msg")
     price_list = fields.Selection(_price_list_remarks)
 
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
@@ -999,32 +1014,7 @@ class DmpiCrmSaleOrder(models.Model):
         return pack_code_tmp
 
     pack_code_tmp = fields.Text(string='Pack Code Tmp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
-
-
-    #Crown
-    # p101 = fields.Integer(string="P5", compute='get_product_qty')
-    # p102 = fields.Integer(string="P6", compute='get_product_qty')
-    # p103 = fields.Integer(string="P7", compute='get_product_qty')
-    # p104 = fields.Integer(string="P8", compute='get_product_qty')
-    # p105 = fields.Integer(string="P9", compute='get_product_qty')
-    # p106 = fields.Integer(string="P10", compute='get_product_qty')
-    # p107 = fields.Integer(string="P12", compute='get_product_qty')
-    # p108 = fields.Integer(string="UA", compute='get_product_qty')
-    # p109 = fields.Integer(string="UA", compute='get_product_qty')
-    # p110 = fields.Integer(string="UA", compute='get_product_qty')
     total_p100 = fields.Integer(string="With Crown", compute='get_product_qty')
-
-    #Crownless
-    # p201 = fields.Integer(string="P5C7", compute='get_product_qty')
-    # p202 = fields.Integer(string="P6C8", compute='get_product_qty')
-    # p203 = fields.Integer(string="P7C9", compute='get_product_qty')
-    # p204 = fields.Integer(string="P8C10", compute='get_product_qty')
-    # p205 = fields.Integer(string="P9C11", compute='get_product_qty')
-    # p206 = fields.Integer(string="P10C12", compute='get_product_qty')
-    # p207 = fields.Integer(string="P12C20", compute='get_product_qty')
-    # p208 = fields.Integer(string="UA", compute='get_product_qty')
-    # p209 = fields.Integer(string="UA", compute='get_product_qty')
-    # p210 = fields.Integer(string="UA", compute='get_product_qty')
     total_p200 = fields.Integer(string="Crownless", compute='get_product_qty')
 
     @api.multi
@@ -1155,8 +1145,13 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.product_code = self.product_id.code
             self.total = self.qty * self.price
             self.name = self.product_id.name
-            qty = round_qty(75,self.qty)
-            self.qty = qty
+
+            # not qty or (qty-60) not divisible by 75
+            mod_75 = self.qty % 75
+            mod_75_less = (self.qty - 60) % 75
+            if not ((mod_75 == 0) or (mod_75_less == 0)):
+                qty = round_qty(75,self.qty)
+                self.qty = qty
 
 
     def recompute_price(self):
