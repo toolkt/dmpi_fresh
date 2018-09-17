@@ -998,7 +998,7 @@ class DmpiCrmSaleOrder(models.Model):
         pack_code_tmp = ','.join(tmp)
         return pack_code_tmp
 
-    pack_code_tmp = fields.Text(string='Pack Code Temp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
+    pack_code_tmp = fields.Text(string='Pack Code Tmp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
 
 
     #Crown
@@ -1053,7 +1053,7 @@ class DmpiCrmSaleOrder(models.Model):
                     total_amount += l.total
                     total_qty += l.qty
 
-                    if 'C' in pcode:
+                    if 'C' not in pcode:
                         total_p100 += l.qty
                     else:
                         total_p200 += l.qty
@@ -1161,8 +1161,7 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.total = self.qty * self.price
             self.name = self.product_id.name
             qty = round_qty(75,self.qty)
-            self.qty = qty  
-        
+            self.qty = qty
 
 
     def recompute_price(self):
@@ -1221,7 +1220,7 @@ class CustomerCrmSaleOrder(models.Model):
                     total_amount += l.total
                     total_qty += l.qty
 
-                    if 'C' in pcode:
+                    if 'C' not in pcode:
                         total_p100 += l.qty
                     else:
                         total_p200 += l.qty
