@@ -1042,21 +1042,16 @@ class DmpiCrmSaleOrder(models.Model):
             for l in rec.order_ids:
 
                 product = l.product_id
-                if product:
-                    pcode = product.code_id.name
-
+                pcode = product and product.code_id.name
+                if pcode:
                     if pcode not in data:
-                        data[pcode] = l.qty
-                    else:
-                        data[pcode] += l.qty
+                        data[pcode] = 0
 
+                    data[pcode] += l.qty
+                    total_p100 += l.qty if 'C' not in pcode else 0
+                    total_p100 += l.qty if 'C' in pcode else 0
                     total_amount += l.total
                     total_qty += l.qty
-
-                    if 'C' not in pcode:
-                        total_p100 += l.qty
-                    else:
-                        total_p200 += l.qty
 
             # change to summary formatting view
             headers = []
@@ -1209,21 +1204,16 @@ class CustomerCrmSaleOrder(models.Model):
             for l in rec.order_ids:
 
                 product = l.product_id
-                if product:
-                    pcode = product.code_id.name
-
+                pcode = product and product.code_id.name
+                if pcode:
                     if pcode not in data:
-                        data[pcode] = l.qty
-                    else:
-                        data[pcode] += l.qty
+                        data[pcode] = 0
 
+                    data[pcode] += l.qty
+                    total_p100 += l.qty if 'C' not in pcode else 0
+                    total_p100 += l.qty if 'C' in pcode else 0
                     total_amount += l.total
                     total_qty += l.qty
-
-                    if 'C' not in pcode:
-                        total_p100 += l.qty
-                    else:
-                        total_p200 += l.qty
 
             # change to summary formatting view
             headers = []

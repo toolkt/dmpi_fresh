@@ -115,7 +115,7 @@
                             <group>
                                 <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <field name="customer_ref" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                <field name="customer_ref" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="po_date" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_from" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_to" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
