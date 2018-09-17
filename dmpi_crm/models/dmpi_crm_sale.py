@@ -435,6 +435,8 @@ class DmpiCrmSaleContract(models.Model):
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
                         'requested_delivery_date': l.requested_delivery_date,
+                        'estimated_date': l.estimated_date,
+                        'plant_id': l.plant_id.id,
                         'plant': l.plant,
                         'week_no': week_no,
                         # 'p5': l.p5,
@@ -949,7 +951,7 @@ class DmpiCrmSaleOrder(models.Model):
             msg = ''
 
             for l in so.order_ids:
-                if l.price == 0:
+                if l.price == 0 and l.product_id:
                     error += 1
                     s = 'No Price set for %s (%s)' % (l.product_id.code, l.product_id.sku)
                     error_msg.append(s)

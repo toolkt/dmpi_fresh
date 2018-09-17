@@ -29,7 +29,7 @@
                     <field name="sales_org"/>
                     <field name="plant_id"/>
                     <field name="plant" invisible="1"/>
-                    <field name="week_no"/>
+                    <field name="week_no" required="1"/>
                     <field name="tag_ids" widget="many2many_tags"/>
                 </search>
             </field>
@@ -41,11 +41,14 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="partner_id"/>
                     <field name="sap_so_no" />
+                    <field name="contract_id"/>
+                    <field name="partner_id"/>
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
-                    <field name="week_no"/>
+                    <field name="ship_line"/>
+                    <field name="shell_color"/>
+                    <field name="week_no" required="1"/>
 
 <!--                     <field name="p101" sum="Total"/>
                     <field name="p102" sum="Total"/>
@@ -63,9 +66,6 @@
                     <field name="p207" sum="Total"/> -->
                     <field name="total_qty" sum="Total"/>
                     <field name="total_amount" sum="Total"/>
-                    
-                    <field name="ship_line" />
-                    <field name="shell_color" />
                     <field name="po_state" string="PO Status"/>
                     <field name="state" string="SO Status"/>
 
@@ -118,7 +118,7 @@
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
                                 <field name="estimated_date" />
-                                <field name="sap_so_no" />
+                                <!-- <field name="sap_so_no" /> -->
                                 <field name="total_amount" invisible="1"/>
                                 <field name="total_qty" invisible="1"/>
                                 <field name="total_p100" invisible="1"/>
@@ -160,6 +160,9 @@
                                     <group>
                                         <field name="contract_id" />
                                         <field name="partner_id" />
+                                    </group>
+                                    <group>
+                                        <field name="pack_code_tmp"/>
                                     </group>
                                 </group>
                             </page>
@@ -253,7 +256,7 @@
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
                                 <field name="estimated_date" />
-                                <field name="sap_so_no" />
+                                <!-- <field name="sap_so_no" /> -->
                                 <field name="total_amount" invisible="1"/>
                                 <field name="total_qty" invisible="1"/>
                                 <field name="total_p100" invisible="1"/>
