@@ -689,16 +689,18 @@
                 <tree editable='bottom'>
                     <field name="sku"/>
                     <field name="name"/>
-                    <field name="code"/>
-                    <field name="partner_id"/>
+                    <field name="code_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                    <field name="code" invisible="1"/>
+                    <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                     <field name="product_class"/>
-                    <field name="product_crown"/>
+                    <field name="product_crown" readonly="1"/>
+                    <field name="packaging"/>
                     <field name="psd"/>
                     <field name="weight"/>
                     <field name="box"/>
                     <field name="volume"/>
                     <field name="crate_box"/>
-                    <field name="dest_country_id"/>
+                    <field name="dest_country_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                     <field name="active"/>
                 </tree>
             </field>

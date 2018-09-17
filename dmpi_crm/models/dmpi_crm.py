@@ -260,10 +260,11 @@ class DmpiCrmShipTo(models.Model):
     def name_get(self):
         result = []
         for rec in self:
-            destination = ''
-            if rec.destination:
-                destination = rec.destination
-            name = destination+' [' + rec.name+ ']'
+            # destination = ''
+            # if rec.destination:
+                # destination = rec.destination
+            # name = destination+' [' + rec.name+ ']'
+            name = rec.name + ' [' + rec.ship_to_code + ']'
             result.append((rec.id, name))
         return result
 
@@ -414,11 +415,12 @@ class DmpiCrmProduct(models.Model):
 
 
     name            = fields.Char("Name")
-    code            = fields.Char("Code")
+    code            = fields.Char("Pack Code Name", related='code_id.name')
+    code_id         = fields.Many2one('dmpi.crm.product.code','Pack Code')
     sku             = fields.Char("SKU")
     partner_id      = fields.Many2one('dmpi.crm.partner','Customer')
     product_class   = fields.Selection(_get_product_class,'Class')
-    product_crown   = fields.Selection(_get_product_crown,'Crown')
+    product_crown   = fields.Selection(CROWN, string='Crown',related='code_id.product_crown')
     psd             = fields.Integer("PSD")
     weight          = fields.Float("Weight")
     box             = fields.Float("Box")
@@ -426,6 +428,7 @@ class DmpiCrmProduct(models.Model):
     crate_box       = fields.Float("Crate/Box")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
     active          = fields.Boolean("Active", default=True)
+    packaging       = fields.Char("Packaging")
 
 
 
@@ -558,8 +561,7 @@ class DmpiCRMProductCode(models.Model):
     product_crown   = fields.Selection(CROWN,'Crown')
     sequence = fields.Integer("Sequence")
     field_name = fields.Char("Field Name")
-    active = fields.Boolean("Active")
-
+    active = fields.Boolean("Active", default=True)
 
 class DmpiCRMPaymentTerms(models.Model):
     _name = 'dmpi.crm.payment.terms'

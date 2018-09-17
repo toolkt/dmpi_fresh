@@ -913,36 +913,6 @@ class DmpiCrmSaleOrder(models.Model):
         for rec in self:
             rec.state = 'confirmed'
             rec.write({'state':'confirmed'})
-
-
-
-    # @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20','order_ids')
-    # def get_totals(self):
-        
-    #     for rec in self:
-    #         total_amount = 0.0
-    #         for l in rec.order_ids:
-    #             total_amount += l.total
-    #             if l.product_code == 'P5': rec.p5 += l.qty
-    #             if l.product_code == 'P6': rec.p6 += l.qty
-    #             if l.product_code == 'P7': rec.p7 += l.qty
-    #             if l.product_code == 'P8': rec.p8 += l.qty
-    #             if l.product_code == 'P9': rec.p9 += l.qty
-    #             if l.product_code == 'P10': rec.p10 += l.qty
-    #             if l.product_code == 'P12': rec.p12 += l.qty
-    #             if l.product_code == 'P5C7': rec.p5c7 += l.qty
-    #             if l.product_code == 'P6C8': rec.p6c8 += l.qty
-    #             if l.product_code == 'P7C9': rec.p7c9 += l.qty
-    #             if l.product_code == 'P8C10': rec.p8c10 += l.qty
-    #             if l.product_code == 'P9C11': rec.p9c11 += l.qty
-    #             if l.product_code == 'P10C12': rec.p10c12 += l.qty
-    #             if l.product_code == 'P12C20': rec.p12c20 += l.qty
-
-    #         rec.total_amount = total_amount
-    #         rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
-    #         rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
-    #         rec.total_qty = rec.total_crown + rec.total_crownless
-
         
     def _get_doc_types(self):
         res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
@@ -1017,92 +987,99 @@ class DmpiCrmSaleOrder(models.Model):
 
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
 
+    def _get_default_pack_codes(self):
+        pack_codes = self.env['dmpi.crm.product.code'].sudo().search([('active','=',True)])
+        tmp = []
+        for pc in pack_codes:
+            tmp.append(pc.name)
+
+        pack_code_tmp = ','.join(tmp)
+        return pack_code_tmp
+
+    pack_code_tmp = fields.Text(string='Pack Code Temp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
+
 
     #Crown
-    p101 = fields.Integer(string="P5", compute='get_product_qty')
-    p102 = fields.Integer(string="P6", compute='get_product_qty')
-    p103 = fields.Integer(string="P7", compute='get_product_qty')
-    p104 = fields.Integer(string="P8", compute='get_product_qty')
-    p105 = fields.Integer(string="P9", compute='get_product_qty')
-    p106 = fields.Integer(string="P10", compute='get_product_qty')
-    p107 = fields.Integer(string="P12", compute='get_product_qty')
-    p108 = fields.Integer(string="UA", compute='get_product_qty')
-    p109 = fields.Integer(string="UA", compute='get_product_qty')
-    p110 = fields.Integer(string="UA", compute='get_product_qty')
-    total_p100 = fields.Integer(string="Total", compute='get_product_qty')
+    # p101 = fields.Integer(string="P5", compute='get_product_qty')
+    # p102 = fields.Integer(string="P6", compute='get_product_qty')
+    # p103 = fields.Integer(string="P7", compute='get_product_qty')
+    # p104 = fields.Integer(string="P8", compute='get_product_qty')
+    # p105 = fields.Integer(string="P9", compute='get_product_qty')
+    # p106 = fields.Integer(string="P10", compute='get_product_qty')
+    # p107 = fields.Integer(string="P12", compute='get_product_qty')
+    # p108 = fields.Integer(string="UA", compute='get_product_qty')
+    # p109 = fields.Integer(string="UA", compute='get_product_qty')
+    # p110 = fields.Integer(string="UA", compute='get_product_qty')
+    total_p100 = fields.Integer(string="With Crown", compute='get_product_qty')
 
     #Crownless
-    p201 = fields.Integer(string="P5C7", compute='get_product_qty')
-    p202 = fields.Integer(string="P6C8", compute='get_product_qty')
-    p203 = fields.Integer(string="P7C9", compute='get_product_qty')
-    p204 = fields.Integer(string="P8C10", compute='get_product_qty')
-    p205 = fields.Integer(string="P9C11", compute='get_product_qty')
-    p206 = fields.Integer(string="P10C12", compute='get_product_qty')
-    p207 = fields.Integer(string="P12C20", compute='get_product_qty')
-    p208 = fields.Integer(string="UA", compute='get_product_qty')
-    p209 = fields.Integer(string="UA", compute='get_product_qty')
-    p210 = fields.Integer(string="UA", compute='get_product_qty')
-    total_p200 = fields.Integer(string="Total", compute='get_product_qty')
+    # p201 = fields.Integer(string="P5C7", compute='get_product_qty')
+    # p202 = fields.Integer(string="P6C8", compute='get_product_qty')
+    # p203 = fields.Integer(string="P7C9", compute='get_product_qty')
+    # p204 = fields.Integer(string="P8C10", compute='get_product_qty')
+    # p205 = fields.Integer(string="P9C11", compute='get_product_qty')
+    # p206 = fields.Integer(string="P10C12", compute='get_product_qty')
+    # p207 = fields.Integer(string="P12C20", compute='get_product_qty')
+    # p208 = fields.Integer(string="UA", compute='get_product_qty')
+    # p209 = fields.Integer(string="UA", compute='get_product_qty')
+    # p210 = fields.Integer(string="UA", compute='get_product_qty')
+    total_p200 = fields.Integer(string="Crownless", compute='get_product_qty')
 
     @api.multi
+    @api.depends('order_ids','pack_code_tmp')
     def get_product_qty(self):
         for rec in self:
-            if rec[0].id:
-                query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
-                    SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 
-                    SELECT 0 AS seq,P.code,P.sku,sol.qty,sol.price*sol.qty AS amount FROM dmpi_crm_sale_order_line sol LEFT JOIN dmpi_crm_product P ON P.ID=sol.product_id WHERE sol.order_id=%s) AS Q1 GROUP BY code ORDER BY seq
-                """ % rec[0].id
-                # print (query)
-                self.env.cr.execute(query)
-                result = self.env.cr.dictfetchall()
 
-                headers = []
-                skus = []
-                rows = []
-                total_amount = 0
-                total_qty = 0
-                for l in result:
-                    total_amount += l['amount'] or 0
-                    total_qty += l['qty'] or 0
+            data = {}
+            total_amount = 0
+            total_qty = 0
+            total_p100 = 0
+            total_p200 = 0
 
-                    if l['code'] == 'P5': rec.p101 = l['qty'] 
-                    if l['code'] == 'P6': rec.p102 = l['qty']
-                    if l['code'] == 'P7': rec.p103 = l['qty']
-                    if l['code'] == 'P8': rec.p104 = l['qty']
-                    if l['code'] == 'P9': rec.p105 = l['qty']
-                    if l['code'] == 'P10': rec.p106 = l['qty']
-                    if l['code'] == 'P12': rec.p107 = l['qty']
-                    if l['code'] == 'P': rec.p108 = l['qty']
-                    if l['code'] == 'P': rec.p109 = l['qty']
-                    if l['code'] == 'P': rec.p110 = l['qty']
+            # get totals per pack code
+            for l in rec.order_ids:
 
-                    if l['code'] == 'P5C7': rec.p201 = l['qty']
-                    if l['code'] == 'P6C8': rec.p202 = l['qty']
-                    if l['code'] == 'P7C9': rec.p203 = l['qty']
-                    if l['code'] == 'P8C10': rec.p204 = l['qty']
-                    if l['code'] == 'P9C11': rec.p205 = l['qty']
-                    if l['code'] == 'P10C12': rec.p206 = l['qty']
-                    if l['code'] == 'P12C20': rec.p207 = l['qty']
-                    if l['code'] == 'P': rec.p208 = l['qty']
-                    if l['code'] == 'P': rec.p209 = l['qty']
-                    if l['code'] == 'P': rec.p210 = l['qty']
+                product = l.product_id
+                if product:
+                    pcode = product.code_id.name
 
-                    headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % l['code'])
-                    # skus.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #999999;" >%s</th>""" % '7AOB19912')# l['sku'])
-                    rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
+                    if pcode not in data:
+                        data[pcode] = l.qty
+                    else:
+                        data[pcode] += l.qty
 
-                rec.notes = """
-                    <h3>SUMMARY</h3>
-                    <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
-                        <thead><tr> %s </tr></thead>
-                        <tbody> <tr class="o_data_row"> %s </tr> </tbody>
-                    </table>
-                """ %(''.join(headers),''.join(rows))
+                    total_amount += l.total
+                    total_qty += l.qty
 
-                rec.total_p100 = 1#self.p101,self.p102,self.p103,self.p104,self.p105,self.p106,self.p107,self.p108,self.p109,self.p110
-                rec.total_p200 = 1#self.p201,self.p202,self.p203,self.p204,self.p205,self.p206,self.p207,self.p208,self.p209,self.p210
-                rec.total_amount = total_amount
-                rec.total_qty = total_qty
+                    if 'C' in pcode:
+                        total_p100 += l.qty
+                    else:
+                        total_p200 += l.qty
+
+            # change to summary formatting view
+            headers = []
+            rows = []
+            tmp = rec.pack_code_tmp
+            tmp = tmp.split(',')
+            
+            for t in tmp:
+                qty = data[t] if t in data else 0
+                headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % t)
+                rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % qty)
+
+            rec.notes = """
+                <h3>SUMMARY</h3>
+                <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
+                    <thead><tr> %s </tr></thead>
+                    <tbody> <tr class="o_data_row"> %s </tr> </tbody>
+                </table>
+            """ %(''.join(headers),''.join(rows))
+
+            # compute totals
+            rec.total_p100 = total_p100
+            rec.total_p200 = total_p200
+            rec.total_amount = total_amount
+            rec.total_qty = total_qty
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
     ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
@@ -1217,50 +1194,46 @@ class CustomerCrmSaleOrder(models.Model):
 
 
     @api.multi
+    @api.depends('order_ids','pack_code_tmp')
     def get_product_qty(self):
         for rec in self:
-            query = """ SELECT SUM (seq) AS seq,code,array_to_string(ARRAY_AGG (sku),'') AS sku,SUM (qty) AS qty,SUM (amount) AS amount FROM (
-                SELECT SEQUENCE AS seq,NAME AS code,'' AS sku,0 AS qty,0 AS amount FROM dmpi_crm_product_code pc WHERE active=TRUE UNION ALL 
-                SELECT 0 AS seq,P.code,P.sku,sol.qty,sol.price*sol.qty AS amount FROM customer_crm_sale_order_line sol LEFT JOIN dmpi_crm_product P ON P.ID=sol.product_id WHERE sol.order_id=%s) AS Q1 GROUP BY code ORDER BY seq
-            """ % rec[0].id
-            # print (query)
-            self.env.cr.execute(query)
-            result = self.env.cr.dictfetchall()
 
-            headers = []
-            skus = []
-            rows = []
+            data = {}
             total_amount = 0
             total_qty = 0
-            for l in result:
-                total_amount += l['amount'] or 0
-                total_qty += l['qty'] or 0
+            total_p100 = 0
+            total_p200 = 0
 
-                if l['code'] == 'P5': rec.p101 = l['qty'] 
-                if l['code'] == 'P6': rec.p102 = l['qty']
-                if l['code'] == 'P7': rec.p103 = l['qty']
-                if l['code'] == 'P8': rec.p104 = l['qty']
-                if l['code'] == 'P9': rec.p105 = l['qty']
-                if l['code'] == 'P10': rec.p106 = l['qty']
-                if l['code'] == 'P12': rec.p107 = l['qty']
-                if l['code'] == 'P': rec.p108 = l['qty']
-                if l['code'] == 'P': rec.p109 = l['qty']
-                if l['code'] == 'P': rec.p110 = l['qty']
+            # get totals per pack code
+            for l in rec.order_ids:
 
-                if l['code'] == 'P5C7': rec.p201 = l['qty']
-                if l['code'] == 'P6C8': rec.p202 = l['qty']
-                if l['code'] == 'P7C9': rec.p203 = l['qty']
-                if l['code'] == 'P8C10': rec.p204 = l['qty']
-                if l['code'] == 'P9C11': rec.p205 = l['qty']
-                if l['code'] == 'P10C12': rec.p206 = l['qty']
-                if l['code'] == 'P12C20': rec.p207 = l['qty']
-                if l['code'] == 'P': rec.p208 = l['qty']
-                if l['code'] == 'P': rec.p209 = l['qty']
-                if l['code'] == 'P': rec.p210 = l['qty']
+                product = l.product_id
+                if product:
+                    pcode = product.code_id.name
 
-                headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % l['code'])
-                # skus.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #999999;" >%s</th>""" % '7AOB19912')# l['sku'])
-                rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
+                    if pcode not in data:
+                        data[pcode] = l.qty
+                    else:
+                        data[pcode] += l.qty
+
+                    total_amount += l.total
+                    total_qty += l.qty
+
+                    if 'C' in pcode:
+                        total_p100 += l.qty
+                    else:
+                        total_p200 += l.qty
+
+            # change to summary formatting view
+            headers = []
+            rows = []
+            tmp = rec.pack_code_tmp
+            tmp = tmp.split(',')
+            
+            for t in tmp:
+                qty = data[t] if t in data else 0
+                headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % t)
+                rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % qty)
 
             rec.notes = """
                 <h3>SUMMARY</h3>
@@ -1270,8 +1243,9 @@ class CustomerCrmSaleOrder(models.Model):
                 </table>
             """ %(''.join(headers),''.join(rows))
 
-            rec.total_p100 = 1#self.p101,self.p102,self.p103,self.p104,self.p105,self.p106,self.p107,self.p108,self.p109,self.p110
-            rec.total_p200 = 1#self.p201,self.p202,self.p203,self.p204,self.p205,self.p206,self.p207,self.p208,self.p209,self.p210
+            # compute totals
+            rec.total_p100 = total_p100
+            rec.total_p200 = total_p200
             rec.total_amount = total_amount
             rec.total_qty = total_qty
 
