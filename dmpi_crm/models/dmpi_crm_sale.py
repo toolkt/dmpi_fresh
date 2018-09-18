@@ -215,6 +215,8 @@ class DmpiCrmSaleContract(models.Model):
     week_no = fields.Char("Week No")
     #week_id = fields.Many2one('dmpi.crm.week',"Week No")
 
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
+
     
 
     @api.multi
@@ -389,6 +391,15 @@ class DmpiCrmSaleContract(models.Model):
 
 
             self.valid_to =  datetime.strptime(self.po_date, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=validity)
+
+            tag_ids = self.partner_id.tag_ids.ids
+            po_date_tag_ids = self.env['dmpi.crm.product.price.tag'].search([('date_from','<=',self.po_date),('date_to','>=',self.po_date)]).ids
+            if len(po_date_tag_ids):
+                for t in po_date_tag_ids:
+                    tag_ids.append(t)
+
+            self.tag_ids = [[6,0,tag_ids]]
+
 
 
 
@@ -896,10 +907,19 @@ class DmpiCrmSaleOrder(models.Model):
         self.notify_id = self.ship_to_id.id
         self.sales_org = self.contract_id.partner_id.sales_org
         self.plant_id = self.contract_id.partner_id.default_plant
+
+
+        # self.env['']
+        # self.tag_ids = 
         # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
         # if sales_org:
         #     self.sales_org = sales_org
         # print("Onchange Partner")
+
+
+        tag_ids = self.contract_id.tag_ids.ids
+        self.tag_ids = [[6,0,tag_ids]]
+
 
 
     @api.multi
@@ -1002,6 +1022,8 @@ class DmpiCrmSaleOrder(models.Model):
     error_msg = fields.Text('Error Message', compute="_get_error_msg")
     price_list = fields.Selection(_price_list_remarks)
 
+
+    contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
 
     def _get_default_pack_codes(self):
@@ -1118,13 +1140,26 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
 
-    def compute_price(self,date,customer_code,material):
-        query = """SELECT amount,currency,uom from dmpi_crm_product_price_list_item  
-                where material = '%s'
-                and '%s'::DATE between valid_from and valid_to
-                limit 1 """ % (material,date)
+    def compute_price(self,date,customer_code,material,tag_ids=[]):
 
-        print("--------PRICE-------\n%s" % query)
+        where_clause = ""
+        if len(tag_ids) > 0:
+            where_clause = "and  ARRAY%s <@ tags" % tag_ids
+
+        else:
+            where_clause = "and '%s'::DATE between i.valid_from and i.valid_to" % date
+
+        query = """SELECT * FROM (
+                SELECT i.id,i.material, amount,currency,uom, array_agg(tr.tag_id) as tags
+                    from dmpi_crm_product_price_list_item  i
+                    left join price_item_tag_rel tr on tr.item_id = i.id
+                    group by i.id,i.material,amount,currency,uom
+                ) AS Q1
+                where material = '%s' %s
+                limit 1 """ % (material, where_clause)
+
+        print (query)
+        # print("--------PRICE-------\n%s" % query)
         self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()
         if result:
@@ -1142,10 +1177,11 @@ class DmpiCrmSaleOrderLine(models.Model):
             return False
 
 
+
     @api.onchange('product_id','qty')
     def onchange_product_id(self):
         if self.product_id:
-            result = self.compute_price(datetime.today(),self.order_id.partner_id.customer_code,self.product_id.sku)
+            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
 
             self.product_code = self.product_id.code
             self.total = self.qty * self.price

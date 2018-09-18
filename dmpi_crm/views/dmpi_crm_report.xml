@@ -2,9 +2,7 @@
 <odoo>
 	<data>
 
-        <!-- <menuitem id="dmpi_reports_main_menu" name="Reporting" web_icon="dmpi_crm,static/description/icon_report.png"/> -->
-        <menuitem id="dmpi_reports_config_menu" parent="menu_dmpi_crm_master_top" name="Reports" sequence="40"/>
-        <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Reports" sequence="50"/>
+
 
         <!-- PRE SHIPMENT TEMPLATES -->
         <record id="dmpi_crm_template_tree" model="ir.ui.view">

@@ -809,6 +809,9 @@
                 <tree editable='bottom'>
                     <field name="name"/>
                     <field name="description"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="active"/>
                 </tree>
             </field>
         </record>

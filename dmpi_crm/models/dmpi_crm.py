@@ -541,6 +541,9 @@ class DmpiCrmProductPriceTag(models.Model):
 
     name = fields.Char("Tag")
     description = fields.Char("Description")
+    date_from = fields.Date("Date From")
+    date_to = fields.Date("Date To")
+    active = fields.Boolean("Active", default=True)
 
 class DmpiCRMSaleContractGroup(models.Model):
     _name = 'dmpi.crm.sale.contract.group'
