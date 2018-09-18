@@ -42,4 +42,3 @@ access_user_customer_crm_sale_order,user.customer.crm.sale.order,model_customer_
 access_user_customer_crm_sale_order_line,user.customer.crm.sale.order.line,model_customer_crm_sale_order_line,base.group_user,1,1,1,1
 access_dmpi_crm_fiscal_year,user.dmpi.crm.fiscal.year,model_dmpi_crm_fiscal_year,base.group_user,1,1,1,1
 access_dmpi_crm_week,user.dmpi.crm.week,model_dmpi_crm_week,base.group_user,1,1,1,1
-access_dmpi_crm_fcl_config,user.dmpi.crm.fcl.config,model_dmpi_crm_fcl_config,base.group_user,1,1,1,1

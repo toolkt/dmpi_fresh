@@ -136,7 +136,7 @@ class DmpiCrmConfig(models.Model):
 
 
     # FCL configuration
-    fcl_config_ids = fields.One2many('dmpi.crm.fcl.config','config_id','FCL Config Ids')
+    # fcl_config_ids = fields.One2many('dmpi.crm.fcl.config','config_id','FCL Config Ids')
 
     #CONTRACT
     inbound_k                           = fields.Char("Contract")
@@ -1579,10 +1579,10 @@ class DmpiCrmConfigContractState(models.Model):
 
 
 
-class DmpiCRMFCLConfig(models.Model):
-    _name = 'dmpi.crm.fcl.config'
+# class DmpiCRMFCLConfig(models.Model):
+#     _name = 'dmpi.crm.fcl.config'
 
-    pallet = fields.Float('Pallet')
-    cases_van = fields.Float('Cases/Van')
-    active = fields.Boolean('Active')
-    config_id = fields.Many2one('dmpi.crm.config',string='Config ID')
+#     pallet = fields.Float('Pallet')
+#     cases_van = fields.Float('Cases/Van')
+#     active = fields.Boolean('Active')
+#     config_id = fields.Many2one('dmpi.crm.config',string='Config ID')

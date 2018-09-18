@@ -173,15 +173,6 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="FCL Config">
-                                <field name="fcl_config_ids">
-                                    <tree editable="bottom">
-                                        <field name="pallet"/>
-                                        <field name="cases_van"/>
-                                        <field name="active"/>
-                                    </tree>
-                                </field>
-                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
