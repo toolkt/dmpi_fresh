@@ -1087,14 +1087,19 @@ class DmpiCrmSaleOrder(models.Model):
     week_no = fields.Char("Week No")
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
     po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state')
-    
+    found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
 
-    # @api.model
-    # def create(self, vals):
-    #     seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
-    #     vals['name'] = seq
-    #     res = super(DmpiCrmSaleOrder, self).create(vals)
-    #     return res
+    @api.multi
+    @api.depends('order_ids')
+    def _compute_found_p60(self):
+        for so in self:
+            count = 0
+            for l in so.order_ids:
+                if l.found_p60:
+                    count += 1
+
+            so.found_p60 = count
+
 
 
 class DmpiCrmSaleOrderLine(models.Model):
@@ -1149,10 +1154,24 @@ class DmpiCrmSaleOrderLine(models.Model):
             # not qty or (qty-60) not divisible by 75
             mod_75 = self.qty % 75
             mod_75_less = (self.qty - 60) % 75
-            if not ((mod_75 == 0) or (mod_75_less == 0)):
+            no_p60 = False # found pallet 60
+            no_mod = False # not divisble by above conditions
+            no_qty = False # qty == 60
+            self.found_p60 = no_p60
+
+            # set found_p60 to True
+            if mod_75_less == 0:
+                self.found_p60 = True
+                no_p60 = True if self.order_id.found_p60 >= 1 else False
+
+            no_mod = not ((mod_75 == 0) or (mod_75_less == 0))
+            no_qty = not bool(self.qty)
+            
+            # round qty if at least 1 error found
+            if any([no_p60, no_mod, no_qty]):
                 qty = round_qty(75,self.qty)
                 self.qty = qty
-
+                self.found_p60 = False
 
     def recompute_price(self):
         if self.product_id:
@@ -1161,7 +1180,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
 
-    name = fields.Char("Description")
+    name = fields.Char("Description", related="product_id.name")
     contract_line_no = fields.Integer('Contract Line No')
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')
@@ -1173,7 +1192,7 @@ class DmpiCrmSaleOrderLine(models.Model):
     uom = fields.Char("Uom")
     qty = fields.Float("Qty")
     total = fields.Float("Total", compute='_get_total')
-
+    found_p60 = fields.Boolean('Found Pallet 60', default=False)
 
 class CustomerCrmSaleOrder(models.Model):
     _name = 'customer.crm.sale.order'

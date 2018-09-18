@@ -20,7 +20,7 @@
                                     <field name="line_no" />
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
-                                    <field name="p5" />
+<!--                                     <field name="p5" />
                                     <field name="p6" />
                                     <field name="p7" />
                                     <field name="p8" />
@@ -33,7 +33,7 @@
                                     <field name="p8c10" />
                                     <field name="p9c11" />
                                     <field name="p10c12" />
-                                    <field name="p12c20" />
+                                    <field name="p12c20" /> -->
                                     <field name="total_qty" />
                                     <field name="ship_line" />
                                     <field name="shell_color" />
@@ -42,6 +42,13 @@
                                     <field name="error_count" />
                                 </tree>
                             </field>
+                        </page>
+                        <page string="Settings">
+                            <group>
+                                <group>
+                                    <field name="pack_code_tmp"/>
+                                </group>
+                            </group>
                         </page>
                     </notebook>
                     <footer>

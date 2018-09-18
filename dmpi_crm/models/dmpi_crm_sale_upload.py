@@ -49,11 +49,21 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
     _name = 'dmpi.crm.sale.contract.upload'
     _description = 'CRM Sale Contract Upload'
 
+    def _get_default_pack_codes(self):
+        pack_codes = self.env['dmpi.crm.product.code'].sudo().search([('active','=',True)])
+        tmp = []
+        for pc in pack_codes:
+            tmp.append(pc.name)
+
+        pack_code_tmp = ','.join(tmp)
+        return pack_code_tmp
+
     upload_file = fields.Binary("Invoice Attachment")
     contract_id = fields.Many2one("dmpi.crm.sale.contract","Contract")
     upload_line_ids = fields.One2many('dmpi.crm.sale.contract.upload.line','upload_id',"Upload Lines")
     error_count = fields.Integer("error_count")
     upload_type = fields.Selection([('customer','Customer Orders'),('commercial','Order Confirmation')], "Upload Type", default='customer')
+    pack_code_tmp = fields.Text(string='Pack Code Tmp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
 
     @api.onchange('upload_file')
     def onchange_upload_file(self):
