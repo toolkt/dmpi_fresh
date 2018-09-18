@@ -1021,6 +1021,7 @@ class DmpiCrmSaleOrder(models.Model):
     error = fields.Integer('Error Count', compute="_get_error_msg")
     error_msg = fields.Text('Error Message', compute="_get_error_msg")
     price_list = fields.Selection(_price_list_remarks)
+    destination = fields.Char('Destination')
 
 
     contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')

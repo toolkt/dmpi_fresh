@@ -115,6 +115,7 @@
                             <group>
                                 <field name="valid" />
                                 <field name="ship_line" />
+                                <field name="destination" />
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
                                 <field name="estimated_date" />
@@ -255,6 +256,7 @@
                             </group>
                             <group>
                                 <!-- <field name="valid" /> -->
+                                <field name="destination" />
                                 <field name="ship_line" />
                                 <field name="shell_color" />
                                 <field name="requested_delivery_date" />
