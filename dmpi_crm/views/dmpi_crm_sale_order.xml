@@ -43,7 +43,9 @@
                     <field name="name"/>
                     <field name="sap_so_no" />
                     <field name="contract_id"/>
+                    <field name="customer_ref"/>
                     <field name="partner_id"/>
+                    <field name="destination"/>
                     <field name="ship_to_id"/>
                     <field name="notify_id"/>
                     <field name="ship_line"/>

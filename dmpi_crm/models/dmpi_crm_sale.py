@@ -1011,6 +1011,7 @@ class DmpiCrmSaleOrder(models.Model):
     plant = fields.Char("Plant", compute='_get_plant_name')
     plant_id = fields.Many2one('dmpi.crm.plant')
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref')
     contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
@@ -1295,6 +1296,7 @@ class CustomerCrmSaleOrder(models.Model):
             """ %(''.join(headers),''.join(rows))
 
             # compute totals
+            print ()
             rec.total_p100 = total_p100
             rec.total_p200 = total_p200
             rec.total_amount = total_amount
