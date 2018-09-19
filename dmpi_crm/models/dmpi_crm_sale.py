@@ -445,6 +445,7 @@ class DmpiCrmSaleContract(models.Model):
                         'sales_org': l.sales_org,
                         'shell_color': l.shell_color,
                         'ship_line': l.ship_line,
+                        'destination': l.destination,
                         'requested_delivery_date': l.requested_delivery_date,
                         'estimated_date': l.estimated_date,
                         'plant_id': l.plant_id.id,
