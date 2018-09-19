@@ -1194,7 +1194,7 @@ class DmpiCrmSaleOrderLine(models.Model):
         if self.product_id:
             result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
 
-            self.price = result
+            # self.price = result
             self.product_code = self.product_id.code
             self.total = self.qty * self.price
             self.name = self.product_id.name
