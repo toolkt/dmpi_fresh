@@ -309,9 +309,9 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 order_lines = eval(l.order_lines)
 
                 for pcode in tmp:
-                    so_line_no += 10
                     qty = order_lines[pcode]
                     if qty != 0:
+                        so_line_no += 10
                         line = format_so(rec,so_line_no,partner_id,qty,pcode)
                         so_lines.append((0,0,line))
 
