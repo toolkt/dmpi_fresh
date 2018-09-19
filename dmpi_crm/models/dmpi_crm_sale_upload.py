@@ -232,26 +232,77 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 so_lines = []
                 so_line_no = 0
 
-                
+
+                def compute_price(date,customer_code,material,tag_ids=[]):
+
+                    where_clause = ""
+                    query = ""
+                    if len(tag_ids) > 0:
+                        
+                        query = """SELECT * FROM (
+                        SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                            from dmpi_crm_product_price_list_item  i
+                            left join price_item_tag_rel tr on tr.item_id = i.id
+                            group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                        ) AS Q1
+                        where material = '%s' and  ARRAY%s <@ tags
+                        limit 1 """ % (material, tag_ids)
+
+                    else:
+
+                        query = """SELECT * FROM (
+                        SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                            from dmpi_crm_product_price_list_item  i
+                            left join price_item_tag_rel tr on tr.item_id = i.id
+                            where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
+                            group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                        ) AS Q1
+
+                        limit 1 """ % (material, date)
+
+
+                    print (query)
+                    # print("--------PRICE-------\n%s" % query)
+                    self.env.cr.execute(query)
+                    result = self.env.cr.dictfetchall()
+                    # if result:
+                    #     self.price = float(result[0]['amount'])
+                    # else:
+                    #     self.price = 0
+                    # if result:
+                    #     self.uom = result[0]['uom']
+                    # else:
+                    #     self.uom = 'CAS'
+
+                    if result:
+                        return result[0]['amount']
+                    else:
+                        return 0
 
                 def format_so(rec,so_line_no,partner_id=0,qty=0,product_code=''):
                     name = "Product not Maintained"
                     product_id = False
                     query = """SELECT cp.id as product_id, cp.sku, cp.code, cp.partner_id, spu.condition_rate,spu.condition_currency, spu.uom from dmpi_crm_product cp
                             left join dmpi_sap_price_upload spu on spu.material = cp.sku
-                            where cp.code = '%s' and partner_id = %s""" % (product_code,partner_id)
+                            where cp.code = '%s' and partner_id = %s and cp.active is true""" % (product_code,partner_id)
+                    # print (query)
                     self.env.cr.execute(query)
                     result = self.env.cr.dictfetchall()
                     if result:
                         name = result[0]['sku']
                         product_id = result[0]['product_id']
+
+
+                    # get price
+                    price = compute_price(rec.contract_id.po_date,rec.partner_id.customer_code,name, rec.contract_id.tag_ids.ids)
                     return { 
-                                'name':name, 
+                                'name':name,
                                 'so_line_no':so_line_no, 
                                 'product_code': product_code, 
                                 'product_id': product_id,
-                                'uom': 'CAS', 
-                                'qty': qty
+                                'uom': 'CAS',
+                                'qty': qty,
+                                'price': price,
                             }
 
                 partner_id = rec.contract_id.partner_id.id
