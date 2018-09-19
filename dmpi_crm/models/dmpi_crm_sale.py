@@ -1144,20 +1144,28 @@ class DmpiCrmSaleOrderLine(models.Model):
     def compute_price(self,date,customer_code,material,tag_ids=[]):
 
         where_clause = ""
+        query = ""
         if len(tag_ids) > 0:
-            where_clause = "and  ARRAY%s <@ tags" % tag_ids
+            query = """SELECT * FROM (
+                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                        from dmpi_crm_product_price_list_item  i
+                        left join price_item_tag_rel tr on tr.item_id = i.id
+                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                    ) AS Q1
+                    where material = '%s' and  ARRAY%s <@ tags
+                    limit 1 """ % (material, tag_ids)
 
         else:
-            where_clause = "and ('%s'::DATE between i.valid_from and i.valid_to)" % date
+            query = """SELECT * FROM (
+                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                        from dmpi_crm_product_price_list_item  i
+                        left join price_item_tag_rel tr on tr.item_id = i.id
+                        where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
+                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                    ) AS Q1
+                    
+                    limit 1 """ % (material, date)
 
-        query = """SELECT * FROM (
-                SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                    from dmpi_crm_product_price_list_item  i
-                    left join price_item_tag_rel tr on tr.item_id = i.id
-                    group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                ) AS Q1
-                where material = '%s' %s
-                limit 1 """ % (material, where_clause)
 
         print (query)
         # print("--------PRICE-------\n%s" % query)
