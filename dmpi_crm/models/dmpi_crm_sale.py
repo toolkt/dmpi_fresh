@@ -1148,7 +1148,7 @@ class DmpiCrmSaleOrderLine(models.Model):
             where_clause = "and  ARRAY%s <@ tags" % tag_ids
 
         else:
-            where_clause = "and '%s'::DATE between Q1.valid_from and Q1.valid_to" % date
+            where_clause = "and ('%s'::DATE between i.valid_from and i.valid_to)" % date
 
         query = """SELECT * FROM (
                 SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
@@ -1212,7 +1212,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 
     def recompute_price(self):
         if self.product_id:
-            result = self.compute_price(datetime.today(),self.order_id.partner_id.customer_code,self.product_id.sku)
+            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku)
 
 
 
