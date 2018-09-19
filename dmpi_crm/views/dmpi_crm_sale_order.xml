@@ -269,6 +269,11 @@
                                 <field name="found_p60" invisible="1"/>
                             </group>
                         </group>
+                        
+                        <center>
+                            <field name="error" invisible="1" style="color:red"/>
+                            <span style="color:red"><field name="error_msg" readonly="1"/></span>
+                        </center>
                         <field name="notes"  widget="html"/>
 
                         <notebook>
