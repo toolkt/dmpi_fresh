@@ -1062,7 +1062,7 @@ class DmpiCrmSaleOrder(models.Model):
 
                     data[pcode] += l.qty
                     total_p100 += l.qty if 'C' not in pcode else 0
-                    total_p100 += l.qty if 'C' in pcode else 0
+                    total_p200 += l.qty if 'C' in pcode else 0
                     total_amount += l.total
                     total_qty += l.qty
 
@@ -1262,7 +1262,7 @@ class CustomerCrmSaleOrder(models.Model):
 
                     data[pcode] += l.qty
                     total_p100 += l.qty if 'C' not in pcode else 0
-                    total_p100 += l.qty if 'C' in pcode else 0
+                    total_p200 += l.qty if 'C' in pcode else 0
                     total_amount += l.total
                     total_qty += l.qty
 

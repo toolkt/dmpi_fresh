@@ -148,6 +148,7 @@
                                 <tree>
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
+                                    <field name="notify_id" />
                                     <!-- <field name="p101" sum="Total"/> -->
                                     <!-- <field name="p102" sum="Total"/> -->
                                     <!-- <field name="p103" sum="Total"/> -->
@@ -175,6 +176,7 @@
                                 <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
+                                    <field name="notify_id" />
 <!--                                     <field name="p101" sum="Total"/>
                                     <field name="p102" sum="Total"/>
                                     <field name="p103" sum="Total"/>
