@@ -149,6 +149,8 @@
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
+                                    <field name="ship_line" />
+                                    <field name="destination" />
                                     <!-- <field name="p101" sum="Total"/> -->
                                     <!-- <field name="p102" sum="Total"/> -->
                                     <!-- <field name="p103" sum="Total"/> -->
@@ -177,6 +179,8 @@
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
+                                    <field name="ship_line" />
+                                    <field name="destination" />
 <!--                                     <field name="p101" sum="Total"/>
                                     <field name="p102" sum="Total"/>
                                     <field name="p103" sum="Total"/>
