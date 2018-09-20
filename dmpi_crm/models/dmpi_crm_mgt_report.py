@@ -38,56 +38,23 @@ class DmpiCrmMarketAllocation(models.Model):
 
             th = lambda x: """<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % x 
             td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
+            a = lambda x,y: """<a href="/web#id=%s&view_type=form&model=dmpi.crm.sale.order&menu_id=96&action=107" target="self">%s</a> """ % (x,y) 
 
-            query = """ SELECT psd
-                    FROM dmpi_crm_product_code pc WHERE active=TRUE 
-                    GROUP BY psd ORDER BY psd
-                """
-            # print (query)
-            self.env.cr.execute(query)
-            result = self.env.cr.fetchall()  
-
-            h1 = []
-            h1.append(th('Customer/ PSD'))
-            h1.append(th('Shell Color'))
-            for p in result:
-                h1.append(th(p))
-            h1.append(th('TOTAL'))
-            h1.append(th('# of FCL'))
-            h1.append(th('PO Quantity'))
-            # print(psd)
-
-            query = """ SELECT 
-                            so.week_no, 
-                            cust.name as customer, 
-                            shp.name as ship_to,  
-                            prod.psd, 
-                            so.shell_color,
-                            prod.product_crown, 
-                            sum(sol.qty) as qty
-                        from dmpi_crm_sale_order_line sol
-                        left join dmpi_crm_sale_order so on so.id = sol.order_id
-                        left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
-                        left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
-                        left join dmpi_crm_partner cust on cust.id = ctr.partner_id
-                        left join dmpi_crm_product prod on prod.id = sol.product_id
-                        where so.week_no like '%%%s%%'
-                        group by so.week_no,cust.name,shp.name,prod.psd,so.shell_color,prod.product_crown
-                        ORDER BY cust.name,shp.name, prod.psd
-            """ % rec[0].week_no
 
             query = """
 (
     SELECT 
             0 as so_id,
             '' as week_no,
+            '' as country,
             '' as so_no,
             '' as customer,
             '' as ship_to, 
             name as prod_code,
             sequence,
             '' as shell_color,
-            '' as product_crown, 
+            product_crown, 
+                        psd,
             0 as qty
     FROM dmpi_crm_product_code pc WHERE active=TRUE 
     ORDER BY pc.sequence
@@ -99,6 +66,7 @@ UNION ALL
     SELECT
             so.id as so_id,
             so.week_no,
+            cc.name as country,
             so.name as so_no,
             cust.name as customer,
             shp.name as ship_to,
@@ -106,6 +74,7 @@ UNION ALL
             pc.sequence,
             so.shell_color,
             prod.product_crown,
+            prod.psd,
             sum(sol.qty) as qty
     from dmpi_crm_sale_order_line sol
     left join dmpi_crm_sale_order so on so.id = sol.order_id
@@ -113,80 +82,117 @@ UNION ALL
     left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
     left join dmpi_crm_partner cust on cust.id = ctr.partner_id
     left join dmpi_crm_product prod on prod.id = sol.product_id
-                        left join dmpi_crm_product_code pc on pc.name = sol.product_code
-    where so.week_no like '%33%'
-    group by so.id,so.week_no,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown
-)
-            """
+    left join dmpi_crm_product_code pc on pc.name = sol.product_code
+    left join dmpi_crm_country cc on cc.id = shp.country_id
+    where so.week_no like '%%%s%%'
+    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown,prod.psd
 
-            print (query)
+)
+            """  % rec[0].week_no
+
+            # print (query)
             self.env.cr.execute(query)
             result = self.env.cr.dictfetchall()
 
             df = pd.DataFrame.from_dict(result)
-            pd_res = pd.pivot_table(df, values='qty', index=['so_id','so_no','customer','ship_to'], columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum)
+            pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to'], 
+                columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
             print(pd_res)
             pd_res_vals = pd_res.reset_index().values
 
+            h1 = []
+            h1.append(th('Country'))
+            h1.append(th('SO No'))
+            h1.append(th('Customer'))
+            h1.append(th('Ship To'))
 
-
+            active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
+            number_of_active_products = len(active_products)
+            for h in active_products:
+                h1.append(th(h.name))
+                
+            h1.append(th('TOTAL'))
+                
+            trow = []
+            col_totals = []
             for l in pd_res_vals:
-                if l[0] != '' or l[0] != 0:
-                    print(l)
+                td_data = []
+                # print (l)
+                if l[0] != 0:
+                    if l[0] == 'All':
+                        td_data.append(th(l[1]))
+                        td_data.append(th(a(l[0],l[2])))
+                        td_data.append(th(l[3]))
+                        td_data.append(th(l[4]))
+                        
+
+                        for d in l[5:]:
+                            d = round(d)
+                            td_data.append(th(d))
+                            col_totals.append({'prod_code': , 'qty':d})
+
+                        trow_data = """<tr class="o_data_row"> %s </tr>""" % ''.join(td_data)
+                        trow.append(trow_data)
+
+                    else:
+                        td_data.append(td(l[1]))
+                        td_data.append(td(a(l[0],l[2])))
+                        td_data.append(td(l[3]))
+                        td_data.append(td(l[4]))
+                        
+                        for d in l[5:]:
+                            d = round(d)
+                            td_data.append(td(d))
+
+                        trow_data = """<tr class="o_data_row"> %s </tr>""" % ''.join(td_data)
+                        trow.append(trow_data)
 
 
 
+            query = """
+SELECT prod_code, SUM(qty) AS qty
+FROM (
+    (SELECT 
+    pc.sequence,
+    pc.name as prod_code,
+    0 as qty
+    FROM dmpi_crm_product_code pc where pc.active is True
+    order by pc.sequence)
 
-            # headers = []
-            # skus = []
-            # rows = []
-            # total_amount = 0
-            # total_qty = 0
-            # for l in result:
-            #     print(l)
-            #     for p in psd:
-            #         if l['psd'] == p: 
+    UNION ALL
 
-            #     total_amount += l['amount'] or 0
-            #     total_qty += l['qty'] or 0
+    (SELECT  
+    pc.sequence,
+    pc.name as prod_code,
+    Sum(al.crop + al.sb + al.dmf) as qty
+    from  dmpi_crm_market_allocation_line al
+    JOIN dmpi_crm_product_code pc on (pc.product_crown = al.product_crown and pc.psd = al.psd)
+    where allocation_id = 1
+    group by pc.name,pc.sequence
+    order by pc.sequence)
+)AS Q1
+GROUP BY prod_code, sequence
+ORDER BY sequence
+            """
+            self.env.cr.execute(query)
+            result = self.env.cr.dictfetchall()
 
-   #              if l['psd'] == '5': rec.p101 = l['qty'] 
-   #              if l['psd'] == '6': rec.p102 = l['qty']
-   #              if l['psd'] == '7': rec.p103 = l['qty']
-   #              if l['psd'] == '8': rec.p104 = l['qty']
-   #              if l['psd'] == '9': rec.p105 = l['qty']
-   #              if l['psd'] == '10': rec.p106 = l['qty']
-   #              if l['psd'] == '12': rec.p107 = l['qty']
-   #              if l['psd'] == '14': rec.p108 = l['qty']
-   #              if l['psd'] == '15': rec.p109 = l['qty']
-   #              if l['psd'] == '16': rec.p110 = l['qty']
 
-   #              if l['code'] == 'P5C7': rec.p201 = l['qty']
-   #              if l['code'] == 'P6C8': rec.p202 = l['qty']
-   #              if l['code'] == 'P7C9': rec.p203 = l['qty']
-   #              if l['code'] == 'P8C10': rec.p204 = l['qty']
-   #              if l['code'] == 'P9C11': rec.p205 = l['qty']
-   #              if l['code'] == 'P10C12': rec.p206 = l['qty']
-   #              if l['code'] == 'P12C20': rec.p207 = l['qty']
-   #              if l['code'] == 'P': rec.p208 = l['qty']
-   #              if l['code'] == 'P': rec.p209 = l['qty']
-   #              if l['code'] == 'P': rec.p210 = l['qty']
+            print (col_totals)
+            print (result)
 
-   #              headers.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % l['code'])
-   #              # skus.append("""<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #999999;" >%s</th>""" % '7AOB19912')# l['sku'])
-   #              rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
-
+                    #Compute Totals
 
             # msg = """<a href="/web?#id=87&view_type=form&model=dmpi.crm.sale.contract&menu_id=84&action=97" target="self">test link</a> """
 
-            msg = """<a role="menuitem" tabindex="-1" data-object="dmpi.crm.sale.contract" action="open_document" data-id="86">View Bill</a>"""
+            
 
             rec.html_report = """
                 <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
                     <thead><tr> %s </tr></thead>
-                    <tbody> <tr class="o_data_row"> %s </tr> </tbody>
-                </table> %s
-            """ %(''.join(h1),''.join(h1),msg)
+                    <tbody> %s </tbody>
+                </table>
+            """ %(''.join(h1),''.join(trow))
 
 
     name = fields.Char("Name")
@@ -227,7 +233,7 @@ class DmpiCrmMarketAllocationLine(models.Model):
 
     # name = fields.Char("Name")
     psd = fields.Integer("PSD")
-    allocation_id = fields.Many2one('dmpi.crm.market.allocation',"Allocation ID")
+    allocation_id = fields.Many2one('dmpi.crm.market.allocation',"Allocation ID", ondelete='cascade')
     grade = fields.Selection([('EX','Export'),('B','Class B'),('BA','Class B to A')], "Grade")
     product_crown   = fields.Selection(_get_product_crown,'Crown')
     corp = fields.Float("CORP")
