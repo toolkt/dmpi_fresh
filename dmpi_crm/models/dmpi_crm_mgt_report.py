@@ -103,7 +103,6 @@ UNION ALL
             h1 = []
             h1.append(th('Country'))
             h1.append(th('SO No'))
-            h1.append(th('Customer'))
             h1.append(th('Ship To'))
 
             active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
@@ -129,7 +128,7 @@ UNION ALL
                         for d in l[5:]:
                             d = round(d)
                             td_data.append(th(d))
-                            col_totals.append({'prod_code': , 'qty':d})
+                            # col_totals.append({'prod_code': , 'qty':d})
 
                         trow_data = """<tr class="o_data_row"> %s </tr>""" % ''.join(td_data)
                         trow.append(trow_data)
