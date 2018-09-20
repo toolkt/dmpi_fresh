@@ -1,5 +1,5 @@
 from odoo import _
-from odoo import models, api, fields
+from odoo import models, api, fields, tools
 from odoo.exceptions import ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
 
@@ -23,6 +23,8 @@ import base64
 import pandas as pd
 import numpy as np
 
+
+CROWN = [('C','w/Crown'),('CL','Crownless')]
 
 class DmpiCrmMarketAllocation(models.Model):
     _name = 'dmpi.crm.market.allocation'
@@ -75,28 +77,46 @@ class DmpiCrmMarketAllocation(models.Model):
             """ % rec[0].week_no
 
             query = """
-                SELECT
-                        so.week_no,
-                        cust.name as customer,
-                        shp.name as ship_to,
-                        prod.psd,
-                        so.shell_color,
-                        prod.product_crown,
-                        sum(sol.qty) as qty
-                from dmpi_crm_sale_order_line sol
-                left join dmpi_crm_sale_order so on so.id = sol.order_id
-                left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
-                left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
-                left join dmpi_crm_partner cust on cust.id = ctr.partner_id
-                left join dmpi_crm_product prod on prod.id = sol.product_id
-                where so.week_no like '%33%'
-                group by so.week_no,cust.name,shp.name,prod.psd,so.shell_color,prod.product_crown
+(
+    SELECT 
+            0 as so_id,
+            '' as week_no,
+            '' as so_no,
+            '' as customer,
+            '' as ship_to, 
+            name as prod_code,
+            sequence,
+            '' as shell_color,
+            '' as product_crown, 
+            0 as qty
+    FROM dmpi_crm_product_code pc WHERE active=TRUE 
+    ORDER BY pc.sequence
+)
 
-                UNION ALL
+UNION ALL
 
-                SELECT '' as week_no,'' as customer,'' as ship_to, psd,'' as shell_color,'' as product_crown, 0 as qty
-                FROM dmpi_crm_product_code pc WHERE active=TRUE 
-                GROUP BY psd ORDER BY psd
+(
+    SELECT
+            so.id as so_id,
+            so.week_no,
+            so.name as so_no,
+            cust.name as customer,
+            shp.name as ship_to,
+            pc.name as prod_code,
+            pc.sequence,
+            so.shell_color,
+            prod.product_crown,
+            sum(sol.qty) as qty
+    from dmpi_crm_sale_order_line sol
+    left join dmpi_crm_sale_order so on so.id = sol.order_id
+    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
+    left join dmpi_crm_partner cust on cust.id = ctr.partner_id
+    left join dmpi_crm_product prod on prod.id = sol.product_id
+                        left join dmpi_crm_product_code pc on pc.name = sol.product_code
+    where so.week_no like '%33%'
+    group by so.id,so.week_no,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown
+)
             """
 
             print (query)
@@ -104,8 +124,18 @@ class DmpiCrmMarketAllocation(models.Model):
             result = self.env.cr.dictfetchall()
 
             df = pd.DataFrame.from_dict(result)
-            pd_res = pd.pivot_table(df, values='qty', index=['week_no','customer','ship_to'], columns=['psd','product_crown'],fill_value=0, aggfunc=np.sum)
+            pd_res = pd.pivot_table(df, values='qty', index=['so_id','so_no','customer','ship_to'], columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum)
             print(pd_res)
+            pd_res_vals = pd_res.reset_index().values
+
+
+
+            for l in pd_res_vals:
+                if l[0] != '' or l[0] != 0:
+                    print(l)
+
+
+
 
             # headers = []
             # skus = []
@@ -147,7 +177,9 @@ class DmpiCrmMarketAllocation(models.Model):
    #              rows.append("""<td class="o_data_cell o_list_number">%s</td>""" % l['qty'])
 
 
-            msg = """<a href="/web?#id=87&view_type=form&model=dmpi.crm.sale.contract&menu_id=84&action=97" target="self">test link</a> """
+            # msg = """<a href="/web?#id=87&view_type=form&model=dmpi.crm.sale.contract&menu_id=84&action=97" target="self">test link</a> """
+
+            msg = """<a role="menuitem" tabindex="-1" data-object="dmpi.crm.sale.contract" action="open_document" data-id="86">View Bill</a>"""
 
             rec.html_report = """
                 <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
@@ -170,149 +202,14 @@ class DmpiCrmMarketAllocation(models.Model):
 
 
 
-    @api.model_cr
-    def init(self):
-        """ change index on partner_id to a multi-column index on (partner_id, ref), the new index will behave in the
-            same way when we search on partner_id, with the addition of being optimal when having a query that will
-            search on partner_id and ref at the same time (which is the case when we open the bank reconciliation widget)
-        """
-        cr = self._cr
-
-        query = """ 
--- https://github.com/hnsl/colpivot/blob/master/colpivot.sql
--- Copyright © 2015, Hannes Landeholm <hannes@jumpstarter.io>
--- This Source Code Form is subject to the terms of the Mozilla Public
--- License, v. 2.0. If a copy of the MPL was not distributed with this
--- file, You can obtain one at http://mozilla.org/MPL/2.0/.
--- See the README.md file distributed with this project for documentation.
-
-CREATE or replace function colpivot(
-    out_table varchar, in_query varchar,
-    key_cols varchar[], class_cols varchar[],
-    value_e varchar, col_order varchar
-) returns void as $$
-    declare
-        in_table varchar;
-        col varchar;
-        ali varchar;
-        on_e varchar;
-        i integer;
-        rec record;
-        query varchar;
-        -- This is actually an array of arrays but postgres does not support an array of arrays type so we flatten it.
-        -- We could theoretically use the matrix feature but it's extremly cancerogenous and we would have to involve
-        -- custom aggrigates. For most intents and purposes postgres does not have a multi-dimensional array type.
-        clsc_cols text[] := array[]::text[];
-        n_clsc_cols integer;
-        n_class_cols integer;
-    begin
-        in_table := quote_ident('__' || out_table || '_in');
-        execute ('create temp table ' || in_table || ' on commit drop as ' || in_query);
-        -- get ordered unique columns (column combinations)
-        query := 'select array[';
-        i := 0;
-        foreach col in array class_cols loop
-            if i > 0 then
-                query := query || ', ';
-            end if;
-            query := query || 'quote_literal(' || quote_ident(col) || ')';
-            i := i + 1;
-        end loop;
-        query := query || '] x from ' || in_table;
-        for j in 1..2 loop
-            if j = 1 then
-                query := query || ' group by ';
-            else
-                query := query || ' order by ';
-                if col_order is not null then
-                    query := query || col_order || ' ';
-                    exit;
-                end if;
-            end if;
-            i := 0;
-            foreach col in array class_cols loop
-                if i > 0 then
-                    query := query || ', ';
-                end if;
-                query := query || quote_ident(col);
-                i := i + 1;
-            end loop;
-        end loop;
-        -- raise notice '%', query;
-        for rec in
-            execute query
-        loop
-            clsc_cols := array_cat(clsc_cols, rec.x);
-        end loop;
-        n_class_cols := array_length(class_cols, 1);
-        n_clsc_cols := array_length(clsc_cols, 1) / n_class_cols;
-        -- build target query
-        query := 'select ';
-        i := 0;
-        foreach col in array key_cols loop
-            if i > 0 then
-                query := query || ', ';
-            end if;
-            query := query || '_key.' || quote_ident(col) || ' ';
-            i := i + 1;
-        end loop;
-        for j in 1..n_clsc_cols loop
-            query := query || ', ';
-            col := '';
-            for k in 1..n_class_cols loop
-                if k > 1 then
-                    col := col || ', ';
-                end if;
-                col := col || clsc_cols[(j - 1) * n_class_cols + k];
-            end loop;
-            ali := '_clsc_' || j::text;
-            query := query || '(' || replace(value_e, '#', ali) || ')' || ' as ' || quote_ident(col) || ' ';
-        end loop;
-        query := query || ' from (select distinct ';
-        i := 0;
-        foreach col in array key_cols loop
-            if i > 0 then
-                query := query || ', ';
-            end if;
-            query := query || quote_ident(col) || ' ';
-            i := i + 1;
-        end loop;
-        query := query || ' from ' || in_table || ') _key ';
-        for j in 1..n_clsc_cols loop
-            ali := '_clsc_' || j::text;
-            on_e := '';
-            i := 0;
-            foreach col in array key_cols loop
-                if i > 0 then
-                    on_e := on_e || ' and ';
-                end if;
-                on_e := on_e || ali || '.' || quote_ident(col) || ' = _key.' || quote_ident(col) || ' ';
-                i := i + 1;
-            end loop;
-            for k in 1..n_class_cols loop
-                on_e := on_e || ' and ';
-                on_e := on_e || ali || '.' || quote_ident(class_cols[k]) || ' = ' || clsc_cols[(j - 1) * n_class_cols + k];
-            end loop;
-            query := query || 'left join ' || in_table || ' as ' || ali || ' on ' || on_e || ' ';
-        end loop;
-        -- raise notice '%', query;
-        execute ('create temp table ' || quote_ident(out_table) || ' on commit drop as ' || query);
-        -- cleanup temporary in_table before we return
-        execute ('drop table ' || in_table)
-        return;
-    end;
-$$ language plpgsql volatile;
-        """
-        cr.execute(query)
-
 
 class DmpiCrmMarketAllocationLine(models.Model):
     _name = 'dmpi.crm.market.allocation.line'
 
-    @api.depends('crop','dmf','sb')
+    @api.depends('corp','dmf','sb')
     def _get_total(self):
     	for rec in self:
-    		rec.total = rec.crop + rec.dmf + rec.sb 
+    		rec.total = rec.corp + rec.dmf + rec.sb 
 
     def _get_product_crown(self):
         group = 'product_crown'
@@ -333,11 +230,79 @@ class DmpiCrmMarketAllocationLine(models.Model):
     allocation_id = fields.Many2one('dmpi.crm.market.allocation',"Allocation ID")
     grade = fields.Selection([('EX','Export'),('B','Class B'),('BA','Class B to A')], "Grade")
     product_crown   = fields.Selection(_get_product_crown,'Crown')
-    crop = fields.Float("Crop")
+    corp = fields.Float("CORP")
     dmf = fields.Float("DMF")
     sb = fields.Float("SB")
     total = fields.Float("Total",compute='_get_total')
 
+
+class DmpiCrmReportOrderLines(models.Model):
+    _name = 'dmpi.crm.report.order.lines'
+    _auto = False
+    _order = 'product_code_seq'
+
+
+    sold_to = fields.Char("Sold To")
+    notify_party = fields.Char("Notify Party")
+    ship_to = fields.Char("Ship To")
+    destination = fields.Char("Destination")
+    odoo_po_no = fields.Char("Odoo Po No")
+    sap_cn_no = fields.Char("SAP Cn No")
+    customer_ref = fields.Char("Customer Ref")
+    po_date = fields.Date("PO Date")
+    state = fields.Char("State")
+    week_no = fields.Char("Week No")
+    shell_color = fields.Char("Shell Color")
+    description = fields.Char("Description")
+    qty = fields.Integer("QTY")
+    product_code = fields.Char("Product Code")
+    product_code_seq = fields.Integer("Product Sequence")
+    product_crown = fields.Selection(CROWN,"Product Crown")
+    psd = fields.Integer("PSD")
+    price = fields.Float("Price")
+    amount = fields.Float("Amount")
+    country = fields.Char("Country")
+
+    @api.model_cr
+    def init(self):
+        tools.drop_view_if_exists(self._cr, 'dmpi_crm_report_order_lines')
+        self._cr.execute(""" create view dmpi_crm_report_order_lines as (
+SELECT 
+        sol.id,
+                            so.id as so_id,
+        cp.name as sold_to,
+        nt.customer_name as notify_party,
+        st.customer_name as ship_to,
+        so.destination,
+        co.name as odoo_po_no,
+        co.sap_cn_no,
+        co.customer_ref,
+        co.po_date,
+        so.state,
+        so.week_no,
+        so.shell_color,
+        sol.name as description, 
+        sol.qty, 
+        sol.product_code,
+        pc.sequence::INT as product_code_seq,
+        pc.product_crown,
+        pr.psd,
+        sol.price,
+        sol.qty * sol.price as amount,
+        cc.name as country
+FROM dmpi_crm_sale_order_line sol
+left join dmpi_crm_sale_order so on so.id = sol.order_id
+left join dmpi_crm_sale_contract co on co.id = so.contract_id
+left join dmpi_crm_partner cp on cp.id = co.partner_id
+left join dmpi_crm_ship_to st on st.id = so.ship_to_id
+left join dmpi_crm_ship_to nt on nt.id = so.notify_id
+left join dmpi_crm_product pr on pr.id = sol.product_id 
+left join dmpi_crm_product_code pc on pc.name = sol.product_code
+left join dmpi_crm_country cc on cc.id = st.country_id
+
+
+            )
+            """)
 
 
 

@@ -293,6 +293,7 @@ class DmpiCrmShipTo(models.Model):
     ship_to_detail = fields.Text("Consignee / Ship to Details")
     incoterm = fields.Char("Incoterm")
     mailing_address = fields.Text("Mailing Address")
+    country_id = fields.Many2one('dmpi.crm.country',"Country")
 
 
 class DmpiCrmContractType(models.Model):
