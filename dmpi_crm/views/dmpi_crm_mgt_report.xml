@@ -157,11 +157,12 @@
         </record>
 
 
-        <!-- <record id="view_dmpi_crm_report_order_lines_tree" model="ir.ui.view">
+        <record id="view_dmpi_crm_report_order_lines_tree" model="ir.ui.view">
             <field name="name">Order Line Report</field>
             <field name="model">dmpi.crm.report.order.lines</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="country"/>
                     <field name="sold_to"/>
                     <field name="notify_party"/>
                     <field name="ship_to"/>
@@ -182,12 +183,12 @@
                     <field name="amount"/>
                 </tree>
             </field>
-        </record> -->
+        </record>
 
         <record id="action_dmpi_crm_report_order_lines" model="ir.actions.act_window">
             <field name="name">Order Line Report</field>
             <field name="res_model">dmpi.crm.report.order.lines</field>
-            <field name="view_mode">pivot</field>
+            <field name="view_mode">pivot,tree</field>
             <field name="domain">[]</field>
            <!--  <field name="context" eval="{'search_default_filter_active':1}"/> -->
         </record>
