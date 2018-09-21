@@ -136,6 +136,7 @@ FROM (
 GROUP BY prod_code, sequence
 ORDER BY sequence
         """ % allocation_id
+        print (query)
         self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()    
         return result    
@@ -150,7 +151,7 @@ ORDER BY sequence
             td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
             a = lambda x,y: """<a href="/web#id=%s&view_type=form&model=dmpi.crm.sale.order&menu_id=96&action=107" target="self">%s</a> """ % (x,y) 
 
-            pd_res_vals = self.get_so_summary_table(rec.week_no)
+            pd_res_vals = self.get_so_summary_table(rec[0].week_no)
 
 
             h1 = []
