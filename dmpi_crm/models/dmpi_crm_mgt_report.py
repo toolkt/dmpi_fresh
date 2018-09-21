@@ -129,7 +129,7 @@ FROM (
     Sum(al.corp + al.sb + al.dmf) as qty
     from  dmpi_crm_market_allocation_line al
     JOIN dmpi_crm_product_code pc on (pc.product_crown = al.product_crown and pc.psd = al.psd)
-    where allocation_id = %s
+    where allocation_id = %s and pc.active is True
     group by pc.name,pc.sequence
     order by pc.sequence)
 )AS Q1
