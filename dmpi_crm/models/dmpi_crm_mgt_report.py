@@ -91,13 +91,13 @@ UNION ALL
     left join dmpi_crm_product prod on prod.id = sol.product_id
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
     left join dmpi_crm_country cc on cc.id = shp.country_id
-    where so.week_no like '%%%s%%'
+    where ctr.week_no like '%%%s%%'
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown,prod.psd
 
 )
         """  % week_no
 
-        # print (query)
+        print (query)
         self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()
 
@@ -150,7 +150,7 @@ ORDER BY sequence
             td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
             a = lambda x,y: """<a href="/web#id=%s&view_type=form&model=dmpi.crm.sale.order&menu_id=96&action=107" target="self">%s</a> """ % (x,y) 
 
-            pd_res_vals = self.get_so_summary_table(rec[0].week_no)
+            pd_res_vals = self.get_so_summary_table(rec.week_no)
 
 
             h1 = []
