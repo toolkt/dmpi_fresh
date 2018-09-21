@@ -43,5 +43,5 @@ access_user_customer_crm_sale_order_line,user.customer.crm.sale.order.line,model
 access_dmpi_crm_fiscal_year,user.dmpi.crm.fiscal.year,model_dmpi_crm_fiscal_year,base.group_user,1,1,1,1
 access_dmpi_crm_week,user.dmpi.crm.week,model_dmpi_crm_week,base.group_user,1,1,1,1
 access_dmpi_crm_market_allocation,user.dmpi.crm.market.allocation,model_dmpi_crm_market_allocation,base.group_user,1,1,1,1
-access_dmpi_crm_market_allocation.line,user.dmpi.crm.market.allocation.line,model_dmpi_crm_market_allocation,base.group_user,1,1,1,1
+access_dmpi_crm_market_allocation_line,user.dmpi.crm.market.allocation.line,model_dmpi_crm_market_allocation_line,base.group_user,1,1,1,1
 access_dmpi_crm_report_order_lines,user.dmpi.crm.report.order.lines,model_dmpi_crm_report_order_lines,base.group_user,1,1,1,1
