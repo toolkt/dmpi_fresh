@@ -2,10 +2,13 @@ from odoo import _
 from odoo import models, api, fields, tools
 from odoo.exceptions import ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
-
 import odoo.addons.decimal_precision as dp
-
 from odoo.http import request
+
+import xlsxwriter, base64
+# https://xlsxwriter.readthedocs.io/working_with_cell_notation.html
+from xlsxwriter.utility import xl_rowcol_to_cell
+import io
 
 # pip3 install Fabric3
 from fabric.api import *
@@ -15,8 +18,8 @@ import os
 import glob
 import csv
 
-import tempfile
-from io import BytesIO
+from tempfile import TemporaryFile
+# from io import BytesIO
 import re
 import pprint
 import base64
@@ -26,22 +29,26 @@ import numpy as np
 
 CROWN = [('C','w/Crown'),('CL','Crownless')]
 
+
+def read_data(data):
+    if data:
+        fileobj = TemporaryFile("w+")
+        fileobj.write(base64.b64decode(data).decode('utf-8'))
+        fileobj.seek(0)
+        line = csv.reader(fileobj, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
+        return line
+
+
+
 class DmpiCrmMarketAllocation(models.Model):
     _name = 'dmpi.crm.market.allocation'
     _inherit = ['mail.thread']
 
 
 
-    @api.multi
-    def action_generate_report(self):
-        for rec in self:
+    def get_so_summary_table(self,week_no):
 
-            th = lambda x: """<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % x 
-            td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
-            a = lambda x,y: """<a href="/web#id=%s&view_type=form&model=dmpi.crm.sale.order&menu_id=96&action=107" target="self">%s</a> """ % (x,y) 
-
-
-            query = """
+        query = """
 (
     SELECT 
             0 as so_id,
@@ -88,20 +95,67 @@ UNION ALL
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown,prod.psd
 
 )
-            """  % rec[0].week_no
+        """  % week_no
 
-            # print (query)
-            self.env.cr.execute(query)
-            result = self.env.cr.dictfetchall()
+        # print (query)
+        self.env.cr.execute(query)
+        result = self.env.cr.dictfetchall()
 
-            df = pd.DataFrame.from_dict(result)
-            pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to'], 
-                columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
-            print(pd_res)
-            pd_res_vals = pd_res.reset_index().values
+        df = pd.DataFrame.from_dict(result)
+        pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to'], 
+            columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
+        print(pd_res)
+
+
+        pd_res_vals = pd_res.reset_index().values
+        return pd_res_vals
+
+    def get_allocations(self,allocation_id):
+        query = """
+SELECT prod_code, SUM(qty) AS qty
+FROM (
+    (SELECT 
+    pc.sequence,
+    pc.name as prod_code,
+    0 as qty
+    FROM dmpi_crm_product_code pc where pc.active is True
+    order by pc.sequence)
+
+    UNION ALL
+
+    (SELECT  
+    pc.sequence,
+    pc.name as prod_code,
+    Sum(al.corp + al.sb + al.dmf) as qty
+    from  dmpi_crm_market_allocation_line al
+    JOIN dmpi_crm_product_code pc on (pc.product_crown = al.product_crown and pc.psd = al.psd)
+    where allocation_id = %s
+    group by pc.name,pc.sequence
+    order by pc.sequence)
+)AS Q1
+GROUP BY prod_code, sequence
+ORDER BY sequence
+        """ % allocation_id
+        self.env.cr.execute(query)
+        result = self.env.cr.dictfetchall()    
+        return result    
+
+
+
+    @api.multi
+    def action_generate_report(self):
+        for rec in self:
+
+            th = lambda x: """<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % x 
+            td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
+            a = lambda x,y: """<a href="/web#id=%s&view_type=form&model=dmpi.crm.sale.order&menu_id=96&action=107" target="self">%s</a> """ % (x,y) 
+
+            pd_res_vals = self.get_so_summary_table(rec[0].week_no)
+
 
             h1 = []
             h1.append(th('Country'))
+            h1.append(th('Customer'))
             h1.append(th('SO No'))
             h1.append(th('Ship To'))
 
@@ -109,7 +163,7 @@ UNION ALL
             number_of_active_products = len(active_products)
             for h in active_products:
                 h1.append(th(h.name))
-                
+
             h1.append(th('TOTAL'))
                 
             trow = []
@@ -148,43 +202,28 @@ UNION ALL
 
 
 
-            query = """
-SELECT prod_code, SUM(qty) AS qty
-FROM (
-    (SELECT 
-    pc.sequence,
-    pc.name as prod_code,
-    0 as qty
-    FROM dmpi_crm_product_code pc where pc.active is True
-    order by pc.sequence)
 
-    UNION ALL
+            alloc_data = []
+            alloc_data.append(th('Allocations'))
+            alloc_data.append(th(''))
+            alloc_data.append(th(''))
+            alloc_data.append(th(''))
 
-    (SELECT  
-    pc.sequence,
-    pc.name as prod_code,
-    Sum(al.crop + al.sb + al.dmf) as qty
-    from  dmpi_crm_market_allocation_line al
-    JOIN dmpi_crm_product_code pc on (pc.product_crown = al.product_crown and pc.psd = al.psd)
-    where allocation_id = 1
-    group by pc.name,pc.sequence
-    order by pc.sequence)
-)AS Q1
-GROUP BY prod_code, sequence
-ORDER BY sequence
-            """
-            self.env.cr.execute(query)
-            result = self.env.cr.dictfetchall()
+            for r in self.get_allocations(rec.id):
+                d = round(r['qty'])
+                alloc_data.append(th(d))
+
+            alloc_data = """<tr class="o_data_row"> %s </tr>""" % ''.join(alloc_data)
+            trow.append(alloc_data)
 
 
-            print (col_totals)
-            print (result)
+
+            # print (col_totals)
+            # print (result)
 
                     #Compute Totals
 
             # msg = """<a href="/web?#id=87&view_type=form&model=dmpi.crm.sale.contract&menu_id=84&action=97" target="self">test link</a> """
-
-            
 
             rec.html_report = """
                 <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
@@ -192,6 +231,137 @@ ORDER BY sequence
                     <tbody> %s </tbody>
                 </table>
             """ %(''.join(h1),''.join(trow))
+
+
+
+
+    @api.multi
+    def print_market_allocations(self):
+        for rec in self:
+            output = io.BytesIO()
+            workbook = xlsxwriter.Workbook(output)
+            summary = workbook.add_worksheet('Summary')
+
+            row1 = 0
+            col1 = 0
+            row = row1
+            col = col1
+
+            active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
+            number_of_active_products = len(active_products)
+
+            summary.write(row,col, 'SO ID') 
+            col += 1
+            summary.write(row,col, 'Country')
+            col += 1
+            summary.write(row,col, 'So No') 
+            col += 1
+            summary.write(row,col, 'Customer')
+            col += 1
+            summary.write(row,col, 'Ship To')
+            col += 1
+
+            for p in active_products: 
+                summary.write(row,col,p.name)
+                col += 1
+            summary.write(row,col, 'TOTAL') 
+            row += 1
+
+            pd_res_vals = self.get_so_summary_table(rec[0].week_no)
+
+            for r in pd_res_vals:
+                col = 0
+                if r[0] != 0:
+                    if r[0] != 'All':
+                        for c in r:
+                            summary.write(row,col, c)
+                            col += 1
+                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,5),xl_rowcol_to_cell(row,col-2))
+                        summary.write(row,col-1, totals) 
+                        row += 1
+                    else:
+                        summary.write(row,col, 'TOTAL') 
+                        col += 5
+                        total_col1 = col
+                        for p in active_products: 
+                            total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(1,col),xl_rowcol_to_cell(row-1,col))
+                            summary.write(row,col,total)
+                            col += 1
+                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
+                        summary.write(row,col, totals)                            
+                        row += 1
+
+
+            col = 0
+            summary.write(row,col, 'ALLOCATIONS') 
+            col += 5
+            total_col1 = col
+            for r in self.get_allocations(rec.id):
+                d = round(r['qty'],2)
+                summary.write(row,col, d)
+                col += 1
+            totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
+            summary.write(row,col, totals)
+            row += 1
+
+            col = 0
+            summary.write(row,col, 'VARIANCE') 
+            col += 5
+            total_col1 = col
+            for r in self.get_allocations(rec.id):
+                variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,col),xl_rowcol_to_cell(row-2,col))
+                summary.write(row,col, variance)
+                col += 1
+
+
+
+            workbook.close()
+            output.seek(0)
+            xy = output.read()
+            file = base64.encodestring(xy)
+            self.write({'excel_file':file})
+
+
+            button = {
+                'type' : 'ir.actions.act_url',
+                'url': '/web/content/dmpi.crm.market.allocation/%s/excel_file/market_allocation.xlsx?download=true'%(rec.id),
+                'target': 'new'
+                }
+            return button
+
+
+
+    @api.onchange('allocation_file')
+    def onchange_upload_file(self):
+        if self.allocation_file:
+            rows = read_data(self.allocation_file)
+
+            row_count = 0
+            error_count = 0
+            line_items = []
+            for r in rows:
+                errors = []
+                if r[0] != '':
+                    if row_count == 0: 
+                        print (r)
+                    else:
+                        item = {
+                            'psd': r[0],
+                            'product_crown': r[1],
+                            'grade': r[2],
+                            'corp': float(r[3].replace(',','')),
+                            'dmf': float(r[4].replace(',','')),
+                            'sb': float(r[5].replace(',','')),
+                        }
+
+                        #Add Error Checking
+
+                        line_items.append((0,0,item))
+                row_count+=1
+            self.line_ids.unlink() 
+            self.line_ids = line_items
+
+
 
 
     name = fields.Char("Name")
@@ -204,7 +374,9 @@ ORDER BY sequence
     line_ids = fields.One2many('dmpi.crm.market.allocation.line','allocation_id','Allocations', copy=True)
     state = fields.Selection([('draft','Draft'),('final','Done'),('cancel','Cancelled')], "State")
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'market_allocation_tag_rel', 'allocation_id', 'tag_id', string='Price Tags', copy=True)
-
+    excel_file = fields.Binary(string='Excel File')
+    allocation_file = fields.Binary(string='Allocation File')
+    allocation_error = fields.Text("ERROR")
 
 
 

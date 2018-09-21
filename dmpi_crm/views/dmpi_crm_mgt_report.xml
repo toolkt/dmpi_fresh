@@ -37,6 +37,12 @@
                     </header>
                     <!-- <sheet> -->
                         <div class="oe_button_box" name="button_box">
+                            <button name="print_market_allocations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-refresh"
+                                string="Download Allocation">
+                            </button>
                             <button name="action_generate_report"
                                 type="object"
                                 class="oe_stat_button"
@@ -70,6 +76,9 @@
                                 <field name="html_report_disp" readonly="1"/>
                             </page>
                             <page string="Allocations">
+                                <group>
+                                    <field name="allocation_file"/>
+                                </group>
                                 <field name="line_ids">
                                     <tree editable="bottom">
                                         <field name="psd"/>
@@ -82,8 +91,10 @@
                                     </tree>
                                 </field>                            
                             </page>    
-                            <page string="Notification">
-
+                            <page string="Settings">
+                                <group>
+                                    <center><field name="excel_file"/></center>
+                                </group>
                             </page>
                         </notebook>
                         <group>
