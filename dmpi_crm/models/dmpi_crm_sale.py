@@ -905,7 +905,7 @@ class DmpiCrmSaleOrder(models.Model):
 
     @api.onchange('ship_to_id')
     def on_change_ship_to(self):
-        self.notify_id = self.ship_to_id.id
+        # self.notify_id = self.ship_to_id.id
         self.sales_org = self.contract_id.partner_id.sales_org
         self.plant_id = self.contract_id.partner_id.default_plant
 

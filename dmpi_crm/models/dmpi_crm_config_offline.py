@@ -259,8 +259,6 @@ class DmpiCrmConfig(models.Model):
                                         so['contract_id'] = contract.id
 
 
-                                    #product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
-                                    # product = self.env['dmpi.crm.product'].search([('sku','=',row[14]),('partner_id','=',contract.partner_id.id)],limit=1)[0]
                                     product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
                                     #print(product)
                                     
