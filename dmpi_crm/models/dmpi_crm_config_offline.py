@@ -240,8 +240,9 @@ class DmpiCrmConfig(models.Model):
                                 if row[0] != '':     
                                     contract_id = 0
                                     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1)[0]
+                                    customer_code = contract.partner_id.customer_code
                                     ship_to_id = 0
-                                    ship_to = self.env['dmpi.crm.ship.to'].search([('ship_to_code','=',row[8])],limit=1)[0]
+                                    ship_to = self.env['dmpi.crm.ship.to'].search([('partner_od','=',row[8]),('customer_code','=',customer_code)],limit=1)[0]
                                     
                                     if contract:
 
@@ -252,14 +253,15 @@ class DmpiCrmConfig(models.Model):
                                         so['plant'] = row[17]
                                         so['requested_delivery_date'] = datetime.strptime(row[11], '%Y%m%d').strftime('%Y-%m-%d')
                                         so['ship_to_id'] = ship_to.id
-                                        so['notify_id'] = ship_to.id
+                                        # so['notify_id'] = ship_to.id
                                         # 'ref_po_no' : row[9],  
                                         # 'po_date' : row[10],
                                         so['contract_id'] = contract.id
 
 
                                     #product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
-                                    product = self.env['dmpi.crm.product'].search([('sku','=',row[14]),('partner_id','=',contract.partner_id.id)],limit=1)[0]
+                                    # product = self.env['dmpi.crm.product'].search([('sku','=',row[14]),('partner_id','=',contract.partner_id.id)],limit=1)[0]
+                                    product = self.env['dmpi.crm.product'].search([('sku','=',row[14])],limit=1)[0]
                                     #print(product)
                                     
                                     sol = {

@@ -410,7 +410,7 @@ class DmpiCrmSalesOrg(models.Model):
 class DmpiCrmProduct(models.Model):
     _name = 'dmpi.crm.product'
     _sql_constraints = [
-        ('unique_sku_customer', 'UNIQUE (sku,partner_id)', _('Similar Product Customer Combination Already Exist!'))
+        ('unique_sku', 'UNIQUE (sku)', _('Similar Material Already Exist!'))
     ]
 
 
