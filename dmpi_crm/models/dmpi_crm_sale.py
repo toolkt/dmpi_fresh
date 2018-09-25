@@ -903,6 +903,24 @@ class DmpiCrmSaleOrder(models.Model):
                 raise Warning("State is in Draft or on Hold. The SO was NOT Created")
 
 
+    @api.onchange('commercial_id')
+    def on_change_commercial_id(self):
+        # self.notify_id = self.ship_to_id.id
+        self.sales_org = self.contract_id.partner_id.sales_org
+        self.plant_id = self.contract_id.partner_id.default_plant
+
+
+        # self.env['']
+        # self.tag_ids = 
+        # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
+        # if sales_org:
+        #     self.sales_org = sales_org
+        # print("Onchange Partner")
+
+        tag_ids = self.contract_id.tag_ids.ids
+        self.tag_ids = [[6,0,tag_ids]]
+
+
     @api.onchange('ship_to_id')
     def on_change_ship_to(self):
         self.notify_id = self.ship_to_id.id
@@ -1094,7 +1112,41 @@ class DmpiCrmSaleOrder(models.Model):
             rec.total_qty = total_qty
 
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
-    ship_to_id = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
+
+    @api.multi
+    @api.depends('commercial_id')
+    def _get_partner_details(self):
+        for rec in self:
+            comm_code = rec.commercial_id
+            if comm_code:
+                if comm_code.ship_to_code:
+                    rec.ship_to_name = comm_code.ship_to_name + ' [' + comm_code.ship_to_code + ']'
+                else:
+                    rec.ship_to_name = comm_code.ship_to_name
+
+                if comm_code.notify_code:
+                    rec.notify_name = comm_code.notify_name + ' [' + comm_code.notify_code + ']'
+                else:
+                    rec.notify_name = comm_code.notify_name
+
+                if comm_code.mailing_code:
+                    rec.mailing_name_name = comm_code.mailing_name + ' [' + comm_code.mailing_code + ']'
+                else:
+                    rec.mailing_name_name = comm_code.mailing_name
+
+    @api.onchange('commercial_id')
+    def onchange_commercial_id(self):
+        for rec in self:
+            comm_code = rec.commercial_id
+            if comm_code:
+                rec.destination = comm_code.destination
+                rec.ship_line = comm_code.ship_line
+
+    commercial_id = fields.Many2one('dmpi.crm.ship.to', 'Commercial Code')
+    ship_to_name = fields.Char('Ship To', compute='_get_partner_details')
+    notify_name = fields.Char('Notify Party', compute='_get_partner_details')
+    mailing_name = fields.Char('Mailing Address', compute='_get_partner_details')
+    ship_to_id = fields.Many2one("dmpi.crm.ship.to", "Ship to Party")
     notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
     # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
     sales_org = fields.Char("Sales Org")
@@ -1228,7 +1280,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
 
-    name = fields.Char("Description", related="product_id.name")
+    name = fields.Char("Description", related="product_id.name", store=True)
     contract_line_no = fields.Integer('Contract Line No')
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')

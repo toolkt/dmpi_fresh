@@ -145,7 +145,7 @@
                                     <tree editable="bottom">
                                         <field name="contract_line_no" readonly="1" string="CO#"/>
                                         <field name="so_line_no" readonly="1" string="SO#"/>
-                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_id', '=', parent.partner_id)]" required="1"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_ids', 'in', parent.partner_id)]" required="1"/>
                                         <field name="product_code"/>
                                         <field name="name" />
                                         <field name="price" />
@@ -248,8 +248,12 @@
                         </div>
                         <group>
                             <group>
-                                <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/>
-                                <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" domain="[('partner_id.id','in',[partner_id])]" required="1"/>
+                                <field name="commercial_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/>
+                                <field name="ship_to_name"/>
+                                <field name="notify_name"/>
+                                <field name="mailing_name"/>
+                                <!-- <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/> -->
+                                <!-- <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" domain="[('partner_id.id','in',[partner_id])]" required="1"/> -->
                                 <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                                 <field name="sales_org" required="1"/>
                                 <field name="plant" invisible="1"/>
@@ -284,7 +288,7 @@
                                     <tree editable="bottom">
                                         <field name="contract_line_no" readonly="1" string="CO#"/>
                                         <field name="so_line_no" readonly="1" string="SO#"/>
-                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_id', '=', parent.partner_id)]" required="1"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_ids', 'in', parent.partner_id)]" required="1"/>
                                         <field name="product_code"/>
                                         <field name="name" readonly="1"/>
                                         <field name="price" />

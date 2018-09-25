@@ -71,6 +71,7 @@ class DmpiCrmPartner(models.Model):
 
 
     name            = fields.Char("Name")
+    short_name      = fields.Char('Short Name')
     email           = fields.Char("Email")
     active          = fields.Boolean("Active", default=True)
     default_plant   = fields.Many2one('dmpi.crm.plant',"Default Plant")
@@ -83,13 +84,15 @@ class DmpiCrmPartner(models.Model):
     postal_code     = fields.Char("Postal Code")
     phone           = fields.Char("Telephone")
     fax             = fields.Char("Fax")
+    country         = fields.Many2one('dmpi.crm.country',string='Country')
+    country_code    = fields.Char('Country Code', related="country.code")
     sales_org       = fields.Char("Sales Org")
     dist_channel    = fields.Char("Distribution Channel")
     division        = fields.Char("Division")
     # plant           = fields.Char("Plant")
     ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'partner_tag_rel', 'partner_id', 'tag_id', string='Default Price Tags', copy=True)
-
+    product_ids = fields.Many2many('dmpi.crm.product','dmpi_partner_product_rel','partner_id','product_id',string='Assigned Products')
 
 
     #DEFAULTS
@@ -241,6 +244,7 @@ class DmpiCrmPartnerARLine(models.Model):
 
 class DmpiCrmShipTo(models.Model):
     _name = 'dmpi.crm.ship.to'
+    _order = 'customer_name, name'
 
 
     @api.model
@@ -264,7 +268,7 @@ class DmpiCrmShipTo(models.Model):
             # if rec.destination:
                 # destination = rec.destination
             # name = destination+' [' + rec.name+ ']'
-            name = rec.name + ' [' + rec.ship_to_code + ']'
+            name = rec.customer_name + ' [' + rec.name + ']'
             result.append((rec.id, name))
         return result
 
@@ -276,24 +280,75 @@ class DmpiCrmShipTo(models.Model):
                 if partner:
                     rec.partner_id = partner[0].id
 
+    # headers
     name = fields.Char("Commercial Code", required=True)
-    name_disp = fields.Char("Ship to Code", placeholder="Shipto Code", related='name')
+    name_disp = fields.Char("Display Name", placeholder="Ship to Code", related='customer_name')
     customer_name = fields.Char("Corporate Name")
     customer_code = fields.Char("Customer Code")
     partner_id = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner_id', store=True)
-    registered_address = fields.Text("Registered Address")
-    contact_no = fields.Char("Contact No")
-    contact_person = fields.Char("Contact Person")
-    contact_person_email = fields.Char("Contact Email")
     destination = fields.Char("Destination")
-    notify_party = fields.Char("Notify Party")
-    notify_party_detail = fields.Text("Notify Party Details")
-    ship_to_code = fields.Char("Ship to Code")
-    ship_to = fields.Char("Consignee / Ship to")
-    ship_to_detail = fields.Text("Consignee / Ship to Details")
-    incoterm = fields.Char("Incoterm")
-    mailing_address = fields.Text("Mailing Address")
-    country_id = fields.Many2one('dmpi.crm.country',"Country")
+    ship_line = fields.Char("Shipping Line")
+    incoterm = fields.Char("Incoterm / Freight")
+    country_id = fields.Many2one('dmpi.crm.country', 'Country')
+
+    # ship to details
+    ship_to_name = fields.Char('Ship to Name')
+    ship_to_code = fields.Char('Ship to Code')
+    ship_to_street = fields.Char('Ship to Street')
+    ship_to_street2 = fields.Char('Ship to Street2')
+    ship_to_city = fields.Char('Ship to City')
+    ship_to_zip = fields.Char('Ship to Zip')
+    # ship_to_country = fields.Char('Ship to Country')
+    ship_to_phone = fields.Char('Ship to Phone')
+    ship_to_fax = fields.Char('Ship to Fax')
+    ship_to_person = fields.Char('Ship to Person')
+    ship_to_mobile = fields.Char('Ship to Mobile')
+    ship_to_email = fields.Char('Ship to Email')
+    ship_to_notes = fields.Text('Ship to Notes')
+
+    # notify 
+    notify_name = fields.Char('Notify Name')
+    notify_code = fields.Char('Notify Code')
+    notify_street = fields.Char('Notify Street')
+    notify_street2 = fields.Char('Notify Street2')
+    notify_city = fields.Char('Notify City')
+    notify_zip = fields.Char('Notify Zip')
+    # notify_country = fields.Char('Notify Country')
+    notify_phone = fields.Char('Notify Phone')
+    notify_fax = fields.Char('Notify Fax')
+    notify_person = fields.Char('Notify Person')
+    notify_mobile = fields.Char('Notify Mobile')
+    notify_email = fields.Char('Notify Email')
+    notify_notes = fields.Text('Notify Notes')
+
+    # mailing 
+    mailing_name = fields.Char('Mailing Name')
+    mailing_code = fields.Char('Mailing Code')
+    mailing_street = fields.Char('Mailing Street')
+    mailing_street2 = fields.Char('Mailing Street2')
+    mailing_city = fields.Char('Mailing City')
+    mailing_zip = fields.Char('Mailing Zip')
+    # mailing_country = fields.Char('Mailing Country')
+    mailing_phone = fields.Char('Mailing Phone')
+    mailing_fax = fields.Char('Mailing Fax')
+    mailing_person = fields.Char('Mailing Person')
+    mailing_mobile = fields.Char('Mailing Mobile')
+    mailing_email = fields.Char('Mailing Email')
+    mailing_notes = fields.Text('Mailing Notes')
+
+    # registered_address = fields.Text("Registered Address")
+    # contact_no = fields.Char("Contact No")
+    # contact_person = fields.Char("Contact Person")
+    # contact_person_email = fields.Char("Contact Email")
+    # destination = fields.Char("Destination")
+    # notify_party = fields.Char("Notify Party")
+    # notify_party_detail = fields.Text("Notify Party Details")
+    # ship_to_code = fields.Char("Ship to Code")
+    # ship_to = fields.Char("Consignee / Ship to")
+    # ship_to_detail = fields.Text("Consignee / Ship to Details")
+    # incoterm = fields.Char("Incoterm")
+    # mailing_address = fields.Text("Mailing Address")
+    # country_id = fields.Many2one('dmpi.crm.country',"Country")
 
 
 class DmpiCrmContractType(models.Model):
@@ -413,23 +468,38 @@ class DmpiCrmProduct(models.Model):
 
     def _get_code(self):
         print("TODO: SET THE CODE BASED ON CROWN AND PSD")
-
-
-    name            = fields.Char("Name")
-    code            = fields.Char("Pack Code Name", related='code_id.name')
-    code_id         = fields.Many2one('dmpi.crm.product.code','Pack Code')
-    sku             = fields.Char("SKU")
+    
     partner_id      = fields.Many2one('dmpi.crm.partner','Customer')
-    product_class   = fields.Selection(_get_product_class,'Class')
-    product_crown   = fields.Selection(CROWN, string='Crown',related='code_id.product_crown')
-    psd             = fields.Integer("PSD")
-    weight          = fields.Float("Weight")
-    box             = fields.Float("Box")
-    volume          = fields.Float("Volume")
-    crate_box       = fields.Float("Crate/Box")
-    dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
-    active          = fields.Boolean("Active", default=True)
+
+    fruit_size      = fields.Char("Fruit Size")
+    fruit_count     = fields.Char("Fruit Count")
+    weight          = fields.Float("Gross Weight")
+    net_weight      = fields.Float("Net Weight")
+    psd             = fields.Integer("Pack Size")
+    uom             = fields.Char("UOM")
+    case_factor     = fields.Float("Case Factor")
+    code_id         = fields.Many2one('dmpi.crm.product.code','Pack Code')
+    code            = fields.Char("Pack Code Name", related='code_id.name')
+    product_crown   = fields.Selection(CROWN, string='Crown', related='code_id.product_crown')
+    product_class   = fields.Char('Fruit Class')
+
+    sku             = fields.Char("SKU") # sku
+    name            = fields.Char("Name") # description
+
     packaging       = fields.Char("Packaging")
+    category        = fields.Char('Category')
+    sub_category    = fields.Char('Sub-Category')
+    brand           = fields.Char('Brand')
+    sub_brand       = fields.Char('Sub-Brand')
+    variant         = fields.Many2one('dmpi.crm.variety','Variant')
+
+    # box             = fields.Float("Box")
+    # volume          = fields.Float("Volume")
+    # crate_box       = fields.Float("Crate/Box")
+    # dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
+    active          = fields.Boolean("Active", default=True)
+    
+    partner_ids     = fields.Many2many('dmpi.crm.partner','dmpi_partner_product_rel','product_id','partner_id',string='Assigned Partners')
 
 
 
