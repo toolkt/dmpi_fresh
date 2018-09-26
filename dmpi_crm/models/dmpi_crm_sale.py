@@ -1101,10 +1101,10 @@ class DmpiCrmSaleOrder(models.Model):
         for rec in self:
             comm_code = rec.ship_to_id
             if comm_code:
-                if comm_code.ship_to_code:
-                    rec.ship_to_name = comm_code.ship_to_name + ' [' + comm_code.ship_to_code + ']'
-                else:
+                if not(comm_code.ship_to_code) or not(comm_code.ship_to_name):
                     rec.ship_to_name = comm_code.ship_to_name
+                else:
+                    rec.ship_to_name = comm_code.ship_to_name + ' [' + comm_code.ship_to_code + ']'
 
                 if comm_code.notify_code:
                     rec.notify_name = comm_code.notify_name + ' [' + comm_code.notify_code + ']'

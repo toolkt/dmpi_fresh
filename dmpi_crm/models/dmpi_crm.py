@@ -635,6 +635,7 @@ class DmpiCRMProductCode(models.Model):
     product_crown   = fields.Selection(CROWN,'Crown')
     sequence = fields.Integer("Sequence")
     field_name = fields.Char("Field Name")
+    factor = fields.Float("Factor")
     active = fields.Boolean("Active", default=True)
 
 class DmpiCRMPaymentTerms(models.Model):

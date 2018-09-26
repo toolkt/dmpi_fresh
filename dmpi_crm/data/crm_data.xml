@@ -18,7 +18,7 @@
 
 
         <!-- PRODUCT TYPES with crown-->
-<!--         <record id="crm_product_code_p101" model="dmpi.crm.product.code">
+        <record id="crm_product_code_p101" model="dmpi.crm.product.code">
             <field name="name">P5</field>
             <field name="description">P5</field>
             <field name="field_name">p101</field>
@@ -81,9 +81,9 @@
             <field name="psd">12</field>
             <field name="product_crown">C</field>
             <field name="active">1</field>
-        </record> -->
+        </record>
         <!-- UNASSIGNED -->
-<!--         <record id="crm_product_code_p108" model="dmpi.crm.product.code">
+        <record id="crm_product_code_p108" model="dmpi.crm.product.code">
             <field name="name">UA</field>
             <field name="description">UNASSIGNED</field>
             <field name="field_name">p108</field>
@@ -109,12 +109,12 @@
             <field name="psd">0</field>
             <field name="product_crown">C</field>
             <field name="active">0</field>
-        </record> -->
+        </record>
 
 
 
         <!-- PRODUCT TYPES crownless-->
-<!--         <record id="crm_product_code_p201" model="dmpi.crm.product.code">
+        <record id="crm_product_code_p201" model="dmpi.crm.product.code">
             <field name="name">P5C7</field>
             <field name="description">P5C7</field>
             <field name="field_name">p201</field>
@@ -176,9 +176,9 @@
             <field name="psd">12</field>
             <field name="product_crown">CL</field>
             <field name="active">1</field>
-        </record> -->
+        </record>
         <!-- UNASSIGNED -->
-<!--         <record id="crm_product_code_p208" model="dmpi.crm.product.code">
+        <record id="crm_product_code_p208" model="dmpi.crm.product.code">
             <field name="name">UA</field>
             <field name="description">UNASSIGNED</field>
             <field name="field_name">p208</field>
@@ -204,7 +204,7 @@
             <field name="psd">0</field>
             <field name="product_crown">CL</field>
             <field name="active">0</field>
-        </record> -->
+        </record>
 
     </data>
 </odoo>

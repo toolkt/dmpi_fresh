@@ -714,6 +714,7 @@
                     <field name="name"/>
                     <field name="description"/>
                     <field name="psd"/>
+                    <field name="factor"/>
                     <field name="product_crown"/>
                     <field name="sequence"/>
                     <field name="active"/>
@@ -770,6 +771,7 @@
                     <field name="brand"/>
                     <field name="sub_brand"/>
                     <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                    <field name="partner_ids" widget="many2many_tags"/>
                     <field name="active"/>
                 </tree>
             </field>

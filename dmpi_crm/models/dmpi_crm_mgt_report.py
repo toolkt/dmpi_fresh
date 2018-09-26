@@ -50,20 +50,21 @@ class DmpiCrmMarketAllocation(models.Model):
 
         query = """
 (
-    SELECT 
+    SELECT
             0 as so_id,
             '' as week_no,
             '' as country,
             '' as so_no,
             '' as customer,
-            '' as ship_to, 
+            '' as ship_to,
+            '' as product_class,
             name as prod_code,
             sequence,
             '' as shell_color,
-            product_crown, 
+            product_crown,
                         psd,
             0 as qty
-    FROM dmpi_crm_product_code pc WHERE active=TRUE 
+    FROM dmpi_crm_product_code pc WHERE active=TRUE
     ORDER BY pc.sequence
 )
 
@@ -77,10 +78,11 @@ UNION ALL
             so.name as so_no,
             cust.name as customer,
             shp.name as ship_to,
+                        prod.product_class,
             pc.name as prod_code,
             pc.sequence,
             so.shell_color,
-            prod.product_crown,
+            pc.product_crown,
             prod.psd,
             sum(sol.qty) as qty
     from dmpi_crm_sale_order_line sol
@@ -92,9 +94,10 @@ UNION ALL
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
     left join dmpi_crm_country cc on cc.id = shp.country_id
     where ctr.week_no like '%%%s%%'
-    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,pc.name,pc.sequence,so.shell_color,prod.product_crown,prod.psd
+    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,prod.product_class,pc.name,pc.sequence,so.shell_color,pc.product_crown,prod.psd
 
 )
+
         """  % week_no
 
         print (query)
@@ -102,7 +105,7 @@ UNION ALL
         result = self.env.cr.dictfetchall()
 
         df = pd.DataFrame.from_dict(result)
-        pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to'], 
+        pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to','product_class'], 
             columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
         print(pd_res)
 
@@ -117,6 +120,7 @@ FROM (
     (SELECT 
     pc.sequence,
     pc.name as prod_code,
+    pc.psd,
     0 as qty
     FROM dmpi_crm_product_code pc where pc.active is True
     order by pc.sequence)
@@ -126,19 +130,21 @@ FROM (
     (SELECT  
     pc.sequence,
     pc.name as prod_code,
+    pc.psd,
     Sum(al.corp + al.sb + al.dmf) as qty
     from  dmpi_crm_market_allocation_line al
     JOIN dmpi_crm_product_code pc on (pc.product_crown = al.product_crown and pc.psd = al.psd)
     where allocation_id = %s and pc.active is True
-    group by pc.name,pc.sequence
+    group by pc.name,pc.sequence,pc.psd
     order by pc.sequence)
 )AS Q1
-GROUP BY prod_code, sequence
+GROUP BY prod_code, sequence, psd
 ORDER BY sequence
         """ % allocation_id
         print (query)
         self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()    
+        result = self.env.cr.dictfetchall()   
+        # print(result) 
         return result    
 
 
@@ -159,6 +165,7 @@ ORDER BY sequence
             h1.append(th('Customer'))
             h1.append(th('SO No'))
             h1.append(th('Ship To'))
+            h1.append(th('Class'))
 
             active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
             number_of_active_products = len(active_products)
@@ -178,9 +185,10 @@ ORDER BY sequence
                         td_data.append(th(a(l[0],l[2])))
                         td_data.append(th(l[3]))
                         td_data.append(th(l[4]))
+                        td_data.append(th(l[5]))
                         
 
-                        for d in l[5:]:
+                        for d in l[6:]:
                             d = round(d)
                             td_data.append(th(d))
                             # col_totals.append({'prod_code': , 'qty':d})
@@ -193,8 +201,9 @@ ORDER BY sequence
                         td_data.append(td(a(l[0],l[2])))
                         td_data.append(td(l[3]))
                         td_data.append(td(l[4]))
+                        td_data.append(td(l[5]))
                         
-                        for d in l[5:]:
+                        for d in l[6:]:
                             d = round(d)
                             td_data.append(td(d))
 
@@ -206,6 +215,7 @@ ORDER BY sequence
 
             alloc_data = []
             alloc_data.append(th('Allocations'))
+            alloc_data.append(th(''))
             alloc_data.append(th(''))
             alloc_data.append(th(''))
             alloc_data.append(th(''))
@@ -243,29 +253,52 @@ ORDER BY sequence
             workbook = xlsxwriter.Workbook(output)
             summary = workbook.add_worksheet('Summary')
 
-            row1 = 0
+            row1 = 4
             col1 = 0
             row = row1
             col = col1
 
+
+
+            #Generate Header 1
+            col = 0
             active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
             number_of_active_products = len(active_products)
 
-            summary.write(row,col, 'SO ID') 
-            col += 1
-            summary.write(row,col, 'Country')
-            col += 1
-            summary.write(row,col, 'So No') 
-            col += 1
-            summary.write(row,col, 'Customer')
-            col += 1
-            summary.write(row,col, 'Ship To')
-            col += 1
 
-            for p in active_products: 
-                summary.write(row,col,p.name)
+
+            summary.write(row1-1,col, 'FACTORS') 
+            columns = ['SO ID','Country','So No','Customer','Ship To','Class']
+            for c in columns:
+                summary.write(row,col, c) 
                 col += 1
+            cc_col = [{'psd':''}]
+            for p in active_products: 
+                summary.write(row1-1,col,p.factor) #Factors
+                summary.write(row,col,p.name)
+                
+                exist = False
+                for c in cc_col:
+                    if c['psd'] == p.psd:
+                        exist = True
+
+                if exist:
+                    for c in cc_col:
+                        if c['psd'] == p.psd:                    
+                            if c['col1'] > 0:
+                                c['col2'] = col
+                else:
+                    cc_col.append({'psd':p.psd, 'col1':col})
+
+                col += 1
+
             summary.write(row,col, 'TOTAL') 
+
+            
+
+
+
+            
             row += 1
 
             pd_res_vals = self.get_so_summary_table(rec[0].week_no)
@@ -277,16 +310,18 @@ ORDER BY sequence
                         for c in r:
                             summary.write(row,col, c)
                             col += 1
-                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,5),xl_rowcol_to_cell(row,col-2))
+                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,len(columns)),xl_rowcol_to_cell(row,col-2)) #Totals Side
                         summary.write(row,col-1, totals) 
                         row += 1
                     else:
                         summary.write(row,col, 'TOTAL') 
-                        col += 5
+                        summary.write(row1-2,col, 'TOTAL') #Top Totals
+                        col += len(columns)
                         total_col1 = col
                         for p in active_products: 
-                            total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(1,col),xl_rowcol_to_cell(row-1,col))
+                            total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row1+1,col),xl_rowcol_to_cell(row-1,col))
                             summary.write(row,col,total)
+                            summary.write(row1-2,col,total) #Top Totals
                             col += 1
                         totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
                         summary.write(row,col, totals)                            
@@ -295,11 +330,13 @@ ORDER BY sequence
 
             col = 0
             summary.write(row,col, 'ALLOCATIONS') 
-            col += 5
+            summary.write(row1-3,col, 'ALLOCATIONS') 
+            col += len(columns)
             total_col1 = col
             for r in self.get_allocations(rec.id):
                 d = round(r['qty'],2)
                 summary.write(row,col, d)
+                summary.write(row1-3,col, d)
                 col += 1
             totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
             summary.write(row,col, totals)
@@ -307,11 +344,13 @@ ORDER BY sequence
 
             col = 0
             summary.write(row,col, 'VARIANCE') 
-            col += 5
+            summary.write(row1-4,col, 'VARIANCE') 
+            col += len(columns)
             total_col1 = col
             for r in self.get_allocations(rec.id):
                 variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,col),xl_rowcol_to_cell(row-2,col))
                 summary.write(row,col, variance)
+                summary.write(row1-4,col, variance)
                 col += 1
 
 
@@ -356,11 +395,13 @@ ORDER BY sequence
                         }
 
                         #Add Error Checking
-
+                        print(item)
                         line_items.append((0,0,item))
                 row_count+=1
-            self.line_ids.unlink() 
-            self.line_ids = line_items
+            
+            if len(line_items) > 0:
+                self.line_ids.unlink() 
+                self.line_ids = line_items
 
 
 
@@ -389,25 +430,23 @@ class DmpiCrmMarketAllocationLine(models.Model):
     	for rec in self:
     		rec.total = rec.corp + rec.dmf + rec.sb 
 
-    def _get_product_crown(self):
-        group = 'product_crown'
-        query = """SELECT cs.select_name,cs.select_value
-                from dmpi_crm_config_selection cs
-                left join dmpi_crm_config cc on cc.id = cs.config_id
-                where select_group = '%s'  and cc.active is True and cc.default is True
-                order by sequence 
-                """ % group
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-        res = [(r['select_value'],r['select_name']) for r in result]
-        return res
+    # def _get_product_crown(self):
+    #     query = """SELECT pc.name, pc.description 
+    #                 from dmpi_crm_product_code pc 
+    #                 where active is True order by sequence
+    #             """
+    #     # print(query)
+    #     self.env.cr.execute(query)
+    #     result = self.env.cr.dictfetchall()
+    #     res = [(r['name'],r['description']) for r in result]
+    #     return res
 
 
     # name = fields.Char("Name")
     psd = fields.Integer("PSD")
     allocation_id = fields.Many2one('dmpi.crm.market.allocation',"Allocation ID", ondelete='cascade')
     grade = fields.Selection([('EX','Export'),('B','Class B'),('BA','Class B to A')], "Grade")
-    product_crown   = fields.Selection(_get_product_crown,'Crown')
+    product_crown   = fields.Selection(CROWN,'Crown')
     corp = fields.Float("CORP")
     dmf = fields.Float("DMF")
     sb = fields.Float("SB")
