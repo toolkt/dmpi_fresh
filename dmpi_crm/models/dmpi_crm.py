@@ -85,7 +85,7 @@ class DmpiCrmPartner(models.Model):
     phone           = fields.Char("Telephone")
     fax             = fields.Char("Fax")
     country         = fields.Many2one('dmpi.crm.country',string='Country')
-    country_code    = fields.Char('Country Code', related="country.code")
+    country_code    = fields.Char('Country Code', related="country.code", store=True)
     sales_org       = fields.Char("Sales Org")
     dist_channel    = fields.Char("Distribution Channel")
     division        = fields.Char("Division")
@@ -282,7 +282,7 @@ class DmpiCrmShipTo(models.Model):
 
     # headers
     name = fields.Char("Commercial Code", required=True)
-    name_disp = fields.Char("Display Name", placeholder="Ship to Code", related='customer_name')
+    name_disp = fields.Char("Display Name", placeholder="Ship to Code", related='customer_name', store=True)
     customer_name = fields.Char("Corporate Name")
     customer_code = fields.Char("Customer Code")
     partner_id = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner_id', store=True)
@@ -479,8 +479,8 @@ class DmpiCrmProduct(models.Model):
     uom             = fields.Char("UOM")
     case_factor     = fields.Float("Case Factor")
     code_id         = fields.Many2one('dmpi.crm.product.code','Pack Code')
-    code            = fields.Char("Pack Code Name", related='code_id.name')
-    product_crown   = fields.Selection(CROWN, string='Crown', related='code_id.product_crown')
+    code            = fields.Char("Pack Code Name", related='code_id.name', store=True)
+    product_crown   = fields.Selection(CROWN, string='Crown', related='code_id.product_crown', store=True)
     product_class   = fields.Char('Fruit Class')
 
     sku             = fields.Char("SKU") # sku
