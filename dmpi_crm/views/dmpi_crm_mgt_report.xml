@@ -71,7 +71,16 @@
 
                     
                         <notebook>
-                            <page string="Report">
+                            <page string="Current Allocation">
+                                <group>
+                                    <group>
+                                        <field name="excel_file" string="UPLOAD FINAL ALLOCATIONS"/>
+                                    </group>
+                                    <group>
+                                        <button name="process_go" string="Process GO" type="object" class="oe_highlight" confirm="Please Confirm Action"/>
+                                        <button name="process_all" string="Process ALL" type="object" class="oe_highlight" confirm="Please Confirm Action"/>
+                                    </group>
+                                </group>
                                 <field name="html_report" invisible="1"/>
                                 <field name="html_report_disp" readonly="1"/>
                             </page>
@@ -91,11 +100,6 @@
                                     </tree>
                                 </field>                            
                             </page>    
-                            <page string="Settings">
-                                <group>
-                                    <center><field name="excel_file"/></center>
-                                </group>
-                            </page>
                         </notebook>
                         <group>
                                 <div class="oe_chatter">

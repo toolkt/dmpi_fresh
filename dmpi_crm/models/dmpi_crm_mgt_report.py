@@ -1,6 +1,7 @@
 from odoo import _
 from odoo import models, api, fields, tools
 from odoo.exceptions import ValidationError, AccessError, UserError
+from odoo.tools.mimetypes import guess_mimetype
 from datetime import datetime, timedelta
 import odoo.addons.decimal_precision as dp
 from odoo.http import request
@@ -26,9 +27,16 @@ import base64
 import pandas as pd
 import numpy as np
 
+from xlrd import open_workbook
+
 
 CROWN = [('C','w/Crown'),('CL','Crownless')]
-
+FILE_TYPE_DICT = {
+    'text/csv': ('csv','SAP'),
+    'application/octet-stream': ('csv','SAP'),
+    'application/vnd.ms-excel': ('xl','AS400'),
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ('xl','AS400')
+}
 
 def read_data(data):
     if data:
@@ -251,6 +259,7 @@ ORDER BY sequence
         for rec in self:
             output = io.BytesIO()
             workbook = xlsxwriter.Workbook(output)
+            details = workbook.add_worksheet('Details')
             summary = workbook.add_worksheet('Summary')
 
             row1 = 4
@@ -258,7 +267,10 @@ ORDER BY sequence
             row = row1
             col = col1
 
-
+            first_row = row1
+            first_col = col1
+            last_row = 0
+            last_col = 0
 
             #Generate Header 1
             col = 0
@@ -266,16 +278,15 @@ ORDER BY sequence
             number_of_active_products = len(active_products)
 
 
-
-            summary.write(row1-1,col, 'FACTORS') 
+            details.write(row1-1,col, 'FACTORS') 
             columns = ['SO ID','Country','So No','Customer','Ship To','Class']
             for c in columns:
-                summary.write(row,col, c) 
+                details.write(row,col, c) 
                 col += 1
-            cc_col = [{'psd':''}]
+            cc_col = []
             for p in active_products: 
-                summary.write(row1-1,col,p.factor) #Factors
-                summary.write(row,col,p.name)
+                details.write(row1-1,col,p.factor) #Factors
+                details.write(row,col,p.name)
                 
                 exist = False
                 for c in cc_col:
@@ -292,66 +303,151 @@ ORDER BY sequence
 
                 col += 1
 
-            summary.write(row,col, 'TOTAL') 
-
             
+            details.write(row,col, 'TOTAL') 
+            col += 1
+            details.write(row,col, 'STATUS') 
+            last_col = col
 
-
-
-            
+            #Common cases Header
+            cc_col1 = col
+            cc_col1 += 4
+            details.write(row-1,cc_col1, 'COMMON CASES') 
+            # print(cc_col)
+            h_col = cc_col1
+            for i in cc_col:
+                details.write(row,h_col,i['psd']) 
+                h_col += 1
             row += 1
+
 
             pd_res_vals = self.get_so_summary_table(rec[0].week_no)
 
             for r in pd_res_vals:
                 col = 0
+                
                 if r[0] != 0:
                     if r[0] != 'All':
                         for c in r:
-                            summary.write(row,col, c)
+                            details.write(row,col, c)
                             col += 1
                         totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,len(columns)),xl_rowcol_to_cell(row,col-2)) #Totals Side
-                        summary.write(row,col-1, totals) 
+                        details.write(row,col-1, totals) 
+
+                        #CommonCases Conversions
+                        cc_val_col1 = cc_col1
+                        for i in cc_col:
+                            # print(i)
+                            vals = ""
+                            if 'col2' in i.keys():
+                                vals = "=%s*%s+%s*%s" % (
+                                        xl_rowcol_to_cell(row,i['col1']),xl_rowcol_to_cell(row1-1,i['col1']),
+                                        xl_rowcol_to_cell(row,i['col2']),xl_rowcol_to_cell(row1-1,i['col2'])
+                                    )
+                            else:
+                                vals = "=%s*%s" % (
+                                        xl_rowcol_to_cell(row,i['col1']),xl_rowcol_to_cell(row1-1,i['col1'])
+                                    )
+                            details.write(row,cc_val_col1,vals) 
+                            cc_val_col1 += 1
+
+                        total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,cc_col1),xl_rowcol_to_cell(row,cc_val_col1-1))
+                        details.write(row,cc_val_col1,total) 
+
                         row += 1
                     else:
-                        summary.write(row,col, 'TOTAL') 
-                        summary.write(row1-2,col, 'TOTAL') #Top Totals
+                        details.write(row,col, 'TOTAL') 
+                        details.write(row1-2,col, 'TOTAL') #Top Totals
                         col += len(columns)
                         total_col1 = col
                         for p in active_products: 
                             total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row1+1,col),xl_rowcol_to_cell(row-1,col))
-                            summary.write(row,col,total)
-                            summary.write(row1-2,col,total) #Top Totals
+                            details.write(row,col,total)
+                            details.write(row1-2,col,total) #Top Totals
                             col += 1
                         totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
-                        summary.write(row,col, totals)                            
+                        details.write(row,col, totals)                            
+                        
+
+                        #CommonCases Conversions TOTALS
+                        cc_val_col1 = cc_col1
+                        for i in cc_col:
+                            # print(i)
+                            # Totals
+                            vals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row1+1,cc_val_col1),xl_rowcol_to_cell(row-1,cc_val_col1))
+                            details.write(row,cc_val_col1,vals) 
+                            details.write(row1-2,cc_val_col1,vals) #Top Totals
+                            cc_val_col1 += 1
+
+                        last_row = row
                         row += 1
 
 
             col = 0
-            summary.write(row,col, 'ALLOCATIONS') 
-            summary.write(row1-3,col, 'ALLOCATIONS') 
+            details.write(row,col, 'ALLOCATIONS') 
+            details.write(row1-3,col, 'ALLOCATIONS') 
             col += len(columns)
             total_col1 = col
             for r in self.get_allocations(rec.id):
                 d = round(r['qty'],2)
-                summary.write(row,col, d)
-                summary.write(row1-3,col, d)
+                details.write(row,col, d)
+                details.write(row1-3,col, d)
                 col += 1
             totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
-            summary.write(row,col, totals)
+            details.write(row,col, totals)
+            
+            #CommonCases Conversions Allocations
+            cc_val_col1 = cc_col1
+            for i in cc_col:
+                # print(i)
+                vals = ""
+                if 'col2' in i.keys():
+                    vals = "=%s+%s" % (xl_rowcol_to_cell(row,i['col1']), xl_rowcol_to_cell(row,i['col2']))
+                else:
+                    vals = "=%s" % ( xl_rowcol_to_cell(row,i['col1']) )
+                details.write(row,cc_val_col1,vals) 
+                details.write(row1-3,cc_val_col1,vals)
+                cc_val_col1 += 1
+
             row += 1
 
+
             col = 0
-            summary.write(row,col, 'VARIANCE') 
-            summary.write(row1-4,col, 'VARIANCE') 
+            details.write(row,col, 'VARIANCE') 
+            details.write(row1-4,col, 'VARIANCE') 
             col += len(columns)
             total_col1 = col
             for r in self.get_allocations(rec.id):
                 variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,col),xl_rowcol_to_cell(row-2,col))
-                summary.write(row,col, variance)
-                summary.write(row1-4,col, variance)
+                details.write(row,col, variance)
+                details.write(row1-4,col, variance)
                 col += 1
+
+            #CommonCases Conversions Allocations
+            cc_val_col1 = cc_col1
+            for i in cc_col:
+                variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,cc_val_col1),xl_rowcol_to_cell(row-2,cc_val_col1))
+                details.write(row,cc_val_col1, variance)
+                details.write(row1-4,cc_val_col1, variance)
+                cc_val_col1 += 1
+
+
+            # summary_cells = "Summary Cells: %s %s" % (xl_rowcol_to_cell(row1,col1) , xl_rowcol_to_cell(last_row,last_col))
+            # print (summary_cells)
+            #GET SO IDS start from Zero
+            summary_row = 0
+            for r in range(first_row,last_row):
+                # print (summary_row)
+                summary_col = 0
+                summary.write(summary_row,summary_col,"=Details!%s" % xl_rowcol_to_cell(r,first_col))
+                
+
+                summary_col = 1
+                for c in range(5,last_col+1):
+                    summary.write(summary_row,summary_col,"=Details!%s" % xl_rowcol_to_cell(r,c))
+                    summary_col += 1
+                summary_row += 1
+
 
 
 
@@ -404,6 +500,54 @@ ORDER BY sequence
                 self.line_ids = line_items
 
 
+    @api.onchange('excel_file')
+    def onchange_upload_file(self):
+        if self.excel_file:
+            
+            (file_extension,source) = FILE_TYPE_DICT.get(guess_mimetype(base64.b64decode(self.excel_file)), (None,None))
+            #check if Excel File
+            # print ('mimetype = ',guess_mimetype(base64.b64decode(self.upload_file)))
+            if file_extension == 'xl':
+                wb = open_workbook(file_contents=base64.b64decode(self.excel_file))
+                # sheet_names = wb.sheet_names()
+                summary_sheet = wb.sheet_by_name('Summary')
+
+
+                num_cols = summary_sheet.ncols   # Number of columns
+                row_counter = 0
+                for r in range(1, summary_sheet.nrows):    # Iterate through rows
+                    for c in range(0, num_cols):  # Iterate through columns
+                        cell_obj = summary_sheet.cell(r, c)  # Get cell object by row, col
+                        print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
+                    row_counter += 1
+
+    @api.multi
+    def process_go(self):
+        print('Process GO')
+        for rec in self:
+            if rec.excel_file:
+                
+                (file_extension,source) = FILE_TYPE_DICT.get(guess_mimetype(base64.b64decode(rec.excel_file)), (None,None))
+                #check if Excel File
+                # print ('mimetype = ',guess_mimetype(base64.b64decode(self.upload_file)))
+                if file_extension == 'xl':
+                    wb = open_workbook(file_contents=base64.b64decode(self.excel_file))
+                    # sheet_names = wb.sheet_names()
+                    summary_sheet = wb.sheet_by_name('Summary')
+
+
+                    num_cols = summary_sheet.ncols   # Number of columns
+                    row_counter = 0
+                    for r in range(1, summary_sheet.nrows):    # Iterate through rows
+                        for c in range(0, num_cols):  # Iterate through columns
+                            cell_obj = summary_sheet.cell(r, c)  # Get cell object by row, col
+                            print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
+                        row_counter += 1
+
+
+    @api.multi
+    def process_all(self):
+        print('Process ALL')
 
 
     name = fields.Char("Name")
