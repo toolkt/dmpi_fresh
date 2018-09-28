@@ -539,9 +539,18 @@ ORDER BY sequence
                     num_cols = summary_sheet.ncols   # Number of columns
                     row_counter = 0
                     for r in range(1, summary_sheet.nrows):    # Iterate through rows
-                        for c in range(0, num_cols):  # Iterate through columns
-                            cell_obj = summary_sheet.cell(r, c)  # Get cell object by row, col
-                            print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
+                        so_id = int(summary_sheet.cell(r, 0).value)
+                        so_obj = self.env['dmpi.crm.sale.order'].search([('id','=',so_id)])
+                        for l in so_obj.order_ids:
+                            print (l)
+                        # for c in range(0, num_cols):  # Iterate through columns
+                        #     cell_obj = summary_sheet.cell(r, c)  # Get cell object by row, col
+
+                        #     if c == 0
+                        #     print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
+
+
+
                         row_counter += 1
 
 
