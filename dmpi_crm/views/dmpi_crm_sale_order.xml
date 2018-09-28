@@ -105,18 +105,15 @@
 
                         <group>
                             <group>
-                                <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/>
-                                <field name="ship_to_name"/>
-                                <field name="notify_name"/>
-                                <field name="mailing_name"/>
-                                <!-- <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/> -->
-                                <!-- <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/> -->
-                                <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
-                                <field name="sales_org" required="1"/>
+                                <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
+                                <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_notify)]"/>
+                                <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_mailing)]" invisible="1"/>
+                                <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
+                                <field name="sales_org" required="1" invisible="1"/>
                                 <field name="plant" invisible="1"/>
-                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
-                                <field name="week_no" required="1"/>
+                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" invisible="1"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="week_no" required="1" invisible="1"/>
                             </group>
                             <group>
                                 <field name="valid" />
@@ -149,7 +146,7 @@
                                     <tree editable="bottom">
                                         <field name="contract_line_no" readonly="1" string="CO#"/>
                                         <field name="so_line_no" readonly="1" string="SO#"/>
-                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_ids', 'in', parent.partner_id)]" required="1"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('id', 'in', parent.allowed_products)]" required="1"/>
                                         <field name="product_code"/>
                                         <field name="name" />
                                         <field name="price" />
@@ -173,6 +170,12 @@
                                     <group>
                                         <field name="pack_code_tmp"/>
                                         <field name="contract_tag_ids"/>
+                                    </group>
+                                    <group>
+                                        <field name="allowed_ship_to" invisible="1"/>
+                                        <field name="allowed_notify" invisible="1"/>
+                                        <field name="allowed_mailing" invisible="1"/>
+                                        <field name="allowed_products" invisible="1"/>
                                     </group>
                                 </group>
                             </page>
@@ -252,17 +255,16 @@
                         </div>
                         <group>
                             <group>
-                                <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/>
-                                <field name="ship_to_name"/>
-                                <field name="notify_name"/>
-                                <field name="mailing_name"/>
-                                <!-- <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[partner_id])]"/> -->
-                                <!-- <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" domain="[('partner_id.id','in',[partner_id])]" required="1"/> -->
-                                <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
-                                <field name="sales_org" required="1"/>
+                                <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
+                                <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_notify)]"/>
+                                <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_mailing)]" invisible="1"/>
+
+                                <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
+                                <field name="sales_org" required="1" invisible="1"/>
                                 <field name="plant" invisible="1"/>
-                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
+                                <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" invisible="1"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="week_no" invisible="1"/>
                             </group>
                             <group>
                                 <!-- <field name="valid" /> -->
@@ -292,7 +294,7 @@
                                     <tree editable="bottom">
                                         <field name="contract_line_no" readonly="1" string="CO#"/>
                                         <field name="so_line_no" readonly="1" string="SO#"/>
-                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('partner_ids', 'in', parent.partner_id)]" required="1"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('id', 'in', parent.allowed_products)]" required="1"/>
                                         <field name="product_code"/>
                                         <field name="name" readonly="1"/>
                                         <field name="price" />
@@ -316,6 +318,14 @@
                                     <group>
                                         <field name="pack_code_tmp"/>
                                         <field name="contract_tag_ids"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="allowed_ship_to" invisible="1"/>
+                                        <field name="allowed_notify" invisible="1"/>
+                                        <field name="allowed_mailing" invisible="1"/>
+                                        <field name="allowed_products" invisible="1"/>
                                     </group>
                                 </group>
                             </page>

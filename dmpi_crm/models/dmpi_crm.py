@@ -90,7 +90,10 @@ class DmpiCrmPartner(models.Model):
     dist_channel    = fields.Char("Distribution Channel")
     division        = fields.Char("Division")
     # plant           = fields.Char("Plant")
-    ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
+    # ship_to_ids = fields.One2many('dmpi.crm.ship.to','partner_id','Ship to Codes')
+    ship_to_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_ship_rel','partner_id','ship_to_id',string='Partner Functions',domain=[('function_ids.code','=','SHP')])
+    notify_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_notify_rel','partner_id','nofity_id',string='Partner Functions',domain=[('function_ids.code','=','NFY')])
+    mailing_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_mailing_rel','partner_id','mailing_id',string='Partner Functions',domain=[('function_ids.code','=','MAL')])
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'partner_tag_rel', 'partner_id', 'tag_id', string='Default Price Tags', copy=True)
     product_ids = fields.Many2many('dmpi.crm.product','dmpi_partner_product_rel','partner_id','product_id',string='Assigned Products')
 
@@ -244,7 +247,7 @@ class DmpiCrmPartnerARLine(models.Model):
 
 class DmpiCrmShipTo(models.Model):
     _name = 'dmpi.crm.ship.to'
-    _order = 'customer_name, name'
+    _order = 'name'
 
 
     @api.model
@@ -252,7 +255,8 @@ class DmpiCrmShipTo(models.Model):
         args = args or []
         domain = []
         if name:
-            domain = ['|', ('destination', '=ilike', name + '%'), ('name', operator, name)]
+            # domain = ['|', ('destination', '=ilike', name + '%'), ('name', operator, name)]
+            domain = [('name', operator, name)]
             if operator in expression.NEGATIVE_TERM_OPERATORS:
                 domain = ['&', '!'] + domain[1:]
         accounts = self.search(domain + args, limit=limit)
@@ -260,96 +264,49 @@ class DmpiCrmShipTo(models.Model):
 
 
     @api.multi
-    @api.depends('name', 'destination')
+    @api.depends('name', 'ship_to_code')
     def name_get(self):
         result = []
         for rec in self:
-            # destination = ''
-            # if rec.destination:
-                # destination = rec.destination
-            # name = destination+' [' + rec.name+ ']'
-            name = rec.customer_name + ' [' + rec.name + ']'
+            if rec.ship_to_code:
+                name = rec.name + ' [' + rec.ship_to_code + ']'
+            else:
+                name = rec.name + ' [ ]'
             result.append((rec.id, name))
         return result
 
-    @api.depends('customer_code')
-    def _get_partner_id(self):
-        for rec in self:
-            if rec.customer_code:
-                partner = self.env['dmpi.crm.partner'].search([('customer_code','=',rec.customer_code)],limit=1)
-                if partner:
-                    rec.partner_id = partner[0].id
+    # @api.depends('customer_code')
+    # def _get_partner_id(self):
+    #     for rec in self:
+    #         if rec.customer_code:
+    #             partner = self.env['dmpi.crm.partner'].search([('customer_code','=',rec.customer_code)],limit=1)
+    #             if partner:
+    #                 rec.partner_id = partner[0].id
 
     # headers
-    name = fields.Char("Commercial Code", required=True)
-    name_disp = fields.Char("Display Name", placeholder="Ship to Code", related='customer_name', store=True)
-    customer_name = fields.Char("Corporate Name")
-    customer_code = fields.Char("Customer Code")
-    partner_id = fields.Many2one('dmpi.crm.partner',"Partner", compute='_get_partner_id', store=True)
+    name = fields.Char("Partner Name", required=True)
+    # name_disp = fields.Char("Display Name", placeholder="Ship to Code", related='customer_name', store=True)
+    # customer_name = fields.Char("Corporate Name")
+    # customer_code = fields.Char("Customer Code")
+    # partner_id = fields.Many2one('dmpi.crm.partner',"Partner", store=True)
     destination = fields.Char("Destination")
-    ship_line = fields.Char("Shipping Line")
-    incoterm = fields.Char("Incoterm / Freight")
     country_id = fields.Many2one('dmpi.crm.country', 'Country')
 
     # ship to details
-    ship_to_name = fields.Char('Ship to Name')
+    # ship_to_name = fields.Char('Ship to Name')
+    # code = fields.Char('Code')
     ship_to_code = fields.Char('Ship to Code')
-    ship_to_street = fields.Char('Ship to Street')
-    ship_to_street2 = fields.Char('Ship to Street2')
-    ship_to_city = fields.Char('Ship to City')
-    ship_to_zip = fields.Char('Ship to Zip')
-    # ship_to_country = fields.Char('Ship to Country')
-    ship_to_phone = fields.Char('Ship to Phone')
-    ship_to_fax = fields.Char('Ship to Fax')
-    ship_to_person = fields.Char('Ship to Person')
-    ship_to_mobile = fields.Char('Ship to Mobile')
-    ship_to_email = fields.Char('Ship to Email')
-    ship_to_notes = fields.Text('Ship to Notes')
 
-    # notify 
-    notify_name = fields.Char('Notify Name')
-    notify_code = fields.Char('Notify Code')
-    notify_street = fields.Char('Notify Street')
-    notify_street2 = fields.Char('Notify Street2')
-    notify_city = fields.Char('Notify City')
-    notify_zip = fields.Char('Notify Zip')
-    # notify_country = fields.Char('Notify Country')
-    notify_phone = fields.Char('Notify Phone')
-    notify_fax = fields.Char('Notify Fax')
-    notify_person = fields.Char('Notify Person')
-    notify_mobile = fields.Char('Notify Mobile')
-    notify_email = fields.Char('Notify Email')
-    notify_notes = fields.Text('Notify Notes')
+    address = fields.Text('Address')
+    contact = fields.Text('Contact Info')
 
-    # mailing 
-    mailing_name = fields.Char('Mailing Name')
-    mailing_code = fields.Char('Mailing Code')
-    mailing_street = fields.Char('Mailing Street')
-    mailing_street2 = fields.Char('Mailing Street2')
-    mailing_city = fields.Char('Mailing City')
-    mailing_zip = fields.Char('Mailing Zip')
-    # mailing_country = fields.Char('Mailing Country')
-    mailing_phone = fields.Char('Mailing Phone')
-    mailing_fax = fields.Char('Mailing Fax')
-    mailing_person = fields.Char('Mailing Person')
-    mailing_mobile = fields.Char('Mailing Mobile')
-    mailing_email = fields.Char('Mailing Email')
-    mailing_notes = fields.Text('Mailing Notes')
+    function_ids = fields.Many2many('dmpi.crm.partner.function','dmpi_ship_to_function_rel','ship_to_id','function_id', string='Function Type')
 
-    # registered_address = fields.Text("Registered Address")
-    # contact_no = fields.Char("Contact No")
-    # contact_person = fields.Char("Contact Person")
-    # contact_person_email = fields.Char("Contact Email")
-    # destination = fields.Char("Destination")
-    # notify_party = fields.Char("Notify Party")
-    # notify_party_detail = fields.Text("Notify Party Details")
-    # ship_to_code = fields.Char("Ship to Code")
-    # ship_to = fields.Char("Consignee / Ship to")
-    # ship_to_detail = fields.Text("Consignee / Ship to Details")
-    # incoterm = fields.Char("Incoterm")
-    # mailing_address = fields.Text("Mailing Address")
-    # country_id = fields.Many2one('dmpi.crm.country',"Country")
+class DmpiCrmPartnerFunction(models.Model):
+    _name = 'dmpi.crm.partner.function'
 
+    name = fields.Char('Type')
+    code = fields.Char('Code')
 
 class DmpiCrmContractType(models.Model):
     _name = 'dmpi.crm.contract.type'
@@ -499,7 +456,7 @@ class DmpiCrmProduct(models.Model):
     # dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
     active          = fields.Boolean("Active", default=True)
     
-    partner_ids     = fields.Many2many('dmpi.crm.partner','dmpi_partner_product_rel','product_id','partner_id',string='Assigned Partners')
+    # partner_ids     = fields.Many2many('dmpi.crm.partner','dmpi_partner_product_rel','product_id','partner_id',string='Assigned Partners')
 
 
 
@@ -568,14 +525,20 @@ class DmpiCrmProductPriceList(models.Model):
 
                         }
 
+
                         if r[1]:
-                            partner = self.env['dmpi.crm.partner'].search([('customer_code','=',r[1])])
+                            partner = self.env['dmpi.crm.partner'].search([('customer_code','=',r[1])], limit=1)
                             if partner:
                                 item['partner_id'] = partner[0].id
                         if r[2]:
-                            product = self.env['dmpi.crm.product'].search([('sku','=',r[2])])
+                            product = self.env['dmpi.crm.product'].search([('sku','=',r[2])], limit=1)
                             if product:
                                 item['product_id'] = product[0].id
+
+                        if r[9]:
+                            tag = self.env['dmpi.crm.product.price.tag'].search([('name','=',r[9])], limit=1)
+                            if tag:
+                                item['tag_ids'] = [(4,tag.id,)]
 
 
                         line_items.append((0,0,item))

@@ -471,7 +471,7 @@ ORDER BY sequence
     def onchange_upload_file(self):
         if self.allocation_file:
             rows = read_data(self.allocation_file)
-
+            print (rows)
             row_count = 0
             error_count = 0
             line_items = []
@@ -641,8 +641,8 @@ SELECT
         sol.id,
                             so.id as so_id,
         cp.name as sold_to,
-        nt.customer_name as notify_party,
-        st.customer_name as ship_to,
+        nt.name as notify_party,
+        st.name as ship_to,
         so.destination,
         co.name as odoo_po_no,
         co.sap_cn_no,

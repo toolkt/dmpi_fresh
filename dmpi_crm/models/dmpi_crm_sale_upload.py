@@ -81,11 +81,12 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 if row_count == 0:
 
                     if len(head_fmt) != len(r):
-                        raise UserError(_('Bad Header Formatting! Please use below format.\n %s' % head_fmt))
+                        raise UserError(_('[1] Bad Header Formatting! Please use below format.\n %s' % head_fmt))
 
+                    print (r)
                     for h1,h2 in zip(head_fmt, r):
                         if h1 != h2:
-                            raise UserError(_('Bad Header Formatting! Please use below format.\n %s' % head_fmt))
+                            raise UserError(_('[2] Bad Header Formatting! Please use below format.\n %s' % head_fmt))
 
                     row_count += 1
 
@@ -105,11 +106,11 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                     # GET CONTRACT NUMBER
                     contract_id = self.env.context.get('default_contract_id',False)
                     contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
-                    sold_to_id = contract.partner_id.id
+                    sold_to = contract.partner_id
 
                     # CHECK SHIP TO EXISTS
                     shp = data['SHIP TO']
-                    ship_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',shp),('ship_to_code','=',shp),('partner_id.id','=',sold_to_id)],limit=1)
+                    ship_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',shp),('ship_to_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
                     if ship_to:
                         ship_to_id = ship_to.id
                     else:
@@ -119,7 +120,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                     # CHECK NOTIFY ID EXISTS
                     notif = data['NOTIFY PARTY']
-                    notify_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',notif),('ship_to_code','=',notif),('partner_id.id','=',sold_to_id)],limit=1)
+                    notify_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',notif),('ship_to_code','=',notif),('id','in',sold_to.notify_ids.ids)],limit=1)
                     if notify_to:
                         notify_to_id = notify_to.id
                     else:
@@ -282,10 +283,14 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 def format_so(rec,so_line_no,partner_id=0,qty=0,product_code=''):
                     name = "Product not Maintained"
                     product_id = False
-                    query = """SELECT cp.id as product_id, cp.sku, cp.code, cp.partner_id, spu.condition_rate,spu.condition_currency, spu.uom from dmpi_crm_product cp
-                            left join dmpi_sap_price_upload spu on spu.material = cp.sku
-                            where cp.code = '%s' and partner_id = %s and cp.active is true""" % (product_code,partner_id)
-                    # print (query)
+                    # query = """SELECT cp.id as product_id, cp.sku, cp.code, cp.partner_id, spu.condition_rate,spu.condition_currency, spu.uom from dmpi_crm_product cp
+                    #         left join dmpi_sap_price_upload spu on spu.material = cp.sku
+                    #         where cp.code = '%s' and partner_id = %s and cp.active is true""" % (product_code,partner_id)
+                    query = """ SELECT cp.id as product_id, cp.sku, cp.code, cp.product_class, spu.condition_rate, spu.condition_currency, spu.uom
+                                from dmpi_crm_product cp left join dmpi_sap_price_upload spu on spu.material = cp.sku
+                                where cp.code = '%s' and cp.active is true and cp.id in
+                                (select ppr.product_id from dmpi_partner_product_rel ppr where ppr.partner_id = %s) order by product_class """ % (product_code,partner_id)
+                    print ('query1',query)
                     self.env.cr.execute(query)
                     result = self.env.cr.dictfetchall()
                     if result:
@@ -320,7 +325,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'ship_to_id': l.ship_to_id.id,
                         'notify_id': l.notify_id.id,
                         'sap_doc_type': sap_doc_type,
-                        'sales_org': l.ship_to_id.partner_id.sales_org or "",
+                        'sales_org': rec.partner_id.sales_org or "",
                         'shell_color': l.shell_color,
                         'destination': l.destination,
                         'ship_line': l.ship_line,
@@ -328,6 +333,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'estimated_date': l.requested_delivery_date,
                         'plant_id': rec.contract_id.partner_id.default_plant.id,
                         'plant': rec.contract_id.partner_id.default_plant.name,
+                        'week_no': rec.contract_id.week_no,
                         # 'p5': l.p5,
                         # 'p6': l.p6,
                         # 'p7': l.p7,
@@ -348,7 +354,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 # print(order)
                 sale_orders.append((0,0,order))
 
-            if rec.upload_type == 'customer':
+            if rec.upload_type == 'customer' and rec.contract_id.state == 'draft':
                 rec.contract_id.customer_order_ids.unlink()
                 rec.contract_id.customer_order_ids = sale_orders
             if rec.upload_type == 'commercial':

@@ -105,7 +105,7 @@ class DmpiCrmSaleContract(models.Model):
     _name = 'dmpi.crm.sale.contract'
     _description = "Sale Contract"
     _inherit = ['mail.thread']
-    _order = 'po_date desc'
+    _order = 'po_date desc, name desc'
 
 
     # @api.model
@@ -436,7 +436,6 @@ class DmpiCrmSaleContract(models.Model):
 
                     so_lines.append((0,0,vals))
 
-
                 order = {
                         'contract_line_no':l.contract_line_no,
                         'ship_to_id': l.ship_to_id.id,
@@ -467,6 +466,10 @@ class DmpiCrmSaleContract(models.Model):
                         # 'p12c20': l.p12c20,
                         'order_ids': so_lines,
                     }
+
+                if l.tag_ids:
+                    tags = [(4,t.id,) for t in l.tag_ids]
+                    order['tag_ids'] = tags
 
                 sale_orders.append((0,0,order))
 
@@ -1011,7 +1014,7 @@ class DmpiCrmSaleOrder(models.Model):
     plant = fields.Char("Plant", compute='_get_plant_name')
     plant_id = fields.Many2one('dmpi.crm.plant')
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref')
+    customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref', store=True)
     contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
@@ -1025,9 +1028,33 @@ class DmpiCrmSaleOrder(models.Model):
     price_list = fields.Selection(_price_list_remarks)
     destination = fields.Char('Destination')
 
+    @api.multi
+    @api.depends('partner_id')
+    def _get_allowed_ids(self):
+        for rec in self:
+            rec.allowed_ship_to = rec.partner_id.ship_to_ids
+            rec.allowed_notify = rec.partner_id.notify_ids
+            rec.allowed_mailing = rec.partner_id.mailing_ids
+            rec.allowed_products = rec.partner_id.product_ids
+
+
+
+    allowed_ship_to = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
+    allowed_notify = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
+    allowed_mailing = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
+    allowed_products = fields.One2many('dmpi.crm.product', compute="_get_allowed_ids")
 
     contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
+
+
+    @api.multi
+    @api.onchange('tag_ids')
+    def onchange_tag_ids(self):
+        for rec in self:
+            for l in rec.order_ids:
+                l.onchange_product_id()
+
 
     def _get_default_pack_codes(self):
         pack_codes = self.env['dmpi.crm.product.code'].sudo().search([('active','=',True)])
@@ -1093,44 +1120,19 @@ class DmpiCrmSaleOrder(models.Model):
             rec.total_amount = total_amount
             rec.total_qty = total_qty
 
-    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
+    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id', store=True)
 
-    @api.multi
-    @api.depends('ship_to_id')
-    def _get_partner_details(self):
-        for rec in self:
-            comm_code = rec.ship_to_id
-            if comm_code:
-                if not(comm_code.ship_to_code) or not(comm_code.ship_to_name):
-                    rec.ship_to_name = comm_code.ship_to_name
-                else:
-                    rec.ship_to_name = comm_code.ship_to_name + ' [' + comm_code.ship_to_code + ']'
+    # @api.onchange('ship_to_id')
+    # def onchange_ship_to_id(self):
+    #     for rec in self:
+    #         comm_code = rec.ship_to_id
+    #         if comm_code:
+    #             rec.destination = comm_code.destination
+    #             rec.ship_line = comm_code.ship_line
 
-                if comm_code.notify_code:
-                    rec.notify_name = comm_code.notify_name + ' [' + comm_code.notify_code + ']'
-                else:
-                    rec.notify_name = comm_code.notify_name
-
-                if comm_code.mailing_code:
-                    rec.mailing_name_name = comm_code.mailing_name + ' [' + comm_code.mailing_code + ']'
-                else:
-                    rec.mailing_name_name = comm_code.mailing_name
-
-    @api.onchange('ship_to_id')
-    def onchange_ship_to_id(self):
-        for rec in self:
-            comm_code = rec.ship_to_id
-            if comm_code:
-                rec.destination = comm_code.destination
-                rec.ship_line = comm_code.ship_line
-
-    ship_to_id = fields.Many2one('dmpi.crm.ship.to', 'Commercial Code')
-    ship_to_name = fields.Char('Ship To', compute='_get_partner_details')
-    notify_name = fields.Char('Notify Party', compute='_get_partner_details')
-    mailing_name = fields.Char('Mailing Address', compute='_get_partner_details')
-    # ship_to_id = fields.Many2one("dmpi.crm.ship.to", "Ship to Party")
+    ship_to_id = fields.Many2one('dmpi.crm.ship.to', 'Ship To')
     notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
-    # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
+    mailing_id = fields.Many2one("dmpi.crm.ship.to","Mailing Address")
     sales_org = fields.Char("Sales Org")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
     order_date = fields.Date("Order Date")
@@ -1143,9 +1145,9 @@ class DmpiCrmSaleOrder(models.Model):
     total_qty = fields.Float('Total', compute='get_product_qty', store=True)
     total_amount = fields.Float('Total', compute='get_product_qty', store=True)
 
-    week_no = fields.Char("Week No")
+    week_no = fields.Char("Week No", related='contract_id.week_no', store=True)
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
-    po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state')
+    po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state', store=True)
     found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
 
     @api.multi
@@ -1284,6 +1286,13 @@ class CustomerCrmSaleOrder(models.Model):
     order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True, ondelete='cascade')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'customer_order_tag_rel', 'order_id', 'tag_id', string='Price Tags', copy=True)
 
+    @api.multi
+    @api.onchange('tag_ids')
+    def onchange_tag_ids(self):
+        for rec in self:
+            for l in rec.order_ids:
+                l.onchange_product_id()
+
 
     @api.multi
     @api.depends('order_ids','pack_code_tmp')
@@ -1353,7 +1362,7 @@ class DmpiCrmDr(models.Model):
     _order = 'id desc'
 
 
-    name = fields.Char("CRM DR No.", related='sap_dr_no')
+    name = fields.Char("CRM DR No.", related='sap_dr_no', store=True)
     sap_so_no = fields.Char("SAP So No.")
     sap_dr_no = fields.Char("SAP DR No.")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")

@@ -78,23 +78,43 @@
                         </group>
 
                         <notebook>
-                            <page string="Ship-to Codes">
+                            <page string="Ship To">
                                 <field name="ship_to_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="customer_name"/>
-                                        <field name="customer_code"/>
-                                        <field name="partner_id"/>
-                                        <field name="destination"/>
-                                        <field name="ship_to_name"/>
-                                        <field name="notify_name"/>
-                                        <field name="mailing_name"/>
+                                        <field name="ship_to_code"/>
+                                        <field name="country_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notify Party">
+                                <field name="notify_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="ship_to_code"/>
+                                        <field name="country_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Mailing Addresses">
+                                <field name="mailing_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="ship_to_code"/>
                                         <field name="country_id"/>
                                     </tree>
                                 </field>
                             </page>
                             <page string="Assigned Products">
-                                <field name="product_ids"/>
+                                <field name="product_ids">
+                                    <tree>
+                                        <field name="code_id"/>
+                                        <field name="sku"/>
+                                        <field name="product_class"/>
+                                        <field name="packaging"/>
+                                        <field name="variant"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Accounts Receivables">
                                 <field name="ar_records" />
@@ -129,15 +149,11 @@
                 <search>
                     <field name="name"/>
                     <field name="ship_to_code"/>
-                    <field name="customer_name"/>
-                    <field name="customer_code"/>
-                    <field name="partner_id"/>
-                    <field name="destination"/>
                     <field name="country_id"/>
-                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+<!--                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
-                    </group>
+                    </group> -->
                 </search>
             </field>
         </record>
@@ -148,13 +164,8 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="customer_name"/>
-                    <field name="customer_code"/>
-                    <field name="partner_id"/>
-                    <field name="destination"/>
-                    <field name="ship_to_name"/>
-                    <field name="notify_name"/>
-                    <field name="mailing_name"/>
+                    <field name="ship_to_code"/>
+                    <field name="address"/>
                     <field name="country_id"/>
                 </tree>
             </field>
@@ -168,87 +179,22 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <field name="name_disp" placeholder="Customer Name" readonly="1"/>
+                                <field name="name" string="Partner Name"/>
                             </h1>
                         </div>
                         <group>
                             <group>
-                                <field name="name"/>
-                                <field name="customer_name"/>
-                                <field name="customer_code"/>
-                                <field name="partner_id"/>
-                                <field name="destination"/>
-                                <field name="ship_line"/>
-                                <field name="incoterm"/>
-                                <field name="country_id"/>
-
-<!--                                 <field name="ship_to_code"/>
-                                <field name="customer_name"/>
-                                <field name="customer_code"/>
-                                <field name="partner_id"/>
-                                <field name="registered_address"/> -->
-                                
-                            
-                                <!-- <field name="contact_person"/> -->
-                                <!-- <field name="contact_no"/> -->
-                                <!-- <field name="contact_person_email"/> -->
-                            </group>
-                            <group>
-<!--                                 <field name="destination"/>
-                                <field name="country_id"/>
-
-                                <field name="notify_party"/>
-                                <field name="notify_party_detail"/>
-                                
-                                <field name="ship_to"/>
-                                <field name="ship_to_detail"/>
-                                
-                                <field name="incoterm"/>  
-                                <field name="mailing_address"/> -->
+                                <field name="ship_to_code"/>
+                                <field name="function_ids" options="{'no_quick_create':True,'no_create_edit':True}" widget="many2many_tags"/>
                             </group>
                         </group>
                         <group>
-                            <group string="Ship To">
-                                <field name="ship_to_name"/>
-                                <field name="ship_to_code"/>
-                                <field name="ship_to_street"/>
-                                <field name="ship_to_street2"/>
-                                <field name="ship_to_city"/>
-                                <field name="ship_to_zip"/>
-                                <field name="ship_to_phone"/>
-                                <field name="ship_to_fax"/>
-                                <field name="ship_to_person"/>
-                                <field name="ship_to_mobile"/>
-                                <field name="ship_to_email"/>
-                                <field name="ship_to_notes"/>
+                            <group string="Address">
+                                <field name="address"/>
+                                <field name="country_id"/>
                             </group>
-                            <group string="Notify Party">
-                                <field name="notify_name"/>
-                                <field name="notify_code"/>
-                                <field name="notify_street"/>
-                                <field name="notify_street2"/>
-                                <field name="notify_city"/>
-                                <field name="notify_zip"/>
-                                <field name="notify_phone"/>
-                                <field name="notify_fax"/>
-                                <field name="notify_person"/>
-                                <field name="notify_mobile"/>
-                                <field name="notify_email"/>
-                                <field name="notify_notes"/>
-                            </group>
-                            <group string="Mailing Address">
-                                <field name="mailing_name"/>
-                                <field name="mailing_code"/>
-                                <field name="mailing_street"/>
-                                <field name="mailing_street2"/>
-                                <field name="mailing_city"/>
-                                <field name="mailing_zip"/>
-                                <field name="mailing_phone"/>
-                                <field name="mailing_fax"/>
-                                <field name="mailing_person"/>
-                                <field name="mailing_mobile"/>
-                                <field name="mailing_email"/>
-                                <field name="mailing_notes"/>
+                            <group string="Contact">
+                                <field name="contact"/>
                             </group>
                         </group>
                     </sheet>
@@ -771,7 +717,7 @@
                     <field name="brand"/>
                     <field name="sub_brand"/>
                     <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
-                    <field name="partner_ids" widget="many2many_tags"/>
+                    <!-- <field name="partner_ids" widget="many2many_tags"/> -->
                     <field name="active"/>
                 </tree>
             </field>
@@ -848,7 +794,7 @@
                                         <field name="valid_from"/>
                                         <field name="valid_to"/>
                                         <field name="remarks"/>
-                                        <field name="tag_ids"  widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                        <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                     </tree>
                                 </field>
                             </page>
@@ -1490,5 +1436,19 @@
         <menuitem id="menu_dmpi_crm_activity_log" action="action_dmpi_crm_activity_log" parent="menu_dmpi_crm_settings_top"/>
 
 
+        <record id="dmpi_crm_partner_function_shp" model="dmpi.crm.partner.function">
+            <field name="name">SHIP TO</field>
+            <field name="code">SHP</field>
+        </record>
+
+        <record id="dmpi_crm_partner_function_nfy" model="dmpi.crm.partner.function">
+            <field name="name">NOTIFY</field>
+            <field name="code">NFY</field>
+        </record>
+
+        <record id="dmpi_crm_partner_function_mal" model="dmpi.crm.partner.function">
+            <field name="name">MAILING</field>
+            <field name="code">MAL</field>
+        </record>
 
 </odoo>
