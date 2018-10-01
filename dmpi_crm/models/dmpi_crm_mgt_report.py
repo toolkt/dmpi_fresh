@@ -28,6 +28,7 @@ import pandas as pd
 import numpy as np
 
 from xlrd import open_workbook
+import mmap
 
 
 CROWN = [('C','w/Crown'),('CL','Crownless')]
@@ -45,6 +46,14 @@ def read_data(data):
         fileobj.seek(0)
         line = csv.reader(fileobj, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
         return line
+
+def read_xls_to_dict(excel_file_field,sheet_name):
+        book    = open_workbook(file_contents=base64.b64decode(excel_file_field))
+        sheet   = book.sheet_by_name(sheet_name)
+        headers = dict( (i, sheet.cell_value(0, i) ) for i in range(sheet.ncols) ) 
+
+        return ( dict( (headers[j], sheet.cell_value(i, j)) for j in headers ) for i in range(1, sheet.nrows) )
+
 
 
 
@@ -170,7 +179,6 @@ ORDER BY sequence
 
             h1 = []
             h1.append(th('Country'))
-            h1.append(th('Customer'))
             h1.append(th('SO No'))
             h1.append(th('Ship To'))
             h1.append(th('Class'))
@@ -501,7 +509,7 @@ ORDER BY sequence
 
 
     @api.onchange('excel_file')
-    def onchange_upload_file(self):
+    def onchange_upload_final_file(self):
         if self.excel_file:
             
             (file_extension,source) = FILE_TYPE_DICT.get(guess_mimetype(base64.b64decode(self.excel_file)), (None,None))
@@ -521,6 +529,10 @@ ORDER BY sequence
                         print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
                     row_counter += 1
 
+
+
+
+
     @api.multi
     def process_go(self):
         print('Process GO')
@@ -529,29 +541,16 @@ ORDER BY sequence
                 
                 (file_extension,source) = FILE_TYPE_DICT.get(guess_mimetype(base64.b64decode(rec.excel_file)), (None,None))
                 #check if Excel File
-                # print ('mimetype = ',guess_mimetype(base64.b64decode(self.upload_file)))
                 if file_extension == 'xl':
-                    wb = open_workbook(file_contents=base64.b64decode(self.excel_file))
-                    # sheet_names = wb.sheet_names()
-                    summary_sheet = wb.sheet_by_name('Summary')
+                    data = read_xls_to_dict(self.excel_file,'Summary')
 
-
-                    num_cols = summary_sheet.ncols   # Number of columns
-                    row_counter = 0
-                    for r in range(1, summary_sheet.nrows):    # Iterate through rows
-                        so_id = int(summary_sheet.cell(r, 0).value)
-                        so_obj = self.env['dmpi.crm.sale.order'].search([('id','=',so_id)])
-                        for l in so_obj.order_ids:
-                            print (l)
-                        # for c in range(0, num_cols):  # Iterate through columns
-                        #     cell_obj = summary_sheet.cell(r, c)  # Get cell object by row, col
-
-                        #     if c == 0
-                        #     print ('Column: [%s] cell_obj: [%s]' % (c, cell_obj))
+                    for d in data:
+                        print (d)
 
 
 
-                        row_counter += 1
+
+
 
 
     @api.multi
