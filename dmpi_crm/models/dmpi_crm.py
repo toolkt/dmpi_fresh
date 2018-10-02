@@ -536,9 +536,14 @@ class DmpiCrmProductPriceList(models.Model):
                                 item['product_id'] = product[0].id
 
                         if r[9]:
-                            tag = self.env['dmpi.crm.product.price.tag'].search([('name','=',r[9])], limit=1)
-                            if tag:
-                                item['tag_ids'] = [(4,tag.id,)]
+                            tags = r[9].split(',')
+                            tag_ids = []
+                            for t in tags:
+                                tag = self.env['dmpi.crm.product.price.tag'].search([('name','=',t)], limit=1)
+                                if tag:
+                                    tag_ids.append((4,tag.id,))
+
+                            item['tag_ids'] = tag_ids
 
 
                         line_items.append((0,0,item))

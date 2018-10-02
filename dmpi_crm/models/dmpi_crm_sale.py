@@ -212,7 +212,7 @@ class DmpiCrmSaleContract(models.Model):
     # import_errors_disp = fields.Text("Import Errors", related='import_errors')
 
     sap_errors = fields.Text("SAP Errors")
-    week_no = fields.Char("Week No")
+    week_no = fields.Integer("Week No")
     #week_id = fields.Many2one('dmpi.crm.week',"Week No")
 
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
@@ -1145,7 +1145,7 @@ class DmpiCrmSaleOrder(models.Model):
     total_qty = fields.Float('Total', compute='get_product_qty', store=True)
     total_amount = fields.Float('Total', compute='get_product_qty', store=True)
 
-    week_no = fields.Char("Week No", related='contract_id.week_no', store=True)
+    week_no = fields.Integer("Week No", related='contract_id.week_no', store=True)
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
     po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state', store=True)
     found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
@@ -1190,7 +1190,8 @@ class DmpiCrmSaleOrderLine(models.Model):
                         left join price_item_tag_rel tr on tr.item_id = i.id
                         group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
                     ) AS Q1
-                    where material = '%s' and  ARRAY%s <@ tags
+                    -- where material = '' and  ARRAY <@ tags
+                    where material = '%s' and  ARRAY%s && tags
                     limit 1 """ % (material, tag_ids)
 
         else:

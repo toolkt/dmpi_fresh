@@ -132,11 +132,13 @@
             <field name="model">dmpi.crm.report.order.lines</field>
             <field name="arch" type="xml">
                 <pivot string="Sale Report">
-                    <field name="sold_to" type="row"/>
+                    <field name="country" type="row"/>
                     <field name="ship_to" type="row"/>
-                    <field name="product_crown" type="col"/>
+                    <field name="week_no" type="col"/>
+                    <!-- <field name="product_crown" type="col"/> -->
                     <field name="product_code" type="col"/>
-                    <field name="amount" type='measure'/>
+                    <!-- <field name="amount" type='measure'/> -->
+                    <field name="qty" type='measure'/>
                 </pivot>
             </field>
         </record>

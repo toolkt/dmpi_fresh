@@ -246,7 +246,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                             left join price_item_tag_rel tr on tr.item_id = i.id
                             group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
                         ) AS Q1
-                        where material = '%s' and  ARRAY%s <@ tags
+                        -- where material = '' and  ARRAY <@ tags
+                        where material = '%s' and  ARRAY%s && tags
                         limit 1 """ % (material, tag_ids)
 
                     else:
