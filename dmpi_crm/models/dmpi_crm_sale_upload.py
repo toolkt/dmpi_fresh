@@ -56,6 +56,63 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
     pack_code_tmp = fields.Text(string='Pack Code Tmp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
     partner_id = fields.Many2one('dmpi.crm.partner', string='Customer', default=_get_customer)
 
+    def _check_if_fcl(self, qty_list, total_qty):
+        # get FCL configs
+        query = """SELECT distinct fc.cases, fc.pallet
+                    from dmpi_crm_fcl_config fc
+                    order by fc.cases desc """
+        self.env.cr.execute(query)
+        res = self.env.cr.dictfetchall()
+        fcl_config = {}
+
+        for r in res:
+            fcl_config[r['cases']] = eval(r['pallet'])
+
+        if total_qty not in fcl_config.keys():
+            s = 'Total orders is not Full Container Load'
+            return s
+        else:
+
+            # check each order lines
+            pallet_conf = []
+            cases_conf = []
+            for p in fcl_config[total_qty]:
+                pallet_conf.append({
+                        'max_pallets': p[0],
+                        'cases': p[1],
+                        'count': 0,
+                })
+
+                cases_conf.append(p[1])
+
+            for p in pallet_conf:
+                cases = p['cases']
+
+                # loop over qtys
+                for i in range(len(qty_list)):
+                    qty = qty_list[i]
+                    m = qty / cases
+                    r = qty % cases
+
+                    if (m).is_integer():
+                        p['count'] += m
+                    else:
+                        p['count'] += math.floor(qty / cases)
+
+                    qty_list[i] = r
+
+                    # check if beyond max pallets
+                    if p['count'] > p['max_pallets']:
+                        s = 'Invalid quantity combinations'
+                        return s
+                    # print (qty, cases, m, p['count'], qty_list,)
+
+            if any(qty_list):
+                s = 'Invalid quantity combinations'
+                return s
+
+            return False
+
     @api.onchange('upload_file')
     def onchange_upload_file(self):
 
@@ -132,7 +189,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                     total_qty = 0
                     total_p100 = 0
                     total_p200 = 0
-                    found_p60 = False
+                    qty_list = []
+                    # found_p60 = False
 
                     for pcode in tmp:
 
@@ -150,26 +208,32 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                             qty = 0
 
                         order_lines[pcode] = qty
-
-                        if qty != 0:
-                            mod_75 = qty % 75
-                            mod_75_less = (qty-60) % 75
-
-                            if not (mod_75 == 0 or mod_75_less ==0):
-                                errors.append("Invalid qty %s for %s" % (qty, pcode))
-                                error_count += 1
-
-                            elif mod_75_less == 0 and not found_p60:
-                                found_p60 = True
-
-                            elif mod_75_less == 0 and found_p60:
-                                errors.append("Invalid qty %s for %s" % (qty, pcode))
-                                error_count += 1
+                        qty_list.append(qty)
 
 
-                    if not (total_qty == 1500 or total_qty == 1560):
-                        errors.append("Total not FCL")
+                        # if qty != 0:
+                        #     mod_75 = qty % 75
+                        #     mod_75_less = (qty-60) % 75
+
+                        #     if not (mod_75 == 0 or mod_75_less ==0):
+                        #         errors.append("Invalid qty %s for %s" % (qty, pcode))
+                        #         error_count += 1
+
+                        #     elif mod_75_less == 0 and not found_p60:
+                        #         found_p60 = True
+
+                        #     elif mod_75_less == 0 and found_p60:
+                        #         errors.append("Invalid qty %s for %s" % (qty, pcode))
+                        #         error_count += 1
+
+                    s = self._check_if_fcl(qty_list, total_qty)
+                    if s:
+                        errors.append(s)
                         error_count += 1
+
+                    # if not (total_qty == 1500 or total_qty == 1560):
+                    #     errors.append("Total not FCL")
+                    #     error_count += 1
 
                     # CHECK DELIVERY DATE
                     # upload format mm/dd/yyyy

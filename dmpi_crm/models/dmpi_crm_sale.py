@@ -964,6 +964,63 @@ class DmpiCrmSaleOrder(models.Model):
             rec.write({'valid': not rec.valid})
             return True
 
+    def _check_if_fcl(self, qty_list, total_qty):
+        # get FCL configs
+        query = """SELECT distinct fc.cases, fc.pallet
+                    from dmpi_crm_fcl_config fc
+                    order by fc.cases desc """
+        self.env.cr.execute(query)
+        res = self.env.cr.dictfetchall()
+        fcl_config = {}
+
+        for r in res:
+            fcl_config[r['cases']] = eval(r['pallet'])
+
+        if total_qty not in fcl_config.keys():
+            s = 'Total orders is not Full Container Load'
+            return s
+        else:
+
+            # check each order lines
+            pallet_conf = []
+            cases_conf = []
+            for p in fcl_config[total_qty]:
+                pallet_conf.append({
+                        'max_pallets': p[0],
+                        'cases': p[1],
+                        'count': 0,
+                })
+
+                cases_conf.append(p[1])
+
+            for p in pallet_conf:
+                cases = p['cases']
+
+                # loop over qtys
+                for i in range(len(qty_list)):
+                    qty = qty_list[i]
+                    m = qty / cases
+                    r = qty % cases
+
+                    if (m).is_integer():
+                        p['count'] += m
+                    else:
+                        p['count'] += math.floor(qty / cases)
+
+                    qty_list[i] = r
+
+                    # check if beyond max pallets
+                    if p['count'] > p['max_pallets']:
+                        s = 'Invalid quantity combinations'
+                        return s
+                    # print (qty, cases, m, p['count'], qty_list,)
+
+            if any(qty_list):
+                s = 'Invalid quantity combinations'
+                return s
+
+            return False
+
     @api.multi
     @api.depends('order_ids')
     def _get_error_msg(self):
@@ -985,9 +1042,10 @@ class DmpiCrmSaleOrder(models.Model):
                 # lcl total qty
                 total_qty += l.qty
 
-
-            if not ((total_qty == 1500) or (total_qty == 1560)):
-                s = 'Total orders is not Full Container Load'
+            # CHECK IF FCL
+            qty_list = [l.qty for l in so.order_ids]
+            s = self._check_if_fcl(qty_list, total_qty)
+            if s:
                 error_msg.append(s)
 
 
@@ -1226,7 +1284,8 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 
 
-    @api.onchange('product_id','qty')
+    # @api.onchange('product_id','qty')
+    @api.onchange('product_id')
     def onchange_product_id(self):
         if self.product_id:
             result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
@@ -1237,26 +1296,26 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.name = self.product_id.name
 
             # not qty or (qty-60) not divisible by 75
-            mod_75 = self.qty % 75
-            mod_75_less = (self.qty - 60) % 75
-            no_p60 = False # found pallet 60
-            no_mod = False # not divisble by above conditions
-            no_qty = False # qty == 60
-            self.found_p60 = no_p60
+            # mod_75 = self.qty % 75
+            # mod_75_less = (self.qty - 60) % 75
+            # no_p60 = False # found pallet 60
+            # no_mod = False # not divisble by above conditions
+            # no_qty = False # qty == 60
+            # self.found_p60 = no_p60
 
             # set found_p60 to True
-            if mod_75_less == 0:
-                self.found_p60 = True
-                no_p60 = True if self.order_id.found_p60 >= 1 else False
+            # if mod_75_less == 0:
+            #     self.found_p60 = True
+            #     no_p60 = True if self.order_id.found_p60 >= 1 else False
 
-            no_mod = not ((mod_75 == 0) or (mod_75_less == 0))
-            no_qty = not bool(self.qty)
+            # no_mod = not ((mod_75 == 0) or (mod_75_less == 0))
+            # no_qty = not bool(self.qty)
             
             # round qty if at least 1 error found
-            if any([no_p60, no_mod, no_qty]):
-                qty = round_qty(75,self.qty)
-                self.qty = qty
-                self.found_p60 = False
+            # if any([no_p60, no_mod, no_qty]):
+            #     qty = round_qty(75,self.qty)
+            #     self.qty = qty
+            #     self.found_p60 = False
 
     def recompute_price(self):
         if self.product_id:
