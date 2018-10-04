@@ -45,3 +45,12 @@ access_dmpi_crm_week,user.dmpi.crm.week,model_dmpi_crm_week,base.group_user,1,1,
 access_dmpi_crm_market_allocation,user.dmpi.crm.market.allocation,model_dmpi_crm_market_allocation,base.group_user,1,1,1,1
 access_dmpi_crm_market_allocation_line,user.dmpi.crm.market.allocation.line,model_dmpi_crm_market_allocation_line,base.group_user,1,1,1,1
 access_dmpi_crm_report_order_lines,user.dmpi.crm.report.order.lines,model_dmpi_crm_report_order_lines,base.group_user,1,1,1,1
+,,,,,,,
+access_dmpi_crm_fcl_config,user.dmpi.crm.fcl.config,model_dmpi_crm_fcl_config,base.group_user,1,1,1,1
+access_dmpi_crm_partner_ar_line,user.dmpi.crm.partner.ar.line,model_dmpi_crm_partner_ar_line,base.group_user,1,1,1,1
+access_dmpi_crm_partner_function,user.dmpi.crm.partner.function,model_dmpi_crm_partner_function,base.group_user,1,1,1,1
+access_dmpi_crm_variety,user.dmpi.crm.variety,model_dmpi_crm_variety,base.group_user,1,1,1,1
+access_dmpi_crm_activity_log,user.dmpi.crm.activity.log,model_dmpi_crm_activity_log,base.group_user,1,1,1,1
+access_dmpi_crm_preship_inspection_lot,user.dmpi.crm.preship.inspection.lot,model_dmpi_crm_preship_inspection_lot,base.group_user,1,1,1,1
+access_dmpi_crm_preship_pc_line,user.dmpi.crm.preship.pc.line,model_dmpi_crm_preship_pc_line,base.group_user,1,1,1,1
+access_dmpi_crm_clp_pc_line,user.dmpi.crm.clp.pc.line,model_dmpi_crm_clp_pc_line,base.group_user,1,1,1,1
