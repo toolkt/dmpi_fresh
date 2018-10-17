@@ -260,7 +260,7 @@ class DmpiCrmShipTo(models.Model):
 
 
     @api.multi
-    @api.depends('name', 'destination')
+    @api.depends('name', 'destination','customer_name')
     def name_get(self):
         result = []
         for rec in self:
@@ -268,7 +268,10 @@ class DmpiCrmShipTo(models.Model):
             # if rec.destination:
                 # destination = rec.destination
             # name = destination+' [' + rec.name+ ']'
-            name = rec.customer_name + ' [' + rec.name + ']'
+            customer_name = ''
+            if rec.customer_name:
+                customer_name = rec.customer_name
+            name = customer_name + ' [' + rec.name + ']'
             result.append((rec.id, name))
         return result
 
