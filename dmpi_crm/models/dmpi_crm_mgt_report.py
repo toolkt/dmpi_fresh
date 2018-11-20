@@ -95,6 +95,36 @@ UNION ALL
             so.name as so_no,
             cust.name as customer,
             shp.name as ship_to,
+            'A2' as product_class,
+            '' as prod_code,
+            0 as sequence,
+            so.shell_color,
+            '' as product_crown,
+            0 as psd,
+            0 as qty
+    from dmpi_crm_sale_order_line sol
+    left join dmpi_crm_sale_order so on so.id = sol.order_id
+    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
+    left join dmpi_crm_partner cust on cust.id = ctr.partner_id
+    left join dmpi_crm_product prod on prod.id = sol.product_id
+    left join dmpi_crm_product_code pc on pc.name = sol.product_code
+    left join dmpi_crm_country cc on cc.id = shp.country_id
+    where ctr.week_no like '%%%s%%'
+    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,so.shell_color
+
+)
+
+UNION ALL
+
+(
+    SELECT
+            so.id as so_id,
+            so.week_no,
+            cc.name as country,
+            so.name as so_no,
+            cust.name as customer,
+            shp.name as ship_to,
                         prod.product_class,
             pc.name as prod_code,
             pc.sequence,
@@ -115,7 +145,10 @@ UNION ALL
 
 )
 
-        """  % week_no
+
+
+
+        """  % (week_no,week_no)
 
         print (query)
         self.env.cr.execute(query)
@@ -129,6 +162,123 @@ UNION ALL
 
         pd_res_vals = pd_res.reset_index().values
         return pd_res_vals
+
+
+
+    def get_so_summary(self,week_no):
+
+        query = """
+(
+    SELECT
+            0 as so_id,
+            '' as week_no,
+            '' as country,
+            '' as so_no,
+            '' as customer,
+            '' as ship_to,
+            '' as product_class,
+            name as prod_code,
+            sequence,
+            '' as shell_color,
+            product_crown,
+                        psd,
+            0 as qty
+    FROM dmpi_crm_product_code pc WHERE active=TRUE
+    ORDER BY pc.sequence
+)
+
+UNION ALL
+
+(
+    SELECT
+            so.id as so_id,
+            so.week_no,
+            cc.name as country,
+            so.name as so_no,
+            cust.name as customer,
+            shp.name as ship_to,
+            'A2' as product_class,
+            '' as prod_code,
+            0 as sequence,
+            so.shell_color,
+            '' as product_crown,
+            0 as psd,
+            0 as qty
+    from dmpi_crm_sale_order_line sol
+    left join dmpi_crm_sale_order so on so.id = sol.order_id
+    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
+    left join dmpi_crm_partner cust on cust.id = ctr.partner_id
+    left join dmpi_crm_product prod on prod.id = sol.product_id
+    left join dmpi_crm_product_code pc on pc.name = sol.product_code
+    left join dmpi_crm_country cc on cc.id = shp.country_id
+    where ctr.week_no like '%%%s%%'
+    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,so.shell_color
+
+)
+
+UNION ALL
+
+(
+    SELECT
+            so.id as so_id,
+            so.week_no,
+            cc.name as country,
+            so.name as so_no,
+            cust.name as customer,
+            shp.name as ship_to,
+                        prod.product_class,
+            pc.name as prod_code,
+            pc.sequence,
+            so.shell_color,
+            pc.product_crown,
+            prod.psd,
+            sum(sol.qty) as qty
+    from dmpi_crm_sale_order_line sol
+    left join dmpi_crm_sale_order so on so.id = sol.order_id
+    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
+    left join dmpi_crm_partner cust on cust.id = ctr.partner_id
+    left join dmpi_crm_product prod on prod.id = sol.product_id
+    left join dmpi_crm_product_code pc on pc.name = sol.product_code
+    left join dmpi_crm_country cc on cc.id = shp.country_id
+    where ctr.week_no like '%%%s%%'
+    group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,prod.product_class,pc.name,pc.sequence,so.shell_color,pc.product_crown,prod.psd
+
+)
+
+        """  % (week_no,week_no)
+
+        print (query)
+        self.env.cr.execute(query)
+        result = self.env.cr.dictfetchall()
+
+        df = pd.DataFrame.from_dict(result)
+        pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to','product_class'], 
+            columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
+        print(pd_res)
+
+
+        pd_res_index = pd_res.reset_index()
+        pd_res_vals = pd_res.reset_index().values  
+        pd_res_dict = []      
+
+        headers = []
+        for c in pd_res_index:
+            if c[1] == '':
+                headers.append(c[0])
+            else:
+                headers.append(c[1])
+
+
+        for row in pd_res_vals:
+            pd_res_dict.append( dict(zip(headers, row)) )
+
+
+        return headers,pd_res_vals,pd_res_dict
+
+
+
 
     def get_allocations(self,allocation_id):
         query = """
@@ -199,12 +349,11 @@ ORDER BY sequence
                     if l[0] == 'All':
                         td_data.append(th(l[1]))
                         td_data.append(th(a(l[0],l[2])))
-                        td_data.append(th(l[3]))
                         td_data.append(th(l[4]))
                         td_data.append(th(l[5]))
                         
 
-                        for d in l[6:]:
+                        for d in l[7:]:
                             d = round(d)
                             td_data.append(th(d))
                             # col_totals.append({'prod_code': , 'qty':d})
@@ -215,11 +364,10 @@ ORDER BY sequence
                     else:
                         td_data.append(td(l[1]))
                         td_data.append(td(a(l[0],l[2])))
-                        td_data.append(td(l[3]))
                         td_data.append(td(l[4]))
                         td_data.append(td(l[5]))
                         
-                        for d in l[6:]:
+                        for d in l[7:]:
                             d = round(d)
                             td_data.append(td(d))
 
@@ -261,7 +409,6 @@ ORDER BY sequence
 
 
 
-
     @api.multi
     def print_market_allocations(self):
         for rec in self:
@@ -270,32 +417,175 @@ ORDER BY sequence
             details = workbook.add_worksheet('Details')
             summary = workbook.add_worksheet('Summary')
 
-            row1 = 4
+            h1 = workbook.add_format({'bold': True,'bg_color': '#BFDFFF'})
+            h2 = workbook.add_format({'bold': True,'bg_color': '#73B9FF'})
+            alt_1 = workbook.add_format({'bg_color': '#FFEFBF'})
+            alt_2 = workbook.add_format({'bg_color': '#FFFFBF'})
+
+            row1 = 0
             col1 = 0
             row = row1
             col = col1
+            result_row1 = row1+5
+            summary_start = summary_end = []
 
-            first_row = row1
-            first_col = col1
-            last_row = 0
-            last_col = 0
+            headers, pd_res_vals, pd_res_dict  = self.get_so_summary(rec[0].week_no)
+            
+            # print (headers)
+            # print (pd_res_vals)
+            # print (pd_res_dict)
+            #Print Results
+            col = col1
+            row = result_row1
+            pcol_start = 0
+            for h in headers:
+                if h == 'so_id':
+                    h = 'SO ID'
+                if h == 'country':
+                    h = 'Country'
+                if h == 'so_no':
+                    h = 'So No'
+                if h == 'customer':
+                    h = 'Customer'
+                if h == 'ship_to':
+                    h = 'Ship To'
+                if h == 'product_class':
+                    h = 'Class'
+                if h == 'All':
+                    h = 'TOTAL'
+                if h == 0:
+                    pcol_start = col
+                else:
+                    details.write(row,col,h,h1) 
+                    summary.write(0,col,h) 
+                    col += 1 
+                details.write(row,col, 'STATUS',h1)
+                summary.write(0,col,'STATUS')  
 
-            #Generate Header 1
+            so_idx = 0
+            so_id = 0
+            summary_start = [result_row1,col1]
+            for r in pd_res_dict:
+                col = col1
+                if r['so_id'] != 0:
+                    if r['so_id'] != 'All':
+                        row += 1
+                        if r['so_id'] != so_id: #Check if Even or Odd
+                            so_idx += 1
+                            so_id = r['so_id']
+
+                        for h in headers:
+                            if h != 0:
+                                if h != 'All':
+                                    if (so_idx % 2) == 0:
+                                        details.write(row,col,r[h],alt_1)  
+                                    else:
+                                        details.write(row,col,r[h],alt_2)
+                                else:
+                                    totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,pcol_start),xl_rowcol_to_cell(row,col-1))
+                                    if (so_idx % 2) == 0:
+                                        details.write(row,col,totals,alt_1)  
+                                    else:
+                                        details.write(row,col,totals,alt_2)
+                                col += 1
+                    
+                        
+
+                    else:
+                        col = 0
+                        row += 1
+                        for h in headers:
+                            if h != 'All':
+                                if col >= pcol_start:
+                                    # print ("PCOLSTART: %s" % pcol_start)
+                                    totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(result_row1+1,col),xl_rowcol_to_cell(row-1,col))
+                                    details.write(row,col,totals,h2)
+                                    details.write(result_row1-2,col,totals,h2)
+                                else:
+                                    if col == 0:
+                                        details.write(row,col,"TOTAL",h2)
+                                        details.write(result_row1-2,col,"TOTAL",h2)
+                                    else:
+                                        details.write(row,col,"",h2)  
+                                        details.write(result_row1-2,col,"",h2)  
+                            col += 1
+
+                    summary_end = [row,col-1]
+
+                          
+            # print(summary_start,summary_end)
+            row = 1
+            for r in range(summary_start[0]+1,summary_end[0]):
+                # print (r)
+                col = 0
+                for c in range(summary_start[1],summary_end[1]+1):
+                    val = "=Details"
+                    summary.write(row,col,"=Details!%s" % xl_rowcol_to_cell(r,c))
+                    col += 1
+
+                row += 1
+
+
+
+            col = 0
+            factor_row = result_row1-1
+            for h in headers:
+                if h != 'All':
+                    if h != 0:
+                        if col >= pcol_start:
+                            print ("%s PCOLSTART: %s" % (h,pcol_start))
+                            vals = self.env['dmpi.crm.product.code'].search([('name','=',h)]).factor
+                            details.write(factor_row,col,vals,h2)  
+                        else:
+                            if col == 0:
+                                details.write(factor_row,col,"FACTORS",h2)
+                            else:
+                                details.write(factor_row,col,"",h2)  
+                        col += 1
+                else:
+                    details.write(factor_row,col,"",h2) 
+
+            row = summary_end[0]+1
+            col = 0
+            details.write(row,col, 'ALLOCATIONS') 
+            details.write(result_row1-3,col, 'ALLOCATIONS') 
+            col += pcol_start
+            total_col1 = col
+            for r in self.get_allocations(rec.id):
+                d = round(r['qty'],2)
+                details.write(row,col, d, h1)
+                details.write(result_row1-3,col, d, h1)
+                col += 1
+            totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
+            details.write(row,col, totals, h1)
+            details.write(result_row1-3,col,totals, h1) 
+
+
+            row += 1
+
+
+            col = 0
+            details.write(row,col, 'VARIANCE', h1) 
+            details.write(result_row1-4,col, 'VARIANCE', h1) 
+            col += pcol_start
+            total_col1 = col
+            for r in self.get_allocations(rec.id):
+                variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,col),xl_rowcol_to_cell(row-2,col))
+                details.write(row,col, variance, h1)
+                details.write(result_row1-4,col, variance, h1)
+                col += 1
+
+            details.freeze_panes(result_row1+1, pcol_start)
+
+
+
+            #--------------COMMON CASES---------------
+
             col = 0
             active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
-            number_of_active_products = len(active_products)
-
-
-            details.write(row1-1,col, 'FACTORS') 
-            columns = ['SO ID','Country','So No','Customer','Ship To','Class']
-            for c in columns:
-                details.write(row,col, c) 
-                col += 1
+            number_of_active_products = len(active_products)            
             cc_col = []
-            for p in active_products: 
-                details.write(row1-1,col,p.factor) #Factors
-                details.write(row,col,p.name)
-                
+            for p in active_products:                 
                 exist = False
                 for c in cc_col:
                     if c['psd'] == p.psd:
@@ -309,152 +599,28 @@ ORDER BY sequence
                 else:
                     cc_col.append({'psd':p.psd, 'col1':col})
 
-                col += 1
-
-            
-            details.write(row,col, 'TOTAL') 
-            col += 1
-            details.write(row,col, 'STATUS') 
-            last_col = col
-
             #Common cases Header
-            cc_col1 = col
+            cc_col1 = summary_end[1]
             cc_col1 += 4
-            details.write(row-1,cc_col1, 'COMMON CASES') 
+            row = result_row1
+            details.write(row-5,cc_col1, 'COMMON CASES',h1) 
             # print(cc_col)
             h_col = cc_col1
             for i in cc_col:
-                details.write(row,h_col,i['psd']) 
+                details.write(row,h_col,i['psd'],h1) 
                 h_col += 1
             row += 1
 
+            # print(summary_start,summary_end)
+            for r in range(summary_start[0]+1,summary_end[0]):
+                # print (r)
+                col = cc_col1
+                for c in range(summary_start[1],summary_end[1]+1):
+                    val = "=Details"
+                    summary.write(row,col,"=Details!%s" % xl_rowcol_to_cell(r,c))
+                    col += 1
 
-            pd_res_vals = self.get_so_summary_table(rec[0].week_no)
-
-            for r in pd_res_vals:
-                col = 0
-                
-                if r[0] != 0:
-                    if r[0] != 'All':
-                        for c in r:
-                            details.write(row,col, c)
-                            col += 1
-                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,len(columns)),xl_rowcol_to_cell(row,col-2)) #Totals Side
-                        details.write(row,col-1, totals) 
-
-                        #CommonCases Conversions
-                        cc_val_col1 = cc_col1
-                        for i in cc_col:
-                            # print(i)
-                            vals = ""
-                            if 'col2' in i.keys():
-                                vals = "=%s*%s+%s*%s" % (
-                                        xl_rowcol_to_cell(row,i['col1']),xl_rowcol_to_cell(row1-1,i['col1']),
-                                        xl_rowcol_to_cell(row,i['col2']),xl_rowcol_to_cell(row1-1,i['col2'])
-                                    )
-                            else:
-                                vals = "=%s*%s" % (
-                                        xl_rowcol_to_cell(row,i['col1']),xl_rowcol_to_cell(row1-1,i['col1'])
-                                    )
-                            details.write(row,cc_val_col1,vals) 
-                            cc_val_col1 += 1
-
-                        total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,cc_col1),xl_rowcol_to_cell(row,cc_val_col1-1))
-                        details.write(row,cc_val_col1,total) 
-
-                        row += 1
-                    else:
-                        details.write(row,col, 'TOTAL') 
-                        details.write(row1-2,col, 'TOTAL') #Top Totals
-                        col += len(columns)
-                        total_col1 = col
-                        for p in active_products: 
-                            total = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row1+1,col),xl_rowcol_to_cell(row-1,col))
-                            details.write(row,col,total)
-                            details.write(row1-2,col,total) #Top Totals
-                            col += 1
-                        totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
-                        details.write(row,col, totals)                            
-                        
-
-                        #CommonCases Conversions TOTALS
-                        cc_val_col1 = cc_col1
-                        for i in cc_col:
-                            # print(i)
-                            # Totals
-                            vals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row1+1,cc_val_col1),xl_rowcol_to_cell(row-1,cc_val_col1))
-                            details.write(row,cc_val_col1,vals) 
-                            details.write(row1-2,cc_val_col1,vals) #Top Totals
-                            cc_val_col1 += 1
-
-                        last_row = row
-                        row += 1
-
-
-            col = 0
-            details.write(row,col, 'ALLOCATIONS') 
-            details.write(row1-3,col, 'ALLOCATIONS') 
-            col += len(columns)
-            total_col1 = col
-            for r in self.get_allocations(rec.id):
-                d = round(r['qty'],2)
-                details.write(row,col, d)
-                details.write(row1-3,col, d)
-                col += 1
-            totals = "=SUM(%s:%s)" % (xl_rowcol_to_cell(row,total_col1),xl_rowcol_to_cell(row,col-1))
-            details.write(row,col, totals)
-            
-            #CommonCases Conversions Allocations
-            cc_val_col1 = cc_col1
-            for i in cc_col:
-                # print(i)
-                vals = ""
-                if 'col2' in i.keys():
-                    vals = "=%s+%s" % (xl_rowcol_to_cell(row,i['col1']), xl_rowcol_to_cell(row,i['col2']))
-                else:
-                    vals = "=%s" % ( xl_rowcol_to_cell(row,i['col1']) )
-                details.write(row,cc_val_col1,vals) 
-                details.write(row1-3,cc_val_col1,vals)
-                cc_val_col1 += 1
-
-            row += 1
-
-
-            col = 0
-            details.write(row,col, 'VARIANCE') 
-            details.write(row1-4,col, 'VARIANCE') 
-            col += len(columns)
-            total_col1 = col
-            for r in self.get_allocations(rec.id):
-                variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,col),xl_rowcol_to_cell(row-2,col))
-                details.write(row,col, variance)
-                details.write(row1-4,col, variance)
-                col += 1
-
-            #CommonCases Conversions Allocations
-            cc_val_col1 = cc_col1
-            for i in cc_col:
-                variance = "=%s-%s" % (xl_rowcol_to_cell(row-1,cc_val_col1),xl_rowcol_to_cell(row-2,cc_val_col1))
-                details.write(row,cc_val_col1, variance)
-                details.write(row1-4,cc_val_col1, variance)
-                cc_val_col1 += 1
-
-
-            # summary_cells = "Summary Cells: %s %s" % (xl_rowcol_to_cell(row1,col1) , xl_rowcol_to_cell(last_row,last_col))
-            # print (summary_cells)
-            #GET SO IDS start from Zero
-            summary_row = 0
-            for r in range(first_row,last_row):
-                # print (summary_row)
-                summary_col = 0
-                summary.write(summary_row,summary_col,"=Details!%s" % xl_rowcol_to_cell(r,first_col))
-                
-
-                summary_col = 1
-                for c in range(5,last_col+1):
-                    summary.write(summary_row,summary_col,"=Details!%s" % xl_rowcol_to_cell(r,c))
-                    summary_col += 1
-                summary_row += 1
+                row += 1
 
 
 
@@ -472,6 +638,23 @@ ORDER BY sequence
                 'target': 'new'
                 }
             return button
+
+
+
+    @api.multi
+    def upload_market_allocations(self):
+        self.ensure_one()
+        template = self.env.ref('dmpi_crm.view_crm_market_allocation_upload_form')
+        return {
+            'name': 'Upload Market Allocations',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'crm.market.allocation.upload',
+            'views': [(template.id, 'form')],
+            'view_id': template.id,
+            'target': 'new',
+        }
 
 
 
@@ -534,6 +717,47 @@ ORDER BY sequence
 
 
     @api.multi
+    def update_so(self):
+        print('Process GO')
+
+        th = lambda x: """<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % x 
+        td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
+
+        for rec in self:
+            if rec.excel_file:
+
+                book    = open_workbook(file_contents=base64.b64decode(rec.excel_file))
+                sheet   = book.sheet_by_name('Summary')
+
+                trow = []
+                h1 = []
+                num_cols = sheet.ncols 
+                for row_idx in range(0, sheet.nrows): 
+                    td_data = []
+                    for col_idx in range(0, num_cols): 
+                        val = sheet.cell_value(row_idx, col_idx)
+                        if col_idx not in (2,3):
+                            if row_idx == 0: #Header
+                                h1.append(th(val))
+                            else:
+                                if (col_idx > 5 and col_idx < num_cols-1) or (col_idx == 0):
+                                    val = int(sheet.cell_value(row_idx, col_idx))
+                                td_data.append(td(val))
+
+                    trow_data = """<tr class="o_data_row"> %s </tr>""" % ''.join(td_data)
+                    trow.append(trow_data)
+
+
+                
+            rec.html_report = """
+                <table class="o_list_view table table-condensed table-striped o_list_view_ungrouped">
+                    <thead><tr> %s </tr></thead>
+                    <tbody> %s </tbody>
+                </table>
+            """ %(''.join(h1),''.join(trow))                                      
+
+
+    @api.multi
     def process_go(self):
         print('Process GO')
         for rec in self:
@@ -544,9 +768,23 @@ ORDER BY sequence
                 if file_extension == 'xl':
                     data = read_xls_to_dict(self.excel_file,'Summary')
 
-                    for d in data:
-                        print (d)
+                    active_products = self.env['dmpi.crm.product.code'].search([('active','=',True)],order='sequence')
+                    number_of_active_products = len(active_products)
+                    products = []
+                    for h in active_products:
+                        products.append(h.name)
 
+
+                    so_id = 0
+                    
+                    items = []
+                    for d in data:
+
+                        if d['so_id'] != so_id and so_id != 0:
+
+                            d['so_id'] != so_id                            
+                        print (d)
+                        counter += 1
 
 
 
@@ -571,6 +809,7 @@ ORDER BY sequence
     excel_file = fields.Binary(string='Excel File')
     allocation_file = fields.Binary(string='Allocation File')
     allocation_error = fields.Text("ERROR")
+    sale_order_ids = fields.Many2many('dmpi.crm.sale.order','allocation_sale_order_rel','allocation_id','so_id','Sale Orders')
 
 
 
@@ -579,8 +818,8 @@ class DmpiCrmMarketAllocationLine(models.Model):
 
     @api.depends('corp','dmf','sb')
     def _get_total(self):
-    	for rec in self:
-    		rec.total = rec.corp + rec.dmf + rec.sb 
+        for rec in self:
+            rec.total = rec.corp + rec.dmf + rec.sb 
 
     # def _get_product_crown(self):
     #     query = """SELECT pc.name, pc.description 
@@ -603,6 +842,37 @@ class DmpiCrmMarketAllocationLine(models.Model):
     dmf = fields.Float("DMF")
     sb = fields.Float("SB")
     total = fields.Float("Total",compute='_get_total')
+
+
+
+class CrmMarketAllocationUpload(models.TransientModel):
+    """
+    This wizard will confirm the all the selected draft invoices
+    """
+
+    _name = "crm.market.allocation.upload"
+    _description = "Upload Wizard for Market Allocation"
+
+
+    upload_file = fields.Binary(string='Upload File')
+    html_display = fields.Html("Result")
+
+
+    @api.onchange('upload_file')
+    def onchange_upload_final_file(self):
+        if self.upload_file:
+            print ("Upload Excel File")
+
+
+    @api.multi
+    def process_upload(self):
+        print ("Process Uplaod")
+
+    
+
+
+
+
 
 
 class DmpiCrmReportOrderLines(models.Model):

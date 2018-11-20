@@ -35,21 +35,41 @@
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
                     </header>
-                    <!-- <sheet> -->
+                    <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="print_market_allocations"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-refresh"
-                                string="Download Allocation">
-                            </button>
                             <button name="action_generate_report"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-refresh"
-                                string="Generate Report">
+                                string="1. Refresh">
+                            </button>
+                            <button name="print_market_allocations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-cloud-download"
+                                string="2. Download Alloc">
+                            </button>
+                            <button name="upload_market_allocations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-cloud-upload"
+                                string="3. Upload Alloc">
+                            </button>
+                            <button name="process_go"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-thumbs-o-up"
+                                string="4. Process GO">
+                            </button>
+                            <button name="process_all"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-thumbs-up"
+                                string="5. Process ALL">
                             </button>
                         </div>
+
+
                         <div class="oe_title">
                             <h1>
                                 <field name="name" readonly="0"/>
@@ -71,14 +91,18 @@
 
                     
                         <notebook>
-                            <page string="Current Allocation">
+                            <page string="Market Allocation">
+                                <field name="sale_order_ids">
+                                    <tree>
+                                        <field name="ship_to_id" />
+                                        <field name="notes" widget="html"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Market Allocation">
                                 <group>
                                     <group>
                                         <field name="excel_file" string="UPLOAD FINAL ALLOCATIONS"/>
-                                    </group>
-                                    <group>
-                                        <button name="process_go" string="Process GO" type="object" class="oe_highlight" confirm="Please Confirm Action"/>
-                                        <button name="process_all" string="Process ALL" type="object" class="oe_highlight" confirm="Please Confirm Action"/>
                                     </group>
                                 </group>
                                 <field name="html_report" invisible="1"/>
@@ -107,7 +131,7 @@
                                     <field name="message_ids" widget="mail_thread"/>
                                 </div>
                         </group>
-                    <!-- </sheet> -->
+                    </sheet>
 
                     
                 </form>
@@ -215,6 +239,23 @@
 
 
 
+
+        <record id="view_crm_market_allocation_upload_form" model="ir.ui.view">
+            <field name="name">Upload Wizard for Market Allocation</field>
+            <field name="model">crm.market.allocation.upload</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <group>
+                        <field name="upload_file"/>
+                    </group>
+                    <field name="html_display"/>
+                    <footer>
+                        <button string="Process Upload" name="process_upload" type="object" class="btn-primary" confirm="Are you sure you want to process upload?"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
 
 
