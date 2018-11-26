@@ -801,6 +801,11 @@ class DmpiCrmConfig(models.Model):
                                 sap_dr_no = row[4]
                                 so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])], limit=1)
 
+                                if so:
+                                    contract = so.contract_id
+                                    contract_id = contract.id
+
+
                                 dr = {
                                     'contract_id' : contract_id,
                                     'odoo_po_no' : row[1],
@@ -956,10 +961,10 @@ class DmpiCrmConfig(models.Model):
                                 # clp['summary_case_c'] = row[8]
 
                     if contract_id:
-                        # do not create if no dr_lines
+                        # do not create if no dr_lines (remove)
                         success = True
-                        if len(dr_lines) == 0:
-                            success = False
+                        # if len(dr_lines) == 0:
+                            # success = False
 
                         if success:
                             dr['dr_lines'] = dr_lines
