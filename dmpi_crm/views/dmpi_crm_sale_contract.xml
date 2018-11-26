@@ -31,7 +31,7 @@
                     <field name="sap_cn_no"/>
                     <field name="week_no" required="1"/>
                     <field name="partner_id"/>
-                    <field name="contract_type"/>
+                    <field name="contract_type" invisible="1"/>
                     <field name="customer_ref" />
                     <field name="po_date"/>
                     <field name="valid_from" />
@@ -114,7 +114,7 @@
                         <group>
                             <group>
                                 <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
-                                <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" invisible="1"/>
                                 <field name="customer_ref" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="po_date" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_from" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>

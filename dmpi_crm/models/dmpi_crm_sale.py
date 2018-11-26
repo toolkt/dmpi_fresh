@@ -1239,50 +1239,15 @@ class DmpiCrmSaleOrderLine(models.Model):
 
     def compute_price(self,date,customer_code,material,tag_ids=[]):
 
-        where_clause = ""
-        query = ""
-        if len(tag_ids) > 0:
-            query = """SELECT * FROM (
-                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                        from dmpi_crm_product_price_list_item  i
-                        left join price_item_tag_rel tr on tr.item_id = i.id
-                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                    ) AS Q1
-                    -- where material = '' and  ARRAY <@ tags
-                    where material = '%s' and  ARRAY%s && tags
-                    limit 1 """ % (material, tag_ids)
+        product_id = self.env['dmpi.crm.product'].search([('sku','=',material)], limit=1)
+        partner_id = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)], limit=1)
+        pricelist_obj = self.env['dmpi.crm.product.price.list']
 
-        else:
-            query = """SELECT * FROM (
-                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                        from dmpi_crm_product_price_list_item  i
-                        left join price_item_tag_rel tr on tr.item_id = i.id
-                        where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
-                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                    ) AS Q1
-                    
-                    limit 1 """ % (material, date)
-
-
-        print (query)
-        # print("--------PRICE-------\n%s" % query)
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-        if result:
-            self.price = float(result[0]['amount'])
-        else:
-            self.price = 0
-        if result:
-            self.uom = result[0]['uom']
-        else:
-            self.uom = 'CAS'
-
-        if result:
-            return result[0]
-        else:
-            return False
-
-
+        print (product_id.id, partner_id.id, date, tag_ids)
+        rule_id, price, uom = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, tag_ids)
+        self.price = price
+        self.uom = uom
+        return rule_id
 
     # @api.onchange('product_id','qty')
     @api.onchange('product_id')
@@ -1294,28 +1259,6 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.product_code = self.product_id.code
             self.total = self.qty * self.price
             self.name = self.product_id.name
-
-            # not qty or (qty-60) not divisible by 75
-            # mod_75 = self.qty % 75
-            # mod_75_less = (self.qty - 60) % 75
-            # no_p60 = False # found pallet 60
-            # no_mod = False # not divisble by above conditions
-            # no_qty = False # qty == 60
-            # self.found_p60 = no_p60
-
-            # set found_p60 to True
-            # if mod_75_less == 0:
-            #     self.found_p60 = True
-            #     no_p60 = True if self.order_id.found_p60 >= 1 else False
-
-            # no_mod = not ((mod_75 == 0) or (mod_75_less == 0))
-            # no_qty = not bool(self.qty)
-            
-            # round qty if at least 1 error found
-            # if any([no_p60, no_mod, no_qty]):
-            #     qty = round_qty(75,self.qty)
-            #     self.qty = qty
-            #     self.found_p60 = False
 
     def recompute_price(self):
         if self.product_id:

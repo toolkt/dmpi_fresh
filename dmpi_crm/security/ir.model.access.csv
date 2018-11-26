@@ -22,7 +22,6 @@ access_user_dmpi_crm_sale_order_line,user.dmpi.crm.sale.order.line,model_dmpi_cr
 access_user_dmpi_crm_dr,user.dmpi.crm.dr,model_dmpi_crm_dr,base.group_user,1,1,1,1
 access_user_dmpi_crm_invoice_line,user.dmpi.crm.invoice.line,model_dmpi_crm_invoice_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_invoice_dms,user.dmpi.crm.invoice.dms,model_dmpi_crm_invoice_dms,base.group_user,1,1,1,1
-access_user_dmpi_crm_sales_org,user.dmpi.crm.sales.org,model_dmpi_crm_sales_org,base.group_user,1,1,1,1
 access_user_dmpi_crm_product,user.dmpi.crm.product,model_dmpi_crm_product,base.group_user,1,1,1,1
 access_user_dmpi_crm_partner_credit_limit,user.dmpi.crm.partner.credit.limit,model_dmpi_crm_partner_credit_limit,base.group_user,1,1,1,1
 access_user_dmpi_crm_partner_ar,user.dmpi.crm.partner.ar,model_dmpi_crm_partner_ar,base.group_user,1,1,1,1
@@ -35,7 +34,6 @@ access_user_dmpi_crm_template,user.dmpi.crm.template,model_dmpi_crm_template,bas
 access_user_dmpi_crm_product_price_list,user.dmpi.crm.product.price.list,model_dmpi_crm_product_price_list,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_price_tag,user.dmpi.crm.product.price.tag,model_dmpi_crm_product_price_tag,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_price_list_item,user.dmpi.crm.product.price.list.item,model_dmpi_crm_product_price_list_item,base.group_user,1,1,1,1
-access_user_dmpi_crm_sale_contract_group,user.dmpi.crm.sale.contract.group,model_dmpi_crm_sale_contract_group,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_code,user.dmpi.crm.product.code,model_dmpi_crm_product_code,base.group_user,1,1,1,1
 access_user_dmpi_crm_channel_group,user.dmpi.crm.channel.group,model_dmpi_crm_channel_group,base.group_user,1,1,1,1
 access_user_customer_crm_sale_order,user.customer.crm.sale.order,model_customer_crm_sale_order,base.group_user,1,1,1,1

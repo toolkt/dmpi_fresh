@@ -819,19 +819,7 @@ class DmpiCrmMarketAllocationLine(models.Model):
     @api.depends('corp','dmf','sb')
     def _get_total(self):
         for rec in self:
-            rec.total = rec.corp + rec.dmf + rec.sb 
-
-    # def _get_product_crown(self):
-    #     query = """SELECT pc.name, pc.description 
-    #                 from dmpi_crm_product_code pc 
-    #                 where active is True order by sequence
-    #             """
-    #     # print(query)
-    #     self.env.cr.execute(query)
-    #     result = self.env.cr.dictfetchall()
-    #     res = [(r['name'],r['description']) for r in result]
-    #     return res
-
+            rec.total = rec.corp + rec.dmf + rec.sb
 
     # name = fields.Char("Name")
     psd = fields.Integer("PSD")
