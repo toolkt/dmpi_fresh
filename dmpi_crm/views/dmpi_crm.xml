@@ -1063,30 +1063,70 @@
         <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/>
 
 
+        <!-- SHIPMENT -->
+        <record id="view_dmpi_crm_shp_search" model="ir.ui.view">
+            <field name="name">Shipment Details</field>
+            <field name="model">dmpi.crm.shp</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
+                    <field name="sap_dr_no"/>
+                    <field name="van_no"/>
+                    <field name="dr_create_date"/>
+                    <field name="gi_date"/>
+                    <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_shp_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.shp.tree</field>
+            <field name="model">dmpi.crm.shp</field>
+            <field name="arch" type="xml">
+                <tree string="Shipment Details">
+                    <field name="name"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
+                    <field name="sap_dr_no"/>
+                    <field name="van_no"/>
+                    <field name="gi_date"/>
+                    <field name="origin"/>
+                    <field name="destination"/>
+                    <field name="is_duplicate"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="view_dmpi_crm_shp_form" model="ir.ui.view">
             <field name="name">Shipment Details</field>
             <field name="model">dmpi.crm.shp</field>
             <field name="arch" type="xml">
                 <form string="Shipment Details">
                     <sheet>
-                        <h1><field name="name" attrs="{'readonly':True}"/></h1>
+                        <span>Shipment/Container</span>
+                        <h1>
+                            <field name="name" attrs="{'readonly':True}"/>/<field name="van_no" readonly="1"/>
+                            <span style="color:#D84424;" attrs="{'invisible':[('is_duplicate','=',False)]}"> (Duplicate)</span>
+                        </h1>
+                        <field name="is_duplicate" invisible="1"/>
                         <group>
-                            <group>
-                                <field name="sap_so_no"/>
-                                <field name="sap_dr_no"/>
-                                <field name="sap_shp_no"/>
+                            <group string="Odoo Docs">
+                                <field name="odoo_po_no" invisible="1"/>
+                                <field name="odoo_so_no" invisible="1"/>
                                 <field name="contract_id"/>
-                                <field name="odoo_po_no"/>
-                                <field name="odoo_so_no"/>
-                                <field name="sap_so_no"/>
+                                <field name="so_id"/>
                             </group>
-                            <group>
+                            <group string="SAP Docs">
+                                <field name="shp_no" invisible="1"/>
+                                <field name="sap_so_no"/>
                                 <field name="sap_dr_no"/>
+                            </group>
+                        </group>
+                        <group string="Shipment">
+                            <group>
                                 <field name="ship_to"/>
-                                <field name="dr_create_date"/>
-                                <field name="gi_date"/>
-                                <field name="shp_no"/>
-
                                 <field name="fwd_agent"/>
                                 <field name="van_no"/>
                                 <field name="vessel_no"/>
@@ -1094,20 +1134,23 @@
                                 <field name="load_no"/>
                                 <field name="booking_no"/>
                                 <field name="seal_no"/>
+                            </group>
+                            <group>
+                                <field name="dr_create_date"/>
+                                <field name="gi_date"/>
                                 <field name="origin"/>
                                 <field name="destination"/>
                                 <field name="discharge"/>
-
                             </group>
                         </group>
                         <notebook>
                             <page string="Items">
                                 <field name="shp_lines">
                                     <tree string="Items" editable="bottom">
-                                        <field name="sap_so_no"/>
+                                        <field name="sap_so_no" invisible="1"/>
                                         <field name="so_line_no"/>
                                         <field name="material"/>
-                                        <field name="qty"/>
+                                        <field name="qty" sum="Total"/>
                                         <field name="uom"/>
                                         <field name="plant"/>
                                         <field name="reject_reason"/>
@@ -1118,6 +1161,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -1133,16 +1180,37 @@
         <menuitem id="menu_dmpi_crm_shp" action="action_dmpi_crm_shp" parent="menu_dmpi_crm_commercial_top"/>
 
 
+        <!-- INVOICE -->
+        <record id="view_dmpi_crm_inv_search" model="ir.ui.view">
+            <field name="name">dmpi.crm.invoice.search</field>
+            <field name="model">dmpi.crm.invoice</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
+                    <field name="sap_dr_no"/>
+                    <field name="source"/>
+                    <filter name="filter_dmpi" string="DMPI Invoices" domain="[('source', '=', '500')]"/>
+                    <filter name="filter_dms" string="DMS Invoices" domain="[('source', '=', '530')]"/>
+                    <filter name="filter_sbfti" string="SBFTI Invoices" domain="[('source', '=', '570')]"/>
+                    <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+
   		<record id="view_dmpi_crm_invoice_tree" model="ir.ui.view">
-            <field name="name">DMPI Invoice Tree</field>
+            <field name="name">dmpi.crm.invoice.tree</field>
             <field name="model">dmpi.crm.invoice</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
                     <field name="source"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
                     <field name="inv_no"/>
-                    <field name="dmpi_sap_inv_no"/>
-                    <field name="dms_inv_no"/>
+                    <field name="is_duplicate"/>
                 </tree>
             </field>
         </record>
@@ -1156,32 +1224,39 @@
                     <sheet>
                         <h1><field name="name" attrs="{'readonly':True}"/></h1>
                         <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="source"/>
-                                <field name="inv_no"/>
-                                <field name="dmpi_sap_inv_no"/>
+                            <group string="Odoo Docs">
+                                <field name="source" invisible="1"/>
+                                <field name="odoo_po_no" invisible="1"/>
+                                <field name="odoo_so_no" invisible="1"/>
                                 <field name="contract_id"/>
-                                <field name="invoice_filename" invisible="0"/> 
-                                <field name="invoice_file" filename="invoice_filename"/>
+                                <field name="so_id"/>
                             </group>
-                            <group>
-                                <field name="odoo_po_no"/>
-                                <field name="odoo_so_no"/>
+                            <group string="SAP Docs">
+
                                 <field name="sap_so_no"/>
                                 <field name="sap_dr_no"/>
                                 <field name="shp_no"/>
-                                <field name="dmpi_inv_no"/>
-                                <field name="dms_inv_no"/>
-                                <field name="sbfti_inv_no"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Details">
                                 <field name="payer"/>
                                 <field name="inv_create_date"/>
                                 <field name="header_net"/>
-
+                            </group>
+                            <group string="Invoices">
+                                <field name="dmpi_inv_no"/>
+                                <field name="sbfti_inv_no"/>
+                                <field name="dms_inv_no"/>
+                                <field name="inv_no" invisible="1"/>
+                                <field name="invoice_filename" invisible="1"/> 
+                                <field name="invoice_file" filename="invoice_filename"/>
                             </group>
                         </group>
+
                         <notebook>
-                            <page string="Invoice">
+                            <page string="Items">
                                 <field name="inv_lines">
                                     <tree string="Invoice" editable="bottom">
                                         <field name="so_line_no"/>
@@ -1195,6 +1270,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>

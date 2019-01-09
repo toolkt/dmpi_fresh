@@ -10,13 +10,12 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
                     <field name="van_no"/>
                     <field name="delivery_creation_date"/>
                     <field name="gi_date"/>
-                    <!-- <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
-                    <group>
-                        <filter string="Active" context="{'group_by': 'active'}"/>
-                    </group> -->
+                    <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
                 </search>
             </field>
         </record>
@@ -27,12 +26,16 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="odoo_so_no" invisible="1"/>
+                    <field name="so_id"/>
+                    <field name="sap_so_no"/>
                     <field name="van_no"/>
                     <field name="delivery_creation_date"/>
                     <field name="gi_date"/>
                     <field name="port_origin"/>
                     <field name="port_destination"/>
                     <field name="state"/>
+                    <field name="is_duplicate"/>
                 </tree>
             </field>
         </record>
@@ -56,60 +59,71 @@
 
                     <sheet>
                         <div class="oe_title">
+                            <span>DR/Container </span>
                             <h1>
-                                <field name="name" readonly="1"/>
+                                <field name="name" readonly="1"/>/<field name="van_no" readonly="1"/>
+                                <span style="color:#D84424;" attrs="{'invisible':[('is_duplicate','=',False)]}"> (Duplicate)</span>
                             </h1>
+                            <field name="is_duplicate" invisible="1"/>
                         </div>
                         <group>
-                            <group>
-                                <field name="sap_dr_no" />
-                                <field name="sap_so_no" />
-                                <field name="sap_delivery_no" />
-                                <field name="ship_to" />
-                                <field name="sto_no" />
+                            <group string="Odoo Docs">
+                                <field name="odoo_po_no" invisible="1"/>
+                                <field name="odoo_so_no" invisible="1"/>
+                                <field name="contract_id" readonly="1"/>
+                                <field name="so_id" />
                             </group>
-                            <group>
-                                <field name="odoo_po_no" />
-                                <field name="odoo_so_no" />
-                                <field name="contract_id" />
+                            <group string="SAP Docs">
+                                <field name="sap_dr_no" invisible="1"/>
+                                <field name="sap_so_no" />
+                                <field name="sto_no" />
+                                <field name="shipment_no" />
+                                <field name="sap_delivery_no" invisible="1"/>
                             </group>
                         </group>
                         
-                        <group>
+                        <group string="Shipment">
                             <group>
-                                <field name="shipment_no" />
+                                <field name="ship_to" />
                                 <field name="fwd_agent" />
-                                <field name="van_no" />
                                 <field name="vessel_name" />
                                 <field name="truck_no" />
                                 <field name="load_no" />
                                 <field name="booking_no" />
                                 <field name="seal_no" />
                             </group>
-
                             <group>
                                 <field name="delivery_creation_date" />
                                 <field name="gi_date" />
                                 <field name="port_origin" />
                                 <field name="port_destination" />
                                 <field name="port_discharge" />
-                                <field name="sto_no" />
                             </group>
                         </group>
+
+                        <ul>
+                            <li>
+                                No Odoo SO and Contract number means SO created did not came from Odoo
+                            </li>
+                            <li>
+                                If duplicate, choose which among the documents is the correct one
+                            </li>
+                        </ul>
+
                         <notebook>
                             <page string="DR Lines">
                                 <field name="dr_lines">
                                     <tree>
                                         <field name="dr_line_item_no" />
-                                        <field name="tr_order_item" string="TR#"/>
+                                        <field name="tr_order_item"/>
                                         <!-- <field name="sku" /> -->
+                                        <field name="material" />
                                         <field name="qty" sum="Total"/>
                                         <field name="uom" />
                                         <field name="plant" />
                                         <field name="wh_no" string="WH"/>
                                         <field name="storage_loc" string="Storage"/>
                                         <field name="to_num" />
-                                        <field name="material" />
                                         <!-- <field name="plant2" /> -->
                                         <field name="batch" />
                                         <field name="stock_category" />
@@ -152,10 +166,10 @@
                             <page string="Alt Items">
                                 <field name="alt_items">
                                     <tree editable="bottom">
-                                        <field name="sap_so_no" />
+                                        <field name="sap_so_no" invisible="1"/>
                                         <field name="sap_so_line_no" />
                                         <field name="material" />
-                                        <field name="qty" />
+                                        <field name="qty" sum="Total"/>
                                         <field name="uom" />
                                         <field name="plant" />
                                         <field name="rejection_reason" />
@@ -175,8 +189,8 @@
                                         <field name="type" />
                                         <field name="factor_num" />
                                         <field name="factor" />
-                                        <field name="no_sample" />
-                                        <field name="no_defect" />
+                                        <field name="no_sample" sum="Total"/>
+                                        <field name="no_defect" sum="Total"/>
                                         <field name="value" />
                                     </tree>
                                 </field>                        
