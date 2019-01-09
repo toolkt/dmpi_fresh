@@ -223,7 +223,7 @@ class DmpiCrmConfig(models.Model):
                                     contract = self.env['dmpi.crm.sale.contract'].search([('name','=',row[0])],limit=1)[0]
                                     customer_code = contract.partner_id.customer_code
                                     ship_to_id = 0
-                                    ship_to = self.env['dmpi.crm.ship.to'].search([('partner_od','=',row[8]),('customer_code','=',customer_code)],limit=1)[0]
+                                    ship_to = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)],limit=1)[0]
                                     
                                     if contract:
 

@@ -55,9 +55,12 @@
                                 <field name="default_validity" />
                                 <field name="tag_ids" widget="many2many_tags"/>
                             </group>
-                            <group>
+                            <group string="Sales Area">
+                                <field name="sales_org"/>
+                                <field name="dist_channel"/>
+                                <field name="division"/>
                             </group>
-                            <group string="Address">
+                            <group string="Address 1">
                                 <field name="street"/>
                                 <field name="city"/>
                                 <field name="city_code"/>
@@ -68,10 +71,10 @@
                                 <field name="phone"/>
                                 <field name="fax"/>
                             </group>
-                            <group string="Sales Area">
-                                <field name="sales_org"/>
-                                <field name="dist_channel"/>
-                                <field name="division"/>
+                            <group string="Address 2">
+                                <field name="address"/>
+                                <field name="contact"/>
+                                <field name="function_ids" options="{'no_quick_create':True,'no_create_edit':True}" widget="many2many_tags"/>
                             </group>
                         </group>
 
@@ -80,8 +83,8 @@
                                 <field name="ship_to_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="ship_to_code"/>
-                                        <field name="country_id"/>
+                                        <field name="customer_code"/>
+                                        <field name="country"/>
                                     </tree>
                                 </field>
                             </page>
@@ -89,8 +92,8 @@
                                 <field name="notify_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="ship_to_code"/>
-                                        <field name="country_id"/>
+                                        <field name="customer_code"/>
+                                        <field name="country"/>
                                     </tree>
                                 </field>
                             </page>
@@ -98,8 +101,8 @@
                                 <field name="mailing_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="ship_to_code"/>
-                                        <field name="country_id"/>
+                                        <field name="customer_code"/>
+                                        <field name="country"/>
                                     </tree>
                                 </field>
                             </page>
@@ -301,36 +304,6 @@
         </record>
 
         <menuitem id="menu_dmpi_crm_payment_terms" action="action_dmpi_crm_payment_terms" parent="menu_dmpi_crm_master_top"/>
-
-
-
-
-<!--         <record id="view_dmpi_crm_destination_tree" model="ir.ui.view">
-            <field name="name">Destination</field>
-            <field name="model">dmpi.crm.destination</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="ship_to_code"/>
-                    <field name="dest_country_id"/>
-                    <field name="active"/>
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_destination" model="ir.actions.act_window">
-            <field name="name">Destination</field>
-            <field name="res_model">dmpi.crm.destination</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_destination" action="action_dmpi_crm_destination" parent="menu_dmpi_crm_master_top"/>       
- -->
-
-
 
         <record id="view_dmpi_crm_partner_credit_limit_search" model="ir.ui.view">
             <field name="name">Credit Limit</field>
@@ -1499,6 +1472,11 @@
 
         <menuitem id="menu_dmpi_crm_activity_log" action="action_dmpi_crm_activity_log" parent="menu_dmpi_crm_settings_top"/>
 
+
+        <record id="dmpi_crm_partner_function_sld" model="dmpi.crm.partner.function">
+            <field name="name">SOLD TO</field>
+            <field name="code">SLD</field>
+        </record>
 
         <record id="dmpi_crm_partner_function_shp" model="dmpi.crm.partner.function">
             <field name="name">SHIP TO</field>

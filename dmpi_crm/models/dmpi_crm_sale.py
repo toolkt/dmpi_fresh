@@ -160,7 +160,7 @@ class DmpiCrmSaleContract(models.Model):
 	sheet_settings = fields.Text("Settings")
 	sheet_data = fields.Text("Data")
 
-	partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
+	partner_id = fields.Many2one('dmpi.crm.partner',"Customer", domain=[('function_ids.code','=','SLD')])
 	sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
 
 	contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
@@ -597,12 +597,12 @@ class DmpiCrmSaleContract(models.Model):
 						'dist_channel' : rec.partner_id.dist_channel,
 						'division' : rec.partner_id.division,
 						'sold_to' : rec.partner_id.customer_code,
-						'ship_to' : so.ship_to_id.ship_to_code,
+						'ship_to' : so.ship_to_id.customer_code,
 						'ref_po_no' : ref_po_no,
 						'po_date' : po_date,
 						'valid_from' : valid_from,
 						'valid_to' : valid_to,
-						'ship_to_dest' : so.ship_to_id.ship_to_code,
+						'ship_to_dest' : so.ship_to_id.customer_code,
 						'po_line_no' : sol.contract_line_no,
 						'material' : sol.product_id.sku,
 						'qty' : int(sol.qty),
@@ -813,7 +813,7 @@ class DmpiCrmSaleOrder(models.Model):
 					'dist_channel' : cid.partner_id.dist_channel,
 					'division' : cid.partner_id.division,  
 					'sold_to' : cid.partner_id.customer_code,
-					'ship_to' : rec.ship_to_id.ship_to_code, 
+					'ship_to' : rec.ship_to_id.customer_code,
 					'ref_po_no' : ref_po_no,  
 					'po_date' : po_date,
 					# 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
@@ -834,7 +834,7 @@ class DmpiCrmSaleOrder(models.Model):
 					line['sold_to'] = cid.sold_via_id.customer_code
 					line['ship_to'] = cid.sold_via_id.customer_code
 					line['sap_doc_type'] = 'ZKM3'
-					line['original_ship_to'] = rec.ship_to_id.ship_to_code
+					line['original_ship_to'] = rec.ship_to_id.customer_code
 					line['dist_channel'] = cid.sold_via_id.dist_channel
 					line['division'] = cid.sold_via_id.division
 					line['sales_org'] = cid.sold_via_id.sales_org
@@ -1096,10 +1096,9 @@ class DmpiCrmSaleOrder(models.Model):
 			rec.allowed_products = rec.partner_id.product_ids
 
 
-
-	allowed_ship_to = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
-	allowed_notify = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
-	allowed_mailing = fields.One2many('dmpi.crm.ship.to', compute="_get_allowed_ids")
+	allowed_ship_to = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
+	allowed_notify = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
+	allowed_mailing = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
 	allowed_products = fields.One2many('dmpi.crm.product', compute="_get_allowed_ids")
 
 	contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')
@@ -1188,9 +1187,9 @@ class DmpiCrmSaleOrder(models.Model):
 	#             rec.destination = comm_code.destination
 	#             rec.ship_line = comm_code.ship_line
 
-	ship_to_id = fields.Many2one('dmpi.crm.ship.to', 'Ship To')
-	notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
-	mailing_id = fields.Many2one("dmpi.crm.ship.to","Mailing Address")
+	ship_to_id = fields.Many2one('dmpi.crm.partner', 'Ship To')
+	notify_id = fields.Many2one("dmpi.crm.partner","Notify Party")
+	mailing_id = fields.Many2one("dmpi.crm.partner","Mailing Address")
 	sales_org = fields.Char("Sales Org")
 	dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
 	order_date = fields.Date("Order Date")

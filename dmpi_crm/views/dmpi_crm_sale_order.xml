@@ -172,9 +172,9 @@
                                         <field name="contract_tag_ids"/>
                                     </group>
                                     <group>
-                                        <field name="allowed_ship_to" invisible="1"/>
-                                        <field name="allowed_notify" invisible="1"/>
-                                        <field name="allowed_mailing" invisible="1"/>
+                                        <field name="allowed_ship_to" invisible="0"/>
+                                        <field name="allowed_notify" invisible="0"/>
+                                        <field name="allowed_mailing" invisible="0"/>
                                         <field name="allowed_products" invisible="1"/>
                                     </group>
                                 </group>
@@ -322,9 +322,9 @@
                                 </group>
                                 <group>
                                     <group>
-                                        <field name="allowed_ship_to" invisible="1"/>
-                                        <field name="allowed_notify" invisible="1"/>
-                                        <field name="allowed_mailing" invisible="1"/>
+                                        <field name="allowed_ship_to" invisible="0"/>
+                                        <field name="allowed_notify" invisible="0"/>
+                                        <field name="allowed_mailing" invisible="0"/>
                                         <field name="allowed_products" invisible="1"/>
                                     </group>
                                 </group>

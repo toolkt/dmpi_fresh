@@ -167,7 +167,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                     # CHECK SHIP TO EXISTS
                     shp = data['SHIP TO']
-                    ship_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',shp),('ship_to_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
+                    ship_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',shp),('customer_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
                     if ship_to:
                         ship_to_id = ship_to.id
                     else:
@@ -177,7 +177,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                     # CHECK NOTIFY ID EXISTS
                     notif = data['NOTIFY PARTY']
-                    notify_to = self.env['dmpi.crm.ship.to'].search(['&','|',('name','=',notif),('ship_to_code','=',notif),('id','in',sold_to.notify_ids.ids)],limit=1)
+                    notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.notify_ids.ids)],limit=1)
                     if notify_to:
                         notify_to_id = notify_to.id
                     else:
@@ -442,8 +442,8 @@ class DmpiCrmSaleContractUploadLine(models.TransientModel):
     upload_id       = fields.Many2one("dmpi.crm.sale.contract.upload","Upload Template")
     line_no         = fields.Integer("Line No.")
     ship_to         = fields.Char(string="Ship to")
-    ship_to_id      = fields.Many2one("dmpi.crm.ship.to","Ship to Party")
-    notify_id       = fields.Many2one("dmpi.crm.ship.to","Notify Party")
+    ship_to_id      = fields.Many2one("dmpi.crm.partner","Ship to Party")
+    notify_id       = fields.Many2one("dmpi.crm.partner","Notify Party")
     # p5              = fields.Integer(string="P5", sum="TOTAL")
     # p6              = fields.Integer(string="P6", sum="TOTAL")
     # p7              = fields.Integer(string="P7", sum="TOTAL")

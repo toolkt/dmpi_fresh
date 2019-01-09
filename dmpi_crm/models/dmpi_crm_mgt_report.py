@@ -104,12 +104,13 @@ UNION ALL
             0 as qty
     from dmpi_crm_sale_order_line sol
     left join dmpi_crm_sale_order so on so.id = sol.order_id
-    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_partner shp on shp.id = so.ship_to_id
+    left join dmpi_crm_partner shp on shp.id = so.ship_to_id
     left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
     left join dmpi_crm_partner cust on cust.id = ctr.partner_id
     left join dmpi_crm_product prod on prod.id = sol.product_id
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
-    left join dmpi_crm_country cc on cc.id = shp.country_id
+    left join dmpi_crm_country cc on cc.id = shp.country
     where ctr.week_no like '%%%s%%'
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,so.shell_color
 
@@ -134,12 +135,12 @@ UNION ALL
             sum(sol.qty) as qty
     from dmpi_crm_sale_order_line sol
     left join dmpi_crm_sale_order so on so.id = sol.order_id
-    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_partner shp on shp.id = so.ship_to_id
     left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
     left join dmpi_crm_partner cust on cust.id = ctr.partner_id
     left join dmpi_crm_product prod on prod.id = sol.product_id
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
-    left join dmpi_crm_country cc on cc.id = shp.country_id
+    left join dmpi_crm_country cc on cc.id = shp.country
     where ctr.week_no like '%%%s%%'
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,prod.product_class,pc.name,pc.sequence,so.shell_color,pc.product_crown,prod.psd
 
@@ -206,12 +207,12 @@ UNION ALL
             0 as qty
     from dmpi_crm_sale_order_line sol
     left join dmpi_crm_sale_order so on so.id = sol.order_id
-    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_partner shp on shp.id = so.ship_to_id
     left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
     left join dmpi_crm_partner cust on cust.id = ctr.partner_id
     left join dmpi_crm_product prod on prod.id = sol.product_id
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
-    left join dmpi_crm_country cc on cc.id = shp.country_id
+    left join dmpi_crm_country cc on cc.id = shp.country
     where ctr.week_no like '%%%s%%'
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,so.shell_color
 
@@ -236,12 +237,12 @@ UNION ALL
             sum(sol.qty) as qty
     from dmpi_crm_sale_order_line sol
     left join dmpi_crm_sale_order so on so.id = sol.order_id
-    left join dmpi_crm_ship_to shp on shp.id = so.ship_to_id
+    left join dmpi_crm_partner shp on shp.id = so.ship_to_id
     left join dmpi_crm_sale_contract ctr on ctr.id = so.contract_id
     left join dmpi_crm_partner cust on cust.id = ctr.partner_id
     left join dmpi_crm_product prod on prod.id = sol.product_id
     left join dmpi_crm_product_code pc on pc.name = sol.product_code
-    left join dmpi_crm_country cc on cc.id = shp.country_id
+    left join dmpi_crm_country cc on cc.id = shp.country
     where ctr.week_no like '%%%s%%'
     group by so.id,so.week_no,cc.name,so.name,cust.name,shp.name,prod.product_class,pc.name,pc.sequence,so.shell_color,pc.product_crown,prod.psd
 
@@ -921,11 +922,11 @@ FROM dmpi_crm_sale_order_line sol
 left join dmpi_crm_sale_order so on so.id = sol.order_id
 left join dmpi_crm_sale_contract co on co.id = so.contract_id
 left join dmpi_crm_partner cp on cp.id = co.partner_id
-left join dmpi_crm_ship_to st on st.id = so.ship_to_id
-left join dmpi_crm_ship_to nt on nt.id = so.notify_id
+left join dmpi_crm_partner st on st.id = so.ship_to_id
+left join dmpi_crm_partner nt on nt.id = so.notify_id
 left join dmpi_crm_product pr on pr.id = sol.product_id 
 left join dmpi_crm_product_code pc on pc.name = sol.product_code
-left join dmpi_crm_country cc on cc.id = st.country_id
+left join dmpi_crm_country cc on cc.id = st.country
 
 
             )

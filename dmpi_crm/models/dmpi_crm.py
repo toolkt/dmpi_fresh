@@ -90,14 +90,18 @@ class DmpiCrmPartner(models.Model):
 	dist_channel    = fields.Char("Distribution Channel")
 	division        = fields.Char("Division")
 
-	ship_to_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_ship_rel','partner_id','ship_to_id',string='Partner Functions',domain=[('function_ids.code','=','SHP')])
-	notify_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_notify_rel','partner_id','nofity_id',string='Partner Functions',domain=[('function_ids.code','=','NFY')])
-	mailing_ids = fields.Many2many('dmpi.crm.ship.to','dmpi_partner_mailing_rel','partner_id','mailing_id',string='Partner Functions',domain=[('function_ids.code','=','MAL')])
+	ship_to_ids = fields.Many2many('dmpi.crm.partner','dmpi_partner_ship_rel','partner_id','ship_to_id',string='Partner Functions',domain=[('function_ids.code','=','SHP')])
+	notify_ids = fields.Many2many('dmpi.crm.partner','dmpi_partner_notify_rel','partner_id','nofity_id',string='Partner Functions',domain=[('function_ids.code','=','NFY')])
+	mailing_ids = fields.Many2many('dmpi.crm.partner','dmpi_partner_mailing_rel','partner_id','mailing_id',string='Partner Functions',domain=[('function_ids.code','=','MAL')])
 	tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'partner_tag_rel', 'partner_id', 'tag_id', string='Default Price Tags', copy=True)
 	product_ids = fields.Many2many('dmpi.crm.product','dmpi_partner_product_rel','partner_id','product_id',string='Assigned Products')
 
 	ar_records = fields.One2many('dmpi.crm.partner.ar','partner_id','AR Records')
-
+	
+	# additional
+	address = fields.Text('Address')
+	contact = fields.Text('Contact Info')
+	function_ids = fields.Many2many('dmpi.crm.partner.function','dmpi_ship_to_function_rel','ship_to_id','function_id', string='Function Type')
 
 
 
