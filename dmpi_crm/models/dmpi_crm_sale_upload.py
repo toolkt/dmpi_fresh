@@ -225,11 +225,11 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         #     elif mod_75_less == 0 and found_p60:
                         #         errors.append("Invalid qty %s for %s" % (qty, pcode))
                         #         error_count += 1
-
-                    s = self._check_if_fcl(qty_list, total_qty)
-                    if s:
-                        errors.append(s)
-                        error_count += 1
+                    
+                    # s = self._check_if_fcl(qty_list, total_qty)
+                    # if s:
+                        # errors.append(s)
+                        # error_count += 1
 
                     # if not (total_qty == 1500 or total_qty == 1560):
                     #     errors.append("Total not FCL")
