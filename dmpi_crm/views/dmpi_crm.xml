@@ -577,12 +577,12 @@
             <field name="model">dmpi.crm.product.code</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="description"/>
-                    <field name="psd"/>
-                    <field name="factor"/>
-                    <field name="product_crown"/>
-                    <field name="sequence"/>
+                    <field name="name" required="1"/>
+                    <field name="description" required="1"/>
+                    <field name="psd" required="1"/>
+                    <field name="factor" required="1"/>
+                    <field name="product_crown" required="1"/>
+                    <field name="sequence" required="1"/>
                     <field name="active"/>
                 </tree>
             </field>
