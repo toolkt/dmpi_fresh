@@ -592,181 +592,181 @@ class DmpiCrmConfig(models.Model):
 
             files = execute(list_dir,outbound_path,'ODOO_DR')            
             for f in files[host_string]:
-                # try:
-                result = execute(read_file,f)[host_string]
+                try:
+                    result = execute(read_file,f)[host_string]
 
-                line = result.split('\n')
-                odoo_po_no = ""
-                sap_dr_no = ""
-                contract_id = 0
-                dr_id = 0
+                    line = result.split('\n')
+                    odoo_po_no = ""
+                    sap_dr_no = ""
+                    contract_id = 0
+                    dr_id = 0
 
-                dr = {}
-                clp = {}
-                dr_lines = []
-                alt_items = []
-                insp_lots = []
-                clp_lines =[]
-                dr_tr_item = []
+                    dr = {}
+                    clp = {}
+                    dr_lines = []
+                    alt_items = []
+                    insp_lots = []
+                    clp_lines =[]
+                    dr_tr_item = []
 
-                for l in line:
-                    row = l.split('\t')
-                    if row[0] != '':
-                        if row[0] == 'Header':
+                    for l in line:
+                        row = l.split('\t')
+                        if row[0] != '':
+                            if row[0] == 'Header':
 
-                            sap_dr_no = row[4]
-                            so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])], limit=1)
+                                sap_dr_no = row[4]
+                                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[3])], limit=1)
 
-                            if so:
-                                contract = so.contract_id
-                                contract_id = contract.id
+                                if so:
+                                    contract = so.contract_id
+                                    contract_id = contract.id
 
-                            dr = {
-                                'contract_id' : contract_id,
-                                'odoo_po_no' : row[1],
-                                'odoo_so_no' : row[2],
-                                'sap_so_no' : row[3],
-                                'sap_dr_no' : row[4],
-                                'sap_delivery_no' : row[4],
-                                'ship_to' : row[5],
-                                'delivery_creation_date' : row[6],
-                                'gi_date' : row[7],
-                                'shipment_no' : row[8],
-                                'fwd_agent' :  row[9],
-                                'van_no' : row[10],
-                                'vessel_name' : row[11],
-                                'truck_no' : row[12],   
-                                'load_no' : row[13],
-                                'booking_no' : row[14], 
-                                'seal_no' : row[15],
-                                'port_origin' : row[16],
-                                'port_destination' : row[17], 
-                                'port_discharge' : row[18],
-                            }
+                                dr = {
+                                    'contract_id' : contract_id,
+                                    'odoo_po_no' : row[1],
+                                    'odoo_so_no' : row[2],
+                                    'sap_so_no' : row[3],
+                                    'sap_dr_no' : row[4],
+                                    'sap_delivery_no' : row[4],
+                                    'ship_to' : row[5],
+                                    'delivery_creation_date' : row[6],
+                                    'gi_date' : row[7],
+                                    'shipment_no' : row[8],
+                                    'fwd_agent' :  row[9],
+                                    'van_no' : row[10],
+                                    'vessel_name' : row[11],
+                                    'truck_no' : row[12],   
+                                    'load_no' : row[13],
+                                    'booking_no' : row[14], 
+                                    'seal_no' : row[15],
+                                    'port_origin' : row[16],
+                                    'port_destination' : row[17], 
+                                    'port_discharge' : row[18],
+                                }
 
-                            try:
-                                dr['sto_no'] = row[19]
-                            except:
-                                pass
+                                try:
+                                    dr['sto_no'] = row[19]
+                                except:
+                                    pass
 
-                        if row[0] == 'Item' and (row[1],row[9]) not in dr_tr_item:
-                            line = {
-                                'dr_line_item_no' : row[1],
-                                'sku' : row[2],
-                                'qty' : row[3].replace(',', ''),
-                                'uom' : row[4],
-                                'plant' : row[5],
-                                'wh_no' : row[6],
-                                'storage_loc' : row[7],
-                                'to_num' : row[8],
-                                'tr_order_item' : row[9],
-                                'material' : row[10],
-                                'plant2' : row[11],
-                                'batch' : row[12],
-                                'stock_category' : row[13],
-                                'source_su' : row[14],
-                                'sap_delivery_no' : row[15],
-                            }
+                            if row[0] == 'Item' and (row[1],row[9]) not in dr_tr_item:
+                                line = {
+                                    'dr_line_item_no' : row[1],
+                                    'sku' : row[2],
+                                    'qty' : row[3].replace(',', ''),
+                                    'uom' : row[4],
+                                    'plant' : row[5],
+                                    'wh_no' : row[6],
+                                    'storage_loc' : row[7],
+                                    'to_num' : row[8],
+                                    'tr_order_item' : row[9],
+                                    'material' : row[10],
+                                    'plant2' : row[11],
+                                    'batch' : row[12],
+                                    'stock_category' : row[13],
+                                    'source_su' : row[14],
+                                    'sap_delivery_no' : row[15],
+                                }
 
-                            dr_lines.append((0,0,line))
-                            dr_tr_item.append((row[1], row[9]))
+                                dr_lines.append((0,0,line))
+                                dr_tr_item.append((row[1], row[9]))
 
-                        if row[0].upper() == 'ALTTOITM':
-                            line = {
-                                'sap_so_no' : row[1],
-                                'sap_so_line_no' : row[2],
-                                'material' : row[3],
-                                'qty' : read_float(row[4]),
-                                'uom' : row[5],
-                                'plant' : row[6],
-                                'rejection_reason' : row[7],
-                                # 'alt_usage' : row[8],
-                            }
-                            alt_items.append((0,0,line))
+                            if row[0].upper() == 'ALTTOITM':
+                                line = {
+                                    'sap_so_no' : row[1],
+                                    'sap_so_line_no' : row[2],
+                                    'material' : row[3],
+                                    'qty' : read_float(row[4]),
+                                    'uom' : row[5],
+                                    'plant' : row[6],
+                                    'rejection_reason' : row[7],
+                                    # 'alt_usage' : row[8],
+                                }
+                                alt_items.append((0,0,line))
 
-                        if row[0].upper() == 'IL':
-                            line = {
-                                'dr_line_item_no' : row[1],
-                                'stock_unit' : row[2],
-                                'lot' : row[4],
-                                'node_num' : row[5],
-                                'type' : row[6],
-                                'factor_num' : row[7],
-                                'factor' : row[8],
-                                'no_sample' : read_float(row[9]),
-                                'no_defect' : read_float(row[10]),
-                                'value' : read_float(row[11]),
-                                # 'sku' : row[3],
-                                # 'sap_so_no' : row[2],
-                            }
-                            insp_lots.append((0,0,line))
-                        
-                        if row[0].upper() == 'CLPHEADER1':
-                            clp.update({
-                                'layout_name': row[1],
-                                'container_no': row[2],
-                                'seal_no': row[3],
-                                'vessel_name': row[4],
-                                'plant': row[5],
-                                'port_origin': row[6],
-                                'port_destination': row[7],
-                                'customer': row[8],
-                                'shell_color': so.shell_color,
-                            })
+                            if row[0].upper() == 'IL':
+                                line = {
+                                    'dr_line_item_no' : row[1],
+                                    'stock_unit' : row[2],
+                                    'lot' : row[4],
+                                    'node_num' : row[5],
+                                    'type' : row[6],
+                                    'factor_num' : row[7],
+                                    'factor' : row[8],
+                                    'no_sample' : read_float(row[9]),
+                                    'no_defect' : read_float(row[10]),
+                                    'value' : read_float(row[11]),
+                                    # 'sku' : row[3],
+                                    # 'sap_so_no' : row[2],
+                                }
+                                insp_lots.append((0,0,line))
+                            
+                            if row[0].upper() == 'CLPHEADER1':
+                                clp.update({
+                                    'layout_name': row[1],
+                                    'container_no': row[2],
+                                    'seal_no': row[3],
+                                    'vessel_name': row[4],
+                                    'plant': row[5],
+                                    'port_origin': row[6],
+                                    'port_destination': row[7],
+                                    'customer': row[8],
+                                    'shell_color': so.shell_color,
+                                })
 
-                        if row[0].upper() == 'CLPHEADER2':
-                            clp.update({
-                                'week': row[1],
-                                'brand': row[2],
-                                'description': row[3],
-                                'boxes': read_float(row[4]),
-                            })
+                            if row[0].upper() == 'CLPHEADER2':
+                                clp.update({
+                                    'week': row[1],
+                                    'brand': row[2],
+                                    'description': row[3],
+                                    'boxes': read_float(row[4]),
+                                })
 
-                        if row[0].upper() == 'CLPITEM':
-                            line = {
-                                'tag_no' : row[1],
-                                'pack_code' : row[2],
-                                'pack_size' : row[3],
-                                'product_crown'  : row[4],
-                                'qty'  : read_float(row[5]),
-                                'position'  : row[6],
-                            }
-                            clp_lines.append((0,0,line))                                               
+                            if row[0].upper() == 'CLPITEM':
+                                line = {
+                                    'tag_no' : row[1],
+                                    'pack_code' : row[2],
+                                    'pack_size' : row[3],
+                                    'product_crown'  : row[4],
+                                    'qty'  : read_float(row[5]),
+                                    'position'  : row[6],
+                                }
+                                clp_lines.append((0,0,line))                                               
 
-                        if row[0].upper() == 'CLPFTR':
-                            clp.update({
-                                'date_start': row[1],
-                                'date_end': row[2],
-                                'date_depart': row[3],
-                                'date_arrive': row[4],
-                                'control_no': row[5],
-                            })
+                            if row[0].upper() == 'CLPFTR':
+                                clp.update({
+                                    'date_start': row[1],
+                                    'date_end': row[2],
+                                    'date_depart': row[3],
+                                    'date_arrive': row[4],
+                                    'control_no': row[5],
+                                })
 
-                            case_summary = [row[i] for i in range(6,len(row))]
-                            clp['case_summary'] = '\n'.join(case_summary)
+                                case_summary = [row[i] for i in range(6,len(row))]
+                                clp['case_summary'] = '\n'.join(case_summary)
 
-                dr['dr_lines'] = dr_lines
-                dr['alt_items'] = alt_items
-                dr['insp_lots'] = insp_lots
+                    dr['dr_lines'] = dr_lines
+                    dr['alt_items'] = alt_items
+                    dr['insp_lots'] = insp_lots
 
-                if sap_dr_no:
-                    new_dr = self.env['dmpi.crm.dr'].create(dr)
+                    if sap_dr_no:
+                        new_dr = self.env['dmpi.crm.dr'].create(dr)
 
-                    if clp.get('container_no', False):
-                        clp['clp_line_ids'] = clp_lines
-                        clp['dr_id'] = new_dr.id
-                        self.env['dmpi.crm.clp'].create(clp)
+                        if clp.get('container_no', False):
+                            clp['clp_line_ids'] = clp_lines
+                            clp['dr_id'] = new_dr.id
+                            self.env['dmpi.crm.clp'].create(clp)
 
-                    execute(transfer_files,f, outbound_path_success)
-                    _logger.info('SUCCESS process_dr %s',sap_dr_no)
+                        execute(transfer_files,f, outbound_path_success)
+                        _logger.info('SUCCESS process_dr %s',sap_dr_no)
 
-                else:
+                    else:
+                        execute(transfer_files,f, outbound_path_fail)
+                        _logger.info('FAILED process_dr')
+
+                except Exception as e:
                     execute(transfer_files,f, outbound_path_fail)
-                    _logger.info('FAILED process_dr')
-
-                # except Exception as e:
-                #     execute(transfer_files,f, outbound_path_fail)
-                #     _logger.warning('READ ERROR process_dr')
+                    _logger.warning('READ ERROR process_dr')
 
 
     @api.multi
