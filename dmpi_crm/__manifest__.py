@@ -29,19 +29,15 @@
         "views/dmpi_crm_menu.xml",
         "views/dmpi_crm_config.xml",
         "views/dmpi_crm.xml",
-        "views/dmpi_crm_sale.xml",
-        "views/dmpi_crm_sale_order.xml",
-        # "views/customer_crm_sale_order.xml",
         "views/dmpi_crm_sale_contract.xml",
-        "views/dmpi_crm_sale_contract_finance.xml",
+
         "views/dmpi_crm_report.xml",
         "views/dmpi_crm_sale_upload.xml",
         "views/dmpi_crm_dialogue.xml",
+
+        "views/dmpi_crm_commercial.xml",
+        "views/dmpi_crm_finance.xml",
         "views/dmpi_crm_logistics.xml",
-
-        #"views/dmpi_crm_contract.xml",
-        #"views/dmpi_crm_web.xml",
-
 
         "data/schedule.xml",
         "data/sequence.xml",
@@ -50,7 +46,6 @@
         "data/report_attachment.xml",
 
         "reports/report.xml",
-        "views/dmpi_crm_mgt_report.xml",
     ],
     "demo": [
 
