@@ -21,7 +21,7 @@
 
     <menuitem id="menu_dmpi_crm_finance_orders" name="Orders" parent="menu_dmpi_crm_finance_top" sequence="10"/>
 
-    <menuitem id="menu_dmpi_crm_finance_docs" name="Orders" parent="menu_dmpi_crm_finance_top" sequence="20"/>
+    <menuitem id="menu_dmpi_crm_finance_docs" name="Documents" parent="menu_dmpi_crm_finance_top" sequence="20"/>
 
     <menuitem id="menu_dmpi_crm_finance_account" name="Accounts" parent="menu_dmpi_crm_finance_top" sequence="30"/>
 
