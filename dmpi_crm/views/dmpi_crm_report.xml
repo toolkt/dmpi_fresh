@@ -139,6 +139,20 @@
         <menuitem action="dmpi_crm_factor_action" id="dmpi_crm_factor" parent="dmpi_reports_config_menu" sequence="10"/>
 
         <!-- PRESHIPMENT CERTIFICATES -->
+        <record id="dmpi_crm_preship_report_search" model="ir.ui.view">
+            <field name="name">dmpi.crm.preship.report.search</field>
+            <field name="model">dmpi.crm.preship.report</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pre-Shipment Reports">
+                    <field name="container"/>
+                    <field name="dr_id"/>
+                    <field name="series_no"/>
+                </search>
+           </field>
+        </record>
+
+
         <record id="dmpi_crm_preship_report_tree" model="ir.ui.view">
             <field name="name">dmpi.crm.preship.report.tree</field>
             <field name="model">dmpi.crm.preship.report</field>
@@ -148,7 +162,10 @@
                     <field name="series_no"/>
                     <field name="dr_id"/>
                     <field name="container"/>
+                    <field name="customer"/>
+                    <field name="market"/>
                     <field name="tmpl_id"/>
+                    <field name="date_load"/>
                     <field name="date_issue"/>
                     <field name="issuer"/>
                     <field name="customer"/>

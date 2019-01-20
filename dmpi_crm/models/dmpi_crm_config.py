@@ -284,6 +284,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
             
             files = execute(list_dir,outbound_path,'L_ODOO_PO_PO')
             for f in files[host_string]:
@@ -328,6 +329,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
             
             files = execute(list_dir,outbound_path_fail,'L_ODOO_PO_PO')
             for f in files[host_string]:
@@ -361,6 +363,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'L_ODOO_SO_SO')
             for f in files[host_string]:
@@ -418,6 +421,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_AR_OPENAR')
             for f in files[host_string]:
@@ -524,6 +528,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_AR_CRDLMT')            
             for f in files[host_string]:
@@ -589,6 +594,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_DR')            
             for f in files[host_string]:
@@ -782,6 +788,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_SHP')
             for f in files[host_string]:
@@ -875,6 +882,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
             for f in files[host_string]:
@@ -961,6 +969,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
             for f in files[host_string]:
@@ -1041,6 +1050,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')            
             for f in files[host_string]:
@@ -1125,6 +1135,7 @@ class DmpiCrmConfig(models.Model):
             host_string = h.ssh_user + '@' + h.ssh_host + ':22'
             env.hosts.append(host_string)
             env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
 
             
             files = execute(list_dir,outbound_path,'ODOO_ZMAL')            
