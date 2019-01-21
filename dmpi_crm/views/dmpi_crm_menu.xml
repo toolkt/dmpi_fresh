@@ -30,8 +30,13 @@
     <!-- LOGISTICS -->
     <menuitem id="menu_dmpi_crm_logistics_top" name="Logistics" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_logistics_staff" sequence="40"/>
 
+    <!-- PRODUCTION -->
+    <menuitem id="dmpi_crm_production_top" parent="menu_main_dmpi_crm" name="Production" groups="dmpi_crm.group_custom_crm_prod_staff" sequence="45"/>
+
     <!-- QA -->
     <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Quality Assurance" groups="dmpi_crm.group_custom_crm_qa_staff" sequence="50"/>
+
+
 
 
     <!-- MASTER DATA -->

@@ -2,6 +2,8 @@
 <odoo>
     <data>
 
+        <!-- MODULE CATEGORIES -->
+
         <record model="ir.module.category" id="module_category_custom_crm">
             <field name="name">Commercial</field>
             <field name="description">Manage Customers Purchases and Relationships</field>
@@ -32,12 +34,7 @@
             <field name="sequence">24</field>
         </record>
 
-
-<!--         <record model="ir.module.category" id="module_category_custom_admin">
-            <field name="name">SNW Admin</field>
-            <field name="description">Manage Odoo CRM Settings</field>
-            <field name="sequence">26</field>
-        </record> -->
+        <!-- GROUPS -->
 
         <!-- Commercial -->
         <record id="group_custom_crm_commercial_staff" model="res.groups">
