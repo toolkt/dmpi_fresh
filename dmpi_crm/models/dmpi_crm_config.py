@@ -543,16 +543,16 @@ class DmpiCrmConfig(models.Model):
                         if len(row) > 0 and row[0] != '':  
                             customer_code = int(row[0].lstrip("0"))
                             exist = self.env['dmpi.crm.partner.credit.limit'].search([('customer_code','=',customer_code)],limit=1)
-                            partner = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)],limit=1)[0]
+                            partner = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)],limit=1)
                             credit_limit = sap_string_to_float(row[2].replace(',',''))
                             credit_exposure = sap_string_to_float(row[3].replace(',',''))
 
                             if partner:
                                 val = """(%s,'%s','%s',%s,%s,'%s')""" % (partner.id,str(customer_code),str(row[1]),credit_limit,credit_exposure,row[4])
                                 vals.append(val)
-                            else:
-                                val = """(%s,'%s','%s',%s,%s,'%s')""" % (False,str(customer_code),str(row[1]),credit_limit,credit_exposure,row[4])
-                                vals.append(val)
+                            # else:
+                            #     val = """(%s,'%s','%s',%s,%s,'%s')""" % (False,str(customer_code),str(row[1]),credit_limit,credit_exposure,row[4])
+                            #     vals.append(val)
 
 
                     query = """INSERT INTO dmpi_crm_partner_credit_limit (partner_id,customer_code, credit_control_no,credit_limit,credit_exposure,currency) VALUES %s """ % ','.join(vals)
