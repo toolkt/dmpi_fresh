@@ -256,7 +256,6 @@ class DmpiCrmClp(models.Model):
             'report_name': 'dmpi_crm.clp_report',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
-            # 'filename': 'KIT',
             'datas': {
                 'output_type': 'pdf',
                 'variables': {
@@ -284,7 +283,6 @@ class DmpiCrmClp(models.Model):
             'report_name': 'dmpi_crm.clp_report_customer',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
-            # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
             'datas': {
                 'output_type': 'pdf',
                 'variables': {
