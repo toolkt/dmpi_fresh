@@ -457,11 +457,13 @@ class DmpiCrmConfig(models.Model):
                                 amt_in_loc_cur, row[12], row[13], row[14], row[15], row[16], row[17], row[18], 
                                 amt_in_loc_cur2, row[20], row[21], row[22], row[23], partner_id)
 
-                            
-                            if row[17] and row[17] == 'D':
-                                vals.append(val)
-                            else:
-                                line_vals.append(val)
+
+                            if partner_id != 0:
+
+                                if row[17] and row[17] == 'D':
+                                    vals.append(val)
+                                else:
+                                    line_vals.append(val)
 
 
                     query = """INSERT INTO dmpi_crm_partner_ar (name, company_code, customer_no, assignment_no, fiscal_year,
