@@ -88,7 +88,7 @@
                                 <group>
                                     <h3><strong style="color:#79717D;">Signatories</strong></h3>
                                     <field name="encoder_id" invisible="1"/>
-                                    <field name="outbound_checker_id" readonly="1"/>
+                                    <field name="outbound_checker_id"/>
                                     <field name="prod_load_counter_id" invisible="1"/>
                                     <field name="inspector_id" readonly="1"/>
                                     <field name="supervisor_id" readonly="1"/>
