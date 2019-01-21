@@ -73,6 +73,11 @@ class DmpiCrmComplaintReport(models.Model):
         res = super(DmpiCrmComplaintReport, self).create(vals)
         return res
 
+    @api.multi
+    def action_submit_complaint(self):
+        for rec in self:
+            rec.state = 'resolution'
+
 
     name = fields.Char("FFCR SERIES NO.")
     ffcr_series_no = fields.Integer('Series No')
