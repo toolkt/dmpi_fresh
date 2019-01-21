@@ -600,7 +600,7 @@
         </record>
 
         <record id="view_dmpi_crm_clp_form" model="ir.ui.view">
-            <field name="name">Container Load Plan</field>
+            <field name="name">dmpi.crm.clp.form</field>
             <field name="model">dmpi.crm.clp</field>
             <field name="arch" type="xml">
                 <form string="Container Load Plan">
@@ -609,8 +609,8 @@
 
                         <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
 
-                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?"/>
-
+                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
+                        
                         <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/>
 
                         <field name="status" widget="statusbar" statusbar_visible="sap_generated,qa_confirmed,preship_generated,preship_confirmed"/>
@@ -683,9 +683,9 @@
                                 <group>
                                     <group>
                                         <h3><strong style="color:#79717D;">Signatories</strong></h3>
-                                        <field name="encoder_id"/>
+                                        <field name="encoder_id" invisible="1"/>
                                         <field name="outbound_checker_id"/>
-                                        <field name="prod_load_counter_id"/>
+                                        <field name="prod_load_counter_id" invisible="1"/>
                                         <field name="inspector_id"/>
                                         <field name="supervisor_id"/>
 

@@ -38,6 +38,7 @@
         "views/dmpi_crm_commercial.xml",
         "views/dmpi_crm_finance.xml",
         "views/dmpi_crm_logistics.xml",
+        "views/dmpi_crm_production.xml",
 
         "data/schedule.xml",
         "data/sequence.xml",

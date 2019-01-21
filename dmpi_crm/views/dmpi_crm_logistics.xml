@@ -33,15 +33,51 @@
     <menuitem id="menu_dmpi_crm_shp_logistics" action="action_dmpi_crm_shp_logistics" parent="menu_dmpi_crm_logistics_top" sequence="30"/>
 
 
-    <!-- CONTAINER LOAD PLAN -->
+    <!-- CONTAINER LOAD PLAN TO DO-->
+    <record id="view_dmpi_crm_clp_logistics_tree" model="ir.ui.view">
+        <field name="name">dmpi.crm.clp.logistics.tree</field>
+        <field name="model">dmpi.crm.clp</field>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <tree string="Container Load Plan" editable="bottom">
+                <field name="control_no" readonly="1"/>
+                <field name="dr_id" readonly="1"/>
+                <field name="container_no" readonly="1"/>
+                <field name="plant" readonly="1"/>
+                <field name="port_origin" readonly="1"/>
+                <field name="port_destination" readonly="1"/>
+                <field name="customer" readonly="1"/>
+                <field name="outbound_checker_id"/>
+                <field name="outbound_checker_name" invisible="1"/>
+                <field name="boxes" sum="Total Boxes" readonly="1"/>
+                <field name="week" readonly="1"/>
+                <field name="status" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="action_dmpi_crm_clp_logistics" model="ir.actions.act_window">
-        <field name="name">Container Load Plan</field>
+        <field name="name">Container Load Plan To-Do</field>
         <field name="res_model">dmpi.crm.clp</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_dmpi_crm_clp_logistics_tree"/>
         <field name="domain">[]</field>
     </record>
 
     <menuitem id="menu_dmpi_crm_clp_logistics" action="action_dmpi_crm_clp_logistics" parent="menu_dmpi_crm_logistics_top" sequence="40"/>
 
+
+    <!-- CONTAINER LOAD PLAN -->
+    <record id="action_dmpi_crm_clp_full_logistics" model="ir.actions.act_window">
+        <field name="name">Container Load Plan</field>
+        <field name="res_model">dmpi.crm.clp</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_dmpi_crm_clp_tree"/>
+        <field name="domain">[]</field>
+    </record>
+
+    <menuitem id="menu_dmpi_crm_clp_full_logistics" action="action_dmpi_crm_clp_full_logistics" parent="menu_dmpi_crm_logistics_top" sequence="40"/>
 
 </odoo>

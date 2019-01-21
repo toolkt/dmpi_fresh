@@ -168,7 +168,6 @@
                     <field name="date_load"/>
                     <field name="date_issue"/>
                     <field name="issuer"/>
-                    <field name="customer"/>
                 </tree>
            </field>
         </record>
@@ -190,15 +189,17 @@
                         <field name="status" widget="statusbar" statusbar_visible="draft,confirmed"/>
                     </header>
                     <sheet>
+                        Series No. / Container No.
                         <h1>
-                            <field name="dr_no" readonly="1"/>/<field name="series_no"/></h1>
+                            <field name="series_no"/>/<field name="container"/>
+                        </h1>
                         <group>
                             <group>
-                                <field name="dr_id" invisible="1"/>
-                                <field name="container"/>
+                                <field name="dr_id" options="{'no_quick_create':True,'no_create_edit':True}" readonly="1"/>
+                                <field name="clp_id" options="{'no_quick_create':True,'no_create_edit':True}" readonly="1"/>
+                                <field name="dr_no" readonly="1" invisible="1"/>
                                 <field name="tmpl_id" string="Template" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}" required="1"/>
                                 <field name="img"/>
-                                <field name="clp_id" options="{'no_quick_create':True,'no_create_edit':True}" readonly="1"/>
                             </group>
                             <group>
                                 <field name="date_issue"/>
