@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_dmpi_crm_complaint_report_header" parent="dmpi_reports_menu" name="Customer Complaint"/>
+
+        <menuitem id="menu_dmpi_crm_complaint_report_config" parent="dmpi_reports_menu" name="Complaint Config"/>
+
+        <record id="view_dmpi_crm_complaint_claim_nature_tree" model="ir.ui.view">
+            <field name="name">Nature of Claim</field>
+            <field name="model">dmpi.crm.complaint.claim.nature</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_complaint_claim_nature" model="ir.actions.act_window">
+            <field name="name">Nature of Claim</field>
+            <field name="res_model">dmpi.crm.complaint.claim.nature</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_complaint_claim_nature" action="action_dmpi_crm_complaint_claim_nature" parent="menu_dmpi_crm_complaint_report_config"/>
+
+
+        <record id="view_dmpi_crm_complaint_market_tree" model="ir.ui.view">
+            <field name="name">Complaint Market</field>
+            <field name="model">dmpi.crm.complaint.market</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_complaint_market" model="ir.actions.act_window">
+            <field name="name">Complaint Market</field>
+            <field name="res_model">dmpi.crm.complaint.market</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_complaint_market" action="action_dmpi_crm_complaint_market" parent="menu_dmpi_crm_complaint_report_config"/>
+
+
+
+
+        <record id="view_dmpi_crm_complaint_report_tree" model="ir.ui.view">
+            <field name="name">Complaint Report</field>
+            <field name="model">dmpi.crm.complaint.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="clp_id"/>
+                    <field name="customer"/>
+                    <field name="market"/>
+                    <field name="plant"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_complaint_report_form" model="ir.ui.view">
+            <field name="name">Complaint Report</field>
+            <field name="model">dmpi.crm.complaint.report</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <header>
+                        <button name="action_submit_contract" states="draft" string="Submit Complaint" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,resolution,done" clickable="1"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="clp_id"/>
+                                <field name="customer"/>
+                                <field name="market"/>
+                                <field name="plant"/>
+                                <field name="container_no"/>
+                                <field name="claim_nature_id"/>
+                                <field name="description"/>
+                                <field name="pack_date"/>
+                                <field name="box_affected"/>
+                                <field name="claim_amount"/>
+                                <field name="month_claimed"/>
+                                <field name="date_arrival"/>
+                                <field name="date_pullout"/>
+                                <field name="date_inspection"/>
+                                <field name="aop_ata"/>
+                                <field name="aop_pull_out"/>
+                                <field name="aop_inspect"/>
+                            </group>
+                            <group>
+                                <field name="date_qc_report_receipt"/>
+                                <field name="date_claim_notif"/>
+                                <field name="date_claim_bill_receipt"/>
+                                <field name="date_temp_logger_receipt"/>
+                                <field name="date_claim_endorsement_receipt"/>
+                                <field name="date_last_doc_completed"/>
+                                <field name="date_sent_mc_mgr"/>
+                                <field name="date_routed_for_sig"/>
+                                <field name="date_sent_to_fin_sing"/>
+                                <field name="total_days_processed"/>
+                                <field name="date_ffcr_sgd_copy_received"/>
+                                <field name="date_cn_note_issued"/>
+                                <field name="cn_no"/>
+                                <field name="cn_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Corrective Actions">
+                                <field name="car_id"/>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_complaint_report" model="ir.actions.act_window">
+            <field name="name">Complaint Report</field>
+            <field name="res_model">dmpi.crm.complaint.report</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_complaint_report" action="action_dmpi_crm_complaint_report" parent="menu_dmpi_crm_complaint_report_header"/>
+
+
+
+        <record id="view_dmpi_crm_corrective_action_tree" model="ir.ui.view">
+            <field name="name">Corrective Action Report</field>
+            <field name="model">dmpi.crm.corrective.action</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="ph"/>
+                    <field name="date_issued"/>
+                    <field name="date_replied"/>
+                    <field name="desription_non_conf"/>
+                    <field name="responsible"/>
+                    <field name="corrective_action_status"/>
+                    <field name="non_conformity_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_corrective_action_form" model="ir.ui.view">
+            <field name="name">Corrective Action</field>
+            <field name="model">dmpi.crm.corrective.action</field>
+            <field name="arch" type="xml">
+                <form class="o_form_document">
+                    <header>
+                        <field name="corrective_action_status" widget="statusbar" clickable="1"/>
+                        <field name="non_conformity_status" widget="statusbar" clickable="1"/>
+                        
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="ph"/>
+                                <field name="ffcr_id"/>
+                                <field name="initiator"/>
+                                <field name="date_issued"/>
+                                <field name="date_replied"/>
+                                <field name="no_response_time"/>
+                                <field name="ffcr_no"/>
+                                <field name="desription_non_conf"/>
+                                <field name="complaint_feedback_plantation"/>
+                            </group>
+                            <group>
+                                <field name="dept_area_affected"/>
+                                <field name="source_non_conformity"/>
+                                <field name="root_cause"/>
+                                <field name="corrective_actions"/>
+                                <field name="responsible"/>
+                                <field name="timeline_week"/>
+                                <field name="timeline_date"/>
+                                <field name="date_verified"/>
+                                <field name="verified_by"/>
+                            </group>
+                            <field name="remarks"/>
+                        </group>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_corrective_action" model="ir.actions.act_window">
+            <field name="name">Corrective Action Report</field>
+            <field name="res_model">dmpi.crm.corrective.action</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_corrective_action" action="action_dmpi_crm_corrective_action" parent="menu_dmpi_crm_complaint_report_header"/>
+
+    </data>
+
+
+</odoo>

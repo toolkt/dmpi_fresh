@@ -27,3 +27,4 @@ from . import dmpi_crm_sale_upload
 from . import dmpi_crm_report
 from . import dmpi_crm_dialogue
 from . import dmpi_crm_mgt_report
+from . import dmpi_crm_complaints
