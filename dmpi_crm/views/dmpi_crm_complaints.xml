@@ -91,7 +91,7 @@
             <field name="arch" type="xml">
                 <form class="o_form_document">
                     <header>
-                        <button name="action_submit_contract" states="draft" string="Submit Complaint" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_submit_complaint" states="draft" string="Submit Complaint" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission" attrs="{'invisible':[('state','!=','draft')]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible="draft,resolution,done" clickable="1"/>
                     </header>
