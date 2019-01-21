@@ -50,3 +50,5 @@ access_dmpi_crm_activity_log,user.dmpi.crm.activity.log,model_dmpi_crm_activity_
 access_dmpi_crm_preship_inspection_lot,user.dmpi.crm.preship.inspection.lot,model_dmpi_crm_preship_inspection_lot,base.group_user,1,1,1,1
 access_dmpi_crm_preship_pc_line,user.dmpi.crm.preship.pc.line,model_dmpi_crm_preship_pc_line,base.group_user,1,1,1,1
 access_dmpi_crm_clp_pc_line,user.dmpi.crm.clp.pc.line,model_dmpi_crm_clp_pc_line,base.group_user,1,1,1,1
+access_dmpi_crm_res_partner,user.dmpi.crm.res.partner,model_dmpi_crm_res_partner,base.group_user,1,1,1,1
+access_dmpi_crm_ir_config_parameter,user.dmpi.crm.ir.config.parameter,base.model_ir_config_parameter,base.group_user,1,1,0,0

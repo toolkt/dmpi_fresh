@@ -37,7 +37,7 @@
     <record id="view_dmpi_crm_clp_logistics_tree" model="ir.ui.view">
         <field name="name">dmpi.crm.clp.logistics.tree</field>
         <field name="model">dmpi.crm.clp</field>
-        <field name="priority" eval="10"/>
+        <field name="priority">10</field>
         <field name="arch" type="xml">
             <tree string="Container Load Plan" editable="bottom">
                 <field name="control_no" readonly="1"/>

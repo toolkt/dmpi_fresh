@@ -210,7 +210,7 @@
             <field name="domain">[]</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_ship_to" action="action_dmpi_crm_ship_to" parent="menu_dmpi_crm_master_top"/>
+        <!-- <menuitem id="menu_dmpi_crm_ship_to" action="action_dmpi_crm_ship_to" parent="menu_dmpi_crm_master_top"/> -->
 
 
 
@@ -583,6 +583,7 @@
         <record id="view_dmpi_crm_clp_tree" model="ir.ui.view">
             <field name="name">dmpi.crm.clp.tree</field>
             <field name="model">dmpi.crm.clp</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <tree string="Container Load Plan">
                     <field name="control_no"/>
@@ -925,7 +926,35 @@
             <field name="context">{'active_test':False}</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>        
+        <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>
+
+
+
+        <!-- RESOURCE PARTNERS -->
+        <record id="view_dmpi_crm_res_partner_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.res.parnter.tree</field>
+            <field name="model">dmpi.crm.res.partner</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="FF Resource Partners" editable="bottom">
+                    <field name="name"/>
+                    <field name="function"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_res_partner" model="ir.actions.act_window">
+            <field name="name">FF Resource Partners</field>
+            <field name="res_model">dmpi.crm.res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'active_test':False}</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_res_partner" action="action_dmpi_crm_res_partner" parent="menu_dmpi_crm_master_top"/>
+
+
 
         <record id="dmpi_crm_variety_s16" model="dmpi.crm.variety">
             <field name="name">S16</field>

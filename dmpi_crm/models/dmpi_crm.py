@@ -690,3 +690,16 @@ class DmpiCrmDialogWizard(models.TransientModel):
 
 	name = fields.Char('Name')
 	description = fields.Char('Description')
+
+
+
+class DmpiCRMResPartner(models.Model):
+	_name = 'dmpi.crm.res.partner'
+
+	name = fields.Char('Name')
+	function = fields.Char('Function')
+
+
+
+
+
