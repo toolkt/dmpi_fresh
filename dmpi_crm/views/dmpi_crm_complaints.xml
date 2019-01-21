@@ -20,7 +20,7 @@
         <record id="action_dmpi_crm_complaint_claim_nature" model="ir.actions.act_window">
             <field name="name">Nature of Claim</field>
             <field name="res_model">dmpi.crm.complaint.claim.nature</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree</field>
             <field name="domain">[]</field>
         </record>
 
@@ -41,13 +41,33 @@
         <record id="action_dmpi_crm_complaint_market" model="ir.actions.act_window">
             <field name="name">Complaint Market</field>
             <field name="res_model">dmpi.crm.complaint.market</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree</field>
             <field name="domain">[]</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_complaint_market" action="action_dmpi_crm_complaint_market" parent="menu_dmpi_crm_complaint_report_config"/>
 
 
+
+        <record id="view_dmpi_crm_complaint_ph_tree" model="ir.ui.view">
+            <field name="name">Complaint PH</field>
+            <field name="model">dmpi.crm.complaint.ph</field>
+            <field name="arch" type="xml">
+                <tree editable='bottom'>
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_complaint_ph" model="ir.actions.act_window">
+            <field name="name">Complaint PH</field>
+            <field name="res_model">dmpi.crm.complaint.ph</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_complaint_ph" action="action_dmpi_crm_complaint_ph" parent="menu_dmpi_crm_complaint_report_config"/>
 
 
         <record id="view_dmpi_crm_complaint_report_tree" model="ir.ui.view">
@@ -76,15 +96,20 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,resolution,done" clickable="1"/>
                     </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" placeholder="FFCR No"/>
+                            </h1>
+                        </div>
+
                         <group>
                             <group>
-                                <field name="name" readonly="1"/>
-                                <field name="clp_id"/>
+                                <field name="clp_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                 <field name="customer"/>
                                 <field name="market"/>
                                 <field name="plant"/>
                                 <field name="container_no"/>
-                                <field name="claim_nature_id"/>
+                                <field name="claim_nature_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                 <field name="description"/>
                                 <field name="pack_date"/>
                                 <field name="box_affected"/>
@@ -170,11 +195,15 @@
                         
                     </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" placeholder="CAR No"/>
+                            </h1>
+                        </div>
                         <group>
                             <group>
-                                <field name="name"/>
                                 <field name="ph"/>
-                                <field name="ffcr_id"/>
+                                <field name="ffcr_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                 <field name="initiator"/>
                                 <field name="date_issued"/>
                                 <field name="date_replied"/>
