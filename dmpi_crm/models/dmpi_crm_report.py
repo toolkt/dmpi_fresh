@@ -245,12 +245,8 @@ class DmpiCrmClp(models.Model):
 
     @api.multi
     def print_clp(self):
-        report_obj = self.env['ir.actions.report'].sudo().search([('report_name','=','dmpi_crm.clp_report'),('report_type','=','pentaho')], limit=1)
-        report_obj.sudo().write({
-            'name' : 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
-        })
+        filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
-        print('dr_id %s, ids %s' % (self.ids, self.dr_id.id))
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report',
@@ -258,6 +254,7 @@ class DmpiCrmClp(models.Model):
             'name': 'Container Load Plan',
             'datas': {
                 'output_type': 'pdf',
+                'filename': filename,
                 'variables': {
                     # 'user': user.name,
                     'ids': self.ids,
@@ -271,13 +268,8 @@ class DmpiCrmClp(models.Model):
 
     @api.multi
     def print_clp_customer(self):
-        report_obj = self.env['ir.actions.report'].sudo().search([('report_name','=','dmpi_crm.clp_report_customer'),('report_type','=','pentaho')], limit=1)
-        report_obj.name = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
-        report_obj.sudo().write({
-            'name' : 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
-        })
+        filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
-        print('dr_id %s, ids %s' % (self.dr_id.id, self.ids))
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report_customer',
@@ -285,6 +277,7 @@ class DmpiCrmClp(models.Model):
             'name': 'Container Load Plan',
             'datas': {
                 'output_type': 'pdf',
+                'filename': filename,
                 'variables': {
                     # 'user': user.name,
                     'ids': self.ids,

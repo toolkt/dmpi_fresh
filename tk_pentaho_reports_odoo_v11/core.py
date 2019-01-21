@@ -330,22 +330,28 @@ class ReportXML(models.Model):
         Look up a report definition and render the report for the provided IDs.
         """
         report = self._lookup_report(self._context['a']['report_name'])
-        
         if 'datas' in self._context['a']:
             data = self._context['a']['datas']
+            if 'filename' in data:
+                filename = self._context['a']['datas']['filename']
+            else:
+                filename = False
         else:
             data = {'report_type': 'pentaho'}
+
         output,output_type = report.create(self._cr, self._uid, self._context['a']['context']['active_ids'],data, self._context['a']['context'])
-        return output,output_type,self._context['a']['report_name']
+        return output,output_type,self._context['a']['report_name'],filename
 
 class PentahoReportDownload(http.Controller):
     @http.route(['/pentaho/download'], type='http', auth="user")
     def download_report(self, data, token):
 
         result = json.loads(data)
+
         pdf = result[0]
         output_type = result[1]
         reportname = result[2]
+        fname = result[3]
         
         en = base64.b64encode(pdf.encode('latin1', 'replace'))
         res = base64.b64decode(en)
@@ -355,8 +361,12 @@ class PentahoReportDownload(http.Controller):
         response = request.make_response(res,pdfhttpheaders,cookies={'fileToken': token})
 
         report = request.env['ir.actions.report']._get_report_from_name(reportname)
-        print ('name =',report.name)
-        filename = "%s.%s" % (report.name, output_type)
+        
+        if fname:
+            filename = "%s.%s" % (fname, output_type)
+        else:
+            filename = "%s.%s" % (report.name, output_type)
+        print ('name =',filename)
         response.headers.add('Content-Disposition', content_disposition(filename))
 
         return response
