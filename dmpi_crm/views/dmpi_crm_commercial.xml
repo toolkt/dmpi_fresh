@@ -333,7 +333,7 @@
         <field name="res_model">dmpi.crm.sale.order</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="domain">[]</field>
-        <field name="context">{'group_by':['partner_id','week_no']}</field>
+        <field name="context">{'group_by':['partner_id','contract_id']}</field>
     </record>
 
     <menuitem id="menu_sale_order" action="action_dmpi_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="20"/>

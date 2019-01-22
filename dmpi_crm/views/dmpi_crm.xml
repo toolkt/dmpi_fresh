@@ -465,7 +465,7 @@
                                                 <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                             </group>
                                             <group>
-                                                <field name="product_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                                <field name="product_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1" domain="[('id','in',allowed_products)]"/>
                                                 <field name="material" invisible="1"/>
                                                 <field name="amount" required="1"/>
                                                 <field name="currency"/>
@@ -474,6 +474,7 @@
                                                 <field name="valid_to" required="1"/>
                                             </group>
                                         </group>
+                                        <field name="allowed_products" invisible="1"/>
                                     </form>
                                     <tree>
                                         <field name="product_id"/>

@@ -532,6 +532,13 @@ class DmpiCrmProductPriceList(models.Model):
 class DmpiCrmProductPriceListItem(models.Model):
 	_name = 'dmpi.crm.product.price.list.item'
 
+
+	@api.multi
+	@api.depends('partner_id')
+	def get_allowed_products(self):
+		for rec in self:
+			rec.allowed_products = rec.partner_id.product_ids
+
 	version_id = fields.Many2one('dmpi.crm.product.price.list','Versin ID', ondelete="cascade")
 	product_id = fields.Many2one('dmpi.crm.product',"Product ID")
 	sales_org = fields.Char("Sales Org")
@@ -546,6 +553,7 @@ class DmpiCrmProductPriceListItem(models.Model):
 	valid_to = fields.Date("Valid To")
 	remarks = fields.Char("Remarks")
 	tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'price_item_tag_rel', 'item_id', 'tag_id', string='Tags', copy=True)
+	allowed_products = fields.One2many('dmpi.crm.product', compute="get_allowed_products")
 
 	@api.onchange('product_id','partner_id','tag_ids')
 	def onchange_item(self):
@@ -555,6 +563,7 @@ class DmpiCrmProductPriceListItem(models.Model):
 
 			if self.partner_id:
 				self.customer_code = self.partner_id.customer_code
+				self.sales_org = self.partner_id.sales_org
 
 			if self.tag_ids:
 				self.remarks = ','.join([t.name for t in self.tag_ids])
