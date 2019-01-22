@@ -7,11 +7,15 @@
         <field name="model">customer.crm.sale.order</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
+                <field name="contract_id" string="Contract"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="week_no"/>
                 <field name="ship_to_id"/>
                 <field name="notify_id"/>
-                <field name="sap_doc_type" />
-                <field name="sales_org"/>
+                <group expand="1" string="Group By">
+                    <filter string="Week No." name="week_no" context="{'group_by':'week_no'}"/>
+                    <filter string="Customer" name="partner_id" context="{'group_by':'partner_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -27,7 +31,7 @@
                 <field name="notify_id"/>
                 <field name="requested_delivery_date"/>
                 <field name="estimated_date"/>
-                <field name="sap_doc_type" />
+                <field name="sap_doc_type" invisible="1"/>
                 <field name="sales_org"/>
             </tree>
         </field>
@@ -142,9 +146,12 @@
         <field name="res_model">customer.crm.sale.order</field>
         <field name="view_mode">tree,form,graph</field>
         <field name="domain">[]</field>
+        <field name="context">{'group_by':['partner_id','contract_id']}</field>
     </record>
 
     <menuitem id="menu_customer_sale_order" action="action_customer_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="10"/>
+
+
 
     <!-- SALES ORDER -->
     <record id="view_dmpi_crm_sale_order_graph" model="ir.ui.view">
@@ -158,7 +165,6 @@
             </pivot>
         </field>
     </record>
-
 
     <record id="view_dmpi_crm_sale_order_search" model="ir.ui.view">
         <field name="name">Sale Order</field>
@@ -176,6 +182,10 @@
                 <field name="plant" invisible="1"/>
                 <field name="week_no" required="1"/>
                 <field name="tag_ids" widget="many2many_tags"/>
+                <group expand="1" string="Group By">
+                    <filter string="Week No." name="week_no" context="{'group_by':'week_no'}"/>
+                    <filter string="Customer" name="partner_id" context="{'group_by':'partner_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -200,7 +210,6 @@
                 <field name="total_amount" sum="Total"/>
                 <field name="po_state" string="PO Status"/>
                 <field name="state" string="SO Status"/>
-
             </tree>
         </field>
     </record>
@@ -324,6 +333,7 @@
         <field name="res_model">dmpi.crm.sale.order</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="domain">[]</field>
+        <field name="context">{'group_by':['partner_id','week_no']}</field>
     </record>
 
     <menuitem id="menu_sale_order" action="action_dmpi_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="20"/>

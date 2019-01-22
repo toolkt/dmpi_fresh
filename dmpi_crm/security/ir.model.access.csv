@@ -1,7 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_user_dmpi_crm_sap_doc_type,user.dmpi.crm.sap.doc.type,model_dmpi_crm_sap_doc_type,base.group_user,1,1,1,1
 access_user_dmpi_crm_ship_to,user.dmpi.crm.ship.to,model_dmpi_crm_ship_to,base.group_user,1,1,1,1
-access_user_dmpi_crm_config_contract_state,user.dmpi.crm.config.contract.state,model_dmpi_crm_config_contract_state,base.group_user,1,1,1,1
 access_user_dmpi_crm_dr_line,user.dmpi.crm.dr.line,model_dmpi_crm_dr_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_alt_item,user.dmpi.crm.alt.item,model_dmpi_crm_alt_item,base.group_user,1,1,1,1
 access_user_dmpi_crm_inspection_lot,user.dmpi.crm.inspection.lot,model_dmpi_crm_inspection_lot,base.group_user,1,1,1,1
