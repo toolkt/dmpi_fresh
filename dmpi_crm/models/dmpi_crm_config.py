@@ -873,14 +873,31 @@ class DmpiCrmConfig(models.Model):
 
                         if contract_id:
                             contract.write({'state':'enroute'})
+
                         execute(transfer_files,f, outbound_path_success)
+
+                        log = { 'name':"ODOO_SHP", 'log_type':"success",
+                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                            }
+                        self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_shp %s',shp_no)
 
                     else:
                         execute(transfer_files,f, outbound_path_fail)
+
+                        log = { 'name':"ODOO_SHP", 'log_type':"fail",
+                                'description':"Failed: %s \nTransferred %s to %s " % ('No SHIP No.',f,outbound_path_fail)
+                            }
+                        self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('FAILED process_shp')
 
                 except Exception as e:
+                    execute(transfer_files,f, outbound_path_fail)
+
+                    log = { 'name':"ODOO_SHP", 'log_type':"fail",
+                            'description':"Error: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                        }
+                    self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERRROR process_shp')
 
 

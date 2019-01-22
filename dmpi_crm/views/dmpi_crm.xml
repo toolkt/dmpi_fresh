@@ -968,11 +968,22 @@
 
 
 
+        <record id="view_dmpi_crm_activity_log_search" model="ir.ui.view">
+            <field name="name">dmpi.crm.activity.log.search</field>
+            <field name="model">dmpi.crm.activity.log</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter string="Failed" name="failed_logs" domain="[('log_type','=','fail')]"/>
+                </search>
+            </field>
+        </record>
+
         <record id="view_dmpi_crm_activity_log_tree" model="ir.ui.view">
             <field name="name">Activity Log</field>
             <field name="model">dmpi.crm.activity.log</field>
             <field name="arch" type="xml">
-                <tree editable='bottom'>
+                <tree>
                     <field name="name"/>
                     <field name="log_type"/>
                     <field name="description"/>
@@ -985,6 +996,7 @@
             <field name="res_model">dmpi.crm.activity.log</field>
             <field name="view_mode">tree</field>
             <field name="domain">[]</field>
+            <field name="context">{'search_default_failed_logs':1}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_activity_log" action="action_dmpi_crm_activity_log" parent="menu_dmpi_crm_settings_top"/>
