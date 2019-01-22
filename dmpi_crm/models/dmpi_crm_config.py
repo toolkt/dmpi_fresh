@@ -766,7 +766,7 @@ class DmpiCrmConfig(models.Model):
                             self.env['dmpi.crm.clp'].create(clp)
 
                         execute(transfer_files,f, outbound_path_success)
-                        log = { 'name':"ODOO_DR", 'log_type':"fail",
+                        log = { 'name':"ODOO_DR", 'log_type':"success",
                                 'description':"Transferred %s to %s " % (f,outbound_path_success)
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
