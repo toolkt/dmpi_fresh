@@ -707,7 +707,9 @@
                 <field name="source"/>
                 <field name="so_id"/>
                 <field name="sap_so_no"/>
-                <field name="inv_no"/>
+                <field name="inv_create_date"/>
+                <field name="header_net"/>
+                <field name="inv_no" invisible="1"/>
                 <field name="is_duplicate"/>
             </tree>
         </field>
