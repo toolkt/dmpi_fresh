@@ -288,6 +288,11 @@ class DmpiCrmClp(models.Model):
 
         return values
 
+    @api.depends('preship_ids')
+    def _compute_preships(self):
+        self.preship_count = len(self.preship_ids)
+
+
     # headers
     control_no = fields.Char('Control No')
     logo = fields.Binary('Logo')
@@ -362,13 +367,28 @@ class DmpiCrmClp(models.Model):
     pc_line_ids = fields.One2many('dmpi.crm.clp.pc.line','clp_id','Pulp Temp Lines')
     preship_ids = fields.One2many('dmpi.crm.preship.report','clp_id','Pre-Shipment Certificates')
 
+    preship_count = fields.Integer('Preship Count',compute="_compute_preships")
+
     status = fields.Selection([
     	('sap_generated','SAP Generated'),
+        ('prod_confirmed','Production Confirmed'),
     	('qa_confirmed','QA Confirmed'),
     	('preship_generated','Pre-shipment Generted'),
     	('preship_confirmed','Pre-shipment Confirmed')] ,default='sap_generated')
 
     status_disp = fields.Selection(string='Status Disp', related="status")
+
+
+    @api.multi
+    def action_prod_confirm(self):
+        for rec in self:
+            rec.status = 'prod_confirmed'
+
+    @api.multi
+    def action_revert_back(self):
+        for rec in self:
+            rec.status = 'sap_generated'
+
 
     @api.multi
     def action_confirm_clp(self):
@@ -391,6 +411,18 @@ class DmpiCrmClp(models.Model):
     	})
 
     	return action
+
+    def action_view_preship(self):
+
+        preship_id = self.preship_ids.ids[0]
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        action.update({
+            'views': [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')],
+            'res_id' : preship_id,
+        })
+
+        return action
 
     def parse_pack_code(self):
         print('parse pack code')

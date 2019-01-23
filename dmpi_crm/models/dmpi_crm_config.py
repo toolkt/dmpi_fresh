@@ -750,7 +750,7 @@ class DmpiCrmConfig(models.Model):
                                     'control_no': row[5],
                                 })
 
-                                case_summary = [row[i] for i in range(6,len(row))]
+                                case_summary = [row[i] for i in range(6,len(row)) if row[i]]
                                 clp['case_summary'] = '\n'.join(case_summary)
 
                     dr['dr_lines'] = dr_lines

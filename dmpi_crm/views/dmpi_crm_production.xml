@@ -2,21 +2,39 @@
 <odoo>
 
 	<!-- CONTAINER LOAD PLAN TO DO-->
+
+    <record id="view_dmpi_crm_clp_prod_tree" model="ir.ui.view">
+        <field name="name">dmpi.crm.clp.prod.tree</field>
+        <field name="model">dmpi.crm.clp</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <tree string="Container Load Plan" decoration-danger=" status=='sap_generated' ">
+                <field name="control_no"/>
+                <field name="dr_id" string="DR Number"/>
+                <field name="container_no"/>
+                <field name="customer"/>
+                <field name="plant"/>
+                <field name="port_origin"/>
+                <field name="port_destination"/>
+                <field name="boxes" sum="Total Boxes"/>
+                <field name="week"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+
     <record id="view_dmpi_crm_clp_production_form" model="ir.ui.view">
         <field name="name">dmpi.crm.clp.production.form</field>
         <field name="model">dmpi.crm.clp</field>
         <field name="arch" type="xml">
             <form string="Container Load Plan">
                 <header>
-                    <!-- <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/> -->
 
-                    <!-- <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/> -->
+                    <button name="action_prod_confirm" string="Confirm Prod Data" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you have encoded the required data?"/>
 
-                    <!-- <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?" groups="dmpi_crm.group_custom_crm_qa_staff"/> -->
-                    
-                    <!-- <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/> -->
+                    <field name="status" widget="statusbar" statusbar_visible="sap_generated,prod_confirmed,qa_confirmed,preship_generated,preship_confirmed"/>
 
-                    <field name="status" widget="statusbar" statusbar_visible="sap_generated,qa_confirmed,preship_generated,preship_confirmed"/>
                 </header>
                 <sheet>
                     <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
@@ -64,14 +82,10 @@
                                     <field name="date_arrive" readonly="1"/>
 
                                     <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
-<!--                                         <field name="summary_case_a" string="A"/>
-                                    <field name="summary_case_b" string="B"/>
-                                    <field name="summary_case_c" string="C"/> -->
                                     <field name="case_summary" nolabel="1" colspan="2" readonly="1"/>
                                 </group>
                                 <group>
                                     <h3><strong style="color:#79717D;">Container Temp</strong></h3>
-                                    <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                     <field name="simul_no" string="Simul No." readonly="1"/>
                                     <field name="simul_pack_size" string="Simul Pack Size" readonly="1"/>
                                     <field name="simul_pack_date" string="Simul Pack Date" readonly="1"/>
@@ -79,8 +93,6 @@
                                     <field name="mid_temp" string="Mid" readonly="1"/>
                                     <field name="last_temp" string="Last" readonly="1"/>
                                     <field name="van_temp" sring="Van Temp" readonly="1"/>
-                                    <!-- <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3> -->
-                                    <!-- <field name="pulp_room_temp" nolabel="1" colspan="2"/> -->
                                 </group>
                             </group>
 
@@ -88,7 +100,7 @@
                                 <group>
                                     <h3><strong style="color:#79717D;">Signatories</strong></h3>
                                     <field name="encoder_id" invisible="1"/>
-                                    <field name="outbound_checker_id"/>
+                                    <field name="outbound_checker_id" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
                                     <field name="prod_load_counter_id" invisible="1"/>
                                     <field name="inspector_id" readonly="1"/>
                                     <field name="supervisor_id" readonly="1"/>
@@ -110,16 +122,16 @@
                         <page string="Production">
                             <group>
                                 <group>
-                                    <field name="temp_start" string="Supply Temp Start"/>
-                                    <field name="temp_end" string="Supply Temp Dep"/>
+                                    <field name="temp_start" string="Supply Temp Start" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                    <field name="temp_end" string="Supply Temp Dep" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
                                 </group>
                                 <group>
-                                    <field name="van_temp_start" string="Van Temp Before"/>
-                                    <field name="van_temp_end" string="Van Temp After"/>
+                                    <field name="van_temp_start" string="Van Temp Before" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                    <field name="van_temp_end" string="Van Temp After" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
                                 </group>
                             </group>
                             <h3><strong style="color:#79717D;">Pulp Temperature</strong></h3>
-                            <field name="pc_line_ids">
+                            <field name="pc_line_ids" attrs="{'readonly':[('status','=','prod_confirmed')]}">
                                 <tree editable="bottom">
                                     <field name="pack_date"/>
                                     <field name="before_pc"/>
@@ -148,11 +160,10 @@
 		<field name="res_model">dmpi.crm.clp</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
-		<!-- <field name="view_id" ref="view_dmpi_crm_clp_tree"/> -->
 		<field name="view_ids" eval="[(5, 0, 0),
-			(0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_clp_tree')}),
+			(0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_clp_prod_tree')}),
 			(0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_clp_production_form')})]"/>
-		<field name="domain">[]</field>
+		<field name="domain">[('status','in',('sap_generated','prod_confirmed'))]</field>
 	</record>
 
 	<menuitem id="menu_dmpi_crm_clp_production" action="action_dmpi_crm_clp_production" parent="dmpi_crm_production_top" sequence="10" groups="group_custom_crm_prod_staff"/>

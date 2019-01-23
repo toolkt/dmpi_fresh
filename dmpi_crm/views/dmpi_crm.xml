@@ -573,7 +573,7 @@
 
                     <separator/>
 
-                    <filter name="sap_generated" string="Sap Generated" domain="[('status', '=', 'sap_generated')]"/>
+                    <filter name="prod_confirmed" string="Production Confirmed" domain="[('status', '=', 'prod_confirmed')]"/>
                     <filter name="qa_confirmed" string="QA Confirmed" domain="[('status', '=', 'qa_confirmed')]"/>
                     <filter name="preship_generated" string="Pre-shipment Generated" domain="[('status', '=', 'preship_generated')]"/>
                     <filter name="preship_confirmed" string="Pre-shipment Confimred" domain="[('status', '=', 'preship_confirmed')]"/>
@@ -588,12 +588,12 @@
             <field name="arch" type="xml">
                 <tree string="Container Load Plan">
                     <field name="control_no"/>
-                    <field name="dr_id"/>
+                    <field name="dr_id" string="DR Number"/>
                     <field name="container_no"/>
+                    <field name="customer"/>
                     <field name="plant"/>
                     <field name="port_origin"/>
                     <field name="port_destination"/>
-                    <field name="customer"/>
                     <field name="boxes" sum="Total Boxes"/>
                     <field name="week"/>
                     <field name="status"/>
@@ -607,17 +607,27 @@
             <field name="arch" type="xml">
                 <form string="Container Load Plan">
                     <header>
-                        <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
 
-                        <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
-
-                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
-                        
                         <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/>
 
-                        <field name="status" widget="statusbar" statusbar_visible="sap_generated,qa_confirmed,preship_generated,preship_confirmed"/>
+                        <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
+
+                        <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
+
+                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','prod_confirmed')]}" confirm="Are you sure you want to confirm the CLP?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
+
+                        <button name="action_revert_back" string="Revert Back Status" type="object" class="oe_stat_button" attrs="{'invisible':[('status','!=','prod_confirmed')]}" confirm="Are you sure you want to revert the status to SAP Generated for editing of Production Team?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
+
+                        <field name="status" widget="statusbar" statusbar_visible="sap_generated,prod_confirmed,qa_confirmed,preship_generated,preship_confirmed"/>
                     </header>
                     <sheet>
+
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_preship" type="object" class="oe_stat_button" icon="fa-file" attrs="{'invisible':[('preship_count','=',0)]}" string="Pre-shipments">
+                                <field name="preship_count" widget="statinfo" invisible="1"/>
+                            </button>
+                        </div>
+
                         <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                         <group>
                             <group>
@@ -662,14 +672,10 @@
                                         <field name="date_arrive"/>
 
                                         <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
-<!--                                         <field name="summary_case_a" string="A"/>
-                                        <field name="summary_case_b" string="B"/>
-                                        <field name="summary_case_c" string="C"/> -->
                                         <field name="case_summary" nolabel="1" colspan="2"/>
                                     </group>
                                     <group>
                                         <h3><strong style="color:#79717D;">Container Temp</strong></h3>
-                                        <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                         <field name="simul_no" string="Simul No."/>
                                         <field name="simul_pack_size" string="Simul Pack Size"/>
                                         <field name="simul_pack_date" string="Simul Pack Date"/>
@@ -677,8 +683,6 @@
                                         <field name="mid_temp" string="Mid"/>
                                         <field name="last_temp" string="Last"/>
                                         <field name="van_temp" sring="Van Temp"/>
-                                        <!-- <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3> -->
-                                        <!-- <field name="pulp_room_temp" nolabel="1" colspan="2"/> -->
                                     </group>
                                 </group>
 
@@ -726,10 +730,10 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Pre-Shipment Certificates">
+                            <page string="Pre-Shipment Certificates" groups="base.group_erp_manager">
                                 <field name="preship_ids"/>
                             </page>
-                            <page string="Settings">
+                            <page string="Settings" groups="base.group_erp_manager">
                                 <group>
                                     <field name="status_disp"/>
                                 </group>
@@ -746,7 +750,7 @@
             <field name="res_model">dmpi.crm.clp</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_sap_generated':1}"/>
+            <field name="context" eval="{'search_default_prod_confirmed':1}"/>
         </record>
 
         <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/>

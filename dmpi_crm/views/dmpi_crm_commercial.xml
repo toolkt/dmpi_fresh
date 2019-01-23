@@ -171,17 +171,12 @@
         <field name="model">dmpi.crm.sale.order</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
+                <field name="week_no"/>
+                <field name="partner_id"/>
                 <field name="sap_so_no" />
-                <field name="ship_to_id"/>
-                <field name="notify_id"/>
+                <field name="name"/>
                 <field name="ship_line" />
                 <field name="shell_color" />
-                <field name="sales_org"/>
-                <field name="plant_id"/>
-                <field name="plant" invisible="1"/>
-                <field name="week_no" required="1"/>
-                <field name="tag_ids" widget="many2many_tags"/>
                 <group expand="1" string="Group By">
                     <filter string="Week No." name="week_no" context="{'group_by':'week_no'}"/>
                     <filter string="Customer" name="partner_id" context="{'group_by':'partner_id'}"/>
