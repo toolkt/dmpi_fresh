@@ -775,7 +775,7 @@ class DmpiCrmConfig(models.Model):
                     else:
                         execute(transfer_files,f, outbound_path_fail)
                         log = { 'name':"ODOO_DR", 'log_type':"fail",
-                                'description':"FAILED: %s \nTransferred %s to %s " % ('No sap_dr_no',f,outbound_path_fail)
+                                'description':"FAILED: %s \nTransferred %s to %s " % ('No sap_dr_no %s'%sap_dr_no,f,outbound_path_fail)
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('FAILED process_dr')
