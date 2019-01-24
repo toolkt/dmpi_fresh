@@ -74,13 +74,13 @@
                     <sheet>
                         <div class="oe_button_box" name="button_box">
 
-                            <button name="send_email"
+<!--                             <button name="send_email"
                                 type="object"
                                 string="Email"
                                 class="oe_stat_button"
                                 icon="fa-envelope">
                             </button>
-
+ -->
                             <button name="upload_wizard"
                                 type="object"
                                 string="Upload"
@@ -88,12 +88,12 @@
                                 icon="fa-upload">
                             </button>
 
-                            <button name="re_map_products"
+<!--                             <button name="re_map_products"
                                 type="object"
                                 string="Re-map Products"
                                 class="oe_stat_button"
                                 icon="fa-check">
-                            </button>
+                            </button> -->
 
                             <button name="recompute_order_lines"
                                 type="object"

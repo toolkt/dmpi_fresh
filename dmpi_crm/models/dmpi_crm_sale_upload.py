@@ -19,8 +19,6 @@ import tempfile
 import re
 
 
-PRODUCT_CODES = ['p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20']
-
 def read_data(data):
     if data:
         fileobj = TemporaryFile("w+")
@@ -286,20 +284,14 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 raise UserError('No Upload Type Selected.')
             sale_orders = []
 
-            # contract_id = self.env.context.get('default_contract_id',False)
-            # contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
-            # sap_doc_type = contract.contract_type.name
             sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)],limit=1)[0].name
             tmp = rec.pack_code_tmp.split(',')
 
-            print (sap_doc_type)
             for l in rec.upload_line_ids:
                 so_lines = []
                 so_line_no = 0
 
-
                 def compute_price(date,customer_code,material,tag_ids=[]):
-
                     where_clause = ""
                     query = ""
                     if len(tag_ids) > 0:
@@ -328,17 +320,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
 
                     print (query)
-                    # print("--------PRICE-------\n%s" % query)
                     self.env.cr.execute(query)
                     result = self.env.cr.dictfetchall()
-                    # if result:
-                    #     self.price = float(result[0]['amount'])
-                    # else:
-                    #     self.price = 0
-                    # if result:
-                    #     self.uom = result[0]['uom']
-                    # else:
-                    #     self.uom = 'CAS'
 
                     if result:
                         return result[0]['amount']
@@ -348,20 +331,18 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 def format_so(rec,so_line_no,partner_id=0,qty=0,product_code=''):
                     name = "Product not Maintained"
                     product_id = False
-                    # query = """SELECT cp.id as product_id, cp.sku, cp.code, cp.partner_id, spu.condition_rate,spu.condition_currency, spu.uom from dmpi_crm_product cp
-                    #         left join dmpi_sap_price_upload spu on spu.material = cp.sku
-                    #         where cp.code = '%s' and partner_id = %s and cp.active is true""" % (product_code,partner_id)
+
                     query = """ SELECT cp.id as product_id, cp.sku, cp.code, cp.product_class, spu.condition_rate, spu.condition_currency, spu.uom
                                 from dmpi_crm_product cp left join dmpi_sap_price_upload spu on spu.material = cp.sku
                                 where cp.code = '%s' and cp.active is true and cp.id in
                                 (select ppr.product_id from dmpi_partner_product_rel ppr where ppr.partner_id = %s) order by product_class """ % (product_code,partner_id)
+
                     print ('query1',query)
                     self.env.cr.execute(query)
                     result = self.env.cr.dictfetchall()
                     if result:
                         name = result[0]['sku']
                         product_id = result[0]['product_id']
-
 
                     # get price
                     price = compute_price(rec.contract_id.po_date,rec.partner_id.customer_code,name, rec.contract_id.tag_ids.ids)
@@ -399,65 +380,28 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         'plant_id': rec.contract_id.partner_id.default_plant.id,
                         'plant': rec.contract_id.partner_id.default_plant.name,
                         'week_no': rec.contract_id.week_no,
-                        # 'p5': l.p5,
-                        # 'p6': l.p6,
-                        # 'p7': l.p7,
-                        # 'p8': l.p8,
-                        # 'p9': l.p9,
-                        # 'p10': l.p10,
-                        # 'p12': l.p12,
-                        # 'p5c7': l.p5c7,
-                        # 'p6c8': l.p6c8,
-                        # 'p7c9': l.p7c9,
-                        # 'p8c10': l.p8c10,
-                        # 'p9c11': l.p9c11,
-                        # 'p10c12': l.p10c12,
-                        # 'p12c20': l.p12c20,
                         'order_ids': so_lines,
                     }
 
-                # print(order)
                 sale_orders.append((0,0,order))
 
-            if rec.upload_type == 'customer' and rec.contract_id.state == 'draft':
-                rec.contract_id.customer_order_ids.unlink()
-                rec.contract_id.customer_order_ids = sale_orders
-            if rec.upload_type == 'commercial':
-                rec.contract_id.sale_order_ids.unlink()
-                rec.contract_id.sale_order_ids = sale_orders
+            # if rec.upload_type == 'customer' and rec.contract_id.state == 'draft':
+            #     rec.contract_id.customer_order_ids.unlink()
+            #     rec.contract_id.customer_order_ids = sale_orders
+            # if rec.upload_type == 'commercial':
+            #     rec.contract_id.sale_order_ids.unlink()
+            #     rec.contract_id.sale_order_ids = sale_orders
 
 
 
 class DmpiCrmSaleContractUploadLine(models.TransientModel):
     _name = 'dmpi.crm.sale.contract.upload.line'
 
-
-    # @api.depends('p5','p6','p7','p8','p9','p10','p12','p5c7','p6c8','p7c9','p8c10','p9c11','p10c12','p12c20')
-    # def _get_totals(self):
-    #     for rec in self:
-    #         rec.total_crown = rec.p5+rec.p6+rec.p7+rec.p8+rec.p9+rec.p10+rec.p12
-    #         rec.total_crownless = rec.p5c7+rec.p6c8+rec.p7c9+rec.p8c10+rec.p9c11+rec.p10c12+rec.p12c20
-    #         rec.total_qty = rec.total_crown + rec.total_crownless
-
     upload_id       = fields.Many2one("dmpi.crm.sale.contract.upload","Upload Template")
     line_no         = fields.Integer("Line No.")
     ship_to         = fields.Char(string="Ship to")
     ship_to_id      = fields.Many2one("dmpi.crm.partner","Ship to Party")
     notify_id       = fields.Many2one("dmpi.crm.partner","Notify Party")
-    # p5              = fields.Integer(string="P5", sum="TOTAL")
-    # p6              = fields.Integer(string="P6", sum="TOTAL")
-    # p7              = fields.Integer(string="P7", sum="TOTAL")
-    # p8              = fields.Integer(string="P8", sum="TOTAL")
-    # p9              = fields.Integer(string="P9", sum="TOTAL")
-    # p10             = fields.Integer(string="P10", sum="TOTAL")
-    # p12             = fields.Integer(string="P12", sum="TOTAL")
-    # p5c7            = fields.Integer(string="P5C7", sum="TOTAL")
-    # p6c8            = fields.Integer(string="P6C8", sum="TOTAL")
-    # p7c9            = fields.Integer(string="P7C9", sum="TOTAL")
-    # p8c10           = fields.Integer(string="P8C10", sum="TOTAL")
-    # p9c11           = fields.Integer(string="P9C11", sum="TOTAL")
-    # p10c12          = fields.Integer(string="P10C12", sum="TOTAL")
-    # p12c20          = fields.Integer(string="P12C20", sum="TOTAL")
     order_lines      = fields.Text(string='Order Lines')
     total_p100      = fields.Integer(string="With Crown", sum="TOTAL")
     total_p200      = fields.Integer(string="Crownless", sum="TOTAL")

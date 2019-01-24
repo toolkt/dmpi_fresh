@@ -84,22 +84,6 @@ CONTRACT_STATE = [
 		('received','Received'),
 		('cancel','Cancelled')]
 
-PRODUCT_CODES = [
-		('P5','P5'),
-		('P6','P6'),
-		('P7','P7'),
-		('P8','P8'),
-		('P9','P9'),
-		('P10','P10'),
-		('P12','P12'),
-		('P5C7','P5C7'),
-		('P6C8','P6C8'),
-		('P7C9','P7C9'),
-		('P8C10','P8C10'),
-		('P9C11','P9C11'),
-		('P10C12','P10C12'),
-		('P12C20','P12C20')]
-
 
 class DmpiCrmSaleContract(models.Model):
 	_name = 'dmpi.crm.sale.contract'
@@ -450,20 +434,6 @@ class DmpiCrmSaleContract(models.Model):
 						'plant_id': l.plant_id.id,
 						'plant': l.plant,
 						'week_no': week_no,
-						# 'p5': l.p5,
-						# 'p6': l.p6,
-						# 'p7': l.p7,
-						# 'p8': l.p8,
-						# 'p9': l.p9,
-						# 'p10': l.p10,
-						# 'p12': l.p12,
-						# 'p5c7': l.p5c7,
-						# 'p6c8': l.p6c8,
-						# 'p7c9': l.p7c9,
-						# 'p8c10': l.p8c10,
-						# 'p9c11': l.p9c11,
-						# 'p10c12': l.p10c12,
-						# 'p12c20': l.p12c20,
 						'order_ids': so_lines,
 					}
 
@@ -677,110 +647,6 @@ class DmpiCrmSaleContract(models.Model):
 class DmpiCrmSaleOrder(models.Model):
 	_name = 'dmpi.crm.sale.order'
 	_inherit = ['mail.thread']
-
-	def _get_doc_type(self):
-		group = 'doc_type'
-		query = """SELECT cs.select_name,cs.select_value
-				from dmpi_crm_config_selection cs
-				left join dmpi_crm_config cc on cc.id = cs.config_id
-				where select_group = '%s'  and cc.active is True and cc.default is True
-				order by sequence 
-				""" % group
-		self.env.cr.execute(query)
-		result = self.env.cr.dictfetchall()
-		res = [(r['select_value'],r['select_name']) for r in result]
-		return res
-
-	def _get_doc_type_default(self):
-		group = 'doc_type'
-		query = """SELECT cs.select_name,cs.select_value
-				from dmpi_crm_config_selection cs
-				left join dmpi_crm_config cc on cc.id = cs.config_id
-				where cs.select_group = '%s'  and cc.active is True and cc.default is True and cs.default is True
-				order by sequence 
-				limit 1 
-				""" % group
-		self.env.cr.execute(query)
-		result = self.env.cr.dictfetchone()
-		# print (result)
-		if result:
-			return result['select_name']
-
-	@api.model
-	def _sale_order_demand_create_csv(self, so_ids):
-		csv = ''
-		headers = ['ODOO PO','ODOO SO','SOLD TO','SHIP TO','DESTINATION','WEEK','P5','P6','P7','P8','P9','P10','P12','P5C7',
-				'P6C8','P7C9','P8C10','P9C11','P10C12','P12C20','Total','Shipp Line','Shell Color','Delivery Date','STATUS']
-
-		csv = u','.join(headers) + '\n'
-
-		# add row data
-		for sid in so_ids:
-			row = []
-			so = self.browse(sid)
-
-			odoo_po_no = so.contract_id.name or ''
-			odoo_so_no = so.name or ''
-			sold_to = so.contract_id.partner_id.name or ''
-			ship_to = so.ship_to_id.name or ''
-			destination = ''
-			week_no = '%s' % (so.week_no or '')
-			total = 0
-			ship_line = so.ship_line or ''
-			shell_color = so.shell_color or ''
-			delivery_date = so.requested_delivery_date or ''
-			status = so.state.upper()
-
-			if delivery_date:
-				delivery_date = datetime.strftime(parse(delivery_date), '%M/%d/%Y')
-
-			for l in so.order_ids:
-				p5  = l.qty if l.product_code == 'P5' else ''
-				p6  = l.qty if l.product_code == 'P6' else ''
-				p7  = l.qty if l.product_code == 'P7' else ''
-				p8  = l.qty if l.product_code == 'P8' else ''
-				p9  = l.qty if l.product_code == 'P9' else ''
-				p10 = l.qty if l.product_code == 'P10' else ''
-				p12 = l.qty if l.product_code == 'P12' else ''
-				p5c7    = l.qty if l.product_code == 'P5C7' else ''
-				p6c8    = l.qty if l.product_code == 'P6C8' else ''
-				p7c9    = l.qty if l.product_code == 'P7C9' else ''
-				p8c10   = l.qty if l.product_code == 'P8C10' else ''
-				p9c11   = l.qty if l.product_code == 'P9C11' else ''
-				p10c12  = l.qty if l.product_code == 'P10C12' else ''
-				p12c20  = l.qty if l.product_code == 'P12C20' else ''
-
-				total += l.qty
-
-			row = [odoo_po_no, odoo_so_no, sold_to, ship_to, destination, week_no, 
-				p5, p6, p7, p8, p9, p10, p12, p5c7, p6c8, p7c9, p8c10, p9c11, p10c12, p12c20,
-				total, ship_line, shell_color, delivery_date, status]
-
-			csv += ','.join(str(d) for d in row) + '\n'
-
-		return csv
-
-	@api.multi
-	def download_demand_sale_order(self):
-		print('EXPORT SALE ORDERS DEMAND')
-		active_ids = self.browse(self.env.context.get('active_ids'))
-
-		docids = []
-		for rec in active_ids:
-			docids.append(rec.id)
-
-		if docids:
-			values = {
-				'type': 'ir.actions.act_url',
-				'url': '/csv/download/dmpi_crm_sale_order/?docids=%s' % (json.dumps(docids)),
-				'target': 'current',
-			}
-
-			return values
-		
-		else:
-			raise UserError(_("Nothing to Download."))
-
 
 
 	def submit_so_file(self,rec):
@@ -1071,7 +937,7 @@ class DmpiCrmSaleOrder(models.Model):
 	name = fields.Char("CRM SO No.", default="Draft", copy=False)
 	plant = fields.Char("Plant", compute='_get_plant_name')
 	plant_id = fields.Many2one('dmpi.crm.plant')
-	contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+	contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID", ondelete="cascade")
 	customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref', store=True)
 	contract_line_no = fields.Integer("Contract Line No.")
 	so_no = fields.Integer("SO Num")
@@ -1202,7 +1068,7 @@ class DmpiCrmSaleOrder(models.Model):
 	total_qty = fields.Float('Total', compute='get_product_qty', store=True)
 	total_amount = fields.Float('Total', compute='get_product_qty', store=True)
 
-	week_no = fields.Integer("Week No", related='contract_id.week_no', store=True)
+	week_no = fields.Integer("Week No", related='contract_id.week_no', store=True, group_operator="avg")
 	state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
 	po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state', store=True)
 	found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
