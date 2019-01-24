@@ -5,7 +5,12 @@
     <record id="action_dmpi_crm_sale_order_logistics" model="ir.actions.act_window">
         <field name="name">Sales Order</field>
         <field name="res_model">dmpi.crm.sale.order</field>
+        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_sale_order_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_sale_order_form')})]"/>
+        <field name="context">{'search_default_partner':1,'search_default_with_sap_so':1}</field>
     </record>
 
     <menuitem id="menu_sale_order_logistics" action="action_dmpi_crm_sale_order_logistics" parent="menu_dmpi_crm_logistics_top" sequence="10"/>

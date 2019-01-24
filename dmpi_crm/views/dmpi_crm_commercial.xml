@@ -177,9 +177,11 @@
                 <field name="name"/>
                 <field name="ship_line" />
                 <field name="shell_color" />
+                <filter string="With SAP SO" name="with_sap_so" domain="[('sap_so_no','!=',False)]"/>
+                <filter string="Without SAP SO" name="without_sap_so" domain="[('sap_so_no','=',False)]"/>
                 <group expand="1" string="Group By">
-                    <filter string="Week No." name="week_no" context="{'group_by':'week_no'}"/>
-                    <filter string="Customer" name="partner_id" context="{'group_by':'partner_id'}"/>
+                    <filter string="Customer" name="partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="Contract" name="contract" context="{'group_by':'contract_id'}"/>
                 </group>
             </search>
         </field>
@@ -328,7 +330,7 @@
         <field name="res_model">dmpi.crm.sale.order</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="domain">[]</field>
-        <field name="context">{'group_by':['partner_id','contract_id']}</field>
+        <field name="context">{'search_default_partner':1}</field>
     </record>
 
     <menuitem id="menu_sale_order" action="action_dmpi_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="20"/>
