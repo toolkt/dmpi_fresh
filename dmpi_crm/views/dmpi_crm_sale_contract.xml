@@ -26,7 +26,7 @@
             <field name="name">CRM Sale Contract</field>
             <field name="model">dmpi.crm.sale.contract</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-muted="state == 'cancel' ">
                     <field name="name"/>
                     <field name="sap_cn_no"/>
                     <field name="week_no" required="1"/>
