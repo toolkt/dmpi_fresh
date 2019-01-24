@@ -84,6 +84,19 @@ class DmpiCrmComplaintReport(models.Model):
         self.variety = self.preship_id.variety.name
         self.week = self.clp_id.week
         self.vessel = self.clp_id.vessel_name 
+        self.total_score = self.preship_id.total_score
+        self.total_class = self.preship_id.total_class
+        self.pack_size = self.preship_id.pack_size
+        self.market = self.clp_id.port_destination
+        self.customer = self.clp_id.customer
+
+    @api.onchange('claim_nature_ids')
+    def on_change_claim_nature_ids(self):
+        claim_nature_desc = []
+        for d in self.claim_nature_ids:
+            claim_nature_desc.append(d.name)
+        self.claim_nature_desc = ','.join([x for x in claim_nature_desc])
+        
 
 
     name = fields.Char("FFCR Series No.")
@@ -92,15 +105,22 @@ class DmpiCrmComplaintReport(models.Model):
 
     ffcr_series_no = fields.Integer('Series No')
     ffcr_series_year = fields.Integer('Series Year')
+
+    report_count = fields.Integer('Count')
+    report_type = fields.Selection([('Complaint','Complaint'),('Feedback','Feedback')],"Report Type")
     
-    customer = fields.Char(string="Customer", related='clp_id.customer')
-    market = fields.Char("Market", related='clp_id.port_destination')
+    customer = fields.Char(string="Customer")
+    market = fields.Char("Market")
     plant = fields.Char("PH", related='clp_id.plant')
     variety = fields.Char(string='Variety')
+    pack_size = fields.Char(string='Pack Size')
+    pack_type = fields.Char(string='Pack Type')
     container_no = fields.Char("Container No.", related='clp_id.container_no')
     week = fields.Char("Week")
 
-    claim_nature_id = fields.Many2one('dmpi.crm.complaint.claim.nature',"Nature if Claim")
+    # claim_nature_id = fields.Many2one('dmpi.crm.complaint.claim.nature',"Nature of Claim")
+    claim_nature_ids = fields.Many2many('dmpi.crm.complaint.claim.nature','ffcr_claim_rel','ffcr_id','claim_nature_id',"Nature of Claim")
+    claim_nature_desc = fields.Char("Nature of Claim Desc")
     description = fields.Char("Complaint description")
     pack_date = fields.Char("Pack Date", related='preship_id.date_pack')
     first_pack_date = fields.Date("First Pack Date")
@@ -121,6 +141,7 @@ class DmpiCrmComplaintReport(models.Model):
     aop_inspect = fields.Integer("AOP at Inspection", compute='get_compute_data')
     feeder_vessel = fields.Char("Feeder Vessel")
     delay_reason = fields.Char("Reason for Delay")
+    temp_reading = fields.Text("Temperature Reading")
 
     date_qc_report_receipt = fields.Date("QC Report Receipt")
     date_claim_notif = fields.Date("Date of Claim Notification")
@@ -138,6 +159,22 @@ class DmpiCrmComplaintReport(models.Model):
     cn_amount = fields.Char("CN Amount (USD)")
     state = fields.Selection([('draft','Draft'),('resolution','For Resolution'),('done','Done')], default='draft', string="State", track_visibility='onchange')
     car_id = fields.One2many('dmpi.crm.corrective.action', 'ffcr_id', "CAR Ids", ondelete='cascade')
+
+
+    total_score = fields.Char("Preship Score")
+    total_class = fields.Char("Preship Class")
+    preship_eval = fields.Text("Preship Evaluation")
+    post_harvest_tmnt = fields.Text("Post-harvest Treatment")
+    remarks = fields.Text("Remarks")
+    simulation_eval = fields.Text("Simulation Evaluation")
+    date_simul_eval = fields.Date("Date Simulation Evavluated")
+    aop_upon_simul = fields.Char("AOP upon Simulation")
+    date_mqa_eval = fields.Date("Date MQA Evavluation")
+    mqa_eval_result = fields.Text("MQA Evaluation Result")
+    aop_mqa_evaluation = fields.Char("AOP at MQA Evaluation")
+    deviation_exception = fields.Text("Deviation/Exceptions")
+    qa_recommendation = fields.Text("QA Recommendations")
+
 
 
 

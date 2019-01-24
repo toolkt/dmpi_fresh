@@ -70,6 +70,32 @@
         <menuitem id="menu_dmpi_crm_complaint_ph" action="action_dmpi_crm_complaint_ph" parent="menu_dmpi_crm_complaint_report_config"/>
 
 
+        <record model="ir.ui.view" id="view_dmpi_crm_complaint_report_graph">
+            <field name="name">dmpi.crm.complaint.report.graph</field>
+            <field name="model">dmpi.crm.complaint.report</field>
+            <field eval="12" name="priority"/>
+            <field name="arch" type="xml">
+                <graph string="Complaint" type="bar">
+                    <field name="report_type"/>
+                    <field name="customer"/>
+                    <field name="report_count" type='measure'/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_dmpi_crm_complaint_report_pivot" model="ir.ui.view">
+            <field name="name">Complaint</field>
+            <field name="model">dmpi.crm.complaint.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Sale Report">
+                    <field name="report_type" type="row"/>
+                    <field name="customer" type="row"/>
+                    <field name="report_count" type='measure'/>
+                </pivot>
+            </field>
+        </record>   
+
+
         <record id="view_dmpi_crm_complaint_report_search" model="ir.ui.view">
             <field name="name">Complaint Report</field>
             <field name="model">dmpi.crm.complaint.report</field>
@@ -80,6 +106,7 @@
                     <field name="customer"/>
                     <field name="market"/>
                     <field name="plant"/>
+                    <field name="report_type"/>
                 </search>
             </field>
         </record>
@@ -96,6 +123,7 @@
                     <field name="customer"/>
                     <field name="market"/>
                     <field name="plant"/>
+                    <field name="report_type"/>
                 </tree>
             </field>
         </record>
@@ -127,12 +155,11 @@
                                 <field name="market"/>
                                 <field name="plant"/>
                                 <field name="variety"/>
+                                <field name="pack_size"/>
+                                <field name="pack_type"/>
                                 <field name="container_no"/>
-                                <field name="claim_nature_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                <field name="claim_nature_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                 <field name="description"/>
-
-
-
                             </group>
                             <group>
                                 <field name="first_pack_date"/>
@@ -145,6 +172,8 @@
                                 <field name="month_claimed"/>
                                 <field name="cn_no"/>
                                 <field name="cn_amount"/>
+                                <field name="report_count"/>
+                                <field name="report_type"/>
                             </group>
                         </group>
                         <notebook>
@@ -159,6 +188,7 @@
                                         <field name="date_claim_bill_receipt"/>
                                     </group>
                                     <group>
+                                        <field name="claim_nature_desc"/>
                                         <field name="date_temp_logger_receipt"/>
                                         <field name="date_claim_endorsement_receipt"/>
                                     </group>
@@ -199,17 +229,37 @@
                                         <field name="feeder_vessel"/>
                                         <field name="delay_reason"/>
                                     </group>
+                                    <label for="temp_reading"/>
+                                    <field name="temp_reading"/>
                                 </group>
                         
                             </page>
                             <page string="QA Evaluation">
                                 <group>
                                     <group>
+                                        <field name="total_score"/>
+                                        <field name="total_class"/>
                                     </group>
                                     <group>
+                                        <field name="deviation_exception"/>  
                                     </group>
                                 </group>
-                        
+                                <group>
+                                    <group>
+                                        <field name="preship_eval"/>
+                                        <field name="post_harvest_tmnt"/>
+                                        <field name="remarks"/>
+                                        <field name="date_simul_eval"/>
+                                        <field name="simulation_eval"/>
+                                        <field name="aop_upon_simul"/>
+                                    </group>
+                                    <group>
+                                        <field name="date_mqa_eval"/>
+                                        <field name="mqa_eval_result"/>
+                                        <field name="aop_mqa_evaluation"/>
+                                        <field name="qa_recommendation"/>
+                                    </group>
+                                </group>
                             </page>
 
                         </notebook>
@@ -228,7 +278,7 @@
         <record id="action_dmpi_crm_complaint_report" model="ir.actions.act_window">
             <field name="name">Complaint Report</field>
             <field name="res_model">dmpi.crm.complaint.report</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
             <field name="domain">[]</field>
         </record>
 
