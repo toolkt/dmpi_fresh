@@ -7,14 +7,17 @@
         <field name="model">customer.crm.sale.order</field>
         <field name="arch" type="xml">
             <search>
-                <field name="contract_id" string="Contract"/>
-                <field name="partner_id" string="Customer"/>
                 <field name="week_no"/>
-                <field name="ship_to_id"/>
-                <field name="notify_id"/>
+                <field name="partner_id"/>
+                <field name="sap_so_no" />
+                <field name="name"/>
+                <field name="ship_line" />
+                <field name="shell_color" />
+                <filter string="With SAP SO" name="with_sap_so" domain="[('sap_so_no','!=',False)]"/>
+                <filter string="Without SAP SO" name="without_sap_so" domain="[('sap_so_no','=',False)]"/>
                 <group expand="1" string="Group By">
-                    <filter string="Week No." name="week_no" context="{'group_by':'week_no'}"/>
-                    <filter string="Customer" name="partner_id" context="{'group_by':'partner_id'}"/>
+                    <filter string="Customer" name="partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="Contract" name="contract" context="{'group_by':'contract_id'}"/>
                 </group>
             </search>
         </field>
@@ -146,7 +149,7 @@
         <field name="res_model">customer.crm.sale.order</field>
         <field name="view_mode">tree,form,graph</field>
         <field name="domain">[]</field>
-        <field name="context">{'group_by':['partner_id','contract_id']}</field>
+        <field name="context">{'search_default_partner':1}</field>
     </record>
 
     <menuitem id="menu_customer_sale_order" action="action_customer_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="10"/>
@@ -793,19 +796,6 @@
     </record>
 
     <menuitem id="menu_dmpi_crm_invoice" action="action_dmpi_crm_invoice" parent="menu_dmpi_crm_commercial_docs" sequence="30"/>
-
-
-    <!-- DOWNLOAD SALES ORDER DEMANDS -->
-    <record id="action_download_demand_sale_order" model="ir.actions.server">
-        <field name="name">Export Sale Orders</field>
-        <field name="type">ir.actions.server</field>
-        <field name="state">code</field>
-        <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_order"></field>
-        <field name="binding_model_id" ref="dmpi_crm.model_dmpi_crm_sale_order"></field>
-        <field name="code">action = env['dmpi.crm.sale.order'].download_demand_sale_order()</field>
-    </record>
-
-
 
 
 	<!-- MARKET ALLOCATION -->

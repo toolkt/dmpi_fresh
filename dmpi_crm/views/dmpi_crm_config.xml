@@ -138,13 +138,6 @@
                                         <button name="process_inv2" string="Process DMS Invoice" type="object" class="oe_highlight" />
                                         <button name="process_inv2_pdf" string="Process DMS Invoice PDF" type="object" class="oe_highlight" />
                                     </group>
-                                    <!-- <group>
-                                        <field name="outbound_prc_success" />
-                                        <field name="outbound_prc_success_sent" />
-                                        <field name="outbound_prc_fail" />
-                                        <field name="outbound_prc_fail_sent" />
-                                        <button name="process_prc" string="Process Price" type="object" class="oe_highlight" />
-                                    </group> -->
                                 </group>
 
                             </page>

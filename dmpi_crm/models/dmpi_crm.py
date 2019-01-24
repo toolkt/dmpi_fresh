@@ -600,22 +600,6 @@ class DmpiCRMPaymentTerms(models.Model):
 	days = fields.Integer("Days Due")
 
 
-class DmpiSAPPriceUpload(models.Model):
-	_name = 'dmpi.sap.price.upload'
-
-	name = fields.Char("Code")
-	application = fields.Char("Application")
-	condition_type = fields.Char("Condition Type")
-	sales_org = fields.Char("Sales Org")
-	customer = fields.Char("Customer")
-	material = fields.Char("Material")
-	valid_to_sap = fields.Char("Valid To (SAP)")
-	valid_to = fields.Date("Valid To (Date)")
-	condition_record = fields.Char("Application")
-	condition_rate = fields.Float("Application")
-	condition_currency = fields.Char("Currency")
-	uom = fields.Char("Unit of Measure")
-
 class DmpiCRMChannelGroup(models.Model):
 	_name = 'dmpi.crm.channel.group'
 	_description = 'DMPI CRM Channel Groups'
