@@ -37,84 +37,107 @@ class DmpiCrmComplaintReport(models.Model):
     _inherit = ['mail.thread']
 
 
-    @api.depends('date_arrival','pack_date','date_pullout','date_inspection','date_last_doc_completed','date_claim_endorsement_receipt')
+    @api.depends('date_arrival','first_pack_date','date_pullout','date_inspection','date_last_doc_completed','date_claim_endorsement_receipt')
     def get_compute_data(self):
         for rec in self:
-            if not(not(rec.date_arrival) or not(rec.pack_date)):
+            if not(not(rec.date_arrival) or not(rec.first_pack_date)):
                 date_arrival = datetime.strptime(rec.date_arrival, "%Y-%m-%d")
-                pack_date = datetime.strptime(rec.pack_date, "%Y-%m-%d")
-                rec.aop_ata = (pack_date-date_arrival).days
+                first_pack_date = datetime.strptime(rec.first_pack_date, "%Y-%m-%d")
+                rec.aop_ata = (date_arrival-first_pack_date).days
 
-            if not(not(rec.date_pullout) or not(rec.pack_date)):
+            if not(not(rec.date_pullout) or not(rec.first_pack_date)):
                 date_pullout = datetime.strptime(rec.date_pullout, "%Y-%m-%d")
-                pack_date = datetime.strptime(rec.pack_date, "%Y-%m-%d")
-                rec.aop_pull_out = (date_pullout-pack_date).days
+                first_pack_date = datetime.strptime(rec.first_pack_date, "%Y-%m-%d")
+                rec.aop_pull_out = (date_pullout-first_pack_date).days
 
-            if not(not(rec.date_inspection) or not(rec.pack_date)):
-                pack_date = datetime.strptime(rec.pack_date, "%Y-%m-%d")
+            if not(not(rec.date_inspection) or not(rec.first_pack_date)):
+                first_pack_date = datetime.strptime(rec.first_pack_date, "%Y-%m-%d")
                 date_inspection = datetime.strptime(rec.date_inspection, "%Y-%m-%d")
-                rec.aop_inspect = (date_inspection-pack_date).days
+                rec.aop_inspect = (date_inspection-first_pack_date).days
                 
 
             if not(not(rec.date_last_doc_completed) or not(rec.date_claim_endorsement_receipt)):
                 date_last_doc_completed = datetime.strptime(rec.date_last_doc_completed, "%Y-%m-%d")
-                date_claim_endorsement_receipt = datetime.strptime(rec.date_claim_endorsement_receipt, "%Y-%m-%d")
-                rec.total_days_processed = (date_last_doc_completed-date_claim_endorsement_receipt).days
+                date_claim_notif = datetime.strptime(rec.date_claim_notif, "%Y-%m-%d")
+                rec.total_days_processed = (date_last_doc_completed-date_claim_notif).days
 
 
-    @api.model
-    def create(self, vals):
-        s = self.env['dmpi.crm.complaint.report'].search([],order='ffcr_series_no desc', limit=1).ffcr_series_no + 1
-        series_no = '%03d' % s
-        series_year = datetime.now().year
-        vals['ffcr_series_no'] = s
-        vals['ffcr_series_year'] = series_year
-        vals['name'] = "FCR%s-%s" % (series_no,series_year)
-        res = super(DmpiCrmComplaintReport, self).create(vals)
-        return res
+    # @api.model
+    # def create(self, vals):
+    #     s = self.env['dmpi.crm.complaint.report'].search([],order='ffcr_series_no desc', limit=1).ffcr_series_no + 1
+    #     series_no = '%03d' % s
+    #     series_year = datetime.now().year
+    #     vals['ffcr_series_no'] = s
+    #     vals['ffcr_series_year'] = series_year
+    #     vals['name'] = "FCR%s-%s" % (series_no,series_year)
+    #     res = super(DmpiCrmComplaintReport, self).create(vals)
+    #     return res
 
     @api.multi
     def action_submit_complaint(self):
         for rec in self:
             rec.state = 'resolution'
 
+    @api.onchange('preship_id')
+    def on_change_preship_id(self):
+        print ("Onchange Preship")
+        self.variety = self.preship_id.variety.name
+        self.week = self.clp_id.week
+        self.vessel = self.clp_id.vessel_name 
 
-    name = fields.Char("FFCR SERIES NO.")
+
+    name = fields.Char("FFCR Series No.")
+    preship_id = fields.Many2one('dmpi.crm.preship.report', string='Preship No.')
+    clp_id = fields.Many2one('dmpi.crm.clp', string='CLP No.', related="preship_id.clp_id")
+
     ffcr_series_no = fields.Integer('Series No')
     ffcr_series_year = fields.Integer('Series Year')
-    clp_id = fields.Many2one('dmpi.crm.clp', string='CLP No.')
-    customer = fields.Char(string="CUSTOMER", related='clp_id.customer')
-    market = fields.Char("MARKET", related='clp_id.port_destination')
+    
+    customer = fields.Char(string="Customer", related='clp_id.customer')
+    market = fields.Char("Market", related='clp_id.port_destination')
     plant = fields.Char("PH", related='clp_id.plant')
-    container_no = fields.Char("CONTAINER NO.", related='clp_id.container_no')
-    claim_nature_id = fields.Many2one('dmpi.crm.complaint.claim.nature',"NATURE OF CLAIM")
+    variety = fields.Char(string='Variety')
+    container_no = fields.Char("Container No.", related='clp_id.container_no')
+    week = fields.Char("Week")
+
+    claim_nature_id = fields.Many2one('dmpi.crm.complaint.claim.nature',"Nature if Claim")
     description = fields.Char("Complaint description")
-    pack_date = fields.Date("PACK DATE")
-    box_affected = fields.Integer("NO OF BOXES AFFECTED")
-    claim_amount = fields.Float("CLAIM AMOUNT, USD")
-    month_claimed = fields.Date("MONTH CLAIMED", default=fields.Datetime.now())
-    date_arrival = fields.Date("DATE OF ARRIVAL")
-    date_pullout = fields.Date("DATE OF PULL - OUT")
-    date_inspection = fields.Date("DATE OF INSPECTION")
-    aop_ata = fields.Integer("AOP AT ATA", compute='get_compute_data')
-    aop_pull_out = fields.Integer("AOP AT PULL-OUT", compute='get_compute_data')
-    aop_inspect = fields.Integer("AOP AT INSPECTION", compute='get_compute_data')
-    date_qc_report_receipt = fields.Date("QC REPORT RECEIPT")
-    date_claim_notif = fields.Date("DATE OF CLAIM NOTIFICATION")
-    date_claim_bill_receipt = fields.Date("DATE OF CLAIM BILL RECEIPT")
-    date_temp_logger_receipt = fields.Date("DATE OF TEMP LOGGER RECEIPT")
-    date_claim_endorsement_receipt = fields.Date("DATE OF CLAIM ENDORSEMENT RECEIPT")
-    date_last_doc_completed = fields.Date("DATE LAST DOCUMENT COMPLETED")
-    date_sent_mc_mgr = fields.Date("DATE SENT TO MARKET COMMERCIAL MGR")
-    date_routed_for_sig = fields.Date("DATE ROUTED FOR SIGNATURE")
-    date_sent_to_fin_sing = fields.Date("DATE SENT TO FINANCE SINGAPORE")
-    total_days_processed = fields.Integer("TOTAL NO. OF DAYS PROCESSED", compute='get_compute_data')
-    date_ffcr_sgd_copy_received = fields.Date("DATE FFCR SIGNED COPY RECEIVED")
-    date_cn_note_issued = fields.Date("DATE CN NOTE ISSUED")
-    cn_no = fields.Char("CN NO.")
-    cn_amount = fields.Char("CN AMOUNT, USD")
+    pack_date = fields.Char("Pack Date", related='preship_id.date_pack')
+    first_pack_date = fields.Date("First Pack Date")
+    box_affected = fields.Integer("No of Boxes Affected")
+    box_code = fields.Char("Box Code")
+    claim_amount = fields.Float("Claim Amount (USD)")
+    po_no = fields.Char("PO No.")
+    inv_no = fields.Char("Invoice No.")
+    month_claimed = fields.Date("Month Claimed", default=fields.Datetime.now())
+    
+    incoterm = fields.Char("Incoterm")
+    date_atd_pol = fields.Date("ATD at POL")
+    date_arrival = fields.Date("Date of Arrival")
+    date_pullout = fields.Date("Date of Pull-out")
+    date_inspection = fields.Date("Date of Inspection")
+    aop_ata = fields.Integer("AOP at ATA", compute='get_compute_data')
+    aop_pull_out = fields.Integer("AOP at Pull-out", compute='get_compute_data')
+    aop_inspect = fields.Integer("AOP at Inspection", compute='get_compute_data')
+    feeder_vessel = fields.Char("Feeder Vessel")
+    delay_reason = fields.Char("Reason for Delay")
+
+    date_qc_report_receipt = fields.Date("QC Report Receipt")
+    date_claim_notif = fields.Date("Date of Claim Notification")
+    date_claim_bill_receipt = fields.Date("Date of Claim Bill Receipt")
+    date_temp_logger_receipt = fields.Date("Date of Temp Logger Receipt")
+    date_claim_endorsement_receipt = fields.Date("Date of Claim Endorsement Receipt")
+    date_last_doc_completed = fields.Date("Date of Last Document Completed")
+    date_sent_mc_mgr = fields.Date("Date sent to Market Commercial Mgr")
+    date_routed_for_sig = fields.Date("Date routed for signature")
+    date_sent_to_fin_sing = fields.Date("Date sent to Finance Singapore")
+    total_days_processed = fields.Integer("Total no of days processed", compute='get_compute_data')
+    date_ffcr_sgd_copy_received = fields.Date("Date FFCR signed copy received")
+    date_cn_note_issued = fields.Date("Date of CN Note issued")
+    cn_no = fields.Char("CN No.")
+    cn_amount = fields.Char("CN Amount (USD)")
     state = fields.Selection([('draft','Draft'),('resolution','For Resolution'),('done','Done')], default='draft', string="State", track_visibility='onchange')
-    car_id = fields.One2many('dmpi.crm.corrective.action', 'ffcr_id', "CAR IDS", ondelete='cascade')
+    car_id = fields.One2many('dmpi.crm.corrective.action', 'ffcr_id', "CAR Ids", ondelete='cascade')
 
 
 
