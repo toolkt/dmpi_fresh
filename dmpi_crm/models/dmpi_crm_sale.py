@@ -247,7 +247,8 @@ class DmpiCrmSaleContract(models.Model):
 	@api.multi
 	def action_cancel_po(self):
 		for rec in self:
-			rec.state = 'cancel'
+			for so in rec.sale_order_ids:
+				so.state = 'cancelled'
 
 	@api.multi
 	def send_email(self):
@@ -520,7 +521,7 @@ class DmpiCrmSaleContract(models.Model):
 			if rec.ar_status > 0:
 				contract_line_no = 0
 				for so in rec.sale_order_ids:
-					# so.write({'contract_line_no':contract_line_no})
+
 					if rec.week_no:
 						so.week_no = rec.week_no
 					for sol in so.order_ids:
@@ -541,7 +542,7 @@ class DmpiCrmSaleContract(models.Model):
 			else:
 				contract_line_no = 0
 				for so in rec.sale_order_ids:
-					# so.write({'contract_line_no':contract_line_no})
+
 					if rec.week_no:
 						so.week_no = rec.week_no
 					for sol in so.order_ids:
