@@ -1365,10 +1365,6 @@ class DmpiCrmConfigSelection(models.Model):
     select_value = fields.Char("Select Value", track_visibility='onchange')
     default = fields.Boolean("Default")
 
-# class DmpiCrmConfigContractState(models.Model):
-#     _name = 'dmpi.crm.config.contract.state'
-
-#     name = fields.Char("State")
 
 class DmpiCRMFCLConfig(models.Model):
     _name = 'dmpi.crm.fcl.config'

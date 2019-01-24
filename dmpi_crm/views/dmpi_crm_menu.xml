@@ -36,6 +36,7 @@
     <!-- QA -->
     <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Quality Assurance" groups="dmpi_crm.group_custom_crm_qa_staff" sequence="50"/>
 
+    <menuitem id="dmpi_reports_config_menu" name="Reports Configuration" parent="dmpi_reports_menu" sequence="40"/>
 
 
 
@@ -43,8 +44,6 @@
     <menuitem id="menu_dmpi_crm_master_top" name="Master Data" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="90"/>
 
     <menuitem id="menu_dmpi_crm_master_product_group" name="Product Config" parent="menu_dmpi_crm_master_top" sequence="10"/>
-
-    <menuitem id="dmpi_reports_config_menu" name="Reports" parent="menu_dmpi_crm_master_top" sequence="40"/>
 
 
     <!-- SNW ADMIN -->

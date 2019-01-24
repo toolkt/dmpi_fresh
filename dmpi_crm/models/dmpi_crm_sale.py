@@ -189,8 +189,7 @@ class DmpiCrmSaleContract(models.Model):
 	sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders', copy=True)
 	customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders', copy=True)
 	invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
-	# dmpi_invoice_ids = fields.One2many('dmpi.crm.invoice.dmpi','contract_id','Invoice (DMPI)')
-	# dms_invoice_ids = fields.One2many('dmpi.crm.invoice.dms','contract_id','Invoice (DMS)')
+
 	dr_ids = fields.One2many('dmpi.crm.dr','contract_id','DR')
 	shp_ids = fields.One2many('dmpi.crm.shp','contract_id','SHP')
 

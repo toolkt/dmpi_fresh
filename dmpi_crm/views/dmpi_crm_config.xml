@@ -205,28 +205,4 @@
         <menuitem id="menu_dmpi_crm_config" action="action_dmpi_crm_config" parent="menu_dmpi_crm_settings_top" />
 
 
-
-
-
-<!--         <record id="view_dmpi_crm_config_contract_state_tree" model="ir.ui.view">
-            <field name="name">Contract State</field>
-            <field name="model">dmpi.crm.config.contract.state</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_config_contract_state" model="ir.actions.act_window">
-            <field name="name">Contract State</field>
-            <field name="res_model">dmpi.crm.config.contract.state</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_config_contract_state" action="action_dmpi_crm_config_contract_state" parent="menu_dmpi_crm_settings_top"/> -->
-
 </odoo>
