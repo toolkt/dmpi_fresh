@@ -103,7 +103,6 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                     if p['count'] > p['max_pallets']:
                         s = 'Invalid quantity combinations'
                         return s
-                    # print (qty, cases, m, p['count'], qty_list,)
 
             if any(qty_list):
                 s = 'Invalid quantity combinations'
@@ -207,31 +206,6 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                         order_lines[pcode] = qty
                         qty_list.append(qty)
-
-
-                        # if qty != 0:
-                        #     mod_75 = qty % 75
-                        #     mod_75_less = (qty-60) % 75
-
-                        #     if not (mod_75 == 0 or mod_75_less ==0):
-                        #         errors.append("Invalid qty %s for %s" % (qty, pcode))
-                        #         error_count += 1
-
-                        #     elif mod_75_less == 0 and not found_p60:
-                        #         found_p60 = True
-
-                        #     elif mod_75_less == 0 and found_p60:
-                        #         errors.append("Invalid qty %s for %s" % (qty, pcode))
-                        #         error_count += 1
-                    
-                    # s = self._check_if_fcl(qty_list, total_qty)
-                    # if s:
-                        # errors.append(s)
-                        # error_count += 1
-
-                    # if not (total_qty == 1500 or total_qty == 1560):
-                    #     errors.append("Total not FCL")
-                    #     error_count += 1
 
                     # CHECK DELIVERY DATE
                     # upload format mm/dd/yyyy

@@ -77,7 +77,6 @@ CONTRACT_STATE = [
 		('confirmed','Confirmed'),
 		('soa','Statement of Account'),
 		('approved','Approved'),
-		('hold','Hold'),
 		('processing','Processing'),
 		('processed','Processed'),
 		('enroute','Enroute'),
@@ -91,14 +90,6 @@ class DmpiCrmSaleContract(models.Model):
 	_inherit = ['mail.thread']
 	_order = 'po_date desc, name desc'
 
-
-	# @api.model
-	# def create(self, vals):
-	#     contract_seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.contract')
-	#     vals['name'] = contract_seq
-	#     print(contract_seq)
-	#     res = super(DmpiCrmSaleContract, self).create(vals)
-	#     return res
 
 	def _get_contract_type(self):
 		result = self.env['dmpi.crm.contract.type'].search([])
@@ -165,11 +156,9 @@ class DmpiCrmSaleContract(models.Model):
 	total_sales = fields.Float("Total Sales",compute='_compute_totals')
 	credit_after_sale = fields.Float("Credit After Sale", compute='_compute_credit')
 
-
 	worksheet_item_text = fields.Text("Worksheet Items")
 
 	#ONE2MANY RELATIONSHIPTS
-	# contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
 	sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders', copy=True)
 	customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders', copy=True)
 	invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
@@ -181,22 +170,12 @@ class DmpiCrmSaleContract(models.Model):
 	sent_to_sap = fields.Boolean("Sent to SAP")
 	sent_to_sap_time = fields.Datetime("Sent to SAP Time")
 
-	# upload_file = fields.Binary("Upload")
-	# upload_file_name = fields.Char("Upload Filename")
-	# upload_file_template = fields.Binary("Upload Template")
-
-	# upload_file_so = fields.Binary("Upload")
-
 	error_count = fields.Integer("Error Count")
 	errors = fields.Text("Errors")
 	errors_disp = fields.Text("Errors", related='errors')
 
-	# import_errors = fields.Text("Import Errors")
-	# import_errors_disp = fields.Text("Import Errors", related='import_errors')
-
 	sap_errors = fields.Text("SAP Errors")
 	week_no = fields.Integer("Week No")
-	#week_id = fields.Many2one('dmpi.crm.week',"Week No")
 
 	tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
 
@@ -223,49 +202,10 @@ class DmpiCrmSaleContract(models.Model):
 
 
 	@api.multi
-	def re_map_products(self):
-		for rec in self:
-			print(rec)
-
-
-	@api.multi
 	def action_cancel_po(self):
 		for rec in self:
 			for so in rec.sale_order_ids:
 				so.state = 'cancelled'
-
-	@api.multi
-	def send_email(self):
-
-		action = self.env.ref('mail.action_view_mail_mail').read()[0]
-		action.update({
-			'views': [(self.env.ref('mail.view_mail_form').id, 'form')],
-			# 'res_id' : self.id,
-			'target': 'new',
-			'context': {
-				'default_body_html': "KIT"
-			}
-		})
-
-		return action
-		
-
-	# def check_row_error(self,data):
-	#     errors = []
-	#     error_count = 0
-		
-		
-	#     #print "-----CHECK ROW ERROR------"
-
-	#     row_count = 0
-	#     for row in data:
-	#         row_error = []
-	#         if row_count > 0:
-	#             print(row)
-	#         row_count += 1
-	#         print (row[0])
-
-	#     return errors,error_count
 
 
 
@@ -658,7 +598,7 @@ class DmpiCrmSaleOrder(models.Model):
 			for sol in rec.order_ids:
 				line_no += 10
 				sol.so_line_no = line_no
-				ref_po_no = cid.customer_ref_to_sap
+				ref_po_no = cid.customer_ref_to_sap + ' -%s' % rec.destination
 
 				po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
 				po_date = po_date.strftime('%Y%m%d')

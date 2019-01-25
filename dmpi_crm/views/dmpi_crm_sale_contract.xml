@@ -13,7 +13,6 @@
                     <field name="customer_ref"/>
                     <field name="partner_id"/>
                     <field name="week_no" required="1"/>
-
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
@@ -120,15 +119,12 @@ c
                                 <field name="sold_via_id" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                             </group>
                             <group>
-
                                 <field name="credit_limit" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="credit_exposure" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="remaining_credit" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="open_so" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="total_sales" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <!-- <field name="contract_total" /> -->
                                 <field name="credit_after_sale" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-
                                 <field name="ar_status" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="error_count" invisible="1"/>
                                 <field name="errors" invisible="1"/>
@@ -147,29 +143,14 @@ c
                                     <field name="notify_id" />
                                     <field name="ship_line" />
                                     <field name="destination" />
-                                    <!-- <field name="p101" sum="Total"/> -->
-                                    <!-- <field name="p102" sum="Total"/> -->
-                                    <!-- <field name="p103" sum="Total"/> -->
-                                    <!-- <field name="p104" sum="Total"/> -->
-                                    <!-- <field name="p105" sum="Total"/> -->
-                                    <!-- <field name="p106" sum="Total"/> -->
-                                    <!-- <field name="p107" sum="Total"/> -->
-                                    <!-- <field name="p201" sum="Total"/> -->
-                                    <!-- <field name="p202" sum="Total"/> -->
-                                    <!-- <field name="p203" sum="Total"/> -->
-                                    <!-- <field name="p204" sum="Total"/> -->
-                                    <!-- <field name="p205" sum="Total"/> -->
-                                    <!-- <field name="p206" sum="Total"/> -->
-                                    <!-- <field name="p207" sum="Total"/> -->
                                     <field name="total_p100" sum="Total" string="With Crown"/>
                                     <field name="total_p200" sum="Total" string="Crownless"/>
-                                    <field name="total_qty" sum="Total" string="Total Qty"/>
-                                    <field name="total_amount" sum="Total" string="Subtotal"/>
+                                    <field name="total_qty" sum="Total" string="Qty"/>
+                                    <field name="total_amount" sum="Total" string="Amount"/>
                                 </tree>
                             </field>
                         </page>
                         <page string="Sales Order">
-                            <!-- <field name="sale_order_ids" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"> -->
                             <field name="sale_order_ids">
                                 <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
@@ -177,20 +158,6 @@ c
                                     <field name="notify_id" />
                                     <field name="ship_line" />
                                     <field name="destination" />
-<!--                                     <field name="p101" sum="Total"/>
-                                    <field name="p102" sum="Total"/>
-                                    <field name="p103" sum="Total"/>
-                                    <field name="p104" sum="Total"/>
-                                    <field name="p105" sum="Total"/>
-                                    <field name="p106" sum="Total"/>
-                                    <field name="p107" sum="Total"/>
-                                    <field name="p201" sum="Total"/>
-                                    <field name="p202" sum="Total"/>
-                                    <field name="p203" sum="Total"/>
-                                    <field name="p204" sum="Total"/>
-                                    <field name="p205" sum="Total"/>
-                                    <field name="p206" sum="Total"/>
-                                    <field name="p207" sum="Total"/> -->
                                     <field name="total_p100" sum="Total"/>
                                     <field name="total_p200" sum="Total"/>
                                     <field name="total_qty" sum="Total"/>
