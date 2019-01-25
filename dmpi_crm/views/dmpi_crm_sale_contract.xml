@@ -164,8 +164,8 @@
                                     <field name="destination" />
                                     <field name="total_p100" sum="Total"/>
                                     <field name="total_p200" sum="Total"/>
-                                    <field name="total_qty" sum="Total"/>
-                                    <field name="total_amount" sum="Total"/>
+                                    <field name="total_qty" sum="Total" string="Qty"/>
+                                    <field name="total_amount" sum="Total" string="Amount"/>
                                     <field name="error" invisible="1"/>
                                     <field name="state"/>
 

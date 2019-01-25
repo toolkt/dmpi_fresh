@@ -113,14 +113,15 @@ class DmpiCrmSaleContract(models.Model):
 	@api.depends('customer_ref','week_no')
 	def _get_customer_ref_to_sap(self):
 		ref = []
+		if self.week_no:
+			ref.append("W%s" % self.week_no)
 		if self.customer_ref:
 			ref.append(self.customer_ref)
 		else:
 			ref.append(self.name)
-		if self.week_no:
-			ref.append("-W%s" % self.week_no)
 
-		self.customer_ref_to_sap = ''.join(ref)
+
+		self.customer_ref_to_sap = '-'.join(ref)
 
 
 
@@ -598,7 +599,7 @@ class DmpiCrmSaleOrder(models.Model):
 			for sol in rec.order_ids:
 				line_no += 10
 				sol.so_line_no = line_no
-				ref_po_no = '%s-' %rec.destination + cid.customer_ref_to_sap
+				ref_po_no = rec.destination+'-'+cid.customer_ref_to_sap
 
 				po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
 				po_date = po_date.strftime('%Y%m%d')
@@ -1005,8 +1006,8 @@ class DmpiCrmSaleOrder(models.Model):
 	requested_delivery_date = fields.Date("Req. Date")
 	notes = fields.Text("Notes/Remarks", compute='get_product_qty')
 
-	total_qty = fields.Float('Total', compute='get_product_qty', store=True)
-	total_amount = fields.Float('Total', compute='get_product_qty', store=True)
+	total_qty = fields.Float('Qty Total', compute='get_product_qty', store=True)
+	total_amount = fields.Float('Amount Total', compute='get_product_qty', store=True)
 
 	week_no = fields.Integer("Week No", related='contract_id.week_no', store=True, group_operator="avg")
 	state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
@@ -1148,11 +1149,13 @@ class CustomerCrmSaleOrder(models.Model):
 			""" %(''.join(headers),''.join(rows))
 
 			# compute totals
-			print ()
+			print ('compute totals',total_amount,total_qty)
 			rec.total_p100 = total_p100
 			rec.total_p200 = total_p200
 			rec.total_amount = total_amount
 			rec.total_qty = total_qty
+
+			print (rec.total_amount,'total amount')
 
 
 class CustomerCrmSaleOrderLine(models.Model):

@@ -359,12 +359,12 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                 sale_orders.append((0,0,order))
 
-            # if rec.upload_type == 'customer' and rec.contract_id.state == 'draft':
-            #     rec.contract_id.customer_order_ids.unlink()
-            #     rec.contract_id.customer_order_ids = sale_orders
-            # if rec.upload_type == 'commercial':
-            #     rec.contract_id.sale_order_ids.unlink()
-            #     rec.contract_id.sale_order_ids = sale_orders
+            if rec.upload_type == 'customer' and rec.contract_id.state == 'draft':
+                rec.contract_id.customer_order_ids.unlink()
+                rec.contract_id.customer_order_ids = sale_orders
+            if rec.upload_type == 'commercial':
+                rec.contract_id.sale_order_ids.unlink()
+                rec.contract_id.sale_order_ids = sale_orders
 
 
 
