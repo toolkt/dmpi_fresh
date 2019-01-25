@@ -598,7 +598,7 @@ class DmpiCrmSaleOrder(models.Model):
 			for sol in rec.order_ids:
 				line_no += 10
 				sol.so_line_no = line_no
-				ref_po_no = cid.customer_ref_to_sap + ' -%s' % rec.destination
+				ref_po_no = '%s-' %rec.destination + cid.customer_ref_to_sap
 
 				po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
 				po_date = po_date.strftime('%Y%m%d')
