@@ -265,42 +265,42 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                 so_lines = []
                 so_line_no = 0
 
-                def compute_price(date,customer_code,material,tag_ids=[]):
-                    where_clause = ""
-                    query = ""
-                    if len(tag_ids) > 0:
+                # def compute_price(date,customer_code,material,tag_ids=[]):
+                #     where_clause = ""
+                #     query = ""
+                #     if len(tag_ids) > 0:
                         
-                        query = """SELECT * FROM (
-                        SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                            from dmpi_crm_product_price_list_item  i
-                            left join price_item_tag_rel tr on tr.item_id = i.id
-                            group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                        ) AS Q1
-                        -- where material = '' and  ARRAY <@ tags
-                        where material = '%s' and  ARRAY%s && tags
-                        limit 1 """ % (material, tag_ids)
+                #         query = """SELECT * FROM (
+                #         SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                #             from dmpi_crm_product_price_list_item  i
+                #             left join price_item_tag_rel tr on tr.item_id = i.id
+                #             group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                #         ) AS Q1
+                #         -- where material = '' and  ARRAY <@ tags
+                #         where material = '%s' and  ARRAY%s && tags
+                #         limit 1 """ % (material, tag_ids)
 
-                    else:
+                #     else:
 
-                        query = """SELECT * FROM (
-                        SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                            from dmpi_crm_product_price_list_item  i
-                            left join price_item_tag_rel tr on tr.item_id = i.id
-                            where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
-                            group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                        ) AS Q1
+                #         query = """SELECT * FROM (
+                #         SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
+                #             from dmpi_crm_product_price_list_item  i
+                #             left join price_item_tag_rel tr on tr.item_id = i.id
+                #             where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
+                #             group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
+                #         ) AS Q1
 
-                        limit 1 """ % (material, date)
+                #         limit 1 """ % (material, date)
 
 
-                    print (query)
-                    self.env.cr.execute(query)
-                    result = self.env.cr.dictfetchall()
+                #     print (query)
+                #     self.env.cr.execute(query)
+                #     result = self.env.cr.dictfetchall()
 
-                    if result:
-                        return result[0]['amount']
-                    else:
-                        return 0
+                #     if result:
+                #         return result[0]['amount']
+                #     else:
+                #         return 0
 
                 def format_so(rec,so_line_no,partner_id=0,qty=0,product_code=''):
                     name = "Product not Maintained"
@@ -319,7 +319,9 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
                         product_id = result[0]['product_id']
 
                     # get price
-                    price = compute_price(rec.contract_id.po_date,rec.partner_id.customer_code,name, rec.contract_id.tag_ids.ids)
+                    pricelist_obj = self.env['dmpi.crm.product.price.list']
+                    rule_id, price, uom = pricelist_obj.get_product_price(product_id, partner_id, rec.contract_id.po_date, rec.contract_id.tag_ids.ids)
+                    # price = compute_price(rec.contract_id.po_date,rec.partner_id.customer_code,name, rec.contract_id.tag_ids.ids)
                     return { 
                                 'name':name,
                                 'so_line_no':so_line_no, 

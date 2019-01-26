@@ -1149,13 +1149,13 @@ class CustomerCrmSaleOrder(models.Model):
 			""" %(''.join(headers),''.join(rows))
 
 			# compute totals
-			print ('compute totals',total_amount,total_qty)
+			# print ('compute totals',total_amount,total_qty)
 			rec.total_p100 = total_p100
 			rec.total_p200 = total_p200
 			rec.total_amount = total_amount
 			rec.total_qty = total_qty
 
-			print (rec.total_amount,'total amount')
+			# print (rec.total_amount,'total amount')
 
 
 class CustomerCrmSaleOrderLine(models.Model):
