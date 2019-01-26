@@ -58,8 +58,8 @@
                     <group>
                         <group>
                             <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_notify)]"/>
-                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_mailing)]" invisible="1"/>
+                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
+                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_ship_to)]" invisible="1"/>
 
                             <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
                             <field name="sales_org" required="1" invisible="1"/>
@@ -125,8 +125,6 @@
                             <group>
                                 <group>
                                     <field name="allowed_ship_to" invisible="0"/>
-                                    <field name="allowed_notify" invisible="0"/>
-                                    <field name="allowed_mailing" invisible="0"/>
                                     <field name="allowed_products" invisible="1"/>
                                 </group>
                             </group>
@@ -245,8 +243,8 @@
                     <group>
                         <group>
                             <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_notify)]"/>
-                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_mailing)]" invisible="1"/>
+                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
+                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_ship_to)]" invisible="1"/>
                             <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
                             <field name="sales_org" required="1" invisible="1"/>
                             <field name="plant" invisible="1"/>
@@ -309,8 +307,6 @@
                                 </group>
                                 <group>
                                     <field name="allowed_ship_to" invisible="0"/>
-                                    <field name="allowed_notify" invisible="0"/>
-                                    <field name="allowed_mailing" invisible="0"/>
                                     <field name="allowed_products" invisible="1"/>
                                 </group>
                             </group>

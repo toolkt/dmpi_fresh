@@ -898,14 +898,10 @@ class DmpiCrmSaleOrder(models.Model):
 	def _get_allowed_ids(self):
 		for rec in self:
 			rec.allowed_ship_to = rec.partner_id.ship_to_ids
-			rec.allowed_notify = rec.partner_id.notify_ids
-			rec.allowed_mailing = rec.partner_id.mailing_ids
 			rec.allowed_products = rec.partner_id.product_ids
 
 
 	allowed_ship_to = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
-	allowed_notify = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
-	allowed_mailing = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
 	allowed_products = fields.One2many('dmpi.crm.product', compute="_get_allowed_ids")
 
 	contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')

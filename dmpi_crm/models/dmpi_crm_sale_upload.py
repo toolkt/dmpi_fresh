@@ -174,7 +174,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
                     # CHECK NOTIFY ID EXISTS
                     notif = data['NOTIFY PARTY']
-                    notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.notify_ids.ids)],limit=1)
+                    notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.ship_to_ids.ids)],limit=1)
                     if notify_to:
                         notify_to_id = notify_to.id
                     else:

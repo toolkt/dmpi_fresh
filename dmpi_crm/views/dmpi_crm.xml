@@ -88,24 +88,6 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Notify Party">
-                                <field name="notify_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="customer_code"/>
-                                        <field name="country"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Mailing Addresses">
-                                <field name="mailing_ids">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="customer_code"/>
-                                        <field name="country"/>
-                                    </tree>
-                                </field>
-                            </page>
                             <page string="Assigned Products">
                                 <field name="product_ids">
                                     <tree>
