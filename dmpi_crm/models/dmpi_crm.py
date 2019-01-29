@@ -509,6 +509,7 @@ class DmpiCrmProductPriceList(models.Model):
 			where_clause = """and ARRAY%s && tags""" % tag_ids
 			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
+			print (query)
 			res = self._cr.dictfetchall()
 
 			if res:

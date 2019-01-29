@@ -12,6 +12,7 @@ from fabric.api import *
 import csv
 import sys
 import math
+import io
 
 import base64
 from tempfile import TemporaryFile
@@ -180,7 +181,8 @@ class DmpiCrmSaleContract(models.Model):
 
 	tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
 
-	
+	customer_orders_csv = fields.Binary('Customer Orders CSV')
+	sale_orders_csv = fields.Binary('Sale Orders CSV')
 
 	@api.multi
 	def upload_wizard(self):
@@ -582,6 +584,80 @@ class DmpiCrmSaleContract(models.Model):
 
 			rec.write({'state':'processing'})
 
+	@api.one
+	def download_sale_orders(self):
+
+		lines = []
+		headers = ['NO','SHIP TO','NOTIFY PARTY','DESTINATION','SHIPPING LINE','SHELL COLOR','DELIVERY DATE','P5','P6','P7','P8','P9','P10','P12','P14','P5C7','P6C8','P6C12','P7C9','P7C13','P8C10','P9C11','P10C12','P12C20','TOTAL']
+
+		lines.append(headers)
+
+
+		pack_codes = ['P5','P6','P7','P8','P9','P10','P12','P14','P5C7','P6C8','P6C12','P7C9','P7C13','P8C10','P9C11','P10C12','P12C20']
+		q1 = ""
+
+		for pc in pack_codes:
+			q1 += ",case when sol.product_code = '{pack_code}' then sol.qty else 0 end {pack_code}\n".format(pack_code=pc)
+
+		query = """
+				SELECT
+					so.contract_line_no
+					,shp.customer_code ship_to_code
+					,nfy.customer_code notify_code
+					,so.destination
+					,so.ship_line
+					,so.shell_color
+					,to_char(so.requested_delivery_date,'mm/dd/yyyy') delivery_date
+					%s
+					,so.total_qty as total
+				from dmpi_crm_sale_order_line sol
+				left join dmpi_crm_sale_order so on so.id = sol.order_id
+				left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+				left join dmpi_crm_partner shp on shp.id = so.ship_to_id
+				left join dmpi_crm_partner nfy on nfy.id = so.notify_id
+				where sc.id = %s
+				order by so.contract_line_no
+		""" % (q1, self.id)
+
+		print (query)
+		self._cr.execute(query)
+		res = self._cr.fetchall()
+
+		for r in res:
+			r_str = []
+			for i in r:
+				if i == 0:
+					r_str.append('')
+				else:
+					r_str.append(str(i))
+
+			lines.append(r_str)
+
+
+		fp = io.StringIO()
+		# fileobj = TemporaryFile("w+")
+		# with open('fake_file_name', 'w') as fake_csv:
+		writer = csv.writer(fp, quoting=csv.QUOTE_ALL)
+		for l in lines:
+			writer.writerow([name.encode('utf-8') for name in l])
+		
+		# xy = fp.get_value()
+		# xy = writer.read()
+		fp.seek(0)
+		xy = fp.read()
+		print (xy)
+		file = base64.b64encode(xy)
+
+		self.sale_orders_csv = file
+		filename = 'kit.csv'
+
+		action = {
+			'type' : 'ir.actions.act_url',
+			'url': '/web/content/dmpi.crm.sale.contract/%s/sale_orders_csv/%s?download=true'%(self.id,filename),
+			'target': 'current'
+		}
+
+		return action
 
 
 
@@ -1064,7 +1140,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 
 	def recompute_price(self):
 		if self.product_id:
-			result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku)
+			result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku,self.order_id.tag_ids.ids)
 
 
 

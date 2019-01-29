@@ -80,6 +80,14 @@
                                 icon="fa-envelope">
                             </button>
  -->
+
+                             <button name="download_sale_orders"
+                                type="object"
+                                string="Download Sale Orders"
+                                class="oe_stat_button"
+                                icon="fa-download">
+                            </button>
+
                             <button name="upload_wizard"
                                 type="object"
                                 string="Upload"
