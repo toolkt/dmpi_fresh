@@ -494,6 +494,7 @@ class DmpiCrmProductPriceList(models.Model):
 				and ('%s'::DATE between A.valid_from and A.valid_to)
 				and A.active is true
 				%s
+				order by A.id asc
 			LIMIT 1
 		"""
 
