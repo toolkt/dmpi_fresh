@@ -455,6 +455,7 @@ class DmpiCrmSaleContract(models.Model):
 						sol.write({'so_line_no':sol_line_no})
 
 				rec.write({'state':'soa'})
+				#TODO Trigger Auto Email to Finance Users
 
 			else:
 				contract_line_no = 0
@@ -1141,9 +1142,11 @@ class DmpiCrmSaleOrderLine(models.Model):
 			self.product_code = self.product_id.code
 			self.total = self.qty * self.price
 			self.name = self.product_id.name
+			print (self.order_id.destination,self.order_id.tag_ids.ids)
 
 	def recompute_price(self):
 		if self.product_id:
+			print (self.order_id.tag_ids.ids)
 			result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku,self.order_id.tag_ids.ids)
 
 

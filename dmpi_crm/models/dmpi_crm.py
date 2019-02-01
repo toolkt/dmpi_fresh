@@ -477,8 +477,8 @@ class DmpiCrmProductPriceList(models.Model):
 			if tag_ids exist and has a result use that pirce
 			if no result, back to default
 		"""
-		print ('get product price %s %s %s %s' % (product_id, partner_id, date, tag_ids))
-
+		print ('get product price Product:%s Partner:%s Date:%s Tags%s' % (product_id, partner_id, date, tag_ids))
+		query = ""
 		query_tmp = """
 			SELECT * FROM (
 				SELECT
@@ -509,14 +509,13 @@ class DmpiCrmProductPriceList(models.Model):
 			where_clause = """and ARRAY%s && tags""" % tag_ids
 			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
-			print (query)
 			res = self._cr.dictfetchall()
 
-			if res:
-				price_tags = res[0]['tags']
-				valid = self.check_valid_tag_ids(tag_ids, price_tags)
-
-		if not tag_ids or not valid:
+			# if res:
+			# 	price_tags = res[0]['tags']
+			# 	valid = self.check_valid_tag_ids(tag_ids, price_tags)
+		else:
+		# if not tag_ids or not valid:
 			query = query_tmp % (product_id, partner_id, date, "")
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
@@ -525,7 +524,7 @@ class DmpiCrmProductPriceList(models.Model):
 			rule_id = res[0]['id']
 			price = res[0]['amount']
 			uom = res[0]['uom']
-
+		print (query)
 		return rule_id, price, uom
 
 
