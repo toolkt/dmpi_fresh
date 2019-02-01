@@ -184,6 +184,8 @@ class DmpiCrmSaleContract(models.Model):
 	customer_orders_csv = fields.Binary('Customer Orders CSV')
 	sale_orders_csv = fields.Binary('Sale Orders CSV')
 
+	route_to_finance = fields.Boolean("Route to Finances")
+
 	@api.multi
 	def upload_wizard(self):
 		self.ensure_one()
@@ -292,10 +294,11 @@ class DmpiCrmSaleContract(models.Model):
 		if self.ar_status  > 0:
 			error_count += 1
 			errors.append("CUSTOMER HAS EXISTING AR: Will be routed to Finance for Approval")
+			self.route_to_finance = True
 
 		if self.credit_after_sale  < 0:
 			error_count += 1
-			errors.append("CREDIT LIMIT EXCEEDED: Please reduce purhcases accordingly")
+			errors.append("CREDIT LIMIT EXCEEDED: Please reduce purchases accordingly")
 
 		if error_count > 0:
 			self.error_count = error_count
@@ -304,6 +307,7 @@ class DmpiCrmSaleContract(models.Model):
 		else:
 			self.error_count = 0
 			self.errors = ""
+			self.route_to_finance = False
 
 
 

@@ -214,6 +214,7 @@
                                     <field name="customer_ref_to_sap"/>
                                     <field name="sent_to_sap"/>
                                     <field name="sent_to_sap_time"/>
+                                    <field name="route_to_finance"/>
                                 </group>
                                 <group>
                                     <field name="name" />
