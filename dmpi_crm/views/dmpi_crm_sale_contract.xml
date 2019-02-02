@@ -308,7 +308,7 @@
 
 
     <!-- finance for confirmation template -->
-    <record id="finance_release_contract_with_ar" model="mail.template">
+    <record id="notify_finance_release_contract_with_ar" model="mail.template">
         <field name="name">Send Email to Finance to Release Contract with AR</field>
         <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
         <field name="subject">SNW Online Purchase - Contract with AR ${object.partner_id.name}</field>
@@ -317,7 +317,8 @@
         <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
         <field name="auto_delete" eval="True"/>
         <field name="lang">${object.lang}</field>
-        <field name="body_html"><![CDATA[
+        <field name="body_html">
+            <![CDATA[
             <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
                 <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
                 <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
@@ -336,6 +337,13 @@
                 <p>
                     This is to inform you that customer ${object.partner_id.name} has been flagged for having exceeded the allowable AR Limit. Please visit the online purchasing site to verify the Purchase Order details with reference number <srong>${object.name}</strong>. Thank you.
                 </p>
+
+                <span>
+                    <a href="${object.get_base_url()}&view_type=list" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View All Contracts with AR</a> 
+                    or
+                    <a href="${object.get_base_url()}&view_type=form&id=${object.id}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View ${object.name}</a>
+                </span>
+                
                 <p>Best regards,</p>
                 <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
                     SNW Commercial Team

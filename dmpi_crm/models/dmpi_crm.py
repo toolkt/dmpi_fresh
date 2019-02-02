@@ -677,6 +677,13 @@ class DmpiCrmActivityLog(models.Model):
 	record_id = fields.Integer("Record ID")
 
 
+class DmpiCrmEmailNotificationSubscriber(models.Model):
+	_name = 'dmpi.crm.email.notification.subscriber'
+
+	name = fields.Many2one('mail.template',"Mail Template")
+	user_id = fields.Many2one('res.users',"User")
+
+
 
 class DmpiCrmDialogWizard(models.TransientModel):
 	_name = 'dmpi.crm.dialog.wizard'
