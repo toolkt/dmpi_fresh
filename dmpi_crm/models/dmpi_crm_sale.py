@@ -252,7 +252,7 @@ class DmpiCrmSaleContract(models.Model):
 					   where ar.acct_type = 'D' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
 
-			print(query)        
+			#print(query)        
 			self.env.cr.execute(query)
 			result = self.env.cr.dictfetchall()
 			if result:
@@ -273,7 +273,7 @@ class DmpiCrmSaleContract(models.Model):
 			""" % self.partner_id.id
 
 			print ("-----------OpenSO--------------")
-			print (query)
+			#print (query)
 
 			self.env.cr.execute(query)
 			result = self.env.cr.dictfetchall()
@@ -1131,6 +1131,8 @@ class DmpiCrmSaleOrderLine(models.Model):
 		self.price = price
 		self.uom = uom
 		self.order_id.get_product_qty()
+		self.order_id.contract_id.on_change_partner_id()
+		self.order_id.contract_id.on_change_ar_status()
 		return rule_id
 
 	# @api.onchange('product_id','qty')
