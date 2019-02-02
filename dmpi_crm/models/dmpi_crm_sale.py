@@ -1130,6 +1130,7 @@ class DmpiCrmSaleOrderLine(models.Model):
 		rule_id, price, uom = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, tag_ids)
 		self.price = price
 		self.uom = uom
+		self.order_id.get_product_qty()
 		return rule_id
 
 	# @api.onchange('product_id','qty')
