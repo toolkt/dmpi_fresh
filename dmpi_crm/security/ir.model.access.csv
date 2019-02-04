@@ -56,3 +56,4 @@ access_dmpi_crm_complaint_market,user.dmpi.crm.complaint.market,model_dmpi_crm_c
 access_dmpi_crm_complaint_ph,user.dmpi.crm.complaint.ph,model_dmpi_crm_complaint_ph,base.group_user,1,1,1,1
 access_dmpi_crm_complaint_report,user.dmpi.crm.complaint.report,model_dmpi_crm_complaint_report,base.group_user,1,1,1,1
 access_dmpi_crm_corrective_action,user.dmpi.crm.corrective.action,model_dmpi_crm_corrective_action,base.group_user,1,1,1,1
+access_dmpi_crm_email_notification_subscriber,user.dmpi.crm.email.notification.subscriber,model_dmpi_crm_email_notification_subscriber,base.group_user,1,1,1,1
