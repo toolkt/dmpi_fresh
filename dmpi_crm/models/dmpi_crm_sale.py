@@ -184,7 +184,7 @@ class DmpiCrmSaleContract(models.Model):
     customer_orders_csv = fields.Binary('Customer Orders CSV')
     sale_orders_csv = fields.Binary('Sale Orders CSV')
 
-    route_to_finance = fields.Boolean("Route to Finances")
+    route_to_finance = fields.Boolean("Route to Finance")
 
     @api.multi
     def upload_wizard(self):

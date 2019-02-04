@@ -14,6 +14,7 @@
                 <field name="partner_id"/>
                 <field name="week_no" />
                 <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_soa" string="SOA" domain="[('state', '=', 'soa')]"/>
                 <group>
                     <filter string="Active" context="{'group_by': 'active'}"/>
                 </group>
@@ -153,8 +154,8 @@
         <field name="name">Sales Contract with AR</field>
         <field name="res_model">dmpi.crm.sale.contract</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('state','=','soa')]</field>
-        <field name="context" eval="{'search_default_filter_active':1}"/>
+        <field name="domain">[('route_to_finance','=',True)]</field>
+        <field name="context" eval="{'search_default_filter_soa':1}"/>
         <field name="search_view_id" ref="view_dmpi_crm_sale_contract_search_finance"/>
     </record>
 
