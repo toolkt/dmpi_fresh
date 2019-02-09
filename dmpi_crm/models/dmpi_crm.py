@@ -515,8 +515,8 @@ class DmpiCrmProductPriceList(models.Model):
 			# if res:
 			# 	price_tags = res[0]['tags']
 			# 	valid = self.check_valid_tag_ids(tag_ids, price_tags)
-		else:
-		# if not tag_ids or not valid:
+		# else:
+		if not tag_ids or not res:
 			query = query_tmp % (product_id, partner_id, date, "")
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
