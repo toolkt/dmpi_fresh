@@ -249,7 +249,7 @@
             <field name="res_model">dmpi.crm.sale.contract</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_filter_soa':1}"/>
+            <field name="context">{}</field>
         </record>
 
         <menuitem id="menu_sale_contract" action="action_dmpi_crm_sale_contract" parent="menu_dmpi_crm_purchase_top"/>
