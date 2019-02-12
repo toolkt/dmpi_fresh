@@ -260,7 +260,8 @@
             <field name="name">Sales Contract with AR</field>
             <field name="res_model">dmpi.crm.sale.contract</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('route_to_finance','=',True)]</field>
+            <!-- <field name="domain">[('route_to_finance','=',True)]</field> -->
+            <field name="domain">[]</field>
             <field name="context" eval="{'search_default_filter_soa':1}"/>
         </record>
 
