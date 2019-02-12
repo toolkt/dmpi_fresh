@@ -59,7 +59,7 @@
 
                         <button name="action_approve_contract" states="confirmed" string="Approve Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
 
-                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
+                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
 
                         <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
 
