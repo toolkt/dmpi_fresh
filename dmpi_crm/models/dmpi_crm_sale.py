@@ -323,13 +323,13 @@ class DmpiCrmSaleContract(models.Model):
 
             self.valid_to =  datetime.strptime(self.po_date, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=validity)
 
-            tag_ids = self.partner_id.tag_ids.ids
-            po_date_tag_ids = self.env['dmpi.crm.product.price.tag'].search([('date_from','<=',self.po_date),('date_to','>=',self.po_date)]).ids
-            if len(po_date_tag_ids):
-                for t in po_date_tag_ids:
-                    tag_ids.append(t)
+            # tag_ids = self.partner_id.tag_ids.ids
+            # po_date_tag_ids = self.env['dmpi.crm.product.price.tag'].search([('date_from','<=',self.po_date),('date_to','>=',self.po_date)]).ids
+            # if len(po_date_tag_ids):
+            #     for t in po_date_tag_ids:
+            #         tag_ids.append(t)
 
-            self.tag_ids = [[6,0,tag_ids]]
+            # self.tag_ids = [[6,0,tag_ids]]
 
 
 
