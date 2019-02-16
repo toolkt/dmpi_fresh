@@ -471,7 +471,7 @@ class DmpiCrmProductPriceList(models.Model):
 		return False
 
 	@api.multi
-	def get_product_price(self, product_id, partner_id, date, tag_ids=[]):
+1	def get_product_price(self, product_id, partner_id, date, tag_ids=[]):
 		"""
 			use date by default to find price.
 			if tag_ids exist and has a result use that pirce
@@ -507,6 +507,7 @@ class DmpiCrmProductPriceList(models.Model):
 			return rule_id, price, uom
 
 		if tag_ids:
+			print ('has tag ids')
 			where_clause = """and ARRAY%s && tags""" % tag_ids
 			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
@@ -517,6 +518,7 @@ class DmpiCrmProductPriceList(models.Model):
 			# 	valid = self.check_valid_tag_ids(tag_ids, price_tags)
 		# else:
 		if not tag_ids or not res:
+			print ('no tag ids or no result')
 			query = query_tmp % (product_id, partner_id, date, "")
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
