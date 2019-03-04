@@ -519,7 +519,8 @@ class DmpiCrmProductPriceList(models.Model):
 		# else:
 		if not tag_ids or not res:
 			print ('no tag ids or no ')
-			query = query_tmp % (product_id, partner_id, date, "")
+			where_clause = """and A.tags[1] is null"""
+			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
 
