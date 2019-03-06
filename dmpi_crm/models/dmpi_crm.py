@@ -454,22 +454,6 @@ class DmpiCrmProductPriceList(models.Model):
 
 		return action
 
-	def check_valid_tag_ids(self, array1, array2):
-		"""
-			valid tag if:
-				1. array1 has intersection with array2
-				2. no elements in arary1 are not in array2
-		"""
-		array1 = set(array1)
-		array2 = set(array2)
-
-		has_intersect = bool( array1.intersection(array2) )
-		no_unique = not bool( array1 - array1.intersection(array2) )
-
-		if has_intersect and no_unique:
-			return True
-		return False
-
 	@api.multi
 	def get_product_price(self, product_id, partner_id, date, tag_ids=[]):
 		"""
@@ -494,10 +478,11 @@ class DmpiCrmProductPriceList(models.Model):
 				and ('%s'::DATE between A.valid_from and A.valid_to)
 				and A.active is true
 				%s
-				order by A.id asc
+				ORDER by tags desc
 			LIMIT 1
 		"""
 
+		mode = ''
 		rule_id = False
 		price = 0
 		uom = 'CAS'
@@ -507,19 +492,15 @@ class DmpiCrmProductPriceList(models.Model):
 			return rule_id, price, uom
 
 		if tag_ids:
-			print ('has tag ids')
+			mode = 'has tag ids'
 			where_clause = """and ARRAY%s && tags""" % tag_ids
 			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
 
-			# if res:
-			# 	price_tags = res[0]['tags']
-			# 	valid = self.check_valid_tag_ids(tag_ids, price_tags)
-		# else:
 		if not tag_ids or not res:
-			print ('no tag ids or no ')
-			where_clause = """and A.tags[1] is null"""
+			mode = 'no tag ids or no result'
+			where_clause = ""
 			query = query_tmp % (product_id, partner_id, date, where_clause)
 			self._cr.execute(query)
 			res = self._cr.dictfetchall()
@@ -528,6 +509,7 @@ class DmpiCrmProductPriceList(models.Model):
 			rule_id = res[0]['id']
 			price = res[0]['amount']
 			uom = res[0]['uom']
+		print (mode)
 		print (query)
 		return rule_id, price, uom
 
@@ -594,6 +576,11 @@ class DmpiCRMProductCode(models.Model):
 	field_name = fields.Char("Field Name")
 	factor = fields.Float("Factor")
 	active = fields.Boolean("Active", default=True)
+
+
+	def get_product_codes(self):
+		product_codes = self.env['dmpi.crm.product.code'].sudo().search([], order='sequence')
+		return product_codes.mapped('name')
 
 class DmpiCRMPaymentTerms(models.Model):
 	_name = 'dmpi.crm.payment.terms'

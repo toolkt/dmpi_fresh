@@ -83,7 +83,6 @@
                             <field name="remaining_credit" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                             <field name="open_so" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                             <field name="total_sales" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                            <!-- <field name="contract_total" /> -->
                             <field name="credit_after_sale" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
 
                             <field name="ar_status" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>

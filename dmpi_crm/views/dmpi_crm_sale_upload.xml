@@ -10,6 +10,7 @@
                     <group>
                         <field name="upload_file" />
                         <field name="upload_type"/>
+                        <button name="donwload_template" string="Download CSV Template" type="object" class="oe_link"/>
                         <field name="contract_id" invisible="1"/>
                         <field name="error_count" invisible="1"/>
                     </group>
@@ -28,12 +29,13 @@
                                     <field name="destination" />
                                     <field name="shell_color" />
                                     <field name="requested_delivery_date" />
+                                    <field name="estimated_date" />
                                     <field name="errors" readonly="1"/>
                                     <field name="error_count" readonly="1"/>
                                 </tree>
                             </field>
                         </page>
-                        <page string="Settings">
+                        <page string="Settings" groups="base.group_system">
                             <group>
                                 <group>
                                     <field name="pack_code_tmp"/>
