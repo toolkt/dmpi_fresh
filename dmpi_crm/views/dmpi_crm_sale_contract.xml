@@ -400,7 +400,7 @@
             <form string="Select Orders">
                 <h4>Select which orders to apply. Do not select price tags to remove them on the orders.</h4>
                 <group>
-                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
                 </group>
 
                 <notebook>
