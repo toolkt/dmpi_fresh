@@ -516,6 +516,7 @@ class DmpiCrmProductPriceList(models.Model):
 
 class DmpiCrmProductPriceListItem(models.Model):
 	_name = 'dmpi.crm.product.price.list.item'
+	_rec_name = 'product_id'
 
 
 	@api.multi
@@ -524,8 +525,8 @@ class DmpiCrmProductPriceListItem(models.Model):
 		for rec in self:
 			rec.allowed_products = rec.partner_id.product_ids
 
-	version_id = fields.Many2one('dmpi.crm.product.price.list','Versin ID', ondelete="cascade")
-	product_id = fields.Many2one('dmpi.crm.product',"Product ID")
+	version_id = fields.Many2one('dmpi.crm.product.price.list','Pricelist', ondelete="cascade")
+	product_id = fields.Many2one('dmpi.crm.product',"Product")
 	sales_org = fields.Char("Sales Org")
 	customer_code = fields.Char("Customer Code")
 	partner_id = fields.Many2one("dmpi.crm.partner","Customer")
