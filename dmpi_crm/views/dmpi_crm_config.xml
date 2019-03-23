@@ -138,13 +138,6 @@
                                         <button name="process_inv2" string="Process DMS Invoice" type="object" class="oe_highlight" />
                                         <button name="process_inv2_pdf" string="Process DMS Invoice PDF" type="object" class="oe_highlight" />
                                     </group>
-                                    <!-- <group>
-                                        <field name="outbound_prc_success" />
-                                        <field name="outbound_prc_success_sent" />
-                                        <field name="outbound_prc_fail" />
-                                        <field name="outbound_prc_fail_sent" />
-                                        <button name="process_prc" string="Process Price" type="object" class="oe_highlight" />
-                                    </group> -->
                                 </group>
 
                             </page>
@@ -173,6 +166,16 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="FCL Config">
+                                <field name="fcl_config_ids">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="cases"/>
+                                        <field name="pallet"/>
+                                        <field name="active"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -194,33 +197,5 @@
 
         <menuitem id="menu_dmpi_crm_config" action="action_dmpi_crm_config" parent="menu_dmpi_crm_settings_top" />
 
-
-
-
-
-        <record id="view_dmpi_crm_config_contract_state_tree" model="ir.ui.view">
-            <field name="name">Contract State</field>
-            <field name="model">dmpi.crm.config.contract.state</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_config_contract_state" model="ir.actions.act_window">
-            <field name="name">Contract State</field>
-            <field name="res_model">dmpi.crm.config.contract.state</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_config_contract_state" action="action_dmpi_crm_config_contract_state" parent="menu_dmpi_crm_settings_top"/>
-
-
-
-    
 
 </odoo>

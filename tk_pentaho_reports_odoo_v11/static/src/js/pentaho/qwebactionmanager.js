@@ -74,7 +74,7 @@ ActionManager.include({
         action = _.clone(action);
 
         var report_urls = make_report_url(action);
-        //console.log(action);
+        // console.log(action);
         if (action.report_type === 'qweb-html') {
             var client_action_options = _.extend({}, options, {
                 report_url: report_urls['qweb-html'],
@@ -166,7 +166,6 @@ ActionManager.include({
                 // var detailWindow = window.open ("", winlogicalname, winparams);
                 // detailWindow.document.write(htmlText);
                 // detailWindow.document.close();
-
 
                 var response = datas;
                 var c = crash_manager;

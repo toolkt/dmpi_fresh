@@ -32,6 +32,7 @@
             <field name="number_next_actual">1</field>
             <field name="prefix">SO</field>
         </record>
+
     </data>
 
 </odoo>

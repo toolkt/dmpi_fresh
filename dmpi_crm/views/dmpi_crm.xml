@@ -51,14 +51,16 @@
                                 <field name="short_name"/>
                                 <field name="customer_code"/>
                                 <field name="default_plant"/>
-                                <!-- <field name="function" /> -->
                                 <field name="account_group" />
                                 <field name="default_validity" />
                                 <field name="tag_ids" widget="many2many_tags"/>
                             </group>
-                            <group>
+                            <group string="Sales Area">
+                                <field name="sales_org"/>
+                                <field name="dist_channel"/>
+                                <field name="division"/>
                             </group>
-                            <group string="Address">
+                            <group string="Address 1">
                                 <field name="street"/>
                                 <field name="city"/>
                                 <field name="city_code"/>
@@ -68,33 +70,34 @@
                                 <field name="email"/>
                                 <field name="phone"/>
                                 <field name="fax"/>
-                                <!-- <field name="plant" /> -->
                             </group>
-                            <group string="Sales Area">
-                                <field name="sales_org"/>
-                                <field name="dist_channel"/>
-                                <field name="division"/>
+                            <group string="Address 2">
+                                <field name="address"/>
+                                <field name="contact"/>
+                                <field name="function_ids" options="{'no_quick_create':True,'no_create_edit':True}" widget="many2many_tags"/>
                             </group>
                         </group>
 
                         <notebook>
-                            <page string="Ship-to Codes">
+                            <page string="Partner Functions">
                                 <field name="ship_to_ids">
                                     <tree>
                                         <field name="name"/>
-                                        <field name="customer_name"/>
                                         <field name="customer_code"/>
-                                        <field name="partner_id"/>
-                                        <field name="destination"/>
-                                        <field name="ship_to_name"/>
-                                        <field name="notify_name"/>
-                                        <field name="mailing_name"/>
-                                        <field name="country_id"/>
+                                        <field name="country"/>
                                     </tree>
                                 </field>
                             </page>
                             <page string="Assigned Products">
-                                <field name="product_ids"/>
+                                <field name="product_ids">
+                                    <tree>
+                                        <field name="code_id"/>
+                                        <field name="sku"/>
+                                        <field name="product_class"/>
+                                        <field name="packaging"/>
+                                        <field name="variant"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Accounts Receivables">
                                 <field name="ar_records" />
@@ -121,152 +124,7 @@
         <menuitem id="menu_dmpi_crm_partner" action="action_dmpi_crm_partner" parent="menu_dmpi_crm_master_top"/>
 
 
-
-        <record id="view_dmpi_crm_ship_to_search" model="ir.ui.view">
-            <field name="name">Ship to</field>
-            <field name="model">dmpi.crm.ship.to</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="ship_to_code"/>
-                    <field name="customer_name"/>
-                    <field name="customer_code"/>
-                    <field name="partner_id"/>
-                    <field name="destination"/>
-                    <field name="country_id"/>
-                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
-                    <group>
-                        <filter string="Active" context="{'group_by': 'active'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="view_dmpi_crm_ship_to_tree" model="ir.ui.view">
-            <field name="name">Ship to / Consignee</field>
-            <field name="model">dmpi.crm.ship.to</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="customer_name"/>
-                    <field name="customer_code"/>
-                    <field name="partner_id"/>
-                    <field name="destination"/>
-                    <field name="ship_to_name"/>
-                    <field name="notify_name"/>
-                    <field name="mailing_name"/>
-                    <field name="country_id"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_dmpi_crm_ship_to_form" model="ir.ui.view">
-            <field name="name">CRM Sale Contract</field>
-            <field name="model">dmpi.crm.ship.to</field>
-            <field name="arch" type="xml">
-                <form class="o_form_document">
-                    <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name_disp" placeholder="Customer Name" readonly="1"/>
-                            </h1>
-                        </div>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="customer_name"/>
-                                <field name="customer_code"/>
-                                <field name="partner_id"/>
-                                <field name="destination"/>
-                                <field name="ship_line"/>
-                                <field name="incoterm"/>
-                                <field name="country_id"/>
-
-<!--                                 <field name="ship_to_code"/>
-                                <field name="customer_name"/>
-                                <field name="customer_code"/>
-                                <field name="partner_id"/>
-                                <field name="registered_address"/> -->
-                                
-                            
-                                <!-- <field name="contact_person"/> -->
-                                <!-- <field name="contact_no"/> -->
-                                <!-- <field name="contact_person_email"/> -->
-                            </group>
-                            <group>
-<!--                                 <field name="destination"/>
-                                <field name="country_id"/>
-
-                                <field name="notify_party"/>
-                                <field name="notify_party_detail"/>
-                                
-                                <field name="ship_to"/>
-                                <field name="ship_to_detail"/>
-                                
-                                <field name="incoterm"/>  
-                                <field name="mailing_address"/> -->
-                            </group>
-                        </group>
-                        <group>
-                            <group string="Ship To">
-                                <field name="ship_to_name"/>
-                                <field name="ship_to_code"/>
-                                <field name="ship_to_street"/>
-                                <field name="ship_to_street2"/>
-                                <field name="ship_to_city"/>
-                                <field name="ship_to_zip"/>
-                                <field name="ship_to_phone"/>
-                                <field name="ship_to_fax"/>
-                                <field name="ship_to_person"/>
-                                <field name="ship_to_mobile"/>
-                                <field name="ship_to_email"/>
-                                <field name="ship_to_notes"/>
-                            </group>
-                            <group string="Notify Party">
-                                <field name="notify_name"/>
-                                <field name="notify_code"/>
-                                <field name="notify_street"/>
-                                <field name="notify_street2"/>
-                                <field name="notify_city"/>
-                                <field name="notify_zip"/>
-                                <field name="notify_phone"/>
-                                <field name="notify_fax"/>
-                                <field name="notify_person"/>
-                                <field name="notify_mobile"/>
-                                <field name="notify_email"/>
-                                <field name="notify_notes"/>
-                            </group>
-                            <group string="Mailing Address">
-                                <field name="mailing_name"/>
-                                <field name="mailing_code"/>
-                                <field name="mailing_street"/>
-                                <field name="mailing_street2"/>
-                                <field name="mailing_city"/>
-                                <field name="mailing_zip"/>
-                                <field name="mailing_phone"/>
-                                <field name="mailing_fax"/>
-                                <field name="mailing_person"/>
-                                <field name="mailing_mobile"/>
-                                <field name="mailing_email"/>
-                                <field name="mailing_notes"/>
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="action_dmpi_crm_ship_to" model="ir.actions.act_window">
-            <field name="name">Ship to / Consignee</field>
-            <field name="res_model">dmpi.crm.ship.to</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_ship_to" action="action_dmpi_crm_ship_to" parent="menu_dmpi_crm_master_top"/>
-
-
-
+        <!-- CONTRACT TYPE -->
         <record id="view_dmpi_crm_contract_type_tree" model="ir.ui.view">
             <field name="name">Contract Type</field>
             <field name="model">dmpi.crm.contract.type</field>
@@ -279,6 +137,7 @@
             </field>
         </record>
 
+
         <record id="action_dmpi_crm_contract_type" model="ir.actions.act_window">
             <field name="name">Contract Type</field>
             <field name="res_model">dmpi.crm.contract.type</field>
@@ -289,7 +148,7 @@
         <menuitem id="menu_dmpi_crm_contract_type" action="action_dmpi_crm_contract_type" parent="menu_dmpi_crm_master_top"/>
 
 
-
+        <!-- SAP DOC TYPE -->
         <record id="view_dmpi_crm_sap_doc_type_tree" model="ir.ui.view">
             <field name="name">SAP Doc Type</field>
             <field name="model">dmpi.crm.sap.doc.type</field>
@@ -314,6 +173,7 @@
 
 
 
+        <!-- COUNTRY -->
         <record id="view_dmpi_crm_country_tree" model="ir.ui.view">
             <field name="name">Country</field>
             <field name="model">dmpi.crm.country</field>
@@ -349,6 +209,8 @@
             </field>
         </record>
 
+
+        <!-- PAYMENT TERMS -->
         <record id="action_dmpi_crm_payment_terms" model="ir.actions.act_window">
             <field name="name">Payment Terms</field>
             <field name="res_model">dmpi.crm.payment.terms</field>
@@ -360,287 +222,13 @@
 
 
 
-
-<!--         <record id="view_dmpi_crm_destination_tree" model="ir.ui.view">
-            <field name="name">Destination</field>
-            <field name="model">dmpi.crm.destination</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="ship_to_code"/>
-                    <field name="dest_country_id"/>
-                    <field name="active"/>
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_destination" model="ir.actions.act_window">
-            <field name="name">Destination</field>
-            <field name="res_model">dmpi.crm.destination</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_destination" action="action_dmpi_crm_destination" parent="menu_dmpi_crm_master_top"/>       
- -->
-
-
-
-        <record id="view_dmpi_crm_partner_credit_limit_search" model="ir.ui.view">
-            <field name="name">Credit Limit</field>
-            <field name="model">dmpi.crm.partner.credit.limit</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="partner_id"/>
-                    <field name="customer_code"/>
-                </search>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_partner_credit_limit_tree" model="ir.ui.view">
-            <field name="name">Credit Limit</field>
-            <field name="model">dmpi.crm.partner.credit.limit</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="partner_id"/>
-                    <field name="customer_code"/>
-                    <field name="credit_control_no"/>
-                    <field name="credit_limit"/>
-                    <field name="credit_exposure"/>
-                    <field name="currency"/>
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_partner_credit_limit" model="ir.actions.act_window">
-            <field name="name">Credit Limit</field>
-            <field name="res_model">dmpi.crm.partner.credit.limit</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_partner_credit_limit" action="action_dmpi_crm_partner_credit_limit" parent="menu_dmpi_crm_finance_account"/>       
-
-
-        <record id="view_dmpi_crm_partner_ar_search" model="ir.ui.view">
-            <field name="name">Accounts Receivable</field>
-            <field name="model">dmpi.crm.partner.ar</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="partner_id"/>
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <!-- <field name="name"/> -->
-                </search>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_partner_ar_tree" model="ir.ui.view">
-            <field name="name">AR</field>
-            <field name="model">dmpi.crm.partner.ar</field>
-            <field name="arch" type="xml">
-                <tree>
-
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <field name="partner_id"/>
-                    <field name="acct_doc_no"/>
-                    <field name="fiscal_year"/>
-                    <field name="psting_date"/>
-                    <field name="doc_date"/>
-                    <field name="base_line_date"/>
-                    <field name="terms"/>
-                    <field name="cash_disc_days"/>
-                    <field name="local_curr"/>
-                    <field name="ref_doc"/>
-                    <field name="doc_type"/>
-                    <field name="fiscal_period"/>
-                    <field name="amt_in_loc_cur" sum="Total"/>
-                    <field name="gl_acct_no"/>
-                    <!-- 
-                    <field name="partner_id"/>
-                    <field name="customer_code"/>
-                    <field name="base_line_date"/>
-                    <field name="payment_term_days"/>
-                    <field name="amount"/>
-                    <field name="days_overdue"/>
-                    <field name="currency"/>
-                    <field name="name"/>
-                    <field name="partner_id_get"/>
-                    <field name="assignment_no"/>
-                    <field name="acct_type"/>
-                    <field name="debit_credit"/>
-                    <field name="assign_no"/>
-                    <field name="gl_acct_no2"/>
-                    <field name="acct_doc_num_line"/>
-                    <field name="amt_in_loc_cur2" sum="Total"/>
-                    <field name="active"/>
-                    -->
-                </tree>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_partner_ar_form" model="ir.ui.view">
-            <field name="name">Product Price List</field>
-            <field name="model">dmpi.crm.partner.ar</field>
-            <field name="arch" type="xml">
-                <form class="o_form_document">
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="partner_id"/>
-                                <field name="company_code"/>
-                                <field name="customer_no"/>
-                                <field name="assignment_no"/>
-                                <field name="fiscal_year"/>
-                                <field name="acct_doc_no"/>
-                                <field name="psting_date"/>
-                                <field name="doc_date"/>
-                                <field name="local_curr"/>
-                            </group>
-
-                            <group>
-                                <field name="ref_doc"/>
-                                <field name="doc_type"/>
-                                <field name="fiscal_period"/>
-                                <field name="amt_in_loc_cur"/>
-                                <field name="base_line_date"/>
-                                <field name="terms"/>
-                                <field name="cash_disc_days"/>
-                                <field name="acct_doc_no"/>
-                                <field name="acct_doc_num_line"/>
-                                <field name="acct_type"/>
-                                <field name="debit_credit"/>
-                                <field name="amt_in_loc_cur2"/>
-                                <field name="assign_no"/>
-                                <field name="gl_acct_no"/>
-                                <field name="gl_acct_no2"/>
-                                <field name="customer_no"/>
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="AR Line Items">
-                                <field name="line_ids" >
-                                    <tree editable="bottom">
-                                        <field name="terms"/>
-                                        <field name="cash_disc_days"/>
-                                        <field name="acct_doc_no"/>
-                                        <field name="acct_doc_num_line"/>
-                                        <field name="acct_type"/>
-                                        <field name="debit_credit"/>
-                                        <field name="assign_no"/>
-                                        <field name="gl_acct_no"/>
-                                        <field name="amt_in_loc_cur2" sum="Total"/>
-                                        <field name="amt_in_loc_cur" sum="Total"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="action_dmpi_crm_partner_ar" model="ir.actions.act_window">
-            <field name="name">AR</field>
-            <field name="res_model">dmpi.crm.partner.ar</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_partner_ar" action="action_dmpi_crm_partner_ar" parent="menu_dmpi_crm_finance_account"/>  
-
-
-
-        <record id="view_dmpi_crm_partner_ar_line_search" model="ir.ui.view">
-            <field name="name">Accounts Receivable</field>
-            <field name="model">dmpi.crm.partner.ar.line</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <field name="partner_id"/>
-                </search>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_partner_ar_line_tree" model="ir.ui.view">
-            <field name="name">AR Line</field>
-            <field name="model">dmpi.crm.partner.ar.line</field>
-            <field name="arch" type="xml">
-                <tree editable="bottom">
-
-                    <field name="company_code"/>
-                    <field name="customer_no"/>
-                    <field name="partner_id"/>
-                    <field name="acct_doc_no"/>
-                    <field name="fiscal_year"/>
-                    <field name="psting_date"/>
-                    <field name="doc_date"/>
-                    <field name="base_line_date"/>
-                    <field name="terms"/>
-                    <field name="cash_disc_days"/>
-                    <field name="local_curr"/>
-                    <field name="ref_doc"/>
-                    <field name="doc_type"/>
-                    <field name="fiscal_period"/>
-                    <field name="amt_in_loc_cur2" sum="Total"/>
-                    <field name="gl_acct_no"/>
-                    <!-- 
-                    <field name="partner_id"/>
-                    <field name="customer_code"/>
-                    <field name="base_line_date"/>
-                    <field name="payment_term_days"/>
-                    <field name="amount"/>
-                    <field name="days_overdue"/>
-                    <field name="currency"/>
-                    <field name="name"/>
-                    <field name="partner_id_get"/>
-                    <field name="assignment_no"/>
-                    <field name="acct_type"/>
-                    <field name="debit_credit"/>
-                    <field name="assign_no"/>
-                    <field name="gl_acct_no2"/>
-                    <field name="acct_doc_num_line"/>
-                    <field name="amt_in_loc_cur" sum="Total"/>
-                    <field name="active"/>
-                    -->
-                </tree>
-            </field>
-        </record>
-
-
-
-        <record id="action_dmpi_crm_partner_ar_line" model="ir.actions.act_window">
-            <field name="name">AR Line</field>
-            <field name="res_model">dmpi.crm.partner.ar.line</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_partner_ar_line" action="action_dmpi_crm_partner_ar_line" parent="menu_dmpi_crm_finance_account"/> 
-
-
-
+        <!-- PLANT -->
         <record id="view_dmpi_crm_plant_tree" model="ir.ui.view">
             <field name="name">Plant</field>
             <field name="model">dmpi.crm.plant</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
                     <field name="name"/>
-                    <!-- <field name="sorg"/> -->
-                    <!-- <field name="dist_channel"/> -->
-                    <!-- <field name="client"/> -->
                     <field name="description"/>
                     <field name="active"/>
                 </tree>
@@ -658,65 +246,18 @@
         <menuitem id="menu_dmpi_crm_plant" action="action_dmpi_crm_plant" parent="menu_dmpi_crm_master_top"/>
 
 
-
-        <record id="view_dmpi_crm_sales_org_tree" model="ir.ui.view">
-            <field name="name">Sales Org</field>
-            <field name="model">dmpi.crm.sales.org</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="client"/>
-                    <field name="sorg"/>
-                    <field name="client_desc"/>
-                    <field name="ccode"/>
-                    <field name="ccode_desc"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_dmpi_crm_sales_org" model="ir.actions.act_window">
-            <field name="name">Sales Org</field>
-            <field name="res_model">dmpi.crm.sales.org</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_sales_org" action="action_dmpi_crm_sales_org" parent="menu_dmpi_crm_master_top"/>
-
-
-        <record id="view_dmpi_crm_sale_contract_group_tree" model="ir.ui.view">
-            <field name="name">Contract Group</field>
-            <field name="model">dmpi.crm.sale.contract.group</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="description"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_dmpi_crm_sale_contract_group" model="ir.actions.act_window">
-            <field name="name">Contract Group</field>
-            <field name="res_model">dmpi.crm.sale.contract.group</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_sale_contract_group" action="action_dmpi_crm_sale_contract_group" parent="menu_dmpi_crm_master_top"/>
-
-
-
+        <!-- PRODUCT CODE -->
         <record id="view_dmpi_crm_product_code_tree" model="ir.ui.view">
             <field name="name">Product Code</field>
             <field name="model">dmpi.crm.product.code</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="description"/>
-                    <field name="psd"/>
-                    <field name="factor"/>
-                    <field name="product_crown"/>
-                    <field name="sequence"/>
+                    <field name="name" required="1"/>
+                    <field name="description" required="1"/>
+                    <field name="psd" required="1"/>
+                    <field name="factor" required="1"/>
+                    <field name="product_crown" required="1"/>
+                    <field name="sequence" required="1"/>
                     <field name="active"/>
                 </tree>
             </field>
@@ -732,7 +273,7 @@
         <menuitem id="menu_dmpi_crm_product_code_group" action="action_dmpi_crm_product_code_group" parent="menu_dmpi_crm_master_product_group"/>
 
 
-
+        <!-- PRODUCT -->
         <record id="view_dmpi_crm_product_search" model="ir.ui.view">
             <field name="name">Product</field>
             <field name="model">dmpi.crm.product</field>
@@ -751,7 +292,7 @@
             <field name="name">Product</field>
             <field name="model">dmpi.crm.product</field>
             <field name="arch" type="xml">
-                <tree editable='bottom'>
+                <tree>
                     <field name="fruit_size"/>
                     <field name="fruit_count"/>
                     <field name="weight"/>
@@ -771,11 +312,55 @@
                     <field name="brand"/>
                     <field name="sub_brand"/>
                     <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
-                    <field name="partner_ids" widget="many2many_tags"/>
                     <field name="active"/>
                 </tree>
             </field>
         </record>
+
+        <record id="view_dmpi_crm_product_form" model="ir.ui.view">
+            <field name="name">Product</field>
+            <field name="model">dmpi.crm.product</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <h1><field name="name"/></h1>
+                        <group>
+                            <group>
+                                <field name="fruit_size"/>
+                                <field name="fruit_count"/>
+                                <field name="weight"/>
+                                <field name="net_weight"/>
+                                <field name="psd"/>
+                            </group>
+                            <group>
+                                <field name="uom"/>
+                                <field name="case_factor"/>
+                                <field name="code_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                <field name="code" readonly="1" invisible="1"/>
+                                <field name="product_crown" readonly="1"/>
+                                <field name="product_class"/>
+                                <field name="sku"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group>
+                                <field name="packaging"/>
+                                <field name="category"/>
+                                <field name="sub_category"/>
+                                <field name="brand"/>
+                                <field name="sub_brand"/>
+                                <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
 
         <record id="action_dmpi_crm_product" model="ir.actions.act_window">
             <field name="name">Product</field>
@@ -791,7 +376,7 @@
 
 
 
-
+        <!-- PRDUCT PRICE LIST -->
         <record id="view_dmpi_crm_product_price_list_tree" model="ir.ui.view">
             <field name="name">Product Price List</field>
             <field name="model">dmpi.crm.product.price.list</field>
@@ -799,7 +384,8 @@
                 <tree>
                     <field name="name"/>
                     <field name="date"/>
-                    <field name="state"/>
+                    <field name="state" invisible="1"/>
+                    <field name="active"/>
                 </tree>
             </field>
         </record>
@@ -809,48 +395,85 @@
             <field name="model">dmpi.crm.product.price.list</field>
             <field name="arch" type="xml">
                 <form class="o_form_document">
-                    <header>
-                        <button name="action_approve" states="submitted" string="Approve Pricelist" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
-                        <button name="action_cancel" states="draft" string="Cancel Pricelist" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
-                        <button name="action_draft" states="approved,cancelled" string="Set to Draft" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
-                        <button name="action_submit" states="draft" string="Submit" type="object" class="oe_highlight" groups="base.group_user" confirm="Please Confirm Action"/>
-
-
-
-                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,cancelled" />
-                    </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-check">
+                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;active&quot;}"/>
+                            </button>
+                            <button name="download_pricelist_template" type="object" class="oe_stat_button" icon="fa-download" string="Download Template"/>
+                        </div>
+                        <h1><field name="name"/></h1>
                         <group>
                             <group>
-                                <field name="name" />
-                                <field name="date" />
+                                <field name="date"/>
                                 <field name="week_no"/>
                             </group>
                             <group>
                                 <field name="upload_filename" invisible="1"/>
-                                <field name="upload_file" filename="upload_filename" attrs="{'invisible':[('state','!=','draft')]}"/>
-                                
+                                <field name="upload_file" filename="upload_filename"/>
                             </group>
                         </group>
                         <notebook>
-                            <page string="Products">
+                            <page string="Items">
                                 <field name="item_ids">
-                                    <tree editable="bottom"  limit="500">
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                                <field name="customer_code" invisible="1"/>
+                                                <field name="sales_org"/>
+                                                <field name="freight_term"/>
+                                                <field name="remarks" invisible="1"/>
+                                                <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                            </group>
+                                            <group>
+                                                <field name="product_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1" domain="[('id','in',allowed_products)]"/>
+                                                <field name="material" invisible="1"/>
+                                                <field name="amount" required="1"/>
+                                                <field name="currency"/>
+                                                <field name="uom" required="1"/>
+                                                <field name="valid_from" required="1"/>
+                                                <field name="valid_to" required="1"/>
+                                            </group>
+                                        </group>
+                                        <field name="allowed_products" invisible="1"/>
+                                    </form>
+                                    <tree>
                                         <field name="product_id"/>
                                         <field name="material"/>
-                                        <field name="sales_org"/>
-                                        <field name="customer_code"/>
+                                        <field name="sales_org" invisible="1"/>
+                                        <field name="customer_code" invisible="1"/>
                                         <field name="partner_id"/>
-                                        <field name="freight_term"/>
+                                        <field name="freight_term" invisible="1"/>
                                         <field name="amount"/>
-                                        <field name="currency"/>
+                                        <field name="currency" invisible="1"/>
                                         <field name="uom"/>
                                         <field name="valid_from"/>
                                         <field name="valid_to"/>
-                                        <field name="remarks"/>
-                                        <field name="tag_ids"  widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                                        <field name="remarks" invisible="1"/>
+                                        <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
                                     </tree>
                                 </field>
+                            </page>
+                            
+                            <page string="Instructions">
+                                <ol>
+                                    <li>
+                                        Pricelist is in "inactive" state upon creation. Activate pricelist to use it
+                                    </li>
+                                    <li>
+                                        Upload a CSV file to populate items in the pricelist. The CSV template can also be downloaded using one of the action buttons.
+                                    </li>
+                                    <li>
+                                        The uploaded file can be downloaded then re-upload again to update the pricelist with the changes.
+                                    </li>
+                                    <li>
+                                        To create new price tags, go to the Product Price Tag menu.
+                                    </li>
+                                    <li>
+                                        For week related price tags, the date from and date to fields are required.
+                                    </li>
+                                </ol>
                             </page>
                         </notebook>
                     </sheet>
@@ -868,6 +491,7 @@
             <field name="res_model">dmpi.crm.product.price.list</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
+            <field name="context">{'active_test':False}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_product_price_list" action="action_dmpi_crm_product_price_list" parent="menu_dmpi_crm_finance_configuration"/>
@@ -878,8 +502,8 @@
             <field name="model">dmpi.crm.product.price.tag</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="description"/>
+                    <field name="name" required="1"/>
+                    <field name="description" required="1"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="active"/>
@@ -897,49 +521,6 @@
         <menuitem id="menu_dmpi_crm_product_price_tag" action="action_dmpi_crm_product_price_tag" parent="menu_dmpi_crm_finance_configuration"/>
 
 
-<!--         <record id="view_dmpi_sap_price_upload_search" model="ir.ui.view">
-            <field name="name">SAP Price Upload</field>
-            <field name="model">dmpi.sap.price.upload</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="material"/>
-                    <field name="customer"/>
-                </search>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_sap_price_upload_tree" model="ir.ui.view">
-            <field name="name">SAP Price Upload</field>
-            <field name="model">dmpi.sap.price.upload</field>
-            <field name="arch" type="xml">
-                <tree editable='bottom'>
-                    <field name="name"/>
-                    <field name="application"/>
-                    <field name="condition_type"/>
-                    <field name="sales_org"/>
-                    <field name="customer"/>
-                    <field name="material"/>
-                    <field name="valid_to"/>
-                    <field name="valid_to_sap"/>
-                    <field name="condition_record"/>
-                    <field name="condition_rate"/>
-                    <field name="condition_currency"/>
-                    <field name="uom"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_dmpi_sap_price_upload" model="ir.actions.act_window">
-            <field name="name">SAP Price Upload</field>
-            <field name="res_model">dmpi.sap.price.upload</field>
-            <field name="view_mode">tree</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_sap_price_upload" action="action_dmpi_sap_price_upload" parent="menu_dmpi_crm_finance_configuration"/> -->
-
 
         <!-- CONTAINER LOAD PLAN -->
         <record id="view_dmpi_crm_clp_search" model="ir.ui.view">
@@ -954,7 +535,7 @@
 
                     <separator/>
 
-                    <filter name="sap_generated" string="Sap Generated" domain="[('status', '=', 'sap_generated')]"/>
+                    <filter name="prod_confirmed" string="Production Confirmed" domain="[('status', '=', 'prod_confirmed')]"/>
                     <filter name="qa_confirmed" string="QA Confirmed" domain="[('status', '=', 'qa_confirmed')]"/>
                     <filter name="preship_generated" string="Pre-shipment Generated" domain="[('status', '=', 'preship_generated')]"/>
                     <filter name="preship_confirmed" string="Pre-shipment Confimred" domain="[('status', '=', 'preship_confirmed')]"/>
@@ -965,15 +546,16 @@
         <record id="view_dmpi_crm_clp_tree" model="ir.ui.view">
             <field name="name">dmpi.crm.clp.tree</field>
             <field name="model">dmpi.crm.clp</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <tree string="Container Load Plan">
                     <field name="control_no"/>
-                    <field name="dr_id"/>
+                    <field name="dr_id" string="DR Number"/>
                     <field name="container_no"/>
+                    <field name="customer"/>
                     <field name="plant"/>
                     <field name="port_origin"/>
                     <field name="port_destination"/>
-                    <field name="customer"/>
                     <field name="boxes" sum="Total Boxes"/>
                     <field name="week"/>
                     <field name="status"/>
@@ -982,22 +564,32 @@
         </record>
 
         <record id="view_dmpi_crm_clp_form" model="ir.ui.view">
-            <field name="name">Container Load Plan</field>
+            <field name="name">dmpi.crm.clp.form</field>
             <field name="model">dmpi.crm.clp</field>
             <field name="arch" type="xml">
                 <form string="Container Load Plan">
                     <header>
-                        <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
-
-                        <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','sap_generated')]}"/>
-
-                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you want to confirm the CLP?"/>
 
                         <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/>
 
-                        <field name="status" widget="statusbar" statusbar_visible="sap_generated,qa_confirmed,preship_generated,preship_confirmed"/>
+                        <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
+
+                        <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
+
+                        <button name="action_confirm_clp" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','prod_confirmed')]}" confirm="Are you sure you want to confirm the CLP?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
+
+                        <button name="action_revert_back" string="Revert Back Status" type="object" class="oe_stat_button" attrs="{'invisible':[('status','!=','prod_confirmed')]}" confirm="Are you sure you want to revert the status to SAP Generated for editing of Production Team?" groups="dmpi_crm.group_custom_crm_qa_staff"/>
+
+                        <field name="status" widget="statusbar" statusbar_visible="sap_generated,prod_confirmed,qa_confirmed,preship_generated,preship_confirmed"/>
                     </header>
                     <sheet>
+
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_preship" type="object" class="oe_stat_button" icon="fa-file" attrs="{'invisible':[('preship_count','=',0)]}" string="Pre-shipments">
+                                <field name="preship_count" widget="statinfo" invisible="1"/>
+                            </button>
+                        </div>
+
                         <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                         <group>
                             <group>
@@ -1042,14 +634,10 @@
                                         <field name="date_arrive"/>
 
                                         <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
-<!--                                         <field name="summary_case_a" string="A"/>
-                                        <field name="summary_case_b" string="B"/>
-                                        <field name="summary_case_c" string="C"/> -->
                                         <field name="case_summary" nolabel="1" colspan="2"/>
                                     </group>
                                     <group>
                                         <h3><strong style="color:#79717D;">Container Temp</strong></h3>
-                                        <!-- <field name="container_temp" nolabel="1" colspan="2"/> -->
                                         <field name="simul_no" string="Simul No."/>
                                         <field name="simul_pack_size" string="Simul Pack Size"/>
                                         <field name="simul_pack_date" string="Simul Pack Date"/>
@@ -1057,17 +645,15 @@
                                         <field name="mid_temp" string="Mid"/>
                                         <field name="last_temp" string="Last"/>
                                         <field name="van_temp" sring="Van Temp"/>
-                                        <!-- <h3><strong style="color:#79717D;">Pulp Room Temp</strong></h3> -->
-                                        <!-- <field name="pulp_room_temp" nolabel="1" colspan="2"/> -->
                                     </group>
                                 </group>
 
                                 <group>
                                     <group>
                                         <h3><strong style="color:#79717D;">Signatories</strong></h3>
-                                        <field name="encoder_id"/>
+                                        <field name="encoder_id" invisible="1"/>
                                         <field name="outbound_checker_id"/>
-                                        <field name="prod_load_counter_id"/>
+                                        <field name="prod_load_counter_id" invisible="1"/>
                                         <field name="inspector_id"/>
                                         <field name="supervisor_id"/>
 
@@ -1106,10 +692,10 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Pre-Shipment Certificates">
+                            <page string="Pre-Shipment Certificates" groups="base.group_erp_manager">
                                 <field name="preship_ids"/>
                             </page>
-                            <page string="Settings">
+                            <page string="Settings" groups="base.group_erp_manager">
                                 <group>
                                     <field name="status_disp"/>
                                 </group>
@@ -1126,157 +712,10 @@
             <field name="res_model">dmpi.crm.clp</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_sap_generated':1}"/>
+            <field name="context" eval="{'search_default_prod_confirmed':1}"/>
         </record>
 
         <menuitem id="menu_dmpi_crm_clp" action="action_dmpi_crm_clp" parent="dmpi_reports_menu"/>
-
-
-        <record id="view_dmpi_crm_shp_form" model="ir.ui.view">
-            <field name="name">Shipment Details</field>
-            <field name="model">dmpi.crm.shp</field>
-            <field name="arch" type="xml">
-                <form string="Shipment Details">
-                    <sheet>
-                        <h1><field name="name" attrs="{'readonly':True}"/></h1>
-                        <group>
-                            <group>
-                                <field name="sap_so_no"/>
-                                <field name="sap_dr_no"/>
-                                <field name="sap_shp_no"/>
-                                <field name="contract_id"/>
-                                <field name="odoo_po_no"/>
-                                <field name="odoo_so_no"/>
-                                <field name="sap_so_no"/>
-                            </group>
-                            <group>
-                                <field name="sap_dr_no"/>
-                                <field name="ship_to"/>
-                                <field name="dr_create_date"/>
-                                <field name="gi_date"/>
-                                <field name="shp_no"/>
-
-                                <field name="fwd_agent"/>
-                                <field name="van_no"/>
-                                <field name="vessel_no"/>
-                                <field name="truck_no"/>
-                                <field name="load_no"/>
-                                <field name="booking_no"/>
-                                <field name="seal_no"/>
-                                <field name="origin"/>
-                                <field name="destination"/>
-                                <field name="discharge"/>
-
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="Items">
-                                <field name="shp_lines">
-                                    <tree string="Items" editable="bottom">
-                                        <field name="sap_so_no"/>
-                                        <field name="so_line_no"/>
-                                        <field name="material"/>
-                                        <field name="qty"/>
-                                        <field name="uom"/>
-                                        <field name="plant"/>
-                                        <field name="reject_reason"/>
-                                        <field name="alt_item"/>
-                                        <field name="usage"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-
-        <record id="action_dmpi_crm_shp" model="ir.actions.act_window">
-            <field name="name">Shipment Details</field>
-            <field name="res_model">dmpi.crm.shp</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_shp" action="action_dmpi_crm_shp" parent="menu_dmpi_crm_commercial_top"/>
-
-
-  		<record id="view_dmpi_crm_invoice_tree" model="ir.ui.view">
-            <field name="name">DMPI Invoice Tree</field>
-            <field name="model">dmpi.crm.invoice</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="source"/>
-                    <field name="inv_no"/>
-                    <field name="dmpi_sap_inv_no"/>
-                    <field name="dms_inv_no"/>
-                </tree>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_invoice_form" model="ir.ui.view">
-            <field name="name">Invoice Details</field>
-            <field name="model">dmpi.crm.invoice</field>
-            <field name="arch" type="xml">
-                <form string="Invoice Details">
-                    <sheet>
-                        <h1><field name="name" attrs="{'readonly':True}"/></h1>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="source"/>
-                                <field name="inv_no"/>
-                                <field name="dmpi_sap_inv_no"/>
-                                <field name="contract_id"/>
-                                <field name="invoice_filename" invisible="0"/> 
-                                <field name="invoice_file" filename="invoice_filename"/>
-                            </group>
-                            <group>
-                                <field name="odoo_po_no"/>
-                                <field name="odoo_so_no"/>
-                                <field name="sap_so_no"/>
-                                <field name="sap_dr_no"/>
-                                <field name="shp_no"/>
-                                <field name="dmpi_inv_no"/>
-                                <field name="dms_inv_no"/>
-                                <field name="sbfti_inv_no"/>
-                                <field name="payer"/>
-                                <field name="inv_create_date"/>
-                                <field name="header_net"/>
-
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="Invoice">
-                                <field name="inv_lines">
-                                    <tree string="Invoice" editable="bottom">
-                                        <field name="so_line_no"/>
-                                        <field name="inv_line_no"/>
-                                        <field name="material"/>
-                                        <field name="qty"  sum="Total"/>
-                                        <field name="uom"/>
-                                        <field name="line_net_value" sum="Total"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-
-        <record id="action_dmpi_crm_invoice" model="ir.actions.act_window">
-            <field name="name">Invoice Details</field>
-            <field name="res_model">dmpi.crm.invoice</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <menuitem id="menu_dmpi_crm_invoice" action="action_dmpi_crm_invoice" parent="menu_dmpi_crm_commercial_top"/>
 
         <!-- RES PARTNER -->
         <record id="action_dmpi_crm_res_partner_inherit" model="ir.actions.act_window">
@@ -1454,7 +893,34 @@
             <field name="context">{'active_test':False}</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>        
+        <menuitem id="menu_dmpi_crm_veriety" action="action_dmpi_crm_variety" parent="menu_dmpi_crm_master_top"/>
+
+
+        <!-- RESOURCE PARTNERS -->
+        <record id="view_dmpi_crm_res_partner_tree" model="ir.ui.view">
+            <field name="name">dmpi.crm.res.parnter.tree</field>
+            <field name="model">dmpi.crm.res.partner</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="FF Resource Partners" editable="bottom">
+                    <field name="name"/>
+                    <field name="function"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_res_partner" model="ir.actions.act_window">
+            <field name="name">FF Resource Partners</field>
+            <field name="res_model">dmpi.crm.res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'active_test':False}</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_res_partner" action="action_dmpi_crm_res_partner" parent="menu_dmpi_crm_master_top"/>
+
+
 
         <record id="dmpi_crm_variety_s16" model="dmpi.crm.variety">
             <field name="name">S16</field>
@@ -1468,11 +934,22 @@
 
 
 
+        <record id="view_dmpi_crm_activity_log_search" model="ir.ui.view">
+            <field name="name">dmpi.crm.activity.log.search</field>
+            <field name="model">dmpi.crm.activity.log</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter string="Failed" name="failed_logs" domain="[('log_type','=','fail')]"/>
+                </search>
+            </field>
+        </record>
+
         <record id="view_dmpi_crm_activity_log_tree" model="ir.ui.view">
             <field name="name">Activity Log</field>
             <field name="model">dmpi.crm.activity.log</field>
             <field name="arch" type="xml">
-                <tree editable='bottom'>
+                <tree>
                     <field name="name"/>
                     <field name="log_type"/>
                     <field name="description"/>
@@ -1485,10 +962,55 @@
             <field name="res_model">dmpi.crm.activity.log</field>
             <field name="view_mode">tree</field>
             <field name="domain">[]</field>
+            <field name="context">{'search_default_failed_logs':1}</field>
         </record>
 
         <menuitem id="menu_dmpi_crm_activity_log" action="action_dmpi_crm_activity_log" parent="menu_dmpi_crm_settings_top"/>
 
 
+        <!-- Email Notification VIEW -->
+        <record id="view_dmpi_crm_email_notification_subscriber_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.email.notification.subscriber.form</field>
+            <field name="model">dmpi.crm.email.notification.subscriber</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Variety" editable="bottom">
+                    <field name="name" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                    <field name="user_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_dmpi_crm_email_notification_subscriber" model="ir.actions.act_window">
+            <field name="name">CRM Email Subscriber</field>
+            <field name="res_model">dmpi.crm.email.notification.subscriber</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'active_test':False}</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_email_notification_subscriber" action="action_dmpi_crm_email_notification_subscriber" parent="menu_dmpi_crm_settings_top"/>
+
+
+
+        <record id="dmpi_crm_partner_function_sld" model="dmpi.crm.partner.function">
+            <field name="name">SOLD TO</field>
+            <field name="code">SLD</field>
+        </record>
+
+        <record id="dmpi_crm_partner_function_shp" model="dmpi.crm.partner.function">
+            <field name="name">SHIP TO</field>
+            <field name="code">SHP</field>
+        </record>
+
+        <record id="dmpi_crm_partner_function_nfy" model="dmpi.crm.partner.function">
+            <field name="name">NOTIFY</field>
+            <field name="code">NFY</field>
+        </record>
+
+        <record id="dmpi_crm_partner_function_mal" model="dmpi.crm.partner.function">
+            <field name="name">MAILING</field>
+            <field name="code">MAL</field>
+        </record>
 
 </odoo>

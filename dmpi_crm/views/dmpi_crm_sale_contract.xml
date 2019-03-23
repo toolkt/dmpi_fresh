@@ -13,8 +13,8 @@
                     <field name="customer_ref"/>
                     <field name="partner_id"/>
                     <field name="week_no" required="1"/>
-
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="filter_soa" string="SOA" domain="[('state', '=', 'soa')]"/>
                     <group>
                         <filter string="Active" context="{'group_by': 'active'}"/>
                     </group>
@@ -26,12 +26,12 @@
             <field name="name">CRM Sale Contract</field>
             <field name="model">dmpi.crm.sale.contract</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-muted="state == 'cancel' ">
                     <field name="name"/>
                     <field name="sap_cn_no"/>
                     <field name="week_no" required="1"/>
                     <field name="partner_id"/>
-                    <field name="contract_type"/>
+                    <field name="contract_type" invisible="1"/>
                     <field name="customer_ref" />
                     <field name="po_date"/>
                     <field name="valid_from" />
@@ -59,11 +59,11 @@
 
                         <button name="action_approve_contract" states="confirmed" string="Approve Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
 
-                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
 
                         <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
 
-                        <button name="action_cancel_po" string="Cancel PO" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO CANCELLATION"/>
+                        <button name="action_cancel_po" string="Cancel PO" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Have you cancelled the corresponding SO and Contract in SAP?" states="approved,processing,processed"/>
 
                         
 
@@ -74,11 +74,26 @@
                     <sheet>
                         <div class="oe_button_box" name="button_box">
 
-                            <button name="send_email"
+<!--                             <button name="send_email"
                                 type="object"
                                 string="Email"
                                 class="oe_stat_button"
                                 icon="fa-envelope">
+                            </button>
+ -->
+
+                             <button name="action_multi_order_tag"
+                                type="object"
+                                string="Multi Tag"
+                                class="oe_stat_button"
+                                icon="fa-check-square-o">
+                            </button>
+
+                             <button name="download_order_wizard"
+                                type="object"
+                                string="Download Orders"
+                                class="oe_stat_button"
+                                icon="fa-download">
                             </button>
 
                             <button name="upload_wizard"
@@ -88,12 +103,12 @@
                                 icon="fa-upload">
                             </button>
 
-                            <button name="re_map_products"
+<!--                             <button name="re_map_products"
                                 type="object"
                                 string="Re-map Products"
                                 class="oe_stat_button"
                                 icon="fa-check">
-                            </button>
+                            </button> -->
 
                             <button name="recompute_order_lines"
                                 type="object"
@@ -104,36 +119,32 @@
 
 
                         </div>
+
                         <div class="oe_title">
                             <h1>
                                 <field name="po_display_number" readonly="1" placeholder="Purchase Order"/>
                             </h1>
                         </div>
 
-
                         <group>
                             <group>
                                 <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
-                                <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="customer_ref" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="po_date" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_from" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_to" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="week_no" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
-                                <field name="tag_ids" widget="many2many_tags" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" />
+                                <field name="tag_ids" widget="many2many_tags" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" options="{'no_quick_create':True,'no_create_edit':True}" invisible="1"/>
                                 <field name="sold_via_id" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                             </group>
                             <group>
-
-                                <field name="credit_limit" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <field name="credit_exposure" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <field name="remaining_credit" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <field name="open_so" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <field name="total_sales" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                <!-- <field name="contract_total" /> -->
-                                <field name="credit_after_sale" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-
-                                <field name="ar_status" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                <field name="credit_limit" readonly="1" force_save="1"/>
+                                <field name="credit_exposure" readonly="1" force_save="1"/>
+                                <field name="remaining_credit" readonly="1" force_save="1"/>
+                                <field name="open_so" readonly="1" force_save="1"/>
+                                <field name="total_sales" readonly="1"/>
+                                <field name="credit_after_sale" readonly="1" force_save="1"/>
+                                <field name="ar_status" readonly="1" force_save="1"/>
                                 <field name="error_count" invisible="1"/>
                                 <field name="errors" invisible="1"/>
                             </group>
@@ -142,6 +153,7 @@
                     <center attrs="{'invisible': [('error_count','=',0)]}">
                         <span style="color:red"><field name="errors_disp" readonly="1"/></span>
                     </center>
+
                     <notebook>
                         <page string="Customer Orders">
                             <field name="customer_order_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
@@ -151,29 +163,14 @@
                                     <field name="notify_id" />
                                     <field name="ship_line" />
                                     <field name="destination" />
-                                    <!-- <field name="p101" sum="Total"/> -->
-                                    <!-- <field name="p102" sum="Total"/> -->
-                                    <!-- <field name="p103" sum="Total"/> -->
-                                    <!-- <field name="p104" sum="Total"/> -->
-                                    <!-- <field name="p105" sum="Total"/> -->
-                                    <!-- <field name="p106" sum="Total"/> -->
-                                    <!-- <field name="p107" sum="Total"/> -->
-                                    <!-- <field name="p201" sum="Total"/> -->
-                                    <!-- <field name="p202" sum="Total"/> -->
-                                    <!-- <field name="p203" sum="Total"/> -->
-                                    <!-- <field name="p204" sum="Total"/> -->
-                                    <!-- <field name="p205" sum="Total"/> -->
-                                    <!-- <field name="p206" sum="Total"/> -->
-                                    <!-- <field name="p207" sum="Total"/> -->
                                     <field name="total_p100" sum="Total" string="With Crown"/>
                                     <field name="total_p200" sum="Total" string="Crownless"/>
-                                    <field name="total_qty" sum="Total" string="Total Qty"/>
-                                    <field name="total_amount" sum="Total" string="Subtotal"/>
+                                    <field name="total_qty" sum="Total" string="Qty"/>
+                                    <field name="total_amount" sum="Total" string="Amount"/>
                                 </tree>
                             </field>
                         </page>
                         <page string="Sales Order">
-                            <!-- <field name="sale_order_ids" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"> -->
                             <field name="sale_order_ids">
                                 <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
@@ -181,24 +178,10 @@
                                     <field name="notify_id" />
                                     <field name="ship_line" />
                                     <field name="destination" />
-<!--                                     <field name="p101" sum="Total"/>
-                                    <field name="p102" sum="Total"/>
-                                    <field name="p103" sum="Total"/>
-                                    <field name="p104" sum="Total"/>
-                                    <field name="p105" sum="Total"/>
-                                    <field name="p106" sum="Total"/>
-                                    <field name="p107" sum="Total"/>
-                                    <field name="p201" sum="Total"/>
-                                    <field name="p202" sum="Total"/>
-                                    <field name="p203" sum="Total"/>
-                                    <field name="p204" sum="Total"/>
-                                    <field name="p205" sum="Total"/>
-                                    <field name="p206" sum="Total"/>
-                                    <field name="p207" sum="Total"/> -->
                                     <field name="total_p100" sum="Total"/>
                                     <field name="total_p200" sum="Total"/>
-                                    <field name="total_qty" sum="Total"/>
-                                    <field name="total_amount" sum="Total"/>
+                                    <field name="total_qty" sum="Total" string="Qty"/>
+                                    <field name="total_amount" sum="Total" string="Amount"/>
                                     <field name="error" invisible="1"/>
                                     <field name="state"/>
 
@@ -232,32 +215,28 @@
                             </field>                            
                         </page>
                         <page string="Settings">
-                            
+                            <h5>
+                                <p>Remaining Credit = Credit Limit - Credit Exposure</p>
+                                <p>Credit After Sale = Remaining Credit - (Total Sales + Open SO)</p>
+                            </h5>
                             <group>
                                 <group>
-                                    <field name="cn_no"/>
-                                    <field name="customer_ref_to_sap"/>
+                                    <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                    <field name="customer_ref_to_sap" readonly="1"/>
                                     <field name="sent_to_sap"/>
                                     <field name="sent_to_sap_time"/>
+                                    <field name="route_to_finance"/>
                                 </group>
                                 <group>
                                     <field name="name" />
                                 	<field name="sap_cn_no" />
-                                    <field name="active" />
                                     <field name="state_disp"/>
                                 </group>
-
-                            <field name="sheet_settings"/>
-                            <field name="sheet_data"/>
-                            <field name="sap_errors"/>
-
-                            <field name="worksheet_item_text" />
                             </group>
                         </page>
                     </notebook>
 
                     </sheet>
-
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="message_ids" widget="mail_thread"/>
@@ -272,11 +251,10 @@
             <field name="res_model">dmpi.crm.sale.contract</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_filter_active':1}"/>
+            <field name="context">{}</field>
         </record>
 
         <menuitem id="menu_sale_contract" action="action_dmpi_crm_sale_contract" parent="menu_dmpi_crm_purchase_top"/>
-
 
 
 
@@ -284,8 +262,9 @@
             <field name="name">Sales Contract with AR</field>
             <field name="res_model">dmpi.crm.sale.contract</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','=','soa')]</field>
-            <field name="context" eval="{'search_default_filter_active':1}"/>
+            <!-- <field name="domain">[('route_to_finance','=',True)]</field> -->
+            <field name="domain">[]</field>
+            <field name="context" eval="{'search_default_filter_soa':1}"/>
         </record>
 
         <menuitem id="menu_sale_contract_finance" action="action_dmpi_crm_sale_contract_finance" parent="menu_dmpi_crm_finance_top"/>
@@ -295,7 +274,7 @@
     <!-- commercial for confirmation template -->
     <record id="commercial_send_for_confirmation" model="mail.template">
         <field name="name">Send Email For Contract Confirmation</field>
-        <field name="email_from"><![CDATA[SNW Purchase<purchase_order@dmdistribution.net>]]></field>
+        <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
         <field name="subject">SNW Online Purchase - For Contract Confirmation Notification</field>
         <field name="partner_to"></field>
         <field name="email_to"></field>
@@ -328,6 +307,148 @@
             </div>
             ]]>
         </field>
+    </record>
+
+
+    <!-- finance for confirmation template -->
+    <record id="notify_finance_release_contract_with_ar" model="mail.template">
+        <field name="name">Send Email to Finance to Release Contract with AR</field>
+        <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
+        <field name="subject">SNW Online Purchase - Contract with AR ${object.partner_id.name}</field>
+        <field name="partner_to"></field>
+        <field name="email_to"></field>
+        <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">${object.lang}</field>
+        <field name="body_html">
+            <![CDATA[
+            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
+                <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
+                    <tbody><tr>
+                        <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
+                            <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
+                        </td>
+                    </tr></tbody>
+                </table>
+            </div>
+            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                <p>Dear Finance Team,</p>
+                <p>
+                    Good Day!
+                </p>
+                <p>
+                    This is to inform you that customer ${object.partner_id.name} has been flagged for having exceeded the allowable AR Limit. Please visit the online purchasing site to verify the Purchase Order details with reference number <srong>${object.name}</strong>. Thank you.
+                </p>
+
+                <span>
+                    <a href="${object.get_base_url()}&view_type=list" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View All Contracts with AR</a> 
+                    or
+                    <a href="${object.get_base_url()}&view_type=form&id=${object.id}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View ${object.name}</a>
+                </span>
+                
+                <p>Best regards,</p>
+                <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
+                    SNW Commercial Team
+                </div>
+            </div>
+            ]]>
+        </field>
+    </record>
+
+
+
+    <!-- DOWNLOAD PO AND SO -->
+    <record id="view_dmpi_crm_download_order_wizard_form" model="ir.ui.view">
+        <field name="name">Download Orders</field>
+        <field name="model">dmpi.crm.download.order.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Download Orders">
+                <h4>Select which orders to download.</h4>
+                <group>
+                    <div>
+                        <button name="download_orders" string="Customer Orders" type="object" class="oe_highlight" context="{'type':'customer'}"/>
+                        or
+                        <button name="download_orders" string="Sale Orders" type="object" class="oe_highlight" context="{'type':'commercial'}"/>
+                    </div>
+                </group>
+                <field name="csv_file" invisible="1"/>
+                <footer>
+                    <button string="CANCEL" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_dmpi_crm_download_order_wizard" model="ir.actions.act_window">
+        <field name="name">Download Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dmpi.crm.download.order.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+
+    <!-- SELECT MULTIPLE ORDERS -->
+    <record id="view_dmpi_crm_multi_tag_form" model="ir.ui.view">
+        <field name="name">Select Orders</field>
+        <field name="model">dmpi.crm.multi.tag</field>
+        <field name="arch" type="xml">
+            <form string="Select Orders">
+                <h4>Select which orders to apply. Do not select price tags to remove them on the orders.</h4>
+                <group>
+                    <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                </group>
+
+                <notebook>
+                    <page string="Customer Orders">
+                        <field name="customer_order_ids">
+                            <form>
+                            </form>
+                            <tree>
+                                <field name="contract_line_no"/>
+                                <field name="ship_to_id"/>
+                                <field name="notify_id"/>
+                                <field name="ship_line"/>
+                                <field name="destination"/>
+                            </tree>
+                        </field>
+                    </page>
+
+                    <page string="Sale Orders">
+                        <field name="sale_order_ids">
+                            <form>
+                            </form>
+                            <tree>
+                                <field name="contract_line_no"/>
+                                <field name="ship_to_id"/>
+                                <field name="notify_id"/>
+                                <field name="ship_line"/>
+                                <field name="destination"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+
+                <footer>
+                    <button name="apply_settings" string="Apply" type="object" class="oe_highlight"/>
+                    <button string="CANCEL" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_dmpi_crm_multi_tag" model="ir.actions.act_window">
+        <field name="name">Select Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dmpi.crm.multi.tag</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
     </record>
 
 </odoo>

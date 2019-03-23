@@ -1,25 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-        
-        <menuitem id="menu_main_dmpi_crm" name="CRM" web_icon="dmpi_crm,static/description/icon.png" sequence="0"/>
-        
-        	<menuitem id="menu_dmpi_crm_purchase_top" name="Purchases" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="10"/>
+    <menuitem id="menu_main_dmpi_crm" name="CRM" web_icon="dmpi_crm,static/description/icon.png" sequence="0"/>
 
-            <menuitem id="menu_dmpi_crm_commercial_top" name="Commercial" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="20"/>
+    <!-- PURCHASES -->
+    <menuitem id="menu_dmpi_crm_purchase_top" name="Purchases" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="10"/>
 
-            <menuitem id="menu_dmpi_crm_finance_top" name="Finance" parent="menu_main_dmpi_crm" sequence="20" groups="group_custom_crm_finance_staff"/>
-            	<menuitem id="menu_dmpi_crm_finance_account" name="Accounts" parent="menu_dmpi_crm_finance_top" sequence="10"/>
-            	<menuitem id="menu_dmpi_crm_finance_configuration" name="Configuration" parent="menu_dmpi_crm_finance_top" sequence="20"/>
 
-            <menuitem id="menu_dmpi_crm_master_top" name="Master Data" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="90"/>
-            	<menuitem id="menu_dmpi_crm_master_product_group" name="Product Config" parent="menu_dmpi_crm_master_top" sequence="10"/>
+    <!-- COMMERCIAL -->
+    <menuitem id="menu_dmpi_crm_commercial_top" name="Commercial" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="20"/>
 
-            <menuitem id="menu_dmpi_crm_settings_top" name="Settings" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="100"/>
+    <menuitem id="menu_dmpi_crm_commercial_orders" name="Orders" parent="menu_dmpi_crm_commercial_top" sequence="10"/>
 
-            <menuitem id="menu_dmpi_crm_logistics_top" name="Logistics" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_logistics_manager" sequence="30"/>
+    <menuitem id="menu_dmpi_crm_commercial_docs" name="Documents" parent="menu_dmpi_crm_commercial_top" sequence="20"/>
 
-            <menuitem id="dmpi_reports_main_menu" name="Reporting" web_icon="dmpi_crm,static/description/icon_report.png"/>
-            <menuitem id="dmpi_reports_config_menu" parent="menu_dmpi_crm_master_top" name="Reports" sequence="40"/>
-            <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Reports" sequence="50"/>
+    <menuitem id="menu_dmpi_crm_commercial_reports" name="Reports" parent="menu_dmpi_crm_commercial_top" sequence="30"/>
+
+    <menuitem id="menu_dmpi_crm_commercial_config" name="Configuration" parent="menu_dmpi_crm_commercial_top" sequence="40"/>
+
+
+    <!-- FINANCE -->
+    <menuitem id="menu_dmpi_crm_finance_top" name="Finance" parent="menu_main_dmpi_crm" groups="group_custom_crm_finance_staff" sequence="30"/>
+
+    <menuitem id="menu_dmpi_crm_finance_orders" name="Orders" parent="menu_dmpi_crm_finance_top" sequence="10"/>
+
+    <menuitem id="menu_dmpi_crm_finance_docs" name="Documents" parent="menu_dmpi_crm_finance_top" sequence="20"/>
+
+    <menuitem id="menu_dmpi_crm_finance_account" name="Accounts" parent="menu_dmpi_crm_finance_top" sequence="30"/>
+
+    <menuitem id="menu_dmpi_crm_finance_configuration" name="Configuration" parent="menu_dmpi_crm_finance_top" sequence="40"/>
+
+    <!-- LOGISTICS -->
+    <menuitem id="menu_dmpi_crm_logistics_top" name="Logistics" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_logistics_staff" sequence="40"/>
+
+    <!-- PRODUCTION -->
+    <menuitem id="dmpi_crm_production_top" parent="menu_main_dmpi_crm" name="Production" groups="dmpi_crm.group_custom_crm_prod_staff" sequence="45"/>
+
+    <!-- QA -->
+    <menuitem id="dmpi_reports_menu" parent="menu_main_dmpi_crm" name="Quality Assurance" groups="dmpi_crm.group_custom_crm_qa_staff" sequence="50"/>
+
+    <menuitem id="dmpi_reports_config_menu" name="Reports Configuration" parent="dmpi_reports_menu" sequence="40"/>
+
+
+
+    <!-- MASTER DATA -->
+    <menuitem id="menu_dmpi_crm_master_top" name="Master Data" parent="menu_main_dmpi_crm" groups="dmpi_crm.group_custom_crm_commercial_staff" sequence="90"/>
+
+    <menuitem id="menu_dmpi_crm_master_product_group" name="Product Config" parent="menu_dmpi_crm_master_top" sequence="10"/>
+
+
+    <!-- SNW ADMIN -->
+    <menuitem id="menu_dmpi_crm_settings_top" name="Settings" parent="menu_main_dmpi_crm" sequence="100" groups="base.group_erp_manager"/>
 
 </odoo>

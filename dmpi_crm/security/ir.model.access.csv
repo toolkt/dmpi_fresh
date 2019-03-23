@@ -1,7 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_user_dmpi_crm_sap_doc_type,user.dmpi.crm.sap.doc.type,model_dmpi_crm_sap_doc_type,base.group_user,1,1,1,1
 access_user_dmpi_crm_ship_to,user.dmpi.crm.ship.to,model_dmpi_crm_ship_to,base.group_user,1,1,1,1
-access_user_dmpi_crm_config_contract_state,user.dmpi.crm.config.contract.state,model_dmpi_crm_config_contract_state,base.group_user,1,1,1,1
 access_user_dmpi_crm_dr_line,user.dmpi.crm.dr.line,model_dmpi_crm_dr_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_alt_item,user.dmpi.crm.alt.item,model_dmpi_crm_alt_item,base.group_user,1,1,1,1
 access_user_dmpi_crm_inspection_lot,user.dmpi.crm.inspection.lot,model_dmpi_crm_inspection_lot,base.group_user,1,1,1,1
@@ -21,8 +20,6 @@ access_user_dmpi_crm_contract_type,user.dmpi.crm.contract.type,model_dmpi_crm_co
 access_user_dmpi_crm_sale_order_line,user.dmpi.crm.sale.order.line,model_dmpi_crm_sale_order_line,base.group_user,1,1,1,1
 access_user_dmpi_crm_dr,user.dmpi.crm.dr,model_dmpi_crm_dr,base.group_user,1,1,1,1
 access_user_dmpi_crm_invoice_line,user.dmpi.crm.invoice.line,model_dmpi_crm_invoice_line,base.group_user,1,1,1,1
-access_user_dmpi_crm_invoice_dms,user.dmpi.crm.invoice.dms,model_dmpi_crm_invoice_dms,base.group_user,1,1,1,1
-access_user_dmpi_crm_sales_org,user.dmpi.crm.sales.org,model_dmpi_crm_sales_org,base.group_user,1,1,1,1
 access_user_dmpi_crm_product,user.dmpi.crm.product,model_dmpi_crm_product,base.group_user,1,1,1,1
 access_user_dmpi_crm_partner_credit_limit,user.dmpi.crm.partner.credit.limit,model_dmpi_crm_partner_credit_limit,base.group_user,1,1,1,1
 access_user_dmpi_crm_partner_ar,user.dmpi.crm.partner.ar,model_dmpi_crm_partner_ar,base.group_user,1,1,1,1
@@ -35,7 +32,6 @@ access_user_dmpi_crm_template,user.dmpi.crm.template,model_dmpi_crm_template,bas
 access_user_dmpi_crm_product_price_list,user.dmpi.crm.product.price.list,model_dmpi_crm_product_price_list,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_price_tag,user.dmpi.crm.product.price.tag,model_dmpi_crm_product_price_tag,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_price_list_item,user.dmpi.crm.product.price.list.item,model_dmpi_crm_product_price_list_item,base.group_user,1,1,1,1
-access_user_dmpi_crm_sale_contract_group,user.dmpi.crm.sale.contract.group,model_dmpi_crm_sale_contract_group,base.group_user,1,1,1,1
 access_user_dmpi_crm_product_code,user.dmpi.crm.product.code,model_dmpi_crm_product_code,base.group_user,1,1,1,1
 access_user_dmpi_crm_channel_group,user.dmpi.crm.channel.group,model_dmpi_crm_channel_group,base.group_user,1,1,1,1
 access_user_customer_crm_sale_order,user.customer.crm.sale.order,model_customer_crm_sale_order,base.group_user,1,1,1,1
@@ -45,3 +41,19 @@ access_dmpi_crm_week,user.dmpi.crm.week,model_dmpi_crm_week,base.group_user,1,1,
 access_dmpi_crm_market_allocation,user.dmpi.crm.market.allocation,model_dmpi_crm_market_allocation,base.group_user,1,1,1,1
 access_dmpi_crm_market_allocation_line,user.dmpi.crm.market.allocation.line,model_dmpi_crm_market_allocation_line,base.group_user,1,1,1,1
 access_dmpi_crm_report_order_lines,user.dmpi.crm.report.order.lines,model_dmpi_crm_report_order_lines,base.group_user,1,1,1,1
+access_dmpi_crm_fcl_config,user.dmpi.crm.fcl.config,model_dmpi_crm_fcl_config,base.group_user,1,1,1,1
+access_dmpi_crm_partner_ar_line,user.dmpi.crm.partner.ar.line,model_dmpi_crm_partner_ar_line,base.group_user,1,1,1,1
+access_dmpi_crm_partner_function,user.dmpi.crm.partner.function,model_dmpi_crm_partner_function,base.group_user,1,1,1,1
+access_dmpi_crm_variety,user.dmpi.crm.variety,model_dmpi_crm_variety,base.group_user,1,1,1,1
+access_dmpi_crm_activity_log,user.dmpi.crm.activity.log,model_dmpi_crm_activity_log,base.group_user,1,1,1,1
+access_dmpi_crm_preship_inspection_lot,user.dmpi.crm.preship.inspection.lot,model_dmpi_crm_preship_inspection_lot,base.group_user,1,1,1,1
+access_dmpi_crm_preship_pc_line,user.dmpi.crm.preship.pc.line,model_dmpi_crm_preship_pc_line,base.group_user,1,1,1,1
+access_dmpi_crm_clp_pc_line,user.dmpi.crm.clp.pc.line,model_dmpi_crm_clp_pc_line,base.group_user,1,1,1,1
+access_dmpi_crm_res_partner,user.dmpi.crm.res.partner,model_dmpi_crm_res_partner,base.group_user,1,1,1,1
+access_dmpi_crm_ir_config_parameter,user.dmpi.crm.ir.config.parameter,base.model_ir_config_parameter,base.group_user,1,1,0,0
+access_dmpi_crm_complaint_claim_nature,user.dmpi.crm.complaint.claim.nature,model_dmpi_crm_complaint_claim_nature,base.group_user,1,1,1,1
+access_dmpi_crm_complaint_market,user.dmpi.crm.complaint.market,model_dmpi_crm_complaint_market,base.group_user,1,1,1,1
+access_dmpi_crm_complaint_ph,user.dmpi.crm.complaint.ph,model_dmpi_crm_complaint_ph,base.group_user,1,1,1,1
+access_dmpi_crm_complaint_report,user.dmpi.crm.complaint.report,model_dmpi_crm_complaint_report,base.group_user,1,1,1,1
+access_dmpi_crm_corrective_action,user.dmpi.crm.corrective.action,model_dmpi_crm_corrective_action,base.group_user,1,1,1,1
+access_dmpi_crm_email_notification_subscriber,user.dmpi.crm.email.notification.subscriber,model_dmpi_crm_email_notification_subscriber,base.group_user,1,1,1,1

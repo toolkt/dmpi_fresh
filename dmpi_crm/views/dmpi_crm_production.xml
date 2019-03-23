@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<!-- CONTAINER LOAD PLAN TO DO-->
+
+    <record id="view_dmpi_crm_clp_prod_tree" model="ir.ui.view">
+        <field name="name">dmpi.crm.clp.prod.tree</field>
+        <field name="model">dmpi.crm.clp</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <tree string="Container Load Plan" decoration-danger=" status=='sap_generated' ">
+                <field name="control_no"/>
+                <field name="dr_id" string="DR Number"/>
+                <field name="container_no"/>
+                <field name="customer"/>
+                <field name="plant"/>
+                <field name="port_origin"/>
+                <field name="port_destination"/>
+                <field name="boxes" sum="Total Boxes"/>
+                <field name="week"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_dmpi_crm_clp_production_form" model="ir.ui.view">
+        <field name="name">dmpi.crm.clp.production.form</field>
+        <field name="model">dmpi.crm.clp</field>
+        <field name="arch" type="xml">
+            <form string="Container Load Plan">
+                <header>
+
+                    <button name="action_prod_confirm" string="Confirm Prod Data" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you have encoded the required data?"/>
+
+                    <field name="status" widget="statusbar" statusbar_visible="sap_generated,prod_confirmed,qa_confirmed,preship_generated,preship_confirmed"/>
+
+                </header>
+                <sheet>
+                    <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
+                    <group>
+                        <group>
+                            <field name="dr_id" invisible="1"/>
+                            <field name="container_no" readonly="1"/>
+                            <field name="seal_no" readonly="1"/>
+                            <field name="vessel_name" readonly="1"/>
+                            <field name="plant" readonly="1"/>
+                            <field name="port_origin" readonly="1"/>
+                            <field name="port_destination" readonly="1"/>
+                            <field name="customer" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="week" readonly="1"/>
+                            <field name="brand" readonly="1"/>
+                            <field name="shell_color" readonly="1"/>
+                            <field name="description" readonly="1"/>
+                            <field name="boxes" readonly="1"/>
+                            <field name="installed" string="Installed Already?" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Packages">
+                            <field name="clp_line_ids" readonly="1">
+                                <tree string="Packages" editable="bottom">
+                                    <field name="position"/>
+                                    <field name="tag_no"/>
+                                    <field name="pack_code"/>
+                                    <field name="product_crown"/>
+                                    <field name="qty"/>
+                                    <field name="pack_size"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Others" readonly="1">
+                            <group>
+                                <group>
+                                    <h3><strong style="color:#79717D;">Loading Date/Time</strong></h3>
+                                    <field name="date_start" readonly="1"/>
+                                    <field name="date_end" readonly="1"/>
+                                    <field name="date_depart" readonly="1"/>
+                                    <field name="date_arrive" readonly="1"/>
+
+                                    <h3><strong style="color:#79717D;">Summary of Cases</strong></h3>
+                                    <field name="case_summary" nolabel="1" colspan="2" readonly="1"/>
+                                </group>
+                                <group>
+                                    <h3><strong style="color:#79717D;">Container Temp</strong></h3>
+                                    <field name="simul_no" string="Simul No." readonly="1"/>
+                                    <field name="simul_pack_size" string="Simul Pack Size" readonly="1"/>
+                                    <field name="simul_pack_date" string="Simul Pack Date" readonly="1"/>
+                                    <field name="first_temp" string="First" readonly="1"/>
+                                    <field name="mid_temp" string="Mid" readonly="1"/>
+                                    <field name="last_temp" string="Last" readonly="1"/>
+                                    <field name="van_temp" sring="Van Temp" readonly="1"/>
+                                </group>
+                            </group>
+
+                            <group>
+                                <group>
+                                    <h3><strong style="color:#79717D;">Signatories</strong></h3>
+                                    <field name="encoder_id" invisible="1"/>
+                                    <field name="outbound_checker_id" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                    <field name="prod_load_counter_id" invisible="1"/>
+                                    <field name="inspector_id" readonly="1"/>
+                                    <field name="supervisor_id" readonly="1"/>
+
+                                    <field name="encoder_name" invisible="1"/>
+                                    <field name="outbound_checker_name" invisible="1"/>
+                                    <field name="prod_load_counter_name" invisible="1"/>
+                                    <field name="inspector_name" invisible="1"/>
+                                    <field name="supervisor_name" invisible="1"/>
+                                </group>
+                                <group>
+                                    <separator/>
+                                    <separator/>
+                                    <field name="remarks" placeholder="Add notes here..." readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Production">
+                            <group>
+                                <group>
+                                    <field name="temp_start" string="Supply Temp Start" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                    <field name="temp_end" string="Supply Temp Dep" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                </group>
+                                <group>
+                                    <field name="van_temp_start" string="Van Temp Before" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                    <field name="van_temp_end" string="Van Temp After" attrs="{'readonly':[('status','=','prod_confirmed')]}"/>
+                                </group>
+                            </group>
+                            <h3><strong style="color:#79717D;">Pulp Temperature</strong></h3>
+                            <field name="pc_line_ids" attrs="{'readonly':[('status','=','prod_confirmed')]}">
+                                <tree editable="bottom">
+                                    <field name="pack_date"/>
+                                    <field name="before_pc"/>
+                                    <field name="after_pc"/>
+                                    <field name="cold_storage"/>
+                                    <field name="no_pallet"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Pre-Shipment Certificates" invisible="1">
+                            <field name="preship_ids"/>
+                        </page>
+                        <page string="Settings" invisible="1">
+                            <group>
+                                <field name="status_disp"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+	<record id="action_dmpi_crm_clp_production" model="ir.actions.act_window">
+		<field name="name">Container Load Plan</field>
+		<field name="res_model">dmpi.crm.clp</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="view_ids" eval="[(5, 0, 0),
+			(0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_clp_prod_tree')}),
+			(0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_clp_production_form')})]"/>
+		<field name="domain">[('status','in',('sap_generated','prod_confirmed'))]</field>
+	</record>
+
+	<menuitem id="menu_dmpi_crm_clp_production" action="action_dmpi_crm_clp_production" parent="dmpi_crm_production_top" sequence="10" groups="group_custom_crm_prod_staff"/>
+
+</odoo>

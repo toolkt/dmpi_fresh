@@ -10,6 +10,7 @@
                     <group>
                         <field name="upload_file" />
                         <field name="upload_type"/>
+                        <button name="donwload_template" string="Download CSV Template" type="object" class="oe_link"/>
                         <field name="contract_id" invisible="1"/>
                         <field name="error_count" invisible="1"/>
                     </group>
@@ -20,20 +21,6 @@
                                     <field name="line_no" />
                                     <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[parent.partner_id])]"/>
                                     <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('partner_id.id','in',[parent.partner_id])]"/>
-<!--                                     <field name="p5" />
-                                    <field name="p6" />
-                                    <field name="p7" />
-                                    <field name="p8" />
-                                    <field name="p9" />
-                                    <field name="p10" />
-                                    <field name="p12" />
-                                    <field name="p5c7" />
-                                    <field name="p6c8" />
-                                    <field name="p7c9" />
-                                    <field name="p8c10" />
-                                    <field name="p9c11" />
-                                    <field name="p10c12" />
-                                    <field name="p12c20" /> -->
                                     <field name="order_lines" invisible="1"/>
                                     <field name="total_p100" readonly="1"/>
                                     <field name="total_p200" readonly="1"/>
@@ -42,12 +29,13 @@
                                     <field name="destination" />
                                     <field name="shell_color" />
                                     <field name="requested_delivery_date" />
+                                    <field name="estimated_date" />
                                     <field name="errors" readonly="1"/>
                                     <field name="error_count" readonly="1"/>
                                 </tree>
                             </field>
                         </page>
-                        <page string="Settings">
+                        <page string="Settings" groups="base.group_system">
                             <group>
                                 <group>
                                     <field name="pack_code_tmp"/>

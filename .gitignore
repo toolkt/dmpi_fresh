@@ -101,3 +101,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+dmpi_crm/models/\.DS_Store

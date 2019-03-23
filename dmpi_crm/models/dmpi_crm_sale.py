@@ -12,6 +12,7 @@ from fabric.api import *
 import csv
 import sys
 import math
+import io
 
 import base64
 from tempfile import TemporaryFile
@@ -67,9 +68,6 @@ def read_data(data):
         return rows
 
 
-
-
-
 CONTRACT_STATE = [
         ('draft','Draft'),
         ('submitted','Submitted'),
@@ -77,44 +75,30 @@ CONTRACT_STATE = [
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
         ('approved','Approved'),
-        ('hold','Hold'),
         ('processing','Processing'),
         ('processed','Processed'),
         ('enroute','Enroute'),
         ('received','Received'),
         ('cancel','Cancelled')]
 
-PRODUCT_CODES = [
-        ('P5','P5'),
-        ('P6','P6'),
-        ('P7','P7'),
-        ('P8','P8'),
-        ('P9','P9'),
-        ('P10','P10'),
-        ('P12','P12'),
-        ('P5C7','P5C7'),
-        ('P6C8','P6C8'),
-        ('P7C9','P7C9'),
-        ('P8C10','P8C10'),
-        ('P9C11','P9C11'),
-        ('P10C12','P10C12'),
-        ('P12C20','P12C20')]
-
+CSV_UPLOAD_HEADERS = [
+    'NO',
+    'SHIP TO',
+    'NOTIFY PARTY',
+    'DESTINATION',
+    'SHIPPING LINE',
+    'SHELL COLOR',
+    'DELIVERY DATE',
+    'ESTIMATED DATE',
+    'TOTAL'
+]
 
 class DmpiCrmSaleContract(models.Model):
     _name = 'dmpi.crm.sale.contract'
     _description = "Sale Contract"
     _inherit = ['mail.thread']
-    _order = 'po_date desc'
+    _order = 'po_date desc, name desc'
 
-
-    # @api.model
-    # def create(self, vals):
-    #     contract_seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.contract')
-    #     vals['name'] = contract_seq
-    #     print(contract_seq)
-    #     res = super(DmpiCrmSaleContract, self).create(vals)
-    #     return res
 
     def _get_contract_type(self):
         result = self.env['dmpi.crm.contract.type'].search([])
@@ -134,90 +118,78 @@ class DmpiCrmSaleContract(models.Model):
                 sap_cn_no = "/%s" % self.sap_cn_no
             self.po_display_number = "%s%s" % (self.name, sap_cn_no)
 
+    ## to deprecate (move to submit PO)
     @api.one
     @api.depends('customer_ref','week_no')
     def _get_customer_ref_to_sap(self):
         ref = []
+        if self.week_no:
+            ref.append("W%s" % self.week_no)
         if self.customer_ref:
             ref.append(self.customer_ref)
         else:
             ref.append(self.name)
-        if self.week_no:
-            ref.append("-W%s" % self.week_no)
+        self.customer_ref_to_sap = '-'.join(ref)
 
-        self.customer_ref_to_sap = ''.join(ref)
+    @api.one
+    @api.depends('sale_order_ids.order_ids')
+    def _compute_totals(self):
+        self.total_sales = sum ( self.sale_order_ids.mapped('order_ids').mapped('total') )
 
 
+    @api.depends('credit_limit','credit_exposure','total_sales', 'open_so')
+    def _compute_credit(self):
+        for rec in self:
+            rec.remaining_credit = rec.credit_limit - rec.credit_exposure
+            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
 
-    po_display_number = fields.Char("PO Numbers", compute="_get_po_display_number")
-    name = fields.Char("ContractNo", default="Draft", copy=False)
-    active = fields.Boolean("Active", default=True)
-    cn_no = fields.Integer("CRM Contract no.", copy=False)
-    sap_cn_no = fields.Char("SAP Contract no.", copy=False)
+
+    name = fields.Char("Contract Number", default="Draft", copy=False)
+    sap_cn_no = fields.Char("SAP Contract Number", copy=False)
+    po_display_number = fields.Char("Display Name", compute="_get_po_display_number")
     customer_ref = fields.Char("Customer Reference", copy=False)
-    customer_ref_to_sap = fields.Char("Customer Reference", compute="_get_customer_ref_to_sap")
-
-    sheet_settings = fields.Text("Settings")
-    sheet_data = fields.Text("Data")
-
-    partner_id = fields.Many2one('dmpi.crm.partner',"Customer")
+    customer_ref_to_sap = fields.Char("Customer Reference to SAP", compute="_get_customer_ref_to_sap") ## to deprecate
+    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", domain=[('function_ids.code','=','SLD')])
     sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
-
     contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
+    week_no = fields.Integer("Week No")
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
 
     credit_limit = fields.Float("Credit Limit")
     credit_exposure = fields.Float("Credit Exposure")
-    remaining_credit = fields.Float("Remaining Credit", compute='_compute_credit')
-    ar_status = fields.Float("AR Status")
-    state = fields.Selection(CONTRACT_STATE,string="Status", default='draft', track_visibility='onchange')
-    state_disp = fields.Selection(CONTRACT_STATE,related='state',string="Status Display", default='draft')
-
-    contract_total = fields.Float("Contract Total")
-
+    remaining_credit = fields.Float("Remaining Credit", compute='_compute_credit', store=True)
     open_so = fields.Float("Open SO")
-    total_sales = fields.Float("Total Sales",compute='_compute_totals')
-    credit_after_sale = fields.Float("Credit After Sale", compute='_compute_credit')
+    total_sales = fields.Float("Total Sales", compute='_compute_totals', store=True)
+    credit_after_sale = fields.Float("Credit After Sale", compute='_compute_credit', store=True)
+    ar_status = fields.Float("AR Status")
 
-
-    worksheet_item_text = fields.Text("Worksheet Items")
+    state = fields.Selection(CONTRACT_STATE, string="Status", default='draft', track_visibility='onchange')
+    state_disp = fields.Selection(CONTRACT_STATE, related='state', string="Status Display", default='draft')
 
     #ONE2MANY RELATIONSHIPTS
-    # contract_line_ids = fields.One2many('dmpi.crm.sale.contract.line','contract_id','Contract Lines', track_visibility=True)
     sale_order_ids = fields.One2many('dmpi.crm.sale.order','contract_id','Sale Orders', copy=True)
     customer_order_ids = fields.One2many('customer.crm.sale.order','contract_id','Customer Orders', copy=True)
-    invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoice (DMPI)')
-    # dmpi_invoice_ids = fields.One2many('dmpi.crm.invoice.dmpi','contract_id','Invoice (DMPI)')
-    # dms_invoice_ids = fields.One2many('dmpi.crm.invoice.dms','contract_id','Invoice (DMS)')
-    dr_ids = fields.One2many('dmpi.crm.dr','contract_id','DR')
-    shp_ids = fields.One2many('dmpi.crm.shp','contract_id','SHP')
+    dr_ids = fields.One2many('dmpi.crm.dr','contract_id','Delivery')
+    shp_ids = fields.One2many('dmpi.crm.shp','contract_id','Shipments')
+    invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoices')
 
     #LOGS
     sent_to_sap = fields.Boolean("Sent to SAP")
     sent_to_sap_time = fields.Datetime("Sent to SAP Time")
+    route_to_finance = fields.Boolean("Route to Finance")
 
-    # upload_file = fields.Binary("Upload")
-    # upload_file_name = fields.Char("Upload Filename")
-    # upload_file_template = fields.Binary("Upload Template")
-
-    # upload_file_so = fields.Binary("Upload")
-
+    # ERRORS
     error_count = fields.Integer("Error Count")
     errors = fields.Text("Errors")
-    errors_disp = fields.Text("Errors", related='errors')
+    errors_disp = fields.Text("Errors Display", related='errors')
 
-    # import_errors = fields.Text("Import Errors")
-    # import_errors_disp = fields.Text("Import Errors", related='import_errors')
+    # BINARY FILES
+    customer_orders_csv = fields.Binary('Customer Orders CSV')
+    sale_orders_csv = fields.Binary('Sale Orders CSV')
 
-    sap_errors = fields.Text("SAP Errors")
-    week_no = fields.Char("Week No")
-    #week_id = fields.Many2one('dmpi.crm.week',"Week No")
-
-    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
-
-    
 
     @api.multi
     def upload_wizard(self):
@@ -225,7 +197,6 @@ class DmpiCrmSaleContract(models.Model):
         res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_sale_contract_upload')
         res['context'] = {'default_contract_id':self.id,}
         return res
-
 
 
     @api.multi
@@ -240,81 +211,27 @@ class DmpiCrmSaleContract(models.Model):
 
 
     @api.multi
-    def re_map_products(self):
-        for rec in self:
-            print(rec)
-
-
-    @api.multi
     def action_cancel_po(self):
         for rec in self:
-            rec.state = 'cancel'
+            for so in rec.sale_order_ids:
+                so.state = 'cancelled'
 
-    @api.multi
-    def send_email(self):
-
-        action = self.env.ref('mail.action_view_mail_mail').read()[0]
-        action.update({
-            'views': [(self.env.ref('mail.view_mail_form').id, 'form')],
-            # 'res_id' : self.id,
-            'target': 'new',
-            'context': {
-                'default_body_html': "KIT"
-            }
-        })
-
-        return action
-        
-
-    # def check_row_error(self,data):
-    #     errors = []
-    #     error_count = 0
-        
-        
-    #     #print "-----CHECK ROW ERROR------"
-
-    #     row_count = 0
-    #     for row in data:
-    #         row_error = []
-    #         if row_count > 0:
-    #             print(row)
-    #         row_count += 1
-    #         print (row[0])
-
-    #     return errors,error_count
-
-
-
-    @api.depends('sale_order_ids')
-    def _compute_totals(self):
-        total_sales = 0.0
-        for s in self.sale_order_ids:
-            if s.state not in ['draft','hold']:
-                for l in s.order_ids:
-                    total_sales += l.total
-
-        self.total_sales = total_sales
-
-
-
-    @api.depends('credit_limit','credit_exposure','total_sales', 'open_so')
-    def _compute_credit(self):
-        for rec in self:
-            rec.remaining_credit = rec.credit_limit - rec.credit_exposure
-            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
 
 
     @api.onchange('partner_id')
     def on_change_partner_id(self):
 
+        # if len(self.customer_order_ids) or len(self.sale_order_ids):
+        #     raise UserError(_('Cannot change Customer if you have existing Orders. Remove first or try creating new contract.'))
+
         if self.partner_id:
+            # COMPUTE CREDIT
             credit = self.env['dmpi.crm.partner.credit.limit'].search([('customer_code','=',self.partner_id.customer_code)], order="write_date desc, id desc", limit=1)
-
-            # query = """SELECT sum(replace(ar.amt_in_loc_cur,',','')::float) as ar from dmpi_crm_partner_ar ar
-            #             where ar.active is True and ltrim(ar.customer_no,'0') = '%s'
-            #         """ % self.partner_id.customer_code
+            self.credit_limit = credit.credit_limit
+            self.credit_exposure = credit.credit_exposure
 
 
+            # COMPUTE AR
             query = """SELECT sum(ar.amt_in_loc_cur *
                        case
                            when (ar.base_line_date::date + ar.cash_disc_days::INT + 14) <= NOW()::date then 1
@@ -322,29 +239,22 @@ class DmpiCrmSaleContract(models.Model):
                        from dmpi_crm_partner_ar ar
                        where ar.acct_type = 'D' and ltrim(ar.customer_no,'0') = '%s' """ % self.partner_id.customer_code
 
-
-            print(query)        
             self.env.cr.execute(query)
             result = self.env.cr.dictfetchall()
             if result:
-                self.ar_status = result[0]['ar'] 
+                self.ar_status = result[0]['ar']
             else:
                 self.ar_status = 0
 
 
-
+            # COMPUTE OPEN SO (SO WITHOUT INVOICES)
             query = """SELECT sum(sol.price * sol.qty) as openso
-                from dmpi_crm_sale_order_line sol
-                left join dmpi_crm_sale_order so on so.id = sol.order_id
-                left join (select odoo_so_no from dmpi_crm_invoice 
-                                        where odoo_so_no is not null
-                                        group by odoo_so_no) inv_so on inv_so.odoo_so_no = so.name
-                left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-                where sc.partner_id = %s and so.state in ('confirmed','process','processed')
+                        FROM dmpi_crm_sale_order_line sol
+                        left join dmpi_crm_sale_order so on so.id = sol.order_id
+                        left join dmpi_crm_invoice inv on inv.sap_so_no = so.sap_so_no
+                        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+                        where sc.partner_id = %s and so.state in ('confirmed','process','processed','done') and inv.id is null
             """ % self.partner_id.id
-
-            print ("-----------OpenSO--------------")
-            print (query)
 
             self.env.cr.execute(query)
             result = self.env.cr.dictfetchall()
@@ -352,23 +262,19 @@ class DmpiCrmSaleContract(models.Model):
                 self.open_so = result[0]['openso'] 
 
 
-            self.credit_limit = credit.credit_limit
-            self.credit_exposure = credit.credit_exposure
-            self.on_change_po_date()
-
 
     @api.onchange('ar_status','credit_after_sale')
     def on_change_ar_status(self):
-        print('AR STATUS CHANGED')
         error_count = 0
         errors = []
         if self.ar_status  > 0:
             error_count += 1
             errors.append("CUSTOMER HAS EXISTING AR: Will be routed to Finance for Approval")
+            self.route_to_finance = True
 
         if self.credit_after_sale  < 0:
             error_count += 1
-            errors.append("CREDIT LIMIT EXCEEDED: Please reduce purhcases accordingly")
+            errors.append("CREDIT LIMIT EXCEEDED: Please reduce purchases accordingly")
 
         if error_count > 0:
             self.error_count = error_count
@@ -377,37 +283,20 @@ class DmpiCrmSaleContract(models.Model):
         else:
             self.error_count = 0
             self.errors = ""
+            self.route_to_finance = False
 
 
 
-
-    @api.onchange('po_date')
+    @api.onchange('po_date','partner_id')
     def on_change_po_date(self):
         if self.po_date and self.partner_id:
             self.valid_from = self.po_date
-            validity = self.partner_id.default_validity 
+            validity = self.partner_id.default_validity
+
             if validity < 1:
                 validity = 7
 
-
             self.valid_to =  datetime.strptime(self.po_date, DEFAULT_SERVER_DATE_FORMAT) + timedelta(days=validity)
-
-            tag_ids = self.partner_id.tag_ids.ids
-            po_date_tag_ids = self.env['dmpi.crm.product.price.tag'].search([('date_from','<=',self.po_date),('date_to','>=',self.po_date)]).ids
-            if len(po_date_tag_ids):
-                for t in po_date_tag_ids:
-                    tag_ids.append(t)
-
-            self.tag_ids = [[6,0,tag_ids]]
-
-
-
-
-
-    @api.multi
-    def action_release(self):
-        for rec in self:
-            rec.state = 'submitted'
 
 
     @api.multi
@@ -436,7 +325,6 @@ class DmpiCrmSaleContract(models.Model):
 
                     so_lines.append((0,0,vals))
 
-
                 order = {
                         'contract_line_no':l.contract_line_no,
                         'ship_to_id': l.ship_to_id.id,
@@ -451,22 +339,12 @@ class DmpiCrmSaleContract(models.Model):
                         'plant_id': l.plant_id.id,
                         'plant': l.plant,
                         'week_no': week_no,
-                        # 'p5': l.p5,
-                        # 'p6': l.p6,
-                        # 'p7': l.p7,
-                        # 'p8': l.p8,
-                        # 'p9': l.p9,
-                        # 'p10': l.p10,
-                        # 'p12': l.p12,
-                        # 'p5c7': l.p5c7,
-                        # 'p6c8': l.p6c8,
-                        # 'p7c9': l.p7c9,
-                        # 'p8c10': l.p8c10,
-                        # 'p9c11': l.p9c11,
-                        # 'p10c12': l.p10c12,
-                        # 'p12c20': l.p12c20,
                         'order_ids': so_lines,
                     }
+
+                if l.tag_ids:
+                    tags = [(4,t.id,) for t in l.tag_ids]
+                    order['tag_ids'] = tags
 
                 sale_orders.append((0,0,order))
 
@@ -511,6 +389,11 @@ class DmpiCrmSaleContract(models.Model):
             rec.write({'state':'confirmed'})
 
 
+    def get_base_url(self):
+    	action = self.env.ref('dmpi_crm.action_dmpi_crm_sale_contract_finance')
+    	url = "%s/web#model=dmpi.crm.sale.contract&action=%s" % (self.env['ir.config_parameter'].sudo().get_param('web.base.url'),action.id)
+    	return url
+
     @api.multi
     def action_approve_contract(self):
         for rec in self:
@@ -518,7 +401,7 @@ class DmpiCrmSaleContract(models.Model):
             if rec.ar_status > 0:
                 contract_line_no = 0
                 for so in rec.sale_order_ids:
-                    # so.write({'contract_line_no':contract_line_no})
+
                     if rec.week_no:
                         so.week_no = rec.week_no
                     for sol in so.order_ids:
@@ -535,11 +418,22 @@ class DmpiCrmSaleContract(models.Model):
                         sol.write({'so_line_no':sol_line_no})
 
                 rec.write({'state':'soa'})
+                #TODO Trigger Auto Email to Finance Users
+
+                template = self.env.ref('dmpi_crm.notify_finance_release_contract_with_ar')
+                user_ids = self.env['dmpi.crm.email.notification.subscriber'].search([('name','=',template.id)])
+                email_to = ','.join(["<%s>" % x.user_id.login for x in user_ids])
+                template['email_to'] = email_to
+
+                print (email_to,self.get_base_url)
+                template.send_mail(rec.id)
+
+
 
             else:
                 contract_line_no = 0
                 for so in rec.sale_order_ids:
-                    # so.write({'contract_line_no':contract_line_no})
+
                     if rec.week_no:
                         so.week_no = rec.week_no
                     for sol in so.order_ids:
@@ -594,12 +488,12 @@ class DmpiCrmSaleContract(models.Model):
                         'dist_channel' : rec.partner_id.dist_channel,
                         'division' : rec.partner_id.division,
                         'sold_to' : rec.partner_id.customer_code,
-                        'ship_to' : so.ship_to_id.ship_to_code,
+                        'ship_to' : so.ship_to_id.customer_code,
                         'ref_po_no' : ref_po_no,
                         'po_date' : po_date,
                         'valid_from' : valid_from,
                         'valid_to' : valid_to,
-                        'ship_to_dest' : so.ship_to_id.ship_to_code,
+                        'ship_to_dest' : so.ship_to_id.customer_code,
                         'po_line_no' : sol.contract_line_no,
                         'material' : sol.product_id.sku,
                         'qty' : int(sol.qty),
@@ -670,114 +564,42 @@ class DmpiCrmSaleContract(models.Model):
 
 
 
+    # def modify_order_lines(self, context, order_lines=False):
+    #     '''
+    #     This function modify the order lines of an SO. EDIT if line is existing, CREATE if line 
+    #     is not exiting, and DELETE if lines is not found.
+
+    #     :param order_lines: array of dict values for each order_line
+    #         {
+    #             'name':name,
+    #             'so_line_no':so_line_no,
+    #             'product_code': product_code, 
+    #             'product_id': product_id,
+    #             'uom': 'CAS',
+    #             'qty': qty,
+    #             'price': price,
+    #         }
+    #     :return: boolean
+    #     '''
+        
+    @api.multi
+    def download_order_wizard(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_download_order_wizard')
+        res['context'] = {'default_contract_id':self.id,}
+        return res
+
+    @api.multi
+    def action_multi_order_tag(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_multi_tag')
+        res['context'] = {'default_contract_id':self.id,}
+        return res
+
 
 class DmpiCrmSaleOrder(models.Model):
     _name = 'dmpi.crm.sale.order'
     _inherit = ['mail.thread']
-
-    def _get_doc_type(self):
-        group = 'doc_type'
-        query = """SELECT cs.select_name,cs.select_value
-                from dmpi_crm_config_selection cs
-                left join dmpi_crm_config cc on cc.id = cs.config_id
-                where select_group = '%s'  and cc.active is True and cc.default is True
-                order by sequence 
-                """ % group
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-        res = [(r['select_value'],r['select_name']) for r in result]
-        return res
-
-    def _get_doc_type_default(self):
-        group = 'doc_type'
-        query = """SELECT cs.select_name,cs.select_value
-                from dmpi_crm_config_selection cs
-                left join dmpi_crm_config cc on cc.id = cs.config_id
-                where cs.select_group = '%s'  and cc.active is True and cc.default is True and cs.default is True
-                order by sequence 
-                limit 1 
-                """ % group
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchone()
-        # print (result)
-        if result:
-            return result['select_name']
-
-    @api.model
-    def _sale_order_demand_create_csv(self, so_ids):
-        csv = ''
-        headers = ['ODOO PO','ODOO SO','SOLD TO','SHIP TO','DESTINATION','WEEK','P5','P6','P7','P8','P9','P10','P12','P5C7',
-                'P6C8','P7C9','P8C10','P9C11','P10C12','P12C20','Total','Shipp Line','Shell Color','Delivery Date','STATUS']
-
-        csv = u','.join(headers) + '\n'
-
-        # add row data
-        for sid in so_ids:
-            row = []
-            so = self.browse(sid)
-
-            odoo_po_no = so.contract_id.name or ''
-            odoo_so_no = so.name or ''
-            sold_to = so.contract_id.partner_id.name or ''
-            ship_to = so.ship_to_id.name or ''
-            destination = ''
-            week_no = '%s' % (so.week_no or '')
-            total = 0
-            ship_line = so.ship_line or ''
-            shell_color = so.shell_color or ''
-            delivery_date = so.requested_delivery_date or ''
-            status = so.state.upper()
-
-            if delivery_date:
-                delivery_date = datetime.strftime(parse(delivery_date), '%M/%d/%Y')
-
-            for l in so.order_ids:
-                p5  = l.qty if l.product_code == 'P5' else ''
-                p6  = l.qty if l.product_code == 'P6' else ''
-                p7  = l.qty if l.product_code == 'P7' else ''
-                p8  = l.qty if l.product_code == 'P8' else ''
-                p9  = l.qty if l.product_code == 'P9' else ''
-                p10 = l.qty if l.product_code == 'P10' else ''
-                p12 = l.qty if l.product_code == 'P12' else ''
-                p5c7    = l.qty if l.product_code == 'P5C7' else ''
-                p6c8    = l.qty if l.product_code == 'P6C8' else ''
-                p7c9    = l.qty if l.product_code == 'P7C9' else ''
-                p8c10   = l.qty if l.product_code == 'P8C10' else ''
-                p9c11   = l.qty if l.product_code == 'P9C11' else ''
-                p10c12  = l.qty if l.product_code == 'P10C12' else ''
-                p12c20  = l.qty if l.product_code == 'P12C20' else ''
-
-                total += l.qty
-
-            row = [odoo_po_no, odoo_so_no, sold_to, ship_to, destination, week_no, 
-                p5, p6, p7, p8, p9, p10, p12, p5c7, p6c8, p7c9, p8c10, p9c11, p10c12, p12c20,
-                total, ship_line, shell_color, delivery_date, status]
-
-            csv += ','.join(str(d) for d in row) + '\n'
-
-        return csv
-
-    @api.multi
-    def download_demand_sale_order(self):
-        print('EXPORT SALE ORDERS DEMAND')
-        active_ids = self.browse(self.env.context.get('active_ids'))
-
-        docids = []
-        for rec in active_ids:
-            docids.append(rec.id)
-
-        if docids:
-            values = {
-                'type': 'ir.actions.act_url',
-                'url': '/csv/download/dmpi_crm_sale_order/?docids=%s' % (json.dumps(docids)),
-                'target': 'current',
-            }
-
-            return values
-        
-        else:
-            raise UserError(_("Nothing to Download."))
-
 
 
     def submit_so_file(self,rec):
@@ -789,7 +611,7 @@ class DmpiCrmSaleOrder(models.Model):
             for sol in rec.order_ids:
                 line_no += 10
                 sol.so_line_no = line_no
-                ref_po_no = cid.customer_ref_to_sap
+                ref_po_no = rec.destination+'-'+cid.customer_ref_to_sap if rec.destination else cid.customer_ref_to_sap
 
                 po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
                 po_date = po_date.strftime('%Y%m%d')
@@ -810,7 +632,7 @@ class DmpiCrmSaleOrder(models.Model):
                     'dist_channel' : cid.partner_id.dist_channel,
                     'division' : cid.partner_id.division,  
                     'sold_to' : cid.partner_id.customer_code,
-                    'ship_to' : rec.ship_to_id.ship_to_code, 
+                    'ship_to' : rec.ship_to_id.customer_code,
                     'ref_po_no' : ref_po_no,  
                     'po_date' : po_date,
                     # 'rdd' : valid_to, #TODO: CHANGE TO CORRECT SO RDD
@@ -831,7 +653,7 @@ class DmpiCrmSaleOrder(models.Model):
                     line['sold_to'] = cid.sold_via_id.customer_code
                     line['ship_to'] = cid.sold_via_id.customer_code
                     line['sap_doc_type'] = 'ZKM3'
-                    line['original_ship_to'] = rec.ship_to_id.ship_to_code
+                    line['original_ship_to'] = rec.ship_to_id.customer_code
                     line['dist_channel'] = cid.sold_via_id.dist_channel
                     line['division'] = cid.sold_via_id.division
                     line['sales_org'] = cid.sold_via_id.sales_org
@@ -905,18 +727,8 @@ class DmpiCrmSaleOrder(models.Model):
 
     @api.onchange('ship_to_id')
     def on_change_ship_to(self):
-        # self.notify_id = self.ship_to_id.id
         self.sales_org = self.contract_id.partner_id.sales_org
         self.plant_id = self.contract_id.partner_id.default_plant
-
-
-        # self.env['']
-        # self.tag_ids = 
-        # sales_org = self.env['dmpi.crm.partner'].search([('customer_code','=',self.ship_to.customer_code)], limit=1)[0].sales_org
-        # if sales_org:
-        #     self.sales_org = sales_org
-        # print("Onchange Partner")
-
 
         tag_ids = self.contract_id.tag_ids.ids
         self.tag_ids = [[6,0,tag_ids]]
@@ -944,6 +756,7 @@ class DmpiCrmSaleOrder(models.Model):
         res = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)])[0].name
         return res
 
+    @api.one
     @api.depends('name','sap_so_no')
     def _get_name_disp(self):
         name = []
@@ -960,6 +773,63 @@ class DmpiCrmSaleOrder(models.Model):
         for rec in self:
             rec.write({'valid': not rec.valid})
             return True
+
+    def _check_if_fcl(self, qty_list, total_qty):
+        # get FCL configs
+        query = """SELECT distinct fc.cases, fc.pallet
+                    from dmpi_crm_fcl_config fc
+                    order by fc.cases desc """
+        self.env.cr.execute(query)
+        res = self.env.cr.dictfetchall()
+        fcl_config = {}
+
+        for r in res:
+            fcl_config[r['cases']] = eval(r['pallet'])
+
+        if total_qty not in fcl_config.keys():
+            s = 'Total orders is not Full Container Load'
+            return s
+        else:
+
+            # check each order lines
+            pallet_conf = []
+            cases_conf = []
+            for p in fcl_config[total_qty]:
+                pallet_conf.append({
+                        'max_pallets': p[0],
+                        'cases': p[1],
+                        'count': 0,
+                })
+
+                cases_conf.append(p[1])
+
+            for p in pallet_conf:
+                cases = p['cases']
+
+                # loop over qtys
+                for i in range(len(qty_list)):
+                    qty = qty_list[i]
+                    m = qty / cases
+                    r = qty % cases
+
+                    if (m).is_integer():
+                        p['count'] += m
+                    else:
+                        p['count'] += math.floor(qty / cases)
+
+                    qty_list[i] = r
+
+                    # check if beyond max pallets
+                    if p['count'] > p['max_pallets']:
+                        s = 'Invalid quantity combinations'
+                        return s
+                    # print (qty, cases, m, p['count'], qty_list,)
+
+            if any(qty_list):
+                s = 'Invalid quantity combinations'
+                return s
+
+            return False
 
     @api.multi
     @api.depends('order_ids')
@@ -982,18 +852,17 @@ class DmpiCrmSaleOrder(models.Model):
                 # lcl total qty
                 total_qty += l.qty
 
-
-            if not ((total_qty == 1500) or (total_qty == 1560)):
-                s = 'Total orders is not Full Container Load'
-                error_msg.append(s)
+            # CHECK IF FCL
+            # qty_list = [l.qty for l in so.order_ids]
+            # s = self._check_if_fcl(qty_list, total_qty)
+            # if s:
+            #     error_msg.append(s)
 
 
 
             msg = '\n'.join(error_msg)
             so.error = error
             so.error_msg = msg
-
-
 
 
     def _price_list_remarks(self):
@@ -1010,8 +879,8 @@ class DmpiCrmSaleOrder(models.Model):
     name = fields.Char("CRM SO No.", default="Draft", copy=False)
     plant = fields.Char("Plant", compute='_get_plant_name')
     plant_id = fields.Many2one('dmpi.crm.plant')
-    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref')
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID", ondelete="cascade")
+    customer_ref = fields.Char('Customer Reerence', related='contract_id.customer_ref', store=True)
     contract_line_no = fields.Integer("Contract Line No.")
     so_no = fields.Integer("SO Num")
     sap_so_no = fields.Char("SAP SO no.")
@@ -1025,9 +894,28 @@ class DmpiCrmSaleOrder(models.Model):
     price_list = fields.Selection(_price_list_remarks)
     destination = fields.Char('Destination')
 
+    @api.multi
+    @api.depends('partner_id')
+    def _get_allowed_ids(self):
+        for rec in self:
+            rec.allowed_ship_to = rec.partner_id.ship_to_ids
+            rec.allowed_products = rec.partner_id.product_ids
+
+
+    allowed_ship_to = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
+    allowed_products = fields.One2many('dmpi.crm.product', compute="_get_allowed_ids")
 
     contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
+
+
+    @api.multi
+    @api.onchange('tag_ids')
+    def onchange_tag_ids(self):
+        for rec in self:
+            for l in rec.order_ids:
+                l.onchange_product_id()
+
 
     def _get_default_pack_codes(self):
         pack_codes = self.env['dmpi.crm.product.code'].sudo().search([('active','=',True)])
@@ -1093,44 +981,10 @@ class DmpiCrmSaleOrder(models.Model):
             rec.total_amount = total_amount
             rec.total_qty = total_qty
 
-    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id')
-
-    @api.multi
-    @api.depends('ship_to_id')
-    def _get_partner_details(self):
-        for rec in self:
-            comm_code = rec.ship_to_id
-            if comm_code:
-                if not(comm_code.ship_to_code) or not(comm_code.ship_to_name):
-                    rec.ship_to_name = comm_code.ship_to_name
-                else:
-                    rec.ship_to_name = comm_code.ship_to_name + ' [' + comm_code.ship_to_code + ']'
-
-                if comm_code.notify_code:
-                    rec.notify_name = comm_code.notify_name + ' [' + comm_code.notify_code + ']'
-                else:
-                    rec.notify_name = comm_code.notify_name
-
-                if comm_code.mailing_code:
-                    rec.mailing_name_name = comm_code.mailing_name + ' [' + comm_code.mailing_code + ']'
-                else:
-                    rec.mailing_name_name = comm_code.mailing_name
-
-    @api.onchange('ship_to_id')
-    def onchange_ship_to_id(self):
-        for rec in self:
-            comm_code = rec.ship_to_id
-            if comm_code:
-                rec.destination = comm_code.destination
-                rec.ship_line = comm_code.ship_line
-
-    ship_to_id = fields.Many2one('dmpi.crm.ship.to', 'Commercial Code')
-    ship_to_name = fields.Char('Ship To', compute='_get_partner_details')
-    notify_name = fields.Char('Notify Party', compute='_get_partner_details')
-    mailing_name = fields.Char('Mailing Address', compute='_get_partner_details')
-    # ship_to_id = fields.Many2one("dmpi.crm.ship.to", "Ship to Party")
-    notify_id = fields.Many2one("dmpi.crm.ship.to","Notify Party")
-    # notify_partner_id = fields.Many2one('dmpi.crm.partner',"Notify Party")
+    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", related='contract_id.partner_id', store=True)
+    ship_to_id = fields.Many2one('dmpi.crm.partner', 'Ship To')
+    notify_id = fields.Many2one("dmpi.crm.partner","Notify Party")
+    mailing_id = fields.Many2one("dmpi.crm.partner","Mailing Address")
     sales_org = fields.Char("Sales Org")
     dest_country_id = fields.Many2one('dmpi.crm.country', 'Destination')
     order_date = fields.Date("Order Date")
@@ -1140,12 +994,12 @@ class DmpiCrmSaleOrder(models.Model):
     requested_delivery_date = fields.Date("Req. Date")
     notes = fields.Text("Notes/Remarks", compute='get_product_qty')
 
-    total_qty = fields.Float('Total', compute='get_product_qty', store=True)
-    total_amount = fields.Float('Total', compute='get_product_qty', store=True)
+    total_qty = fields.Float('Qty Total', compute='get_product_qty', store=True)
+    total_amount = fields.Float('Amount Total', compute='get_product_qty', store=True)
 
-    week_no = fields.Char("Week No")
+    week_no = fields.Integer("Week No", related='contract_id.week_no', store=True, group_operator="avg")
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
-    po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state')
+    po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state', store=True)
     found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
 
     @api.multi
@@ -1156,8 +1010,25 @@ class DmpiCrmSaleOrder(models.Model):
             for l in so.order_ids:
                 if l.found_p60:
                     count += 1
-
             so.found_p60 = count
+
+    @api.multi
+    def convert_to_dict(self):
+        self.ensure_one()
+        vals = {
+            'NO': self.contract_line_no or '',
+            'SHIP TO': self.ship_to_id.customer_code or '',
+            'NOTIFY PARTY': self.notify_id.customer_code or '',
+            'DESTINATION': self.destination or '',
+            'SHIPPING LINE': self.ship_line or '',
+            'SHELL COLOR': self.shell_color or '',
+            'DELIVERY DATE': datetime.strftime(parse(self.requested_delivery_date),'%m/%d/%Y') if self.requested_delivery_date else '',
+            'ESTIMATED DATE': datetime.strftime(parse(self.estimated_date),'%m/%d/%Y') if self.estimated_date else '',
+            'TOTAL': int(self.total_qty),
+        }
+        for l in self.order_ids:
+            vals[l.product_code] = int(l.qty)
+        return vals
 
 
 
@@ -1179,51 +1050,21 @@ class DmpiCrmSaleOrderLine(models.Model):
 
     def compute_price(self,date,customer_code,material,tag_ids=[]):
 
-        where_clause = ""
-        query = ""
-        if len(tag_ids) > 0:
-            query = """SELECT * FROM (
-                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                        from dmpi_crm_product_price_list_item  i
-                        left join price_item_tag_rel tr on tr.item_id = i.id
-                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                    ) AS Q1
-                    where material = '%s' and  ARRAY%s <@ tags
-                    limit 1 """ % (material, tag_ids)
+        product_id = self.env['dmpi.crm.product'].search([('sku','=',material)], limit=1)
+        partner_id = self.env['dmpi.crm.partner'].search([('customer_code','=',customer_code)], limit=1)
+        pricelist_obj = self.env['dmpi.crm.product.price.list']
 
-        else:
-            query = """SELECT * FROM (
-                    SELECT i.id,i.material, amount,currency,uom, i.valid_from,i.valid_to,array_agg(tr.tag_id) as tags
-                        from dmpi_crm_product_price_list_item  i
-                        left join price_item_tag_rel tr on tr.item_id = i.id
-                        where material = '%s' and ('%s'::DATE between i.valid_from and i.valid_to)
-                        group by i.id,i.material,i.valid_from,i.valid_to,amount,currency,uom
-                    ) AS Q1
-                    
-                    limit 1 """ % (material, date)
+        print (product_id.id, partner_id.id, date, tag_ids)
+        rule_id, price, uom = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, tag_ids)
+        self.price = price
+        self.uom = uom
+        self.order_id.get_product_qty()
+        self.order_id.contract_id.on_change_partner_id()
+        self.order_id.contract_id.on_change_ar_status()
+        return rule_id
 
-
-        print (query)
-        # print("--------PRICE-------\n%s" % query)
-        self.env.cr.execute(query)
-        result = self.env.cr.dictfetchall()
-        if result:
-            self.price = float(result[0]['amount'])
-        else:
-            self.price = 0
-        if result:
-            self.uom = result[0]['uom']
-        else:
-            self.uom = 'CAS'
-
-        if result:
-            return result[0]
-        else:
-            return False
-
-
-
-    @api.onchange('product_id','qty')
+    # @api.onchange('product_id','qty')
+    @api.onchange('product_id')
     def onchange_product_id(self):
         if self.product_id:
             result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
@@ -1232,32 +1073,13 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.product_code = self.product_id.code
             self.total = self.qty * self.price
             self.name = self.product_id.name
+            print (self.order_id.destination,self.order_id.tag_ids.ids)
 
-            # not qty or (qty-60) not divisible by 75
-            mod_75 = self.qty % 75
-            mod_75_less = (self.qty - 60) % 75
-            no_p60 = False # found pallet 60
-            no_mod = False # not divisble by above conditions
-            no_qty = False # qty == 60
-            self.found_p60 = no_p60
-
-            # set found_p60 to True
-            if mod_75_less == 0:
-                self.found_p60 = True
-                no_p60 = True if self.order_id.found_p60 >= 1 else False
-
-            no_mod = not ((mod_75 == 0) or (mod_75_less == 0))
-            no_qty = not bool(self.qty)
-            
-            # round qty if at least 1 error found
-            if any([no_p60, no_mod, no_qty]):
-                qty = round_qty(75,self.qty)
-                self.qty = qty
-                self.found_p60 = False
-
+    @api.multi
     def recompute_price(self):
         if self.product_id:
-            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku)
+            print (self.order_id.tag_ids.ids)
+            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku,self.order_id.tag_ids.ids)
 
 
 
@@ -1283,6 +1105,13 @@ class CustomerCrmSaleOrder(models.Model):
 
     order_ids = fields.One2many('customer.crm.sale.order.line','order_id','Order IDs', copy=True, ondelete='cascade')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'customer_order_tag_rel', 'order_id', 'tag_id', string='Price Tags', copy=True)
+
+    @api.multi
+    @api.onchange('tag_ids')
+    def onchange_tag_ids(self):
+        for rec in self:
+            for l in rec.order_ids:
+                l.onchange_product_id()
 
 
     @api.multi
@@ -1331,11 +1160,13 @@ class CustomerCrmSaleOrder(models.Model):
             """ %(''.join(headers),''.join(rows))
 
             # compute totals
-            print ()
+            # print ('compute totals',total_amount,total_qty)
             rec.total_p100 = total_p100
             rec.total_p200 = total_p200
             rec.total_amount = total_amount
             rec.total_qty = total_qty
+
+            # print (rec.total_amount,'total amount')
 
 
 class CustomerCrmSaleOrderLine(models.Model):
@@ -1344,50 +1175,113 @@ class CustomerCrmSaleOrderLine(models.Model):
 
     order_id = fields.Many2one('customer.crm.sale.order','Sale Order ID', ondelete='cascade')
 
-# class DmpiCrmOrderSummaryWizard(models.Model):
-#     _name = 'dmpi.crm.order.summary.wizard'
 
 class DmpiCrmDr(models.Model):
     _name = 'dmpi.crm.dr'
     _inherit = ['mail.thread']
     _order = 'id desc'
 
+    @api.model
+    def create(self, vals):
 
-    name = fields.Char("CRM DR No.", related='sap_dr_no')
-    sap_so_no = fields.Char("SAP So No.")
+        # check duplicates
+        sap_dr_no = vals.get('sap_dr_no',False)
+        if sap_dr_no:
+            is_duplicate, dr_count = self.check_duplicates(sap_dr_no, 'create')
+            vals['is_duplicate'] = is_duplicate
+
+        return super(DmpiCrmDr, self).create(vals)
+
+    @api.multi
+    def unlink(self):
+
+        # check duplicates
+        sap_drs = list(set( self.mapped('sap_dr_no') ))
+        res = super(DmpiCrmDr, self).unlink()
+        for sap_dr_no in sap_drs:
+            is_duplicate, dr_count = self.check_duplicates(sap_dr_no, 'unlink')
+
+        return res
+
+
+    @api.multi
+    def check_duplicates(self, sap_dr_no, typ):
+        # type = 'create' or 'unlink'
+        similar_dr = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)])
+        dr_count = len(similar_dr)
+
+        if dr_count > 0 and typ == 'create':
+            for rec in similar_dr:
+                rec.is_duplicate = True
+            return True, dr_count
+
+        if dr_count == 1 and typ == 'unlink':
+            similar_dr.is_duplicate = False
+            return True, dr_count
+
+        return False, dr_count
+
+
+    @api.multi
+    @api.depends('sap_so_no')
+    def _get_odoo_doc(self):
+        for rec in self:
+            
+            so_id = False
+            contract_id = False
+            sap_so_no = rec.sap_so_no
+
+            if sap_so_no:
+                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
+
+                if so:
+                    so_id = so
+                    contract_id = so.contract_id
+
+            rec.so_id = so_id
+            rec.contract_id = contract_id
+
+
+
+    # odoo docs
+    name = fields.Char("DR No.", related='sap_dr_no', store=True)
+    odoo_po_no = fields.Char("Odoo PO No.")
+    odoo_so_no  = fields.Char("Odoo SO No.")
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Oodoo PO", compute='_get_odoo_doc', store=True)
+    so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute='_get_odoo_doc', store=True)
+
+    # sap docs
+    sap_so_no = fields.Char("SAP SO No.")
     sap_dr_no = fields.Char("SAP DR No.")
-    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    sale_order_id = fields.Many2one('dmpi.crm.sale.order', "Sale Order ID")
+    sap_delivery_no  = fields.Char("SAP Delivery No.")
+    sto_no = fields.Char("STO No.")
+
+    # headers
+    ship_to  = fields.Char("Ship To")
+    shipment_no  = fields.Char("Shipment No.")
+    fwd_agent  = fields.Char("Forward Agent")
+    van_no  = fields.Char("Container No.")
+    vessel_name  = fields.Char("Vessel Name / Voyage")
+    truck_no  = fields.Char("Truck No.")
+    load_no  = fields.Char("Load no.")
+    booking_no  = fields.Char("Booking No.")
+    seal_no  = fields.Char("Seal No.")
+    delivery_creation_date  = fields.Char("Delivery Create Date")
+    gi_date  = fields.Char("GI Date")
+    port_origin  = fields.Char("Port of Origin")
+    port_destination  = fields.Char("Port of Destination")
+    port_discharge = fields.Char("Port of Discharge")
+
+    # others
     raw = fields.Text("Raw")
+    state = fields.Selection([('generated','SAP Generated'),('cancelled','Cancelled')], default="generated", string="Status", track_visibility='onchange')
+    is_duplicate = fields.Boolean('Duplicate', default=False)
 
     dr_lines = fields.One2many('dmpi.crm.dr.line', 'dr_id', 'DR Lines')
     alt_items = fields.One2many('dmpi.crm.alt.item', 'dr_id', 'Alt Items')
     insp_lots = fields.One2many('dmpi.crm.inspection.lot', 'dr_id', 'Insp Lots')
     clp_ids = fields.One2many('dmpi.crm.clp', 'dr_id', 'CLP')
     preship_ids = fields.One2many('dmpi.crm.preship.report', 'dr_id', 'Preship Report')
-    
-
-    odoo_po_no = fields.Char("Odoo PO No.")
-    odoo_so_no  = fields.Char("Odoo SO No.")
-    sap_so_no  = fields.Char("SAP SO No.")  
-    sap_delivery_no  = fields.Char("SAP Delivery No.")
-    ship_to  = fields.Char("Ship-to")
-    delivery_creation_date  = fields.Char("Delivery Creation Date") 
-    gi_date  = fields.Char("GI Date.")
-    shipment_no  = fields.Char("Shipment No.")
-    fwd_agent  = fields.Char("Fwd Agent")  
-    van_no  = fields.Char("VAN no.") 
-    vessel_name  = fields.Char("Vessel Name / Voyage")
-    truck_no  = fields.Char("Truck No.")   
-    load_no  = fields.Char("Load no.")
-    booking_no  = fields.Char("Booking no.") 
-    seal_no  = fields.Char("Seal no.")
-    port_origin  = fields.Char("Port of Origin")
-    port_destination  = fields.Char("Port of destination")   
-    port_discharge = fields.Char("Port of discharge")
-    sto_no = fields.Char("STO No")
-    state = fields.Selection([('generated','SAP Generated'),('cancelled','Cancelled')], default="generated", string="Status", track_visibility='onchange')
-    
 
     @api.multi
     def action_cancel(self):
@@ -1399,18 +1293,6 @@ class DmpiCrmDr(models.Model):
     def action_generated(self):
         for rec in self:
             rec.write({'state':'generated'})
-
-    # @api.multi
-    # def action_view_invoice(self):
-    #     action = self.env.ref('account.action_invoice_out_refund').read()[0]
-
-    #     invoices = self.mapped('invoice_ids')
-    #     if len(invoices) > 1:
-    #         action['domain'] = [('id', 'in', invoices.ids)]
-    #     elif invoices:
-    #         action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
-    #         action['res_id'] = invoices.id
-    #     return action
 
 class DmpiCrmDrLine(models.Model):
     _name = 'dmpi.crm.dr.line'
@@ -1434,8 +1316,8 @@ class DmpiCrmDrLine(models.Model):
     plant = fields.Char('Plant')
     wh_no = fields.Char('Warehouse No.')
     storage_loc = fields.Char('Storage Location')
-    to_num = fields.Char('TO Number')
-    tr_order_item = fields.Char('Tr Order item')
+    to_num = fields.Char('TO No.')
+    tr_order_item = fields.Char('TR No.')
     material = fields.Char('Material')
     plant2 = fields.Char('Plant2')
     batch = fields.Char('Batch')
@@ -1497,34 +1379,100 @@ class DmpiCrmPreshipInspectionLot(models.Model):
 
 class DmpiCrmShp(models.Model):
     _name = 'dmpi.crm.shp'
-    _rec_name = 'shp_no'
+    _inherit = ['mail.thread']
+    _order = 'id desc'
+    # _rec_name = 'shp_no'
 
-    name = fields.Char("CRM DR No.")
-    sap_so_no = fields.Char("SAP So No.")
+    @api.model
+    def create(self, vals):
+
+        # check duplicates
+        shp_no = vals.get('shp_no',False)
+        if shp_no:
+            is_duplicate, shp_count = self.check_duplicates(shp_no, 'create')
+            vals['is_duplicate'] = is_duplicate
+
+        return super(DmpiCrmShp, self).create(vals)
+
+    @api.multi
+    def unlink(self):
+
+        # check duplicates
+        shp_nos = list(set( self.mapped('shp_no') ))
+        res = super(DmpiCrmShp, self).unlink()
+        for shp_no in shp_nos:
+            is_duplicate, shp_count = self.check_duplicates(shp_no, 'unlink')
+
+        return res
+
+
+    @api.multi
+    def check_duplicates(self, shp_no, typ):
+        # type = 'create' or 'unlink'
+        similar_shp = self.env['dmpi.crm.shp'].search([('shp_no','=',shp_no)])
+        shp_count = len(similar_shp)
+
+        if shp_count > 0 and typ == 'create':
+            for rec in similar_shp:
+                rec.is_duplicate = True
+            return True, shp_count
+
+        if shp_count == 1 and typ == 'unlink':
+            similar_shp.is_duplicate = False
+            return True, shp_count
+
+        return False, shp_count
+
+
+    @api.multi
+    @api.depends('sap_so_no')
+    def _get_odoo_doc(self):
+        for rec in self:
+            
+            so_id = False
+            contract_id = False
+            sap_so_no = rec.sap_so_no
+
+            if sap_so_no:
+                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
+
+                if so:
+                    so_id = so
+                    contract_id = so.contract_id
+
+            rec.so_id = so_id
+            rec.contract_id = contract_id
+
+    # odoo docs
+    name = fields.Char("Shipment No.", related="shp_no", store=True)
+    odoo_po_no = fields.Char("Odoo PO No.")
+    odoo_so_no = fields.Char("Odoo SO No.")
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Odoo PO", compute="_get_odoo_doc", store=True)
+    so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
+
+    # sap docs
+    shp_no  = fields.Char("Shipment No.")
+    sap_so_no = fields.Char("SAP SO No.")
     sap_dr_no = fields.Char("SAP DR No.")
-    sap_shp_no = fields.Char("SAP SHP No.")
-    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+
+    # headers
+    ship_to = fields.Char("Ship To")
+    dr_create_date = fields.Char("Delivery Create Date")
+    gi_date = fields.Char("GI Date")
+    fwd_agent = fields.Char("Forward Agent")
+    van_no  = fields.Char("Container No.")
+    vessel_no = fields.Char("Vessel Name / Voyage")
+    truck_no = fields.Char("Truck No.")
+    load_no  = fields.Char("Load No.")
+    booking_no  = fields.Char("Boking No.")
+    seal_no  = fields.Char("Seal No.")
+    origin = fields.Char("Port of Origin")
+    destination = fields.Char("Port of Destination")
+    discharge = fields.Char("Port of Discharge")
+
+    # others
     raw = fields.Text("Raw")
-
-
-    odoo_po_no = fields.Char("Odoo PO No.")  
-    odoo_so_no = fields.Char("Odoo SO No.")   
-    sap_so_no = fields.Char("SAP SO No.")    
-    sap_dr_no = fields.Char("SAP Delivery No.")    
-    ship_to = fields.Char("Ship-to (header)")  
-    dr_create_date = fields.Char("Delivery creation date")   
-    gi_date = fields.Char("GI date") 
-    shp_no  = fields.Char("Shipment No.")  
-    fwd_agent = fields.Char("Fwd Agent")    
-    van_no  = fields.Char("VAN no.")  
-    vessel_no = fields.Char("Vessel Name / Voyage")    
-    truck_no = fields.Char("Truck No.")     
-    load_no  = fields.Char("Load no.")
-    booking_no  = fields.Char("Booking no.")  
-    seal_no  = fields.Char("Seal no.")
-    origin = fields.Char("Port of Origin")   
-    destination = fields.Char("Port of destination")  
-    discharge = fields.Char("Port of discharge") 
+    is_duplicate = fields.Boolean('Duplicate', default=False)
 
     shp_lines = fields.One2many('dmpi.crm.shp.line', 'shp_id', 'SHP Lines')
     
@@ -1533,7 +1481,7 @@ class DmpiCrmShpLine(models.Model):
     _name = 'dmpi.crm.shp.line'
 
     sap_so_no  = fields.Char("SAP SO No.")   
-    so_line_no  = fields.Char("SO Line item No.")  
+    so_line_no  = fields.Char("SO Line item No.")
     material  = fields.Char("Material")    
     qty  = fields.Float("SO Order Qty")
     uom  = fields.Char("SO UoM")
@@ -1546,63 +1494,137 @@ class DmpiCrmShpLine(models.Model):
 
 class DmpiCrmInvoice(models.Model):
     _name = 'dmpi.crm.invoice'
+    _inherit = ['mail.thread']
+    _order = 'id desc'
 
-    name = fields.Char("Source")
-    inv_no = fields.Integer("Invoice Num")
-    dmpi_sap_inv_no = fields.Char("FF Contract No.")
-    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    raw = fields.Text("Raw")
+    @api.multi
+    @api.depends('sap_so_no')
+    def _get_odoo_doc(self):
+        for rec in self:
+            
+            so_id = False
+            contract_id = False
+            sap_so_no = rec.sap_so_no
 
+            if sap_so_no:
+                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
+
+                if so:
+                    so_id = so
+                    contract_id = so.contract_id
+
+            rec.so_id = so_id
+            rec.contract_id = contract_id
+
+    # odoo docs
+    name = fields.Char("Name")
     odoo_po_no  = fields.Char("Odoo PO No.")
     odoo_so_no  = fields.Char("Odoo SO No.")
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Odoo PO", compute="_get_odoo_doc", store=True)
+    so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
+
+    # sap docs
+    inv_no = fields.Integer("Invoice No.")
     sap_so_no = fields.Char("SAP SO No.")  
-    sap_dr_no = fields.Char("SAP Delivery No.")  
+    sap_dr_no = fields.Char("SAP DR No.")
     shp_no  = fields.Char("Shipment No.")
     dmpi_inv_no = fields.Char("DMPI Invoice No.")
-    dms_inv_no = fields.Char("DMS Invoice No.") 
-    sbfti_inv_no = fields.Char("SBFTI Invoice No.")   
+    dms_inv_no = fields.Char("DMS Invoice No.")
+    sbfti_inv_no = fields.Char("SBFTI Invoice No.")
+
+    # headers
     payer = fields.Char("Payer")  
     inv_create_date = fields.Char("Invoice creation date")
     header_net = fields.Char("Header net value") 
-    source = fields.Selection([('500','500'),('530','530'),('570','570')], "Source")
-
-    invoice_filename = fields.Char("Invoice Filename ")
     invoice_file = fields.Binary("Invoice Attachment")
+    invoice_filename = fields.Char("Invoice Filename ")
+    source = fields.Selection([('500','DMPI'),('530','DMS'),('570','SBFTI')], "Source")
 
+    # others
+    raw = fields.Text("Raw")
+    is_duplicate = fields.Boolean('Duplicate', default=False)
 
     inv_lines = fields.One2many('dmpi.crm.invoice.line', 'inv_id', 'Invoice Lines')
 
 class DmpiCrmInvoiceLine(models.Model):
     _name = 'dmpi.crm.invoice.line'
 
-    so_line_no = fields.Char("SO Line item No.") 
-    inv_line_no = fields.Char("Invoice Line item No.")
-    material = fields.Char("Material")   
-    qty = fields.Float("Invoice Qty")
-    uom = fields.Char("Invoice UOM")
-    line_net_value = fields.Float("Line item net value")
+    so_line_no = fields.Char("SO Line Item No.")
+    inv_line_no = fields.Char("Invoice Line Item No.")
+    material = fields.Char("Material")
+    qty = fields.Float("Qty")
+    uom = fields.Char("UoM")
+    line_net_value = fields.Float("Net Value")
 
     inv_id = fields.Many2one('dmpi.crm.invoice', 'SHP ID', ondelete='cascade')
 
 
-class DmpiCrmInvoiceDms(models.Model):
-    _name = 'dmpi.crm.invoice.dms'
-
-    name = fields.Char("DMS Invoice No.")
-    inv_no = fields.Integer("Invoice Num")
-    dmpi_sap_inv_no = fields.Char("FF Invoice No.")
-    dms_sap_inv_no = fields.Char("DMS Invoice No.")
-    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
-    raw = fields.Text("Raw")
 
 
+class DmpiCrmDownloadOrderWizard(models.TransientModel):
+    _name = 'dmpi.crm.download.order.wizard'
+
+    csv_file = fields.Binary('CSV File')
+
+    @api.multi
+    def download_orders(self):
+        pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
+        hdr = CSV_UPLOAD_HEADERS.copy()
+        end_hdr = hdr.pop()
+        hdr.extend(pack_codes)
+        hdr.append(end_hdr)
+
+        output = io.StringIO()
+        writer = csv.DictWriter(output, hdr, delimiter=',')
+        writer.writeheader()
+
+        contract_id = self.env.context.get('default_contract_id',False)
+        contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
+        order_typ = self.env.context.get('type',False)
+        fname = '%s %s' % (contract.partner_id.customer_code, contract.name)
+
+        
+        if order_typ == 'customer':
+            orders = contract.customer_order_ids
+            fname += ' PO'
+        elif order_typ == 'commercial':
+            orders = contract.sale_order_ids
+            fname += ' SO'
+
+        data = []
+        for o in orders:
+            vals = o.convert_to_dict()
+            writer.writerow(vals)
+
+        xy = output.getvalue().encode('utf-8')
+        file = base64.encodestring(xy)
+        self.write({'csv_file':file})
+
+        button = {
+            'type' : 'ir.actions.act_url',
+            'url': '/web/content/dmpi.crm.download.order.wizard/%s/csv_file/%s.csv?download=true'%(self.id,fname),
+            'target': 'new'
+            }
+        return button
 
 
+class DmpiCrmMultiTag(models.TransientModel):
+    _name = 'dmpi.crm.multi.tag'
 
+    tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'wizard_tag_rel', 'wizard_id', 'tag_id', string='Price Tags')
 
+    def domain_on_orders(self):
+        contract_id = self.env.context.get('default_contract_id',False)
+        domain = [('contract_id','in',[contract_id])]
+        return domain
 
+    customer_order_ids = fields.Many2many('customer.crm.sale.order', 'wizard_customer_order_rel', 'wizard_id', 'customer_order_id', string='Customer Orders', domain=domain_on_orders)
+    sale_order_ids = fields.Many2many('dmpi.crm.sale.order', 'wizard_sale_order_rel', 'wizard_id', 'sale_order_id', string='Sale Orders', domain=domain_on_orders)
 
-
-
-
+    @api.multi
+    def apply_settings(self):
+        for co in self.customer_order_ids:
+            co.tag_ids = self.tag_ids
+        for so in self.sale_order_ids:
+            so.tag_ids = self.tag_ids
 

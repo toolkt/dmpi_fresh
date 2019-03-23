@@ -153,8 +153,8 @@ class DmpiCrmPreshipReport(models.Model):
 	allergen = fields.Char('Allergen Declaration', default="SOY")
 
 	issuer = fields.Many2one('res.users','Issued By', default=lambda self: self.env.user and self.env.user.id or False)
-	supervisor = fields.Many2one('res.users','QA Supervisor')
-	inspector = fields.Many2one('res.users','QA Inspector')
+	supervisor = fields.Many2one('dmpi.crm.res.partner','QA Supervisor')
+	inspector = fields.Many2one('dmpi.crm.res.partner','QA Inspector')
 
 	issuer_name = fields.Char('Issuer Name', related="issuer.name", store=True)
 	supervisor_name = fields.Char('QA Supervisor Name', related="supervisor.name", store=True)
@@ -243,23 +243,20 @@ class DmpiCrmClp(models.Model):
         res = super(DmpiCrmClp, self).create(vals)
         return res
 
+    @api.multi
     def print_clp(self):
-        user = self.env.user
+        filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
-        report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report'),('report_type','=','pentaho')], limit=1)
-        report_obj.name = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
-
-        print('dr_id %s, ids %s' % (self.ids, self.dr_id.id))
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
-            # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
             'datas': {
                 'output_type': 'pdf',
+                'filename': filename,
                 'variables': {
-                    'user': user.name,
+                    # 'user': user.name,
                     'ids': self.ids,
                     'dr_id': self.dr_id.id
                 },
@@ -269,24 +266,20 @@ class DmpiCrmClp(models.Model):
         return values
 
 
-
+    @api.multi
     def print_clp_customer(self):
-        user = self.env.user
+        filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 
-        report_obj = self.env['ir.actions.report'].search([('report_name','=','dmpi_crm.clp_report_customer'),('report_type','=','pentaho')], limit=1)
-        report_obj.name = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
-
-        print('dr_id %s, ids %s' % (self.dr_id.id, self.ids))
         values = {
             'type': 'ir.actions.report',
             'report_name': 'dmpi_crm.clp_report_customer',
             'report_type': 'pentaho',
             'name': 'Container Load Plan',
-            # 'print_report_name': 'CLP_%s_%s' % (self.container_no,self.date_start),
             'datas': {
                 'output_type': 'pdf',
+                'filename': filename,
                 'variables': {
-                    'user': user.name,
+                    # 'user': user.name,
                     'ids': self.ids,
                     'dr_id': self.dr_id.id
                 },
@@ -294,6 +287,11 @@ class DmpiCrmClp(models.Model):
         }
 
         return values
+
+    @api.depends('preship_ids')
+    def _compute_preships(self):
+        self.preship_count = len(self.preship_ids)
+
 
     # headers
     control_no = fields.Char('Control No')
@@ -318,16 +316,18 @@ class DmpiCrmClp(models.Model):
 
     # signatories
     encoder_id = fields.Many2one('res.users','Encoder')
-    outbound_checker_id = fields.Many2one('res.users','Outbound Checker')
-    supervisor_id = fields.Many2one('res.users','QA Supervisor')
     prod_load_counter_id = fields.Many2one('res.users','Production Loading Counter')
-    inspector_id = fields.Many2one('res.users','QA Inspector')
+
+    outbound_checker_id = fields.Many2one('dmpi.crm.res.partner','Outbound Checker')
+    inspector_id = fields.Many2one('dmpi.crm.res.partner','QA Inspector')
+    supervisor_id = fields.Many2one('dmpi.crm.res.partner','QA Supervisor')
 
     encoder_name = fields.Char('Encoder', related="encoder_id.partner_id.name", store=True)
-    outbound_checker_name = fields.Char('Outbound Checker', related="outbound_checker_id.partner_id.name", store=True)
-    supervisor_name = fields.Char('Supervisor', related="supervisor_id.partner_id.name", store=True)
     prod_load_counter_name = fields.Char('Production Loading Counter', related="prod_load_counter_id.partner_id.name", store=True)
-    inspector_name = fields.Char('QA Inspector', related="inspector_id.partner_id.name", store=True)
+
+    outbound_checker_name = fields.Char('Outbound Checker', related="outbound_checker_id.name", store=True)
+    inspector_name = fields.Char('QA Inspector', related="inspector_id.name", store=True)
+    supervisor_name = fields.Char('Supervisor', related="supervisor_id.name", store=True)
 
     # loading date
     date_start = fields.Char('Start')
@@ -367,13 +367,28 @@ class DmpiCrmClp(models.Model):
     pc_line_ids = fields.One2many('dmpi.crm.clp.pc.line','clp_id','Pulp Temp Lines')
     preship_ids = fields.One2many('dmpi.crm.preship.report','clp_id','Pre-Shipment Certificates')
 
+    preship_count = fields.Integer('Preship Count',compute="_compute_preships")
+
     status = fields.Selection([
     	('sap_generated','SAP Generated'),
+        ('prod_confirmed','Production Confirmed'),
     	('qa_confirmed','QA Confirmed'),
     	('preship_generated','Pre-shipment Generted'),
     	('preship_confirmed','Pre-shipment Confirmed')] ,default='sap_generated')
 
     status_disp = fields.Selection(string='Status Disp', related="status")
+
+
+    @api.multi
+    def action_prod_confirm(self):
+        for rec in self:
+            rec.status = 'prod_confirmed'
+
+    @api.multi
+    def action_revert_back(self):
+        for rec in self:
+            rec.status = 'sap_generated'
+
 
     @api.multi
     def action_confirm_clp(self):
@@ -396,6 +411,18 @@ class DmpiCrmClp(models.Model):
     	})
 
     	return action
+
+    def action_view_preship(self):
+
+        preship_id = self.preship_ids.ids[0]
+        action = self.env.ref('dmpi_crm.dmpi_crm_preship_report_action').read()[0]
+
+        action.update({
+            'views': [(self.env.ref('dmpi_crm.dmpi_crm_preship_report_form').id, 'form')],
+            'res_id' : preship_id,
+        })
+
+        return action
 
     def parse_pack_code(self):
         print('parse pack code')
