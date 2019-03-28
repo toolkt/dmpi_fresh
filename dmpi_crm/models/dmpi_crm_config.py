@@ -598,7 +598,7 @@ class DmpiCrmConfig(models.Model):
             env.passwords[host_string] = h.ssh_pass
             env.keepalive = 15
 
-            files = execute(list_dir,outbound_path,'ODOO_DR')            
+            files = execute(list_dir,outbound_path,'ODOO_DR')
             for f in files[host_string]:
                 try:
                     result = execute(read_file,f)[host_string]
@@ -657,7 +657,8 @@ class DmpiCrmConfig(models.Model):
                                 except:
                                     pass
 
-                            if row[0] == 'Item' and (row[1],row[9]) not in dr_tr_item:
+                            # if row[0] == 'Item' and (row[1],row[9]) not in dr_tr_item:
+                            if row[0] == 'Item':
                                 line = {
                                     'dr_line_item_no' : row[1],
                                     'sku' : row[2],
