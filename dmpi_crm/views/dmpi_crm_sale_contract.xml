@@ -391,6 +391,36 @@
     </record>
 
 
+    <!-- SALE ORDER MULTI TAG VIEW -->
+    <record id="view_dmpi_crm_sale_order_multi_tag_tree" model="ir.ui.view">
+        <field name="name">Sale Order</field>
+        <field name="model">dmpi.crm.sale.order</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contract_line_no"/>
+                <field name="ship_to_id"/>
+                <field name="notify_id"/>
+                <field name="ship_line"/>
+                <field name="destination"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_customer_crm_sale_order_multi_tag_tree" model="ir.ui.view">
+        <field name="name">Customer Order</field>
+        <field name="model">customer.crm.sale.order</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contract_line_no"/>
+                <field name="ship_to_id"/>
+                <field name="notify_id"/>
+                <field name="ship_line"/>
+                <field name="destination"/>
+            </tree>
+        </field>
+    </record>
+
 
     <!-- SELECT MULTIPLE ORDERS -->
     <record id="view_dmpi_crm_multi_tag_form" model="ir.ui.view">
@@ -405,9 +435,7 @@
 
                 <notebook>
                     <page string="Customer Orders">
-                        <field name="customer_order_ids">
-                            <form>
-                            </form>
+                        <field name="customer_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_customer_crm_sale_order_multi_tag_tree'}">
                             <tree>
                                 <field name="contract_line_no"/>
                                 <field name="ship_to_id"/>
@@ -419,9 +447,7 @@
                     </page>
 
                     <page string="Sale Orders">
-                        <field name="sale_order_ids">
-                            <form>
-                            </form>
+                        <field name="sale_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_dmpi_crm_sale_order_multi_tag_tree'}">
                             <tree>
                                 <field name="contract_line_no"/>
                                 <field name="ship_to_id"/>
