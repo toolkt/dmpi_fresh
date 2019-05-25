@@ -406,14 +406,14 @@ class DmpiCrmProductPriceList(models.Model):
 						}
 
 						if r[1]:
-							partner = self.env['dmpi.crm.partner'].search([('customer_code','=',r[1])], limit=1)
+							partner = self.env['dmpi.crm.partner'].search([('customer_code','=',r[1]),('active','=',True)], limit=1)
 							if partner:
 								item['partner_id'] = partner[0].id
 							else:
 								errors.append('Partner %s does not exist on row %s.' % (r[1],row_count) )
 
 						if r[2]:
-							product = self.env['dmpi.crm.product'].search([('sku','=',r[2])], limit=1)
+							product = self.env['dmpi.crm.product'].search([('sku','=',r[2]),('active','=',True)], limit=1)
 							if product:
 								item['product_id'] = product[0].id
 							else:
