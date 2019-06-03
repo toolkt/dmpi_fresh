@@ -18,7 +18,41 @@ from tempfile import TemporaryFile
 import tempfile
 import re
 from dateutil.parser import parse
+from io import BytesIO
 
+# pip3 install Fabric3
+import logging
+from fabric.api import *
+import paramiko
+import socket
+import os
+import glob
+
+
+_logger = logging.getLogger(__name__)
+
+#@parallel
+def file_send(localpath,remotepath):
+	with settings(warn_only=True):
+		put(localpath,remotepath,use_sudo=True)
+
+
+#@parallel
+def change_permission(path):
+	with cd(path):
+		cmd = 'chmod 777 -R *'
+		sudo(cmd)
+
+#@parallel
+def file_get(remotepath, localpath):
+	with settings(warn_only=True):
+		get(remotepath,localpath)
+
+#@parallel
+def transfer_files(from_path, to_path):
+	with settings(warn_only=True):
+		mv = "mv %s %s" % (from_path,to_path)
+		sudo(mv)
 
 CROWN = [('C','w/Crown'),('CL','Crownless')]
 
@@ -512,6 +546,88 @@ class DmpiCrmProductPriceList(models.Model):
 		print (mode)
 		print (query)
 		return rule_id, price, uom
+
+
+	def action_send_pricelist_to_sap(self):
+		print('send to sap pricelist')
+		for rec in self:
+
+			filename = 'DMS_A907_PRICEDOWNLOAD_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+			path = '/tmp/%s' % filename
+
+			query = """
+				SELECT *
+				from (
+						select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency,
+						to_char(ppi.valid_from,'MMDDYYYY') valid_from,
+						to_char(ppi.valid_to,'MMDDYYYY') valid_to,
+							ppi.remarks,
+							row_number() over (partition by ppi.customer_code, ppi.material, ppi.valid_from, ppi.valid_to order by ppi.remarks desc) occurrence
+						from dmpi_crm_product_price_list_item ppi
+						left join dmpi_crm_product_price_list pp on pp.id = ppi.version_id
+						left join dmpi_crm_partner rp on rp.id = ppi.partner_id
+						where pp.id in (%s)
+						order by ppi.customer_code, ppi.material, ppi.remarks desc
+				) A
+				where A.occurrence = 1
+			""" % rec.id
+
+			self._cr.execute(query)
+			res = self._cr.fetchall()
+
+			lines = []
+			for ppi in res:
+				line = {
+					'pricelist' : 'ZPR8',
+					'dist_channel' : ppi[0],
+					'sold_to' : ppi[1],
+					'material' : ppi[2],
+					'amount' : float(ppi[3]),
+					'currency' : ppi[4],
+					'valid_from' : ppi[5],
+					'valid_to' : ppi[6],
+				}
+
+				lines.append(line)
+
+			headers = [
+					'KSCHL',
+					'VTWEG',
+					'KUNNR',
+					'MATNR',
+					'KBETR',
+					'Currency',
+					'DATAB',
+					'DATBI',
+				]
+
+			with open(path, 'w') as f:
+				writer = csv.writer(f, delimiter='\t')
+				writer.writerow(headers)
+				for l in lines:
+					writer.writerow([
+							l['pricelist'],
+							l['dist_channel'],
+							l['sold_to'],
+							l['material'],
+							l['amount'],
+							l['currency'],
+							l['valid_from'],
+							l['valid_to'],
+						])
+
+
+			# #TRANSFER TO REMOTE SERVER
+			h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+			host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+			env.hosts.append(host_string)
+			env.passwords[host_string] = h.ssh_pass
+
+			localpath = path
+			path = '%s/%s' % (h.outbound_prc_success,filename)
+			remotepath = path
+
+			execute(file_send,localpath,remotepath)
 
 
 class DmpiCrmProductPriceListItem(models.Model):

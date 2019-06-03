@@ -401,6 +401,7 @@
                                 <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;active&quot;}"/>
                             </button>
                             <button name="download_pricelist_template" type="object" class="oe_stat_button" icon="fa-download" string="Download Template"/>
+                            <button name="action_send_pricelist_to_sap" type="object" class="oe_stat_button" icon="fa-location-arrow" string="Send to SAP"/>
                         </div>
                         <h1><field name="name"/></h1>
                         <group>
