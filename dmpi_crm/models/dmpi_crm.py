@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+import string
 
 import csv
 import sys
@@ -30,6 +31,8 @@ import glob
 
 
 _logger = logging.getLogger(__name__)
+removeWhiteSpace = {ord(c): None for c in string.whitespace}
+
 
 #@parallel
 def file_send(localpath,remotepath):
@@ -552,7 +555,7 @@ class DmpiCrmProductPriceList(models.Model):
 		print('send to sap pricelist')
 		for rec in self:
 
-			filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+			filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name.translate(removeWhiteSpace),datetime.now().strftime("%Y%m%d_%H%M%S"))
 			path = '/tmp/%s' % filename
 
 			query = """
