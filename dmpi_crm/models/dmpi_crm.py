@@ -552,7 +552,7 @@ class DmpiCrmProductPriceList(models.Model):
 		print('send to sap pricelist')
 		for rec in self:
 
-			filename = 'DMS_A907_PRICEDOWNLOAD_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
+			filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name,datetime.now().strftime("%Y%m%d_%H%M%S"))
 			path = '/tmp/%s' % filename
 
 			query = """
