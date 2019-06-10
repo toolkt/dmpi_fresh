@@ -561,7 +561,7 @@ class DmpiCrmProductPriceList(models.Model):
 			query = """
 				SELECT *
 				from (
-						select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency,
+						select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency, ppi.uom,
 						to_char(ppi.valid_from,'MMDDYYYY') valid_from,
 						to_char(ppi.valid_to,'MMDDYYYY') valid_to,
 							ppi.remarks,
@@ -587,37 +587,20 @@ class DmpiCrmProductPriceList(models.Model):
 					'material' : ppi[2],
 					'amount' : float(ppi[3]),
 					'currency' : ppi[4],
-					'valid_from' : ppi[5],
-					'valid_to' : ppi[6],
+					'uom' : ppi[5],
+					'valid_from' : ppi[6],
+					'valid_to' : ppi[7],
 				}
 
 				lines.append(line)
 
-			headers = [
-					'KSCHL',
-					'VTWEG',
-					'KUNNR',
-					'MATNR',
-					'KBETR',
-					'Currency',
-					'DATAB',
-					'DATBI',
-				]
+			headers = ['KSCHL','VTWEG','KUNNR','MATNR','KBETR','Currency','Quantity','UoM','DATAB','DATBI']
 
 			with open(path, 'w') as f:
 				writer = csv.writer(f, delimiter='\t')
 				writer.writerow(headers)
 				for l in lines:
-					writer.writerow([
-							l['pricelist'],
-							l['dist_channel'],
-							l['sold_to'],
-							l['material'],
-							l['amount'],
-							l['currency'],
-							l['valid_from'],
-							l['valid_to'],
-						])
+					writer.writerow([l['pricelist'],l['dist_channel'],l['sold_to'],l['material'],l['amount'],l['currency'],1,l['uom'],l['valid_from'],l['valid_to']])
 
 
 			# #TRANSFER TO REMOTE SERVER
