@@ -556,7 +556,7 @@ class DmpiCrmProductPriceList(models.Model):
 		for rec in self:
 
 			# filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name.translate(removeWhiteSpace),datetime.now().strftime("%Y%m%d_%H%M%S"))
-			filename = 'PriceUpZPR8_%s_%s.csv' % (rec.id, datetime.now().strftime("%Y%m%d_%H%M%S"))
+			filename = 'PRU%s_%s.csv' % (rec.id, datetime.now().strftime("%Y%m%d_%H%M%S"))
 			path = '/tmp/%s' % filename
 
 			query = """
