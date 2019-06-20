@@ -240,7 +240,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
 					# get price
 					pricelist_obj = self.env['dmpi.crm.product.price.list']
-					rule_id, price, uom = pricelist_obj.get_product_price(product_id, partner_id, rec.contract_id.po_date, rec.contract_id.tag_ids.ids)
+					rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(product_id, partner_id, rec.contract_id.po_date, False, rec.contract_id.tag_ids.ids)
 
 					return { 
 								'name':name,
@@ -250,6 +250,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 								'uom': 'CAS',
 								'qty': qty,
 								'price': price,
+								'pricing_date': pricing_date,
 							}
 
 				partner_id = rec.contract_id.partner_id.id

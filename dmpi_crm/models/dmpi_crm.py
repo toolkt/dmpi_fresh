@@ -494,28 +494,28 @@ class DmpiCrmProductPriceList(models.Model):
 		return action
 
 	@api.multi
-	def get_product_price(self, product_id, partner_id, date, tag_ids=[]):
+	def get_product_price(self, product_id, partner_id, date, price, tag_ids=[]):
 		"""
 			use date by default to find price.
 			if tag_ids exist and has a result use that pirce
 			if no result, back to default
 		"""
-		print ('get product price Product:%s Partner:%s Date:%s Tags%s' % (product_id, partner_id, date, tag_ids))
+		print ('get product price Product:%s Partner:%s Date:%s Tags:%s Price:%s' % (product_id, partner_id, date, tag_ids, price))
 		query = ""
 		query_tmp = """
 			SELECT * FROM (
 				SELECT
 					i.id,i.product_id,i.partner_id,i.material,i.amount,i.currency,i.uom,i.valid_from,i.valid_to
-					,array_agg(tr.tag_id) as tags
-					,p.active
+					,array_agg(tr.tag_id) as tags, p.active
+					,i.sap_from as pricing_date ,p.name as pricelist_name
 				FROM dmpi_crm_product_price_list_item i
 				LEFT JOIN dmpi_crm_product_price_list p on p.id = i.version_id
 				LEFT JOIN price_item_tag_rel tr on tr.item_id = i.id
-				GROUP BY i.id,i.product_id,i.partner_id,i.material,i.valid_from,i.valid_to,i.amount,i.currency,i.uom,p.active
+				WHERE i.product_id = %s and i.partner_id = %s
+				GROUP BY i.id,i.product_id,i.partner_id,i.material,i.valid_from,i.valid_to,i.amount,i.currency,i.uom,p.active,i.sap_from,p.name
 			) A
-			WHERE A.product_id = %s and A.partner_id = %s
+			WHERE A.active is true
 				and ('%s'::DATE between A.valid_from and A.valid_to)
-				and A.active is true
 				%s
 				ORDER by tags desc
 			LIMIT 1
@@ -523,34 +523,38 @@ class DmpiCrmProductPriceList(models.Model):
 
 		mode = ''
 		rule_id = False
-		price = 0
+		pricing_date = ''
 		uom = 'CAS'
 		valid = False
+		where_clause = ""
 
 		if not all([product_id, partner_id, date]):
 			return rule_id, price, uom
 
 		if tag_ids:
 			mode = 'has tag ids'
-			where_clause = """and ARRAY%s && tags""" % tag_ids
-			query = query_tmp % (product_id, partner_id, date, where_clause)
-			self._cr.execute(query)
-			res = self._cr.dictfetchall()
+			where_clause = """%sand ARRAY%s && tags""" % (where_clause,tag_ids)
+			
+		if price:
+			where_clause = """and amount = %s""" % price
+		else:
+			price = 0.0
 
-		if not tag_ids or not res:
-			mode = 'no tag ids or no result'
-			where_clause = ""
-			query = query_tmp % (product_id, partner_id, date, where_clause)
-			self._cr.execute(query)
-			res = self._cr.dictfetchall()
+		query = query_tmp % (product_id, partner_id, date, where_clause)
+		self._cr.execute(query)
+		res = self._cr.dictfetchall()
 
 		if res:
 			rule_id = res[0]['id']
 			price = res[0]['amount']
 			uom = res[0]['uom']
-		print (mode)
+			pricing_date = res[0]['pricing_date']
+		else:
+			pricing_date = False
+
+		# print (mode)
 		print (query)
-		return rule_id, price, uom
+		return rule_id, price, uom, pricing_date
 
 
 	def action_send_pricelist_to_sap(self):

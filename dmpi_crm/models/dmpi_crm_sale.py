@@ -318,6 +318,7 @@ class DmpiCrmSaleContract(models.Model):
                                 'so_line_no':sl.so_line_no, 
                                 'product_code': sl.product_code, 
                                 'product_id': sl.product_id.id,
+                                'pricing_date': sl.pricing_date,
                                 'price': sl.price, 
                                 'uom': 'CAS', 
                                 'qty': sl.qty
@@ -474,11 +475,17 @@ class DmpiCrmSaleContract(models.Model):
                     po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
                     po_date = po_date.strftime('%Y%m%d')
 
+                    pricing_date = datetime.strptime(sol.pricing_date, '%Y-%m-%d')
+                    pricing_date = pricing_date.strftime('%Y%m%d')
+
                     valid_from = datetime.strptime(rec.valid_from, '%Y-%m-%d')
                     valid_from = valid_from.strftime('%Y%m%d')
 
                     valid_to = datetime.strptime(rec.valid_to, '%Y-%m-%d')
                     valid_to =   valid_to.strftime('%Y%m%d')
+
+                    tags = rec.tag_ids
+
 
 
                     line = {
@@ -491,7 +498,7 @@ class DmpiCrmSaleContract(models.Model):
                         'ship_to' : so.ship_to_id.customer_code,
                         'ref_po_no' : ref_po_no,
                         'po_date' : po_date,
-                        'pricing_date' : po_date,
+                        'pricing_date' : pricing_date,
                         'valid_from' : valid_from,
                         'valid_to' : valid_to,
                         'ship_to_dest' : so.ship_to_id.customer_code,
@@ -618,6 +625,9 @@ class DmpiCrmSaleOrder(models.Model):
                 po_date = datetime.strptime(cid.po_date, '%Y-%m-%d')
                 po_date = po_date.strftime('%Y%m%d')
 
+                pricing_date = datetime.strptime(sol.pricing_date, '%Y-%m-%d')
+                pricing_date = pricing_date.strftime('%Y%m%d')
+
                 valid_from = datetime.strptime(cid.valid_from, '%Y-%m-%d')
                 valid_from = valid_from.strftime('%Y%m%d')
 
@@ -649,7 +659,7 @@ class DmpiCrmSaleOrder(models.Model):
                     'so_alt_item' : '',
                     'usage' : '',
                     'original_ship_to' : '',
-                    'pricing_date' : po_date
+                    'pricing_date' : pricing_date
                 }
 
                 if cid.sold_via_id:
@@ -1060,8 +1070,9 @@ class DmpiCrmSaleOrderLine(models.Model):
         pricelist_obj = self.env['dmpi.crm.product.price.list']
 
         print (product_id.id, partner_id.id, date, tag_ids)
-        rule_id, price, uom = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, tag_ids)
+        rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, False, tag_ids)
         self.price = price
+        self.pricing_date = pricing_date
         self.uom = uom
         self.order_id.get_product_qty()
         self.order_id.contract_id.on_change_partner_id()
@@ -1080,6 +1091,16 @@ class DmpiCrmSaleOrderLine(models.Model):
             self.name = self.product_id.name
             print (self.order_id.destination,self.order_id.tag_ids.ids)
 
+    @api.onchange('price')
+    def onchange_price(self):
+        if self.price:
+            print ("THE PRICE HAS CHANGED",self.price)
+            pricelist_obj = self.env['dmpi.crm.product.price.list']
+            rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(self.product_id.id, self.order_id.partner_id.id, self.order_id.contract_id.po_date, self.price, self.order_id.tag_ids.ids)
+            
+            self.pricing_date = pricing_date
+
+
     @api.multi
     def recompute_price(self):
         if self.product_id:
@@ -1093,6 +1114,7 @@ class DmpiCrmSaleOrderLine(models.Model):
     contract_line_no = fields.Integer('Contract Line No')
     so_line_no = fields.Integer("Line No")
     sequence = fields.Integer('Sequence')
+    pricing_date = fields.Date('Pricing Date')
 
     order_id = fields.Many2one('dmpi.crm.sale.order','Sale Order ID', ondelete='cascade')
     product_code = fields.Selection(_get_product_codes,"Code")
