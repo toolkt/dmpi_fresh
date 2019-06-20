@@ -439,7 +439,9 @@ class DmpiCrmProductPriceList(models.Model):
 							'uom': r[6],
 							'valid_from': parse_date(r[7]),
 							'valid_to': parse_date(r[8]),
-							'remarks': r[9],
+							'sap_from': parse_date(r[9]),
+							'sap_to': parse_date(r[10]),
+							'remarks': r[11],
 						}
 
 						if r[1]:
@@ -456,8 +458,8 @@ class DmpiCrmProductPriceList(models.Model):
 							else:
 								errors.append('Product %s does not exist on row %s. \n' % (r[2],row_count) )
 
-						if r[9]:
-							tags = r[9].split(',')
+						if r[11]:
+							tags = r[11].split(',')
 							tag_ids = []
 							for t in tags:
 								tag = self.env['dmpi.crm.product.price.tag'].search([('name','=',t)], limit=1)
@@ -566,7 +568,7 @@ class DmpiCrmProductPriceList(models.Model):
 						to_char(ppi.valid_from,'MMDDYYYY') valid_from,
 						to_char(ppi.valid_to,'MMDDYYYY') valid_to,
 							ppi.remarks,
-							row_number() over (partition by ppi.customer_code, ppi.material, ppi.valid_from, ppi.valid_to order by ppi.remarks desc) occurrence
+							row_number() over (partition by ppi.customer_code, ppi.material, ppi.sap_from, ppi.sap_to order by ppi.remarks desc) occurrence
 						from dmpi_crm_product_price_list_item ppi
 						left join dmpi_crm_product_price_list pp on pp.id = ppi.version_id
 						left join dmpi_crm_partner rp on rp.id = ppi.partner_id
@@ -589,8 +591,8 @@ class DmpiCrmProductPriceList(models.Model):
 					'amount' : float(ppi[3]),
 					'currency' : ppi[4],
 					'uom' : ppi[5],
-					'valid_from' : ppi[6],
-					'valid_to' : ppi[7],
+					'sap_from' : ppi[6],
+					'sap_to' : ppi[7],
 				}
 
 				lines.append(line)
@@ -640,6 +642,8 @@ class DmpiCrmProductPriceListItem(models.Model):
 	uom = fields.Char("Unit of Measure", default="CAS")
 	valid_from = fields.Date("Valid From")
 	valid_to = fields.Date("Valid To")
+	sap_from = fields.Date("SAP From")
+	sap_to = fields.Date("SAP To")	
 	remarks = fields.Char("Remarks")
 	tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'price_item_tag_rel', 'item_id', 'tag_id', string='Tags', copy=True)
 	allowed_products = fields.One2many('dmpi.crm.product', compute="get_allowed_products")
