@@ -491,6 +491,7 @@ class DmpiCrmSaleContract(models.Model):
                         'ship_to' : so.ship_to_id.customer_code,
                         'ref_po_no' : ref_po_no,
                         'po_date' : po_date,
+                        'pricing_date' : po_date,
                         'valid_from' : valid_from,
                         'valid_to' : valid_to,
                         'ship_to_dest' : so.ship_to_id.customer_code,
@@ -532,6 +533,7 @@ class DmpiCrmSaleContract(models.Model):
                             l['ship_to'],
                             l['ref_po_no'],
                             l['po_date'],
+                            l['pricing_date'],
                             l['valid_from'],
                             l['valid_to'],
                             l['ship_to_dest'],
@@ -646,7 +648,8 @@ class DmpiCrmSaleOrder(models.Model):
                     'reject_reason' : '',
                     'so_alt_item' : '',
                     'usage' : '',
-                    'original_ship_to' : ''
+                    'original_ship_to' : '',
+                    'pricing_date' : po_date
                 }
 
                 if cid.sold_via_id:
@@ -676,7 +679,8 @@ class DmpiCrmSaleOrder(models.Model):
                                     l['po_date'],l['rdd'],
                                     l['po_line_no'],l['so_line_no'],
                                     l['material'],l['qty'],
-                                    l['uom'],l['plant'],l['original_ship_to']
+                                    l['uom'],l['plant'],
+                                    l['original_ship_to'],l['pricing_date']
                                 ])
                     else:
                         writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
@@ -687,7 +691,8 @@ class DmpiCrmSaleOrder(models.Model):
                                     l['po_date'],l['rdd'],
                                     l['po_line_no'],l['so_line_no'],
                                     l['material'],l['qty'],
-                                    l['uom'],l['plant']
+                                    l['uom'],l['plant'],
+                                    '',l['pricing_date']
                                 ])
 
 
