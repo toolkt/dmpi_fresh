@@ -864,6 +864,12 @@ class DmpiCrmSaleOrder(models.Model):
                     s = 'No Price set for %s (%s)' % (l.product_id.code, l.product_id.sku)
                     error_msg.append(s)
 
+                if not l.pricing_date:
+                    error += 1
+                    s = 'No Pricing Date set for %s %s (%s)' % (so.partner_id.name,l.product_id.code, l.product_id.sku)
+                    error_msg.append(s)
+
+
                 # lcl total qty
                 total_qty += l.qty
 
