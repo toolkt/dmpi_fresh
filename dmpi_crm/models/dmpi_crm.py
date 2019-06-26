@@ -569,8 +569,14 @@ class DmpiCrmProductPriceList(models.Model):
 				SELECT *
 				from (
 						select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency, ppi.uom,
-						to_char(ppi.valid_from,'MMDDYYYY') valid_from,
-						to_char(ppi.valid_to,'MMDDYYYY') valid_to,
+							CASE 
+								WHEN ppi.sap_from IS NOT NULL THEN to_char(ppi.sap_from,'MMDDYYYY')
+								ELSE to_char(ppi.valid_from,'MMDDYYYY')
+							END AS valid_from,
+							CASE 
+								WHEN ppi.sap_to IS NOT NULL THEN to_char(ppi.sap_to,'MMDDYYYY')
+								ELSE to_char(ppi.valid_to,'MMDDYYYY')
+							END AS valid_to,										
 							ppi.remarks,
 							row_number() over (partition by ppi.customer_code, ppi.material, ppi.sap_from, ppi.sap_to order by ppi.remarks desc) occurrence
 						from dmpi_crm_product_price_list_item ppi
@@ -595,8 +601,8 @@ class DmpiCrmProductPriceList(models.Model):
 					'amount' : float(ppi[3]),
 					'currency' : ppi[4],
 					'uom' : ppi[5],
-					'sap_from' : ppi[6],
-					'sap_to' : ppi[7],
+					'valid_from' : ppi[6],
+					'valid_to' : ppi[7],
 				}
 
 				lines.append(line)

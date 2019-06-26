@@ -477,6 +477,7 @@ class DmpiCrmSaleContract(models.Model):
 
                     if not sol.pricing_date:
                         raise UserError(_("Some sales orders have no configured PRICING DATE, please see SO and Pricelist and ensure that the all data are in place"))
+                    
                     pricing_date = datetime.strptime(sol.pricing_date, '%Y-%m-%d')
                     pricing_date = pricing_date.strftime('%Y%m%d')
 
@@ -1080,6 +1081,8 @@ class DmpiCrmSaleOrderLine(models.Model):
         print (product_id.id, partner_id.id, date, tag_ids)
         rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(product_id.id, partner_id.id, date, False, tag_ids)
         self.price = price
+        if not pricing_date:
+            pricing_date = date
         self.pricing_date = pricing_date
         self.uom = uom
         self.order_id.get_product_qty()
