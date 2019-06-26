@@ -475,6 +475,8 @@ class DmpiCrmSaleContract(models.Model):
                     po_date = datetime.strptime(rec.po_date, '%Y-%m-%d')
                     po_date = po_date.strftime('%Y%m%d')
 
+                    if not sol.pricing_date:
+                        raise UserError(_("Some sales orders have no configured PRICING DATE, please see SO and Pricelist and ensure that the all data are in place"))
                     pricing_date = datetime.strptime(sol.pricing_date, '%Y-%m-%d')
                     pricing_date = pricing_date.strftime('%Y%m%d')
 
