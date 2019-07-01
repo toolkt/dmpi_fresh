@@ -413,6 +413,8 @@ class DmpiCrmProductPriceList(models.Model):
 	state = fields.Selection([('draft','Draft'),('submitted','Submitted'),('approved','Approved'),('cancelled','Cancelled')], "State", default='draft', track_visibility='onchange')
 	active = fields.Boolean('Active', default=False, track_visibility='onchange')
 	template = fields.Binary('Upload Template')
+	sent_to_sap_date = fields.Datetime('Sent to SAP Date', track_visibility='onchange')
+	sent_to_sap = fields.Boolean('Sent to SAP', track_visibility='onchange')
 
 	@api.onchange('upload_file')
 	def onchange_upload_file(self):
@@ -560,73 +562,79 @@ class DmpiCrmProductPriceList(models.Model):
 	def action_send_pricelist_to_sap(self):
 		print('send to sap pricelist')
 		for rec in self:
+			try:
+				# filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name.translate(removeWhiteSpace),datetime.now().strftime("%Y%m%d_%H%M%S"))
+				filename = 'ODOOPRICE_%s_%s.csv' % (rec.id, datetime.now().strftime("%Y%m%d_%H%M%S"))
+				path = '/tmp/%s' % filename
 
-			# filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name.translate(removeWhiteSpace),datetime.now().strftime("%Y%m%d_%H%M%S"))
-			filename = 'ODOOPRICE_%s_%s.csv' % (rec.id, datetime.now().strftime("%Y%m%d_%H%M%S"))
-			path = '/tmp/%s' % filename
+				query = """
+					SELECT *
+					from (
+							select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency, ppi.uom,
+								CASE 
+									WHEN ppi.sap_from IS NOT NULL THEN to_char(ppi.sap_from,'MMDDYYYY')
+									ELSE to_char(ppi.valid_from,'MMDDYYYY')
+								END AS valid_from,
+								CASE 
+									WHEN ppi.sap_to IS NOT NULL THEN to_char(ppi.sap_to,'MMDDYYYY')
+									ELSE to_char(ppi.valid_to,'MMDDYYYY')
+								END AS valid_to,										
+								ppi.remarks,
+								row_number() over (partition by ppi.customer_code, ppi.material, ppi.sap_from, ppi.sap_to order by ppi.remarks desc) occurrence
+							from dmpi_crm_product_price_list_item ppi
+							left join dmpi_crm_product_price_list pp on pp.id = ppi.version_id
+							left join dmpi_crm_partner rp on rp.id = ppi.partner_id
+							where pp.id in (%s)
+							order by ppi.customer_code, ppi.material, ppi.remarks desc
+					) A
+					where A.occurrence = 1
+				""" % rec.id
 
-			query = """
-				SELECT *
-				from (
-						select rp.dist_channel, ppi.customer_code, ppi.material, ppi.amount, ppi.currency, ppi.uom,
-							CASE 
-								WHEN ppi.sap_from IS NOT NULL THEN to_char(ppi.sap_from,'MMDDYYYY')
-								ELSE to_char(ppi.valid_from,'MMDDYYYY')
-							END AS valid_from,
-							CASE 
-								WHEN ppi.sap_to IS NOT NULL THEN to_char(ppi.sap_to,'MMDDYYYY')
-								ELSE to_char(ppi.valid_to,'MMDDYYYY')
-							END AS valid_to,										
-							ppi.remarks,
-							row_number() over (partition by ppi.customer_code, ppi.material, ppi.sap_from, ppi.sap_to order by ppi.remarks desc) occurrence
-						from dmpi_crm_product_price_list_item ppi
-						left join dmpi_crm_product_price_list pp on pp.id = ppi.version_id
-						left join dmpi_crm_partner rp on rp.id = ppi.partner_id
-						where pp.id in (%s)
-						order by ppi.customer_code, ppi.material, ppi.remarks desc
-				) A
-				where A.occurrence = 1
-			""" % rec.id
+				self._cr.execute(query)
+				res = self._cr.fetchall()
 
-			self._cr.execute(query)
-			res = self._cr.fetchall()
+				lines = []
+				for ppi in res:
+					line = {
+						'pricelist' : 'ZPR8',
+						'dist_channel' : ppi[0],
+						'sold_to' : ppi[1],
+						'material' : ppi[2],
+						'amount' : float(ppi[3]),
+						'currency' : ppi[4],
+						'uom' : ppi[5],
+						'valid_from' : ppi[6],
+						'valid_to' : ppi[7],
+					}
 
-			lines = []
-			for ppi in res:
-				line = {
-					'pricelist' : 'ZPR8',
-					'dist_channel' : ppi[0],
-					'sold_to' : ppi[1],
-					'material' : ppi[2],
-					'amount' : float(ppi[3]),
-					'currency' : ppi[4],
-					'uom' : ppi[5],
-					'valid_from' : ppi[6],
-					'valid_to' : ppi[7],
-				}
+					lines.append(line)
 
-				lines.append(line)
+				headers = ['KSCHL','VTWEG','KUNNR','MATNR','KBETR','Currency','Quantity','UoM','DATAB','DATBI']
 
-			headers = ['KSCHL','VTWEG','KUNNR','MATNR','KBETR','Currency','Quantity','UoM','DATAB','DATBI']
-
-			with open(path, 'w') as f:
-				writer = csv.writer(f, delimiter='\t')
-				writer.writerow(headers)
-				for l in lines:
-					writer.writerow([l['pricelist'],l['dist_channel'],l['sold_to'],l['material'],l['amount'],l['currency'],1,l['uom'],l['valid_from'],l['valid_to']])
+				with open(path, 'w') as f:
+					writer = csv.writer(f, delimiter='\t')
+					writer.writerow(headers)
+					for l in lines:
+						writer.writerow([l['pricelist'],l['dist_channel'],l['sold_to'],l['material'],l['amount'],l['currency'],1,l['uom'],l['valid_from'],l['valid_to']])
 
 
-			# #TRANSFER TO REMOTE SERVER
-			h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
-			host_string = h.ssh_user + '@' + h.ssh_host + ':22'
-			env.hosts.append(host_string)
-			env.passwords[host_string] = h.ssh_pass
+				# #TRANSFER TO REMOTE SERVER
+				h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+				host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+				env.hosts.append(host_string)
+				env.passwords[host_string] = h.ssh_pass
 
-			localpath = path
-			path = '%s/%s' % (h.outbound_prc_success,filename)
-			remotepath = path
+				localpath = path
+				path = '%s/%s' % (h.outbound_prc_success,filename)
+				remotepath = path
 
-			execute(file_send,localpath,remotepath)
+				execute(file_send,localpath,remotepath)
+				rec.sent_to_sap = True
+				rec.sent_to_sap_date = datetime.now()
+
+			except Exception as e:
+				raise UserError( "Error: %s" % e )
+
 
 
 class DmpiCrmProductPriceListItem(models.Model):
