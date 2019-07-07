@@ -681,6 +681,9 @@ class DmpiCrmProductPriceListItem(models.Model):
 
 class DmpiCrmProductPriceTag(models.Model):
 	_name = 'dmpi.crm.product.price.tag'
+	_sql_constraints = [
+		('unique_name', 'UNIQUE (name)', _('Similar TAG Already Exist!'))
+	]
 
 	name = fields.Char("Tag")
 	description = fields.Char("Description")
