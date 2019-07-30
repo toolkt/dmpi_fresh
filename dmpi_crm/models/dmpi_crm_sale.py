@@ -662,7 +662,7 @@ class DmpiCrmSaleOrder(models.Model):
                     'so_alt_item' : '',
                     'usage' : '',
                     'original_ship_to' : '',
-                    'pricing_date' : pricing_date
+                    'pricing_date' : pricing_date,
                 }
 
                 if cid.sold_via_id:
@@ -708,7 +708,8 @@ class DmpiCrmSaleOrder(models.Model):
                                     '',l['pricing_date']
                                 ])
 
-
+                if rec.instructions:
+                    writer.writerow(['INSTRUCTIONS %s' % rec.instructions])
 
             #TRANSFER TO REMOTE SERVER
             h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
@@ -917,6 +918,7 @@ class DmpiCrmSaleOrder(models.Model):
     error_msg = fields.Text('Error Message', compute="_get_error_msg")
     price_list = fields.Selection(_price_list_remarks)
     destination = fields.Char('Destination')
+    instructions = fields.Char('Instructions', size=256)
 
     @api.multi
     @api.depends('partner_id')

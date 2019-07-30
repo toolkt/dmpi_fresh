@@ -252,6 +252,7 @@
                             <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" invisible="1"/>
                             <field name="tag_ids" widget="many2many_tags"/>
                             <field name="week_no" required="1" invisible="1"/>
+                            <field name="instructions"/>
                         </group>
                         <group>
                             <field name="valid" />
