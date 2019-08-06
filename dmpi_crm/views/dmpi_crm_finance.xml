@@ -53,7 +53,7 @@
 
                     <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
 
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="0" statusbar_colors='{"approved":"blue"}'/>
 
 
                 </header>
