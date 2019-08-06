@@ -67,7 +67,7 @@
 
                         
 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="0" statusbar_colors='{"approved":"blue"}'/>
 
 
                     </header>
