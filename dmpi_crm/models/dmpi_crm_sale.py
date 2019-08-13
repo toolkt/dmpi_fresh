@@ -918,7 +918,7 @@ class DmpiCrmSaleOrder(models.Model):
     error_msg = fields.Text('Error Message', compute="_get_error_msg")
     price_list = fields.Selection(_price_list_remarks)
     destination = fields.Char('Destination')
-    instructions = fields.Char('Instructions', size=256)
+    instructions = fields.Text('Instructions')
 
     @api.multi
     @api.depends('partner_id')

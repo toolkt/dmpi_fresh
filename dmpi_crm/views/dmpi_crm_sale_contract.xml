@@ -177,7 +177,6 @@
                                     <field name="name_disp" />
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
-                                    <field name="name_disp"/>
                                     <field name="ship_line" />
                                     <field name="destination" />
                                     <field name="total_p100" sum="Total"/>
