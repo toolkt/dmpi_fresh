@@ -709,7 +709,10 @@ class DmpiCrmSaleOrder(models.Model):
                                 ])
 
                 if rec.instructions:
-                    writer.writerow(['INSTRUCTIONS %s' % rec.instructions])
+                    #TODO parse per 10 letters bleak by word.
+                    #instructions = rec.instructions.split() 
+
+                    writer.writerow(['INSTRUCTIONS\n%s' % rec.instructions])
 
             #TRANSFER TO REMOTE SERVER
             h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
