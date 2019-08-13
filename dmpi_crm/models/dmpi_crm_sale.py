@@ -7,6 +7,7 @@ from odoo.exceptions import  Warning, RedirectWarning, ValidationError, AccessEr
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from textwrap import TextWrapper
 
 from fabric.api import *
 import csv
@@ -709,11 +710,10 @@ class DmpiCrmSaleOrder(models.Model):
                                 ])
 
                 if rec.instructions:
-                    #TODO parse per 10 letters bleak by word.
-                    #instructions = rec.instructions.split() 
                     writer.writerow(['INSTRUCTIONS'])
-                    inst = rec.instructions.split('\n')
-                    for i in inst:
+                    tw = TextWrapper()
+                    tw.width = 30
+                    for i in tw.wrap(rec.instructions):
                         writer.writerow(['%s' % i])
 
             #TRANSFER TO REMOTE SERVER
