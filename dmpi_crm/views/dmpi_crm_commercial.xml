@@ -358,16 +358,22 @@
                 <templates>
                     <t t-name="kanban-box">
                         <div >
-                            <a href="#" name="action_go_record" type="object" string="Go to Activity">
+                            <a href="#" name="action_go_record" type="object" string="Go to Activity"> Go to Record
+                            </a>
                             <div class="row mb4">
                                 <div class="col-6">
                                     <ul>
-                                        <li><strong><span><t t-esc="record.ship_to_id.value"/></span></strong></li>
-                                        <li><strong><span><t t-esc="record.name_disp.value"/></span></strong></li>
                                         <li><strong><span><t t-esc="record.state.value"/></span></strong></li>
+                                        <li><t t-esc="record.ship_to_id.value"/></li>
+                                        <li><t t-esc="record.name_disp.value"/></li>
                                     </ul>
                                 </div>
                             </div>
+                            <a href="#" name="action_set_confirm" type="object" string="Confirm"> Confirm
+                            </a> | 
+                            <a href="#" name="action_set_hold" type="object" string="Hold"> Hold
+                            </a> | 
+                            <a href="#" name="action_set_cancel" type="object" string="Cancel"> Cancel
                             </a>
                         </div>
                     </t>

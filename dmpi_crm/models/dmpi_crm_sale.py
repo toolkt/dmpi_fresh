@@ -906,20 +906,6 @@ class DmpiCrmSaleOrder(models.Model):
 
 
 
-    @api.multi
-    def action_go_record(self):
-        for rec in self:
-            return {
-                'name': 'Record',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'dmpi.crm.sale.order',
-                'type': 'ir.actions.act_window',
-                'target': 'current',
-                'res_id': rec.id,
-            }
-
-
     name_disp = fields.Char("Display No.", compute='_get_name_disp')
     name = fields.Char("CRM SO No.", default="Draft", copy=False)
     plant = fields.Char("Plant", compute='_get_plant_name')
@@ -1047,6 +1033,35 @@ class DmpiCrmSaleOrder(models.Model):
     state = fields.Selection([('draft','Draft'),('confirmed','Confirmed'),('hold','Hold'),('process','For Processing'),('processed','Processed'),('cancelled','Cancelled')], default="draft", string="Status")
     po_state = fields.Selection(CONTRACT_STATE,string="Status", related='contract_id.state', store=True)
     found_p60 = fields.Integer('Found Pallet 60 order', compute="_compute_found_p60")
+
+
+    @api.multi
+    def action_go_record(self):
+        for rec in self:
+            return {
+                'name': 'Record',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dmpi.crm.sale.order',
+                'type': 'ir.actions.act_window',
+                'target': 'current',
+                'res_id': rec.id,
+            }
+
+    @api.multi
+    def action_set_confirm(self):
+        for rec in self:
+            rec.state = 'confirmed'
+
+    @api.multi
+    def action_set_hold(self):
+        for rec in self:
+            rec.state = 'hold'
+
+    @api.multi
+    def action_set_cancel(self):
+        for rec in self:
+            rec.state = 'cancelled'    
 
     @api.multi
     @api.depends('order_ids')
