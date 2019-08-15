@@ -931,7 +931,10 @@ class DmpiCrmSaleOrder(models.Model):
     def _get_allowed_ids(self):
         for rec in self:
             rec.allowed_ship_to = rec.partner_id.ship_to_ids
-            rec.allowed_products = rec.partner_id.product_ids
+            if len(rec.ship_to_id.product_ids) > 0:
+                rec.allowed_products = rec.ship_to_id.product_ids
+            else:
+                rec.allowed_products = rec.partner_id.product_ids
 
 
     allowed_ship_to = fields.One2many('dmpi.crm.partner', compute="_get_allowed_ids")
