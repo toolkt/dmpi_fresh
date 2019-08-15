@@ -143,10 +143,37 @@
     </record>
 
 
+    <record id="view_customer_crm_sale_order_kanban" model="ir.ui.view">
+        <field name="name">customer.crm.sale.order.kanban</field>
+        <field name="model">customer.crm.sale.order</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="ship_to_id"/>
+                <field name="notify_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div >
+                            <a href="#" name="action_go_record" type="object" string="Go to Activity">
+                            <div class="row mb4">
+                                <div class="col-6">
+                                    <ul>
+                                        <li><strong><span><t t-esc="record.ship_to_id.value"/></span></strong></li>
+                                        <li><strong><span><t t-esc="record.notify_id.value"/></span></strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="action_customer_crm_sale_order" model="ir.actions.act_window">
         <field name="name">Customer Order</field>
         <field name="res_model">customer.crm.sale.order</field>
-        <field name="view_mode">tree,form,graph</field>
+        <field name="view_mode">tree,form,graph,kanban</field>
         <field name="domain">[]</field>
         <field name="context">{'search_default_partner':1}</field>
     </record>
@@ -318,10 +345,43 @@
     </record>
 
 
+
+
+    <record id="view_dmpi_crm_sale_order_kanban" model="ir.ui.view">
+        <field name="name">dmpi.crm.sale.order.kanban</field>
+        <field name="model">dmpi.crm.sale.order</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="ship_to_id"/>
+                <field name="name_disp"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div >
+                            <a href="#" name="action_go_record" type="object" string="Go to Activity">
+                            <div class="row mb4">
+                                <div class="col-6">
+                                    <ul>
+                                        <li><strong><span><t t-esc="record.ship_to_id.value"/></span></strong></li>
+                                        <li><strong><span><t t-esc="record.name_disp.value"/></span></strong></li>
+                                        <li><strong><span><t t-esc="record.state.value"/></span></strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
     <record id="action_dmpi_crm_sale_order" model="ir.actions.act_window">
         <field name="name">Sale Order</field>
         <field name="res_model">dmpi.crm.sale.order</field>
-        <field name="view_mode">tree,form,pivot</field>
+        <field name="view_mode">tree,form,pivot,kanban</field>
         <field name="domain">[]</field>
         <field name="context">{'search_default_partner':1}</field>
     </record>

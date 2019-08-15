@@ -168,25 +168,6 @@
                                     <field name="total_qty" sum="Total" string="Qty"/>
                                     <field name="total_amount" sum="Total" string="Amount"/>
                                 </tree>
-                                <kanban>
-                                    <field name="id"/>
-                                    <field name="ship_to_id" />
-                                    <field name="notify_id" />
-                                    <field name="ship_line" />
-                                    <templates>
-                                        <t t-name="kanban-box">
-                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
-                                                <li t-attf-class="nav-item #{button_state}">
-                                                    <field name="ship_to_id" />
-                                                    <field name="notify_id" />
-                                                    <field name="ship_line" />
-                                                </li>
-                                            </div>
-                                        </t>
-                                    </templates>
-
-                                </kanban>
-
                             </field>
                         </page>
                         <page string="Sales Order">
@@ -205,28 +186,6 @@
                                     <field name="error" invisible="1"/>
                                     <field name="state"/>
                                 </tree>
-
-                                <kanban>
-                                    <field name="id"/>
-                                    <field name="ship_to_id"/>
-                                    <field name="notify_id" />
-                                    <field name="name_disp"/>
-                                    <field name="state"/>
-                                    <templates>
-                                        <t t-name="kanban-box">
-                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
-                                                <li t-attf-class="nav-item #{button_state}">
-                                                    <field name="ship_to_id"/>
-                                                    <field name="notify_id"/>
-                                                    <field name="name_disp"/>
-                                                    <field name="state"/>
-                                                </li>
-                                            </div>
-                                        </t>
-                                    </templates>
-
-                                </kanban>
-
                             </field>
                             
                         </page>
