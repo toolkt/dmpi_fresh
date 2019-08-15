@@ -253,7 +253,12 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 								'pricing_date': pricing_date,
 							}
 
+				#If partner has no products get products from parent
 				partner_id = rec.contract_id.partner_id.id
+				products = 0
+				if len(l.ship_to_id.product_ids) > 0:
+					partner_id = l.ship_to_id.id
+
 				order_lines = eval(l.order_lines)
 
 				for pcode in pack_codes:
