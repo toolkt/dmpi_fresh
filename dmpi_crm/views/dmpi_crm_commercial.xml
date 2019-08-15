@@ -221,7 +221,7 @@
             <form class="o_form_document">
                 <header>
 
-                    <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-pencil-square-o" string="Submit SO"/>
+                    <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-check" string="Submit SO"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
                 </header>
                 <sheet>
