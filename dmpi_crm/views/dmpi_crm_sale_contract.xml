@@ -174,11 +174,11 @@
                             <field name="sale_order_ids">
                                 <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
-                                    <field name="name_disp" />
                                     <field name="ship_to_id" />
                                     <field name="notify_id" />
                                     <field name="ship_line" />
                                     <field name="destination" />
+                                    <field name="name_disp" />
                                     <field name="total_p100" sum="Total"/>
                                     <field name="total_p200" sum="Total"/>
                                     <field name="total_qty" sum="Total" string="Qty"/>
