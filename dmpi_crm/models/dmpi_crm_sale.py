@@ -616,7 +616,8 @@ class DmpiCrmSaleOrder(models.Model):
 
 
     def submit_so_file(self,rec):
-        print ("Sending SO File %s" % rec)
+        log = "Sending SO File  %s %s %s" % (rec.contract_id.sap_cn_no,rec.name,rec.state)
+        print (log)
         if rec.contract_id.sap_cn_no != '' and rec.name != 'Draft' and rec.state != 'hold':
             print ("Contract Not Draft")
             lines = []
