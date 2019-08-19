@@ -734,6 +734,7 @@ class DmpiCrmSaleOrder(models.Model):
             return True
         else:
             #TODO Create real Warning
+            print("SO not submitted")
             return False
 
 
