@@ -102,6 +102,9 @@
                             <page string="Accounts Receivables">
                                 <field name="ar_records" />
                             </page>
+                            <page string="Instructions">
+                                <field name="instructions"/>
+                            </page>
                         </notebook>
 
                     </sheet>

@@ -615,6 +615,15 @@ class DmpiCrmSaleOrder(models.Model):
     _inherit = ['mail.thread']
 
 
+    @api.model
+    def create(self, vals):
+        # Default Instruction 
+        instructions = vals.get('instructions',False)
+        if not (instructions  or  not vals['ship_to_id'] ):
+            vals['instructions'] = self.env['dmpi.crm.partner'].search([('id','=',vals['ship_to_id'])], limit=1)[0].instructions
+
+        return super(DmpiCrmSaleOrder, self).create(vals)
+
     def submit_so_file(self,rec):
         log = "Sending SO File  %s %s %s" % (rec.contract_id.sap_cn_no,rec.name,rec.state)
         print (log)
@@ -759,6 +768,8 @@ class DmpiCrmSaleOrder(models.Model):
 
         tag_ids = self.contract_id.tag_ids.ids
         self.tag_ids = [[6,0,tag_ids]]
+
+        self.instructions = self.ship_to_id.instructions
 
 
 
