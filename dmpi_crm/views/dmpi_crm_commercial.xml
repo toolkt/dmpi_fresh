@@ -52,7 +52,8 @@
                             type="object"
                             class="oe_stat_button"
                             icon="fa-pencil-square-o"
-                            string="Submit SO">
+                            string="Submit SO"
+                            confirm="Please confirm Resending of SO">
                         </button>
                     </div>
                     <group>
@@ -248,7 +249,8 @@
             <form class="o_form_document">
                 <header>
 
-                    <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-check" string="Submit SO"/>
+                    <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-check" string="Submit SO"
+                        confirm="Please confirm resending of SO"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
                 </header>
                 <sheet>
@@ -315,6 +317,8 @@
                         <page string="Settings">
                             <group>
                                 <group>
+                                    <field name="sent_to_sap"/>
+                                    <field name="sent_to_sap_time"/>
                                     <field name="sap_so_no"/>
                                     <field name="sap_so_date"/>
                                 </group>

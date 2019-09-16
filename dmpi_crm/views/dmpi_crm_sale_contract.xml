@@ -65,7 +65,8 @@
 
                         <button name="action_cancel_po" string="Cancel PO" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Have you cancelled the corresponding SO and Contract in SAP?" states="approved,processing,processed"/>
 
-                        
+
+                        <button name="action_generate_new_so" string="Generate New SOs" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Confirm Generation of new SO" states="enroute,processed"/>
 
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
 
