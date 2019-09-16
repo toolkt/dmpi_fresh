@@ -464,7 +464,7 @@ class DmpiCrmSaleContract(models.Model):
                         seq  = self.env['ir.sequence'].next_by_code('dmpi.crm.sale.order')
                         so.write({'name': seq})
 
-                    contract_line_no = 0
+                    contract_line_no = so.contract_line_no
                     if so.contract_line_no == 0:
                         contract_line_no = self.env['dmpi.crm.sale.order'].search([('contract_id','=',rec.id)], limit=1, order='contract_line_no desc')[0].contract_line_no + 10
                         so.write({'contract_line_no':contract_line_no})
