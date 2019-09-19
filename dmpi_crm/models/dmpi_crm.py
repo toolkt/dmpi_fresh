@@ -57,6 +57,15 @@ def transfer_files(from_path, to_path):
         mv = "mv %s %s" % (from_path,to_path)
         sudo(mv)
 
+def check_exists(filename):
+    from fabric.contrib import files
+    if files.exists(filename):
+        return True
+    else:
+        return False
+
+
+
 CROWN = [('C','w/Crown'),('CL','Crownless')]
 
 
@@ -639,8 +648,10 @@ class DmpiCrmProductPriceList(models.Model):
                 remotepath = path
 
                 execute(file_send,localpath,remotepath)
-                rec.sent_to_sap = True
-                rec.sent_to_sap_date = datetime.now()
+                if execute(check_exists, remotepath):
+                    rec.message_post("File was successfuly sent to the Middleware")
+                    rec.sent_to_sap = True
+                    rec.sent_to_sap_date = datetime.now()
 
             except Exception as e:
                 raise UserError( "Error: %s" % e )

@@ -69,6 +69,14 @@ def read_data(data):
         return rows
 
 
+def check_exists(filename):
+    from fabric.contrib import files
+    if files.exists(filename):
+        return True
+    else:
+        return False
+
+
 CONTRACT_STATE = [
         ('draft','Draft'),
         ('submitted','Submitted'),
@@ -590,14 +598,12 @@ class DmpiCrmSaleContract(models.Model):
                 remotepath = path
 
                 execute(file_send,localpath,remotepath)
-                rec.sent_to_sap = True
-
-                # if rec.ar_status > 0 or rec.credit_after_sale < 0:
-                #     rec.state = 'soa'
-                # else:
-                #     rec.state = 'submitted'            
-
-                rec.write({'state':'processing'})
+                if execute(check_exists, remotepath):
+                    rec.message_post("File was successfuly sent to the Middleware")
+                    rec.sent_to_sap = True
+                    rec.write({'state':'processing'})
+                else:
+                    raise UserError( "Error: File not Sent to SAP please contact Administrator")
 
             else:
                 sent_so = []
@@ -776,10 +782,13 @@ class DmpiCrmSaleOrder(models.Model):
                 remotepath = path
 
                 execute(file_send,localpath,remotepath)
-                sent_to_sap_time = datetime.now()
-                rec.write({'state':'process','sent_to_sap':True,'sent_to_sap_time':sent_to_sap_time})
-                rec.message_post("Successfully sent to sap on %s" % sent_to_sap_time)
-                return True
+                if execute(check_exists, remotepath):
+                    sent_to_sap_time = datetime.now()
+                    rec.write({'state':'process','sent_to_sap':True,'sent_to_sap_time':sent_to_sap_time})
+                    rec.message_post("Successfully sent to sap on %s" % sent_to_sap_time)
+                    return True
+                else:
+                    return False
             else:
                 #TODO Create real Warning
                 errors = []
