@@ -251,7 +251,7 @@
 
                     <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-check" string="Submit SO"
                         confirm="Please confirm resending of SO"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,process,processed,hold" clickable="1"/>
                 </header>
                 <sheet>
                     <div class="oe_title">

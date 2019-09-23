@@ -788,6 +788,7 @@ class DmpiCrmSaleOrder(models.Model):
                     rec.message_post("Successfully sent to sap on %s" % sent_to_sap_time)
                     return True
                 else:
+                    rec.message_post("File was not sent to the middleware, please resend or contact your Administrator")
                     return False
             else:
                 #TODO Create real Warning
