@@ -116,6 +116,10 @@ class DmpiCrmConfig(models.Model):
     #Defaults
     default_validity = fields.Integer("Default Validity")
 
+    #Report Headers
+    clp_logo = fields.Binary("CLP Logo")
+    clp_header = fields.Text("CLP Headers")
+
     #Directories
     ssh_user    = fields.Char("SSH User")
     ssh_pass    = fields.Char("SSH Pass")

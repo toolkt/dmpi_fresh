@@ -182,6 +182,12 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Resources">
+                                <group>
+                                    <field name="clp_logo" widget="image"/>
+                                    <field name="clp_header" widget="html"/>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
