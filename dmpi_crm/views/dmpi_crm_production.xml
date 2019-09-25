@@ -69,6 +69,7 @@
                                     <field name="product_crown"/>
                                     <field name="qty"/>
                                     <field name="pack_size"/>
+                                    <field name="shell_color"/>
                                 </tree>
                             </field>
                         </page>
