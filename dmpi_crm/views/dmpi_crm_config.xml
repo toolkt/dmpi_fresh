@@ -184,8 +184,14 @@
                             </page>
                             <page string="Resources">
                                 <group>
-                                    <field name="clp_logo" widget="image"/>
-                                    <field name="clp_header" widget="html"/>
+                                    <group>
+                                        <field name="clp_logo" widget="image"/>
+                                        <field name="clp_header" widget="html"/>
+                                    </group>
+                                    <group>
+                                        <field name="clp_logo2" widget="image"/>
+                                        <field name="clp_header2" widget="html"/>
+                                    </group>
                                 </group>
                             </page>
                         </notebook>

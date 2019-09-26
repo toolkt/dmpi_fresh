@@ -70,6 +70,7 @@
                                     <field name="qty"/>
                                     <field name="pack_size"/>
                                     <field name="shell_color"/>
+                                    <field name="shell_color2"/>
                                 </tree>
                             </field>
                         </page>

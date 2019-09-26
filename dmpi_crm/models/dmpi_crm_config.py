@@ -120,6 +120,11 @@ class DmpiCrmConfig(models.Model):
     clp_logo = fields.Binary("CLP Logo")
     clp_header = fields.Text("CLP Headers")
 
+    #Report Headers
+    clp_logo2 = fields.Binary("CLP Logo External")
+    clp_header2 = fields.Text("CLP Headers External")
+
+
     #Directories
     ssh_user    = fields.Char("SSH User")
     ssh_pass    = fields.Char("SSH Pass")
@@ -736,14 +741,19 @@ class DmpiCrmConfig(models.Model):
                                 })
 
                             if row[0].upper() == 'CLPITEM':
+                                pc = row[2].split(' ')
                                 line = {
                                     'tag_no' : row[1],
-                                    'pack_code' : row[2],
+                                    'pack_code' : '%s %s' % (pc[0],pc[1]),
                                     'pack_size' : row[3],
                                     'product_crown'  : row[4],
                                     'qty'  : read_float(row[5]),
                                     'position'  : row[6],
                                 }
+                                if pc[3]:
+                                    line['shell_color'] = pc[3]
+                                    line['shell_color2'] = pc[3]
+                                print(line)
                                 clp_lines.append((0,0,line))                                               
 
                             if row[0].upper() == 'CLPFTR':

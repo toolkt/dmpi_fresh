@@ -118,6 +118,13 @@ class DmpiCrmSaleContract(models.Model):
         result = self.env['dmpi.crm.contract.type'].search([('default','=',True)], limit=1)[0]
         return result.name
 
+    def _get_doc_types(self):
+        res = [(r.name,r.description) for r in self.env['dmpi.crm.sap.doc.type'].search([])]
+        return res
+
+    def _get_default_doc_types(self):
+        res = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)])[0].name
+        return res
 
     @api.depends('name','sap_cn_no')
     def _get_po_display_number(self):
@@ -153,6 +160,17 @@ class DmpiCrmSaleContract(models.Model):
             rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
 
 
+    @api.onchange('sold_via_id')
+    def on_change_sold_via_id(self):
+        for rec in self:
+            sap_doc_type = self.env['dmpi.crm.sap.doc.type'].search([('default','=',True)])[0].name
+            if rec.sold_via_id:
+                sap_doc_type = 'ZKM3'
+
+            rec.sap_doc_type = sap_doc_type
+            for so in rec.sale_order_ids:
+                so.write({'sap_doc_type' : sap_doc_type})
+
     name = fields.Char("Contract Number", default="Draft", copy=False)
     sap_cn_no = fields.Char("SAP Contract Number", copy=False)
     po_display_number = fields.Char("Display Name", compute="_get_po_display_number")
@@ -161,6 +179,7 @@ class DmpiCrmSaleContract(models.Model):
     partner_id = fields.Many2one('dmpi.crm.partner',"Customer", domain=[('function_ids.code','=','SLD')])
     sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
     contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
+    sap_doc_type = fields.Selection(_get_doc_types,"Doc Type", default=_get_default_doc_types, required=True)
     po_date = fields.Date("PO Date", default=fields.Date.context_today)
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
@@ -723,7 +742,6 @@ class DmpiCrmSaleOrder(models.Model):
                     if cid.sold_via_id:
                         line['sold_to'] = cid.sold_via_id.customer_code
                         line['ship_to'] = cid.sold_via_id.customer_code
-                        line['sap_doc_type'] = 'ZKM3'
                         line['original_ship_to'] = rec.ship_to_id.customer_code
                         line['dist_channel'] = cid.sold_via_id.dist_channel
                         line['division'] = cid.sold_via_id.division

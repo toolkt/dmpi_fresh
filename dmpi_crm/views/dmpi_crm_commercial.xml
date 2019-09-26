@@ -114,6 +114,7 @@
                                 <group>
                                     <field name="sap_so_no"/>
                                     <field name="sap_so_date"/>
+                                    <field name="sap_doc_type"/>
                                 </group>
                                 <group>
                                     <field name="contract_id" />
@@ -321,6 +322,7 @@
                                     <field name="sent_to_sap_time"/>
                                     <field name="sap_so_no"/>
                                     <field name="sap_so_date"/>
+                                    <field name="sap_doc_type"/>
                                 </group>
                                 <group>
                                     <field name="contract_id" />

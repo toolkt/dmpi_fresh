@@ -583,6 +583,7 @@ class DmpiCrmClpLine(models.Model):
     qty = fields.Float('Quantity')
     pack_size = fields.Char('Pack Size')
     shell_color=fields.Char('Shell Color')
+    shell_color2=fields.Char('Shell Color Ext')
 
     clp_id = fields.Many2one('dmpi.crm.clp', 'CLP ID', ondelete='cascade')
 

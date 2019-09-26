@@ -16,6 +16,11 @@
             <field name="default">1</field>
         </record>
 
+        <record id="crm_sap_doc_type_zxso" model="dmpi.crm.sap.doc.type">
+            <field name="name">ZKM3</field>
+            <field name="description">ZKM3</field>
+        </record>
+
 
         <!-- PRODUCT TYPES with crown-->
         <record id="crm_product_code_p101" model="dmpi.crm.product.code">
