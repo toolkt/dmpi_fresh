@@ -159,7 +159,7 @@
 
                     <notebook>
                         <page string="Customer Orders">
-                            <field name="customer_order_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                            <field name="customer_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
                                 <tree>
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />
@@ -174,7 +174,7 @@
                             </field>
                         </page>
                         <page string="Sales Order">
-                            <field name="sale_order_ids">
+                            <field name="sale_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
                                 <tree decoration-danger="error > 0">
                                     <field name="contract_line_no" string="#"/>
                                     <field name="ship_to_id" />

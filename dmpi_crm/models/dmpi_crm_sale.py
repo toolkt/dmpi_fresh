@@ -1229,7 +1229,11 @@ class DmpiCrmSaleOrderLine(models.Model):
     @api.onchange('product_id')
     def onchange_product_id(self):
         if self.product_id:
-            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
+            customer_code = self.order_id.partner_id.customer_code
+            if self.order_id.contract_id.sold_via_id:
+                customer_code = self.order_id.contract_id.sold_via_id.customer_code
+
+            result = self.compute_price(self.order_id.contract_id.po_date,customer_code,self.product_id.sku, self.order_id.tag_ids.ids)
 
             # self.price = result
             self.product_code = self.product_id.code
@@ -1242,7 +1246,12 @@ class DmpiCrmSaleOrderLine(models.Model):
         if self.price:
             print ("THE PRICE HAS CHANGED",self.price)
             pricelist_obj = self.env['dmpi.crm.product.price.list']
-            rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(self.product_id.id, self.order_id.partner_id.id, self.order_id.contract_id.po_date, self.price, self.order_id.tag_ids.ids)
+
+            partner = self.order_id.partner_id
+            if self.order_id.contract_id.sold_via_id:
+                partner = self.order_id.contract_id.sold_via_id
+
+            rule_id, price, uom, pricing_date = pricelist_obj.get_product_price(self.product_id.id, partner.id, self.order_id.contract_id.po_date, self.price, self.order_id.tag_ids.ids)
             
             self.pricing_date = pricing_date
 
@@ -1251,7 +1260,12 @@ class DmpiCrmSaleOrderLine(models.Model):
     def recompute_price(self):
         if self.product_id:
             print (self.order_id.tag_ids.ids)
-            result = self.compute_price(self.order_id.contract_id.po_date,self.order_id.partner_id.customer_code,self.product_id.sku,self.order_id.tag_ids.ids)
+
+            customer_code = self.order_id.partner_id.customer_code
+            if self.order_id.contract_id.sold_via_id:
+                customer_code = self.order_id.contract_id.sold_via_id.customer_code            
+
+            result = self.compute_price(self.order_id.contract_id.po_date,customer_code,self.product_id.sku,self.order_id.tag_ids.ids)
 
 
 
