@@ -562,7 +562,6 @@ class DmpiCrmClp(models.Model):
         return action
 
 
-
 class DmpiCrmClpLine(models.Model):
     _name = 'dmpi.crm.clp.line'
     _rec_name = 'tag_no'
@@ -575,6 +574,11 @@ class DmpiCrmClpLine(models.Model):
         else:
             pass
 
+    def _get_shell_color(self):
+        res = [(r.code,r.name) for r in self.env['dmpi.crm.shell.color'].search([])]
+        return res
+
+
     position = fields.Integer('Sequence', default=1, help="Order placing of packages on the form: from left to right, top to bottom (head to door). \
                                                 Numbered 1 - 24.")
     tag_no = fields.Char('Tag No')
@@ -582,8 +586,8 @@ class DmpiCrmClpLine(models.Model):
     product_crown = fields.Char('Product Crown')
     qty = fields.Float('Quantity')
     pack_size = fields.Char('Pack Size')
-    shell_color=fields.Char('Shell Color')
-    shell_color2=fields.Char('Shell Color Ext')
+    shell_color=fields.Selection(_get_shell_color,'Shell Color')
+    shell_color2=fields.Selection(_get_shell_color,'Shell Color Ext')
 
     clp_id = fields.Many2one('dmpi.crm.clp', 'CLP ID', ondelete='cascade')
 

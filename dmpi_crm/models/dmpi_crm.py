@@ -354,6 +354,13 @@ class DmpiCrmPlant(models.Model):
     description     = fields.Char("Description")
     active          = fields.Boolean("Active", default=True)
 
+class DmpiCrmShellColor(models.Model):
+    _name = 'dmpi.crm.shell.color'
+
+    name = fields.Char('Name')
+    code = fields.Char('Code')
+
+
 
 class DmpiCrmProduct(models.Model):
     _name = 'dmpi.crm.product'
