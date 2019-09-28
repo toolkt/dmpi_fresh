@@ -742,6 +742,7 @@ class DmpiCrmSaleOrder(models.Model):
                     if cid.sold_via_id:
                         line['sold_to'] = cid.sold_via_id.customer_code
                         line['ship_to'] = rec.ship_to_id.customer_code
+                        line['ship_to'] = 'ZKM3'
                         line['original_ship_to'] = rec.ship_to_id.customer_code
                         line['dist_channel'] = cid.sold_via_id.dist_channel
                         line['division'] = cid.sold_via_id.division
