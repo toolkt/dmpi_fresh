@@ -57,3 +57,4 @@ access_dmpi_crm_complaint_ph,user.dmpi.crm.complaint.ph,model_dmpi_crm_complaint
 access_dmpi_crm_complaint_report,user.dmpi.crm.complaint.report,model_dmpi_crm_complaint_report,base.group_user,1,1,1,1
 access_dmpi_crm_corrective_action,user.dmpi.crm.corrective.action,model_dmpi_crm_corrective_action,base.group_user,1,1,1,1
 access_dmpi_crm_email_notification_subscriber,user.dmpi.crm.email.notification.subscriber,model_dmpi_crm_email_notification_subscriber,base.group_user,1,1,1,1
+access_user_dmpi_crm_shell_color,user.dmpi.crm.shell.color,model_dmpi_crm_shell_color,base.group_user,1,1,1,1
