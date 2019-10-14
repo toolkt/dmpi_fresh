@@ -237,6 +237,10 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 					if result:
 						name = result[0]['sku']
 						product_id = result[0]['product_id']
+					else:
+						parnter = self.env['dmpi.crm.partner'].browse(partner_id)
+						err = "Error: Invalid Product Code %s for Customer %s.\n Please ensure that the products are properly configured." % (product_code,parnter.name)
+						raise UserError(err)
 
 					# get price
 					pricelist_obj = self.env['dmpi.crm.product.price.list']
