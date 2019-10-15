@@ -814,7 +814,7 @@ class DmpiCrmSaleOrder(models.Model):
                 #TODO Create real Warning
                 errors = []
                 if cid.sap_cn_no == '' or not(cid.sap_cn_no) :
-                    errors.append("No Contract number.")
+                    errors.append("No SAP Contract number.")
                 if rec.name == 'Draft':
                     errors.append("Sales Order in Draft")
                 if rec.state == 'hold':
