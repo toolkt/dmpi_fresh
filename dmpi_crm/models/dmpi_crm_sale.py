@@ -689,10 +689,11 @@ class DmpiCrmSaleOrder(models.Model):
             msg = "%s has already been sent to SAP, to resend this please uncheck the Sent to SAP checkbox and try again" % rec.name 
             raise Warning(msg)
         else:
-            if not(rec.contract_id.sap_cn_no == '' or rec.name == 'Draft' or rec.state == 'hold'):
+            cid = rec.contract_id
+            if not( not(cid.sap_cn_no) or cid.sap_cn_no == '' or rec.name == 'Draft' or rec.state == 'hold'):
                 print ("Contract Not Draft")
                 lines = []
-                cid = rec.contract_id
+                
                 line_no = 0
                 for sol in rec.order_ids:
                     line_no += 10
@@ -805,14 +806,14 @@ class DmpiCrmSaleOrder(models.Model):
                     sent_to_sap_time = datetime.now()
                     rec.write({'state':'process','sent_to_sap':True,'sent_to_sap_time':sent_to_sap_time})
                     rec.message_post("Successfully sent to sap on %s" % sent_to_sap_time)
-                    return True
+                    return True, 'success'
                 else:
                     rec.message_post("File was not sent to the middleware, please resend or contact your Administrator")
-                    return False
+                    return False, msg
             else:
                 #TODO Create real Warning
                 errors = []
-                if rec.contract_id.sap_cn_no == '':
+                if cid.sap_cn_no == '' or not(cid.sap_cn_no) :
                     errors.append("No Contract number.")
                 if rec.name == 'Draft':
                     errors.append("Sales Order in Draft")
@@ -822,21 +823,21 @@ class DmpiCrmSaleOrder(models.Model):
                 msg = "SO was not Submitted for the following Reasons: %s" % errors
                 rec.message_post(msg)
                 print("SO not submitted")
-                return False
+                return False, msg
 
 
     @api.multi
     def action_submit_so(self):
         for rec in self:
-            submitted = rec.submit_so_file(rec)
+            submitted, err = rec.submit_so_file(rec)
             if submitted:
                 msg = "SUCCESS: <br/>%s Retriggered the creation of SO: %s" % (self.env.user.partner_id.name,rec.name)
                 rec.message_post(msg)
                 # raise Warning("SO was Successfully Created")
             else:
-                msg = "FAIL: <br/>USER %s Retriggered the creation of SO but the SO was NOT Created since state is in Draft or on Hold." % self.env.user.partner_id.name
-                rec.message_post(msg)
-                raise Warning("State is in Draft or on Hold. The SO was NOT Created")
+                # msg = "FAIL: <br/>USER %s Retriggered the creation of SO but the SO was NOT Created since state is in Draft or on Hold." % self.env.user.partner_id.name
+                rec.message_post(err)
+                raise Warning(err)
 
 
     @api.onchange('ship_to_id')

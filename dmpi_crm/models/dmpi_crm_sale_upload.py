@@ -301,7 +301,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
 
 	@api.multi
-	def donwload_template(self):
+	def download_template(self):
 		output = io.StringIO()
 
 		writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
