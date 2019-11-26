@@ -113,7 +113,7 @@
 
 
         <!-- Customer -->
-        <record id="group_custom_crm_customer" model="res.groups">
+<!--         <record id="group_custom_crm_customer" model="res.groups">
             <field name="name">Customer</field>
             <field name="category_id" ref="module_category_custom_cust"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
@@ -125,7 +125,7 @@
             <field name="domain_force">[('partner_id', 'in', [u.id for u in user.partner_ids])]</field>
             <field name="groups" eval="[(4, ref('group_custom_crm_customer'))]"/>
             <field name="perm_unlink" eval="False"/>
-        </record>
+        </record> -->
 
 
         <!-- SNW Admin -->
