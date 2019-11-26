@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_users_form_crm" model="ir.ui.view">
+        <field name="name">Users</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+        <data>
+            <xpath expr="//notebook" position="inside">
+                <page string="Customer Details and Shipto">
+                    <field name="partner_ids"/>
+                </page>
+            </xpath>
+        </data>
+        </field>
+    </record>
+
+
+
+</odoo>

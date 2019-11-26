@@ -22,9 +22,11 @@
 from . import dmpi_crm_config
 from . import dmpi_crm_config_offline
 from . import dmpi_crm
+from . import res_users
 from . import dmpi_crm_sale
 from . import dmpi_crm_sale_upload
 from . import dmpi_crm_report
 from . import dmpi_crm_dialogue
 from . import dmpi_crm_mgt_report
 from . import dmpi_crm_complaints
+

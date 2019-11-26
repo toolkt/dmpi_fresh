@@ -171,12 +171,20 @@ class DmpiCrmSaleContract(models.Model):
             for so in rec.sale_order_ids:
                 so.write({'sap_doc_type' : sap_doc_type})
 
+
+    def _partner_id_domain(self):
+        if self.env.user.has_group('dmpi_crm.group_custom_crm_customer'):
+            return [('function_ids.code','=','SLD'),('id', 'in', [u.id for u in self.env.user.partner_ids])]
+        else:
+            return [('function_ids.code','=','SLD')]
+
+
     name = fields.Char("Contract Number", default="Draft", copy=False)
     sap_cn_no = fields.Char("SAP Contract Number", copy=False)
     po_display_number = fields.Char("Display Name", compute="_get_po_display_number")
     customer_ref = fields.Char("Customer Reference", copy=False)
     customer_ref_to_sap = fields.Char("Customer Reference to SAP", compute="_get_customer_ref_to_sap") ## to deprecate
-    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", domain=[('function_ids.code','=','SLD')])
+    partner_id = fields.Many2one('dmpi.crm.partner',"Customer", domain=_partner_id_domain)
     sold_via_id = fields.Many2one('dmpi.crm.partner',"Sold Via")
     contract_type = fields.Selection(_get_contract_type,"Contract Type", default=_get_contract_type_default)
     sap_doc_type = fields.Selection(_get_doc_types,"Doc Type", default=_get_default_doc_types, required=True)
@@ -203,6 +211,7 @@ class DmpiCrmSaleContract(models.Model):
     dr_ids = fields.One2many('dmpi.crm.dr','contract_id','Delivery')
     shp_ids = fields.One2many('dmpi.crm.shp','contract_id','Shipments')
     invoice_ids = fields.One2many('dmpi.crm.invoice','contract_id','Invoices')
+    note_ids = fields.One2many('dmpi.crm.customer.note','contract_id','Notes')
 
     #LOGS
     sent_to_sap = fields.Boolean("Sent to SAP")
@@ -223,6 +232,14 @@ class DmpiCrmSaleContract(models.Model):
     def upload_wizard(self):
         self.ensure_one()
         res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_sale_contract_upload')
+        res['context'] = {'default_contract_id':self.id,}
+        return res
+
+
+    @api.multi
+    def customer_upload_wizard(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('dmpi_crm', 'action_dmpi_crm_sale_contract_customer_upload')
         res['context'] = {'default_contract_id':self.id,}
         return res
 
@@ -1816,4 +1833,19 @@ class DmpiCrmMultiTag(models.TransientModel):
             co.tag_ids = self.tag_ids
         for so in self.sale_order_ids:
             so.tag_ids = self.tag_ids
+
+
+class DmpiCrmCustomerNotes(models.Model):
+    _name = 'dmpi.crm.customer.note'
+
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    date = fields.Datetime("Date", default=fields.Datetime.now())
+    subject = fields.Char("Subject")
+    body_html = fields.Html('Contents', default='', sanitize_style=True, strip_classes=True)
+    attachment_ids = fields.Many2many(
+        'ir.attachment', 'message_attachment_rel',
+        'message_id', 'attachment_id',
+        string='Attachments',
+        help='Attachments are linked to a document through model / res_id and to the message '
+             'through this field.')
 

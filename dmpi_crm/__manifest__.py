@@ -29,7 +29,9 @@
         "views/dmpi_crm_menu.xml",
         "views/dmpi_crm_config.xml",
         "views/dmpi_crm.xml",
+        "views/res_users.xml",
         "views/dmpi_crm_sale_contract.xml",
+        "views/dmpi_crm_sale_customer.xml",
 
         "views/dmpi_crm_report.xml",
         "views/dmpi_crm_sale_upload.xml",

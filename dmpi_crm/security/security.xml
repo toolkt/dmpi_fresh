@@ -34,6 +34,12 @@
             <field name="sequence">24</field>
         </record>
 
+        <record model="ir.module.category" id="module_category_custom_cust">
+            <field name="name">Customer</field>
+            <field name="description">Manage Customer</field>
+            <field name="sequence">26</field>
+        </record>
+
         <!-- GROUPS -->
 
         <!-- Commercial -->
@@ -104,6 +110,23 @@
             <field name="category_id" ref="module_category_custom_prod"/>
             <field name="implied_ids" eval="[(4, ref('group_custom_crm_prod_staff'))]"/>
         </record>
+
+
+        <!-- Customer -->
+        <record id="group_custom_crm_customer" model="res.groups">
+            <field name="name">Customer</field>
+            <field name="category_id" ref="module_category_custom_cust"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record model="ir.rule" id="dmpi_crm_customer_contract_rule">
+            <field name="name">Customer See own Contracts</field>
+            <field name="model_id" ref="model_dmpi_crm_sale_contract"/>
+            <field name="domain_force">[('partner_id', 'in', [u.id for u in user.partner_ids])]</field>
+            <field name="groups" eval="[(4, ref('group_custom_crm_customer'))]"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
 
         <!-- SNW Admin -->
 <!--         <record id="group_custom_crm_snw_admin" model="res.groups">

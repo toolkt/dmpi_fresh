@@ -151,6 +151,7 @@ class DmpiCrmPartner(models.Model):
 
 
 
+
 class DmpiCrmPartnerCreditLimit(models.Model):
     _name = 'dmpi.crm.partner.credit.limit'
 

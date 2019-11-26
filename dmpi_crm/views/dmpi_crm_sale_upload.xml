@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <form string="Upload">
                     <group>
-                        <field name="upload_file" />
-                        <field name="upload_type"/>
+                        <field name="upload_file" required="1"/>
+                        <field name="upload_type" required="1"/>
                         <button name="download_template" string="Download CSV Template" type="object" class="oe_link"/>
                         <field name="contract_id" invisible="1"/>
                         <field name="error_count" invisible="1"/>

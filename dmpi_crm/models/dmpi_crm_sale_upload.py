@@ -60,12 +60,19 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 		contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
 		return contract.partner_id.id
 
+
+	def _get_upload_type(self):
+		if self.env.user.has_group('dmpi_crm.group_custom_crm_customer'):
+			return [('customer','Customer Orders')]
+		else:
+			return [('customer','Customer Orders'),('commercial','Order Confirmation')]
+
 	template_file = fields.Binary("Template File")
 	upload_file = fields.Binary("Upload File")
 	contract_id = fields.Many2one("dmpi.crm.sale.contract","Contract")
 	upload_line_ids = fields.One2many('dmpi.crm.sale.contract.upload.line','upload_id',"Upload Lines")
 	error_count = fields.Integer("error_count")
-	upload_type = fields.Selection([('customer','Customer Orders'),('commercial','Order Confirmation')], "Upload Type", default='customer')
+	upload_type = fields.Selection(_get_upload_type, "Upload Type", default='customer')
 	pack_code_tmp = fields.Text(string='Pack Code Tmp', help='Active Pack Codes Upon Create', default=_get_default_pack_codes)
 	partner_id = fields.Many2one('dmpi.crm.partner', string='Customer', default=_get_customer)
 
@@ -74,138 +81,140 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 	def onchange_upload_file(self):
 
 		# if upload file exists
-		if self.upload_file:
-			rows = read_data(self.upload_file)
+		try:
+			if self.upload_file:
+				rows = read_data(self.upload_file)
 
-			row_count = 0
-			line_items = []
-			order_lines = {}
-			total_errors = 0
+				row_count = 0
+				line_items = []
+				order_lines = {}
+				total_errors = 0
 
-			hdr = CSV_UPLOAD_HEADERS
-			pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
-			end_hdr = hdr.pop()
-			hdr.extend(pack_codes)
-			hdr.append(end_hdr)
+				hdr = CSV_UPLOAD_HEADERS
+				pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
+				end_hdr = hdr.pop()
+				hdr.extend(pack_codes)
+				hdr.append(end_hdr)
 
-			for r in rows:
-				errors = []
-				error_count = 0
+				for r in rows:
+					errors = []
+					error_count = 0
 
-				if row_count == 0:
-					if not all([r[i] in hdr for i in range(len(r))]):
-						raise UserError(_('Bad Header Formatting! Please use the CSV format.\n'))
-					head_fmt = r
+					if row_count == 0:
+						if not all([r[i] in hdr for i in range(len(r))]):
+							raise UserError(_('Bad Header Formatting! Please use the CSV format.\n'))
+						head_fmt = r
 
-				elif r[0] != '':
-					data = dict(zip(head_fmt, r))
+					elif r[0] != '':
+						data = dict(zip(head_fmt, r))
 
-					# CHECK LINE NO
-					line_no = 0
-					try:
-						line_no = int(data['NO'])
-					except:
-						errors.append("No Line Number")
-						error_count += 1
-
-					# GET CONTRACT NUMBER
-					contract_id = self.env.context.get('default_contract_id',False)
-					contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
-					sold_to = contract.partner_id
-
-					# CHECK SHIP TO EXISTS
-					shp = data['SHIP TO']
-					ship_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',shp),('customer_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
-					if ship_to:
-						ship_to_id = ship_to.id
-					else:
-						ship_to_id = False
-						errors.append("Ship to does not exist")
-						error_count += 1
-
-					# CHECK NOTIFY ID EXISTS
-					notif = data['NOTIFY PARTY']
-					notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.ship_to_ids.ids)],limit=1)
-					if notify_to:
-						notify_to_id = notify_to.id
-					else:
-						notify_to_id = False
-						errors.append("Notify Party does not exist")
-						error_count += 1
-
-					total_qty = 0
-					total_p100 = 0
-					total_p200 = 0
-					qty_list = []
-
-					for pcode in pack_codes:
-
-						q = data.get(pcode,0)
+						# CHECK LINE NO
+						line_no = 0
 						try:
-							qty = int(q)
-							print 
-							total_qty += qty
-
-							if 'C' not in pcode:
-								total_p100 += qty
-							else:
-								total_p200 += qty
-
+							line_no = int(data['NO'])
 						except:
-							qty = 0
+							errors.append("No Line Number")
+							error_count += 1
 
-						order_lines[pcode] = qty
-						qty_list.append(qty)
+						# GET CONTRACT NUMBER
+						contract_id = self.env.context.get('default_contract_id',False)
+						contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
+						sold_to = contract.partner_id
 
-					# upload format mm/dd/yyyy
-					# CHECK DELIVERY DATE
-					deliver_date = False
-					try:
-						deliver_date = datetime.strptime(data['DELIVERY DATE'], '%m/%d/%Y')
-					except:
-						errors.append("Invalid Delivery Date.")
-						error_count += 1
+						# CHECK SHIP TO EXISTS
+						shp = data['SHIP TO']
+						ship_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',shp),('customer_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
+						if ship_to:
+							ship_to_id = ship_to.id
+						else:
+							ship_to_id = False
+							errors.append("Ship to does not exist")
+							error_count += 1
 
-					# CHECK ESTIMATED DATE
-					estimated_date = False
-					try:
-						estimated_date = datetime.strptime(data['ESTIMATED DATE'], '%m/%d/%Y')
-					except:
-						errors.append("Invalid Estimated Date.")
-						error_count += 1
+						# CHECK NOTIFY ID EXISTS
+						notif = data['NOTIFY PARTY']
+						notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.ship_to_ids.ids)],limit=1)
+						if notify_to:
+							notify_to_id = notify_to.id
+						else:
+							notify_to_id = False
+							errors.append("Notify Party does not exist")
+							error_count += 1
 
-					# CONSOLIDATE ERRORS
-					errors = '\n\n'.join(errors)
+						total_qty = 0
+						total_p100 = 0
+						total_p200 = 0
+						qty_list = []
 
-					item = {
-						'line_no': line_no,
-						'ship_to_id': ship_to_id,
-						'notify_id': notify_to_id,
-						'ship_line': data['SHIPPING LINE'],
-						'destination': data['DESTINATION'],
-						'shell_color': data['SHELL COLOR'],
-						'requested_delivery_date': deliver_date,
-						'estimated_date': estimated_date,
-						'order_lines': '%s' % order_lines,
-						'total_qty': total_qty,
-						'total_p100': total_p100,
-						'total_p200': total_p200,
-						'errors': errors,
-						'error_count': error_count,
-					}
-					line_items.append((0,0,item))
+						for pcode in pack_codes:
 
-				row_count += 1
-				total_errors += error_count
+							q = data.get(pcode,0)
+							try:
+								qty = int(q)
+								print 
+								total_qty += qty
 
-			self.upload_line_ids = line_items
-			if total_errors > 0:
-				self.error_count = total_errors
+								if 'C' not in pcode:
+									total_p100 += qty
+								else:
+									total_p200 += qty
 
-		# no file found, remove lines
-		else:
-			self.upload_line_ids.unlink()
+							except:
+								qty = 0
 
+							order_lines[pcode] = qty
+							qty_list.append(qty)
+
+						# upload format mm/dd/yyyy
+						# CHECK DELIVERY DATE
+						deliver_date = False
+						try:
+							deliver_date = datetime.strptime(data['DELIVERY DATE'], '%m/%d/%Y')
+						except:
+							errors.append("Invalid Delivery Date.")
+							error_count += 1
+
+						# CHECK ESTIMATED DATE
+						estimated_date = False
+						try:
+							estimated_date = datetime.strptime(data['ESTIMATED DATE'], '%m/%d/%Y')
+						except:
+							errors.append("Invalid Estimated Date.")
+							error_count += 1
+
+						# CONSOLIDATE ERRORS
+						errors = '\n\n'.join(errors)
+
+						item = {
+							'line_no': line_no,
+							'ship_to_id': ship_to_id,
+							'notify_id': notify_to_id,
+							'ship_line': data['SHIPPING LINE'],
+							'destination': data['DESTINATION'],
+							'shell_color': data['SHELL COLOR'],
+							'requested_delivery_date': deliver_date,
+							'estimated_date': estimated_date,
+							'order_lines': '%s' % order_lines,
+							'total_qty': total_qty,
+							'total_p100': total_p100,
+							'total_p200': total_p200,
+							'errors': errors,
+							'error_count': error_count,
+						}
+						line_items.append((0,0,item))
+
+					row_count += 1
+					total_errors += error_count
+
+				self.upload_line_ids = line_items
+				if total_errors > 0:
+					self.error_count = total_errors
+
+			# no file found, remove lines
+			else:
+				self.upload_line_ids.unlink()
+		except:
+			raise UserError(_("Invalid File Type, please ensure that the format is correct based on upload template and is in CSV format"))
 
 	@api.multi
 	def process_upload(self):

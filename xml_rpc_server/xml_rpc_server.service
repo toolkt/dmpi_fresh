@@ -1,0 +1,13 @@
+#nano /lib/systemd/system/xml_rpc_server.service
+
+[Unit]
+Description=XML RPC Server
+[Install]
+WantedBy=multi-user.target
+[Service]
+User=root
+PermissionsStartOnly=true
+ExecStart=/mnt/hgfs/Development/Odoo/dmpi_fresh/xml_rpc_server/xml_rpc_server.py
+TimeoutSec=600
+Restart=on-failure
+RuntimeDirectoryMode=755
