@@ -217,6 +217,41 @@
                                 </tree>
                             </field>                            
                         </page>
+
+                        <page string="Customer Notes">
+                            <field name="note_ids">
+                                <kanban>
+                                    <field name="subject"/>
+                                    <field name="body_html"/>
+                                    <field name="attachment_ids"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div style="width: 100%;">
+                                                <div class="row ">
+                                                    <div class="col-16">
+                                                        <ul>
+                                                            <li>DATE: <field name="date"/></li>
+                                                            <li>SUBJECT: <field name="subject"/></li>
+                                                            <li><field name="body_html" widget="html"/></li>
+                                                            <li><field name="attachment_ids" widget="many2many_binary"/></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+
+                                <form>
+                                    <label for="subject"/>
+                                    <h2 style="display: inline-block;"><field name="subject" placeholder="Subject (placeholders may be used here)"/></h2>
+                                    <field name="body_html" widget="html" options="{'style-inline': true}"/>
+                                    <field name="attachment_ids" widget="many2many_binary"/>
+                                </form>
+                            </field>
+                        </page>
+
+
                         <page string="Settings">
                             <h5>
                                 <p>Remaining Credit = Credit Limit - Credit Exposure</p>

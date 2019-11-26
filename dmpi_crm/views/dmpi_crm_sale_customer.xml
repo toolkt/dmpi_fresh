@@ -259,9 +259,6 @@
 
                         <page string="Customer Notes">
                             <field name="note_ids">
-
-
-
                                 <kanban>
                                     <field name="subject"/>
                                     <field name="body_html"/>
@@ -270,13 +267,16 @@
                                         <t t-name="kanban-box">
                                             <div style="width: 100%;">
                                                 <div class="row ">
-                                                    <div class="col-16">
-                                                        <ul>
-                                                            <li>DATE: <field name="date"/></li>
-                                                            <li>SUBJECT: <field name="subject"/></li>
-                                                            <li><field name="body_html" widget="html"/></li>
-                                                            <li><field name="attachment_ids" widget="many2many_binary"/></li>
-                                                        </ul>
+                                                    <div class="col-16 m4" style="padding: 10px 20px;">
+                                                        <p>
+                                                            <b>FROM:</b> <field name="user"/><br/>
+                                                            <b>DATE:</b> <field name="date"/><br/>
+                                                            <b>SUBJECT:</b> <field name="subject"/><br/>
+                                                        </p>
+                                                        <b>MESSAGE:</b><br/>
+                                                        <field name="body_html" widget="html"/>
+                                                        <field name="attachment_ids" widget="many2many_binary"/>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -285,6 +285,7 @@
                                 </kanban>
 
                                 <form>
+                                    <field name="date" invisible="1"/>
                                     <label for="subject"/>
                                     <h2 style="display: inline-block;"><field name="subject" placeholder="Subject (placeholders may be used here)"/></h2>
                                     <field name="body_html" widget="html" options="{'style-inline': true}"/>

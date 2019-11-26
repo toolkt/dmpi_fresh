@@ -1839,6 +1839,7 @@ class DmpiCrmCustomerNotes(models.Model):
     _name = 'dmpi.crm.customer.note'
 
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    user = fields.Many2one('res.users', related='create_uid')
     date = fields.Datetime("Date", default=fields.Datetime.now())
     subject = fields.Char("Subject")
     body_html = fields.Html('Contents', default='', sanitize_style=True, strip_classes=True)
