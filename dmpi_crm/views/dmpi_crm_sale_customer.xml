@@ -326,7 +326,7 @@
 
     <menuitem id="menu_main_dmpi_customer_contract" name="Contracts" web_icon="dmpi_crm,static/description/icon.png" sequence="0"/>
     <!-- PURCHASES -->
-    <menuitem id="menu_dmpi_crm_customer_contract_top" name="Contracts" parent="menu_main_dmpi_customer_contract" sequence="10"/>
+    <menuitem id="menu_dmpi_crm_customer_contract_top" name="Contracts" parent="menu_main_dmpi_customer_contract" groups="group_custom_crm_customer" sequence="10"/>
     <menuitem id="menu_dmpi_crm_customer_contract" action="action_dmpi_crm_customer_contract" parent="menu_dmpi_crm_customer_contract_top"/>
 
 </odoo>
