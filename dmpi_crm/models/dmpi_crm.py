@@ -817,6 +817,7 @@ class DmpiCRMVariety(models.Model):
 
 class DmpiCrmActivityLog(models.Model):
     _name = 'dmpi.crm.activity.log'
+    _order = 'date desc'
 
     name = fields.Char("Activity")
     description = fields.Text("Log")
