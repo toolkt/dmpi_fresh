@@ -989,6 +989,7 @@
             <field name="model">dmpi.crm.activity.log</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="date"/>
                     <field name="name"/>
                     <field name="log_type"/>
                     <field name="description"/>

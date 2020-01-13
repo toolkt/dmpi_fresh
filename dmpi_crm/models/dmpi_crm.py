@@ -823,6 +823,7 @@ class DmpiCrmActivityLog(models.Model):
     log_type = fields.Selection([('success','Success'),('fail','Fail'),('warning','Warning'),('note','Note')],"Type")
     model_id = fields.Many2one('ir.model',"Model")
     record_id = fields.Integer("Record ID")
+    date = fields.Datetime("Date",track_visibility='onchange', default=fields.Datetime.now())
 
 
 class DmpiCrmEmailNotificationSubscriber(models.Model):
