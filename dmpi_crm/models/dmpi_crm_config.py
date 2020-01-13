@@ -68,6 +68,16 @@ def read_float(num_str):
     return num
 
 
+def index_to_float(list,index):
+    num = 0.0
+    try:
+        num_str = list[index]
+        num = float( re.sub('[^0-9\.]','',num_str) )
+    except:
+        pass
+
+    return num
+
 def read_file_pdf(file_path, encoding='utf-8'):
     with settings(warn_only=True):
         io_obj = BytesIO()
@@ -695,7 +705,7 @@ class DmpiCrmConfig(models.Model):
                                     'sap_so_no' : row[1],
                                     'sap_so_line_no' : row[2],
                                     'material' : row[3],
-                                    'qty' : read_float(row[4]),
+                                    'qty' : index_to_float(row,4),
                                     'uom' : row[5],
                                     'plant' : row[6],
                                     'rejection_reason' : row[7],
@@ -712,9 +722,9 @@ class DmpiCrmConfig(models.Model):
                                     'type' : row[6],
                                     'factor_num' : row[7],
                                     'factor' : row[8],
-                                    'no_sample' : read_float(row[9]),
-                                    'no_defect' : read_float(row[10]),
-                                    'value' : read_float(row[11]),
+                                    'no_sample' : index_to_float(row,9),
+                                    'no_defect' : index_to_float(row,10),
+                                    'value' : index_to_float(row,11),
                                     # 'sku' : row[3],
                                     # 'sap_so_no' : row[2],
                                 }
@@ -738,23 +748,31 @@ class DmpiCrmConfig(models.Model):
                                     'week': row[1],
                                     'brand': row[2],
                                     'description': row[3],
-                                    'boxes': read_float(row[4]),
+                                    'boxes': index_to_float(row,4),
                                 })
 
                             if row[0].upper() == 'CLPITEM':
-                                pc = row[2].split(' ')
+
                                 line = {
                                     'tag_no' : row[1],
-                                    'pack_code' : '%s %s' % (pc[0],pc[1]),
+                                    # 'pack_code' : pack_code,
                                     'pack_size' : row[3],
                                     'product_crown'  : row[4],
-                                    'qty'  : read_float(row[5]),
+                                    'qty'  : index_to_float(row,5),
                                     'position'  : row[6],
                                 }
-                                if pc[3]:
+
+                                pc = ['','','','']
+                                if ' ' in row[2]:
+                                    pc = row[2].split(' ')
+                                if '-' in row[2]:
+                                    pc = row[2].split('-')
+
+                                line['pack_code']  =  '%s %s' % (pc[0],pc[1])
+                                if len(pc) > 3:
                                     line['shell_color'] = pc[3]
                                     line['shell_color2'] = pc[3]
-                                print(line)
+                                # print(line)
                                 clp_lines.append((0,0,line))                                               
 
                             if row[0].upper() == 'CLPFTR':
@@ -803,6 +821,7 @@ class DmpiCrmConfig(models.Model):
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_dr')
+                    # print (e)
 
 
     @api.multi
@@ -873,7 +892,7 @@ class DmpiCrmConfig(models.Model):
                                 'sap_so_no':row[1],
                                 'so_line_no':row[2],
                                 'material':row[3],
-                                'qty': read_float(row[4]),
+                                'qty': index_to_float(row,4),
                                 'uom':row[5],
                                 'plant':row[6],
                                 'reject_reason':row[7],
@@ -988,9 +1007,9 @@ class DmpiCrmConfig(models.Model):
                                 'so_line_no': row[11],
                                 'inv_line_no': row[12],
                                 'material' : row[13], 
-                                'qty': read_float(row[14]),
+                                'qty': index_to_float(row,14),
                                 'uom': row[15],
-                                'line_net_value': read_float(row[16]),
+                                'line_net_value': index_to_float(row,16),
                             }
 
                             inv_lines.append((0,0,inv_line))
