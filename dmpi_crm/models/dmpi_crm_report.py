@@ -267,6 +267,31 @@ class DmpiCrmClp(models.Model):
 
 
     @api.multi
+    def print_clp_v2(self):
+        filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
+
+        values = {
+            'type': 'ir.actions.report',
+            'report_name': 'dmpi_crm.clp_report_v2',
+            'report_type': 'pentaho',
+            'name': 'Container Load Plan',
+            'datas': {
+                'output_type': 'pdf',
+                'filename': filename,
+                'variables': {
+                    # 'user': user.name,
+                    'ids': self.ids,
+                    'dr_id': self.dr_id.id
+                },
+            },
+        }
+
+        return values
+
+
+
+
+    @api.multi
     def print_clp_customer(self):
         filename = 'CLP_%s_%s_%s' % (self.control_no,self.container_no,self.date_start)
 

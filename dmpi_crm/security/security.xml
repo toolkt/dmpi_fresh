@@ -125,6 +125,8 @@
             <field name="domain_force">[('partner_id', 'in', [u.id for u in user.partner_ids])]</field>
             <field name="groups" eval="[(4, ref('group_custom_crm_customer'))]"/>
             <field name="perm_unlink" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
         </record>
 
 

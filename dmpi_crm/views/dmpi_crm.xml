@@ -606,6 +606,8 @@
 
                         <button name="action_generate_preship" string="Generate Pre-Shipment" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','qa_confirmed')]}"/>
 
+                        <button name="print_clp_v2" string="Print Container Load Plan v2 (Internal)" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
+
                         <button name="print_clp" string="Print Container Load Plan (Internal)" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>
 
                         <button name="print_clp_customer" string="Print Container Load Plan" type="object" class="oe_stat_button" attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}"/>

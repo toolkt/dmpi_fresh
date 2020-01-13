@@ -170,9 +170,8 @@
                                                 </field>                            
                                             </page>    
 
-                                            <field name="allowed_ship_to" invisible="1"/>
-                                            <field name="allowed_products" invisible="1"/>
-<!-- 
+
+
                                             <page string="Settings">
                                                 <group>
                                                     <group>
@@ -185,16 +184,18 @@
                                                         <field name="partner_id" />
                                                     </group>
                                                     <group>
-                                                        <field name="pack_code_tmp"/>
+                                                        
                                                         <field name="contract_tag_ids"/>
                                                     </group>
                                                 </group>
                                                 <group>
                                                     <group>
-
+                                                        <field name="allowed_ship_to" invisible="0"/>
+                                                        <field name="allowed_products" invisible="0"/>
+                                                        <field name="pack_code_tmp"  invisible="0"/>
                                                     </group>
                                                 </group>
-                                            </page> -->
+                                            </page>
 
                                         </notebook>
                                     </sheet>
