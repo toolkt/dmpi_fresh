@@ -637,7 +637,7 @@ class DmpiCrmConfig(models.Model):
                     dr_tr_item = []
 
                     for l in line:
-                        print (l)
+                        # print (l)
                         row = l.split('\t')
                         if row[0] != '':
                             if row[0] == 'Header':
