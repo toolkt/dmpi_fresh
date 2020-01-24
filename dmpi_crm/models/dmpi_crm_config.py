@@ -767,7 +767,7 @@ class DmpiCrmConfig(models.Model):
 
                                 line = {
                                     'tag_no' : row[1],
-                                    # 'pack_code' : pack_code,
+                                    'pack_code' : row[2],
                                     'pack_size' : row[3],
                                     'product_crown'  : row[4],
                                     'qty'  : index_to_float(row,5),
@@ -780,7 +780,7 @@ class DmpiCrmConfig(models.Model):
                                 # if '-' in row[2]:
                                 #     pc = row[2].split('-')
 
-                                line['pack_code']  =  '%s %s' % (pc[0],pc[1])
+                                # line['pack_code']  =  '%s %s' % (pc[0],pc[1])
                                 # if len(pc) > 3:
                                 #     line['shell_color'] = pc[3]
                                 #     line['shell_color2'] = pc[3]
