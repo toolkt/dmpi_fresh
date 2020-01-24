@@ -811,7 +811,7 @@ class DmpiCrmConfig(models.Model):
                         clp['dr_id'] = new_dr.id
                         clp_id = self.env['dmpi.crm.clp'].create(clp)
 
-                        print(new_dr,clp_id)
+                        print(new_dr,clp_id) 
                         if self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)]).id == new_dr.id:
                             execute(transfer_files,f, outbound_path_success)
                             log = { 'name':"ODOO_DR", 'log_type':"success",
