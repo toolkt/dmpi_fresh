@@ -809,16 +809,18 @@ class DmpiCrmConfig(models.Model):
                         if clp.get('container_no', False):
                             clp['clp_line_ids'] = clp_lines
                             clp['dr_id'] = new_dr.id
-                            self.env['dmpi.crm.clp'].create(clp)
+                            clp_id = self.env['dmpi.crm.clp'].create(clp)
 
-                        execute(transfer_files,f, outbound_path_success)
-                        log = { 'name':"ODOO_DR", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_success),
-                                'file_source': f ,
-                                'file_destination': outbound_path_success,
-                            }
-                        self.env['dmpi.crm.activity.log'].create(log)
-                        _logger.info('SUCCESS process_dr %s',sap_dr_no)
+                        print(new_dr,clp_id)
+                        if new_dr:
+                            execute(transfer_files,f, outbound_path_success)
+                            log = { 'name':"ODOO_DR", 'log_type':"success",
+                                    'description':"Transferred %s to %s " % (f,outbound_path_success),
+                                    'file_source': f ,
+                                    'file_destination': outbound_path_success,
+                                }
+                            self.env['dmpi.crm.activity.log'].create(log)
+                            _logger.info('SUCCESS process_dr %s',sap_dr_no)
 
                     # else:
                     #     execute(transfer_files,f, outbound_path_fail)
