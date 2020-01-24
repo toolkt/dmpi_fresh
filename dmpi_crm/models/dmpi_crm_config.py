@@ -630,7 +630,7 @@ class DmpiCrmConfig(models.Model):
             env.keepalive = 15
 
             files = execute(list_dir,outbound_path,'ODOO_DR')
-            for f in files[host_string]:
+            for f in files[host_string][:5]:
                 try:
                     result = execute(read_file,f)[host_string]
 
