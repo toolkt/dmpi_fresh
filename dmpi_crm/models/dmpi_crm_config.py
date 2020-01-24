@@ -806,10 +806,10 @@ class DmpiCrmConfig(models.Model):
                     if sap_dr_no:
                         new_dr = self.env['dmpi.crm.dr'].create(dr)
 
-                        if clp.get('container_no', False):
-                            clp['clp_line_ids'] = clp_lines
-                            clp['dr_id'] = new_dr.id
-                            clp_id = self.env['dmpi.crm.clp'].create(clp)
+                        # if clp.get('container_no', False):
+                        clp['clp_line_ids'] = clp_lines
+                        clp['dr_id'] = new_dr.id
+                        clp_id = self.env['dmpi.crm.clp'].create(clp)
 
                         print(new_dr,clp_id)
                         if new_dr:
