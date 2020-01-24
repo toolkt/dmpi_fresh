@@ -825,6 +825,15 @@ class DmpiCrmActivityLog(models.Model):
     model_id = fields.Many2one('ir.model',"Model")
     record_id = fields.Integer("Record ID")
     date = fields.Datetime("Date",track_visibility='onchange', default=fields.Datetime.now())
+    file_source = fields.Char("Source")
+    file_destination = fields.Char("Destination")
+    note = fields.Char("Note")
+
+    @api.multi
+    def revert(self):
+        for rec in self:
+            if not rec.note:
+                rec.write({'note':"REVERTED"})
 
 
 class DmpiCrmEmailNotificationSubscriber(models.Model):

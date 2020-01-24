@@ -328,7 +328,9 @@ class DmpiCrmConfig(models.Model):
                         rec.write({'state':'processed'})
 
                         log = { 'name':"CONTRACT SUCCESS", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                                'description':"Transferred %s to %s " % (f,outbound_path_success),
+                                'file_source': f ,
+                                'file_destination': outbound_path_success,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_success_contract %s',po_no)
@@ -362,7 +364,9 @@ class DmpiCrmConfig(models.Model):
                         execute(transfer_files,f, outbound_path_fail_sent)
 
                         log = { 'name':"CONTRACT FAIL", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_fail_sent)
+                                'description':"Transferred %s to %s " % (f,outbound_path_fail_sent),
+                                'file_source': f ,
+                                'file_destination': outbound_path_fail_sent,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_fail_contract %s', po_no)
@@ -521,7 +525,9 @@ class DmpiCrmConfig(models.Model):
                     execute(transfer_files,f, outbound_path_success)
 
                     log = { 'name':"ODOO_AR_OPENAR", 'log_type':"success",
-                            'description':"Transferred %s to %s " % (f,outbound_path_success)
+                            'description':"Transferred %s to %s " % (f,outbound_path_success),
+                            'file_source': f ,
+                            'file_destination': outbound_path_success,
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.info('SUCCESS process_ar')
@@ -529,7 +535,9 @@ class DmpiCrmConfig(models.Model):
                 except Exception as e:
                     execute(transfer_files,f, outbound_path_fail)
                     log = { 'name':"ODOO_AR_OPENAR", 'log_type':"fail",
-                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail),
+                            'file_source': f ,
+                            'file_destination': outbound_path_fail,
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_ar')
@@ -588,7 +596,9 @@ class DmpiCrmConfig(models.Model):
                         execute(transfer_files,f, outbound_path_success)
 
                         log = { 'name':"ODOO_AR_CRDLMT", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                                'description':"Transferred %s to %s " % (f,outbound_path_success),
+                                'file_source': f ,
+                                'file_destination': outbound_path_success,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_cl')
@@ -596,7 +606,9 @@ class DmpiCrmConfig(models.Model):
                 except Exception as e:
                     execute(transfer_files,f, outbound_path_fail)
                     log = { 'name':"ODOO_AR_CRDLMT", 'log_type':"fail",
-                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail),
+                            'file_source': f ,
+                            'file_destination': outbound_path_fail,
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_cl')
@@ -755,23 +767,23 @@ class DmpiCrmConfig(models.Model):
 
                                 line = {
                                     'tag_no' : row[1],
-                                    # 'pack_code' : pack_code,
+                                    'pack_code' : pack_code,
                                     'pack_size' : row[3],
                                     'product_crown'  : row[4],
                                     'qty'  : index_to_float(row,5),
                                     'position'  : row[6],
                                 }
 
-                                pc = ['','','','']
-                                if ' ' in row[2]:
-                                    pc = row[2].split(' ')
-                                if '-' in row[2]:
-                                    pc = row[2].split('-')
+                                # pc = ['','','','']
+                                # if ' ' in row[2]:
+                                #     pc = row[2].split(' ')
+                                # if '-' in row[2]:
+                                #     pc = row[2].split('-')
 
-                                line['pack_code']  =  '%s %s' % (pc[0],pc[1])
-                                if len(pc) > 3:
-                                    line['shell_color'] = pc[3]
-                                    line['shell_color2'] = pc[3]
+                                # line['pack_code']  =  '%s %s' % (pc[0],pc[1])
+                                # if len(pc) > 3:
+                                #     line['shell_color'] = pc[3]
+                                #     line['shell_color2'] = pc[3]
                                 # print(line)
                                 clp_lines.append((0,0,line))                                               
 
@@ -801,7 +813,9 @@ class DmpiCrmConfig(models.Model):
 
                         execute(transfer_files,f, outbound_path_success)
                         log = { 'name':"ODOO_DR", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                                'description':"Transferred %s to %s " % (f,outbound_path_success),
+                                'file_source': f ,
+                                'file_destination': outbound_path_success,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_dr %s',sap_dr_no)
@@ -817,7 +831,9 @@ class DmpiCrmConfig(models.Model):
                 except Exception as e:
                     execute(transfer_files,f, outbound_path_fail)
                     log = { 'name':"ODOO_DR", 'log_type':"fail",
-                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                            'description':"ERROR: %s \nTransferred %s to %s " % (e,f,outbound_path_fail),
+                            'file_source': f ,
+                            'file_destination': outbound_path_fail,
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_dr')
@@ -912,7 +928,9 @@ class DmpiCrmConfig(models.Model):
                         execute(transfer_files,f, outbound_path_success)
 
                         log = { 'name':"ODOO_SHP", 'log_type':"success",
-                                'description':"Transferred %s to %s " % (f,outbound_path_success)
+                                'description':"Transferred %s to %s " % (f,outbound_path_success),
+                                'file_source': f ,
+                                'file_destination': outbound_path_success,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('SUCCESS process_shp %s',shp_no)
@@ -921,7 +939,9 @@ class DmpiCrmConfig(models.Model):
                         execute(transfer_files,f, outbound_path_fail)
 
                         log = { 'name':"ODOO_SHP", 'log_type':"fail",
-                                'description':"Failed: %s \nTransferred %s to %s " % ('No SHIP No.',f,outbound_path_fail)
+                                'description':"Failed: %s \nTransferred %s to %s " % ('No SHIP No.',f,outbound_path_fail),
+                                'file_source': f ,
+                                'file_destination': outbound_path_fail,
                             }
                         self.env['dmpi.crm.activity.log'].create(log)
                         _logger.info('FAILED process_shp')
@@ -930,7 +950,9 @@ class DmpiCrmConfig(models.Model):
                     execute(transfer_files,f, outbound_path_fail)
 
                     log = { 'name':"ODOO_SHP", 'log_type':"fail",
-                            'description':"Error: %s \nTransferred %s to %s " % (e,f,outbound_path_fail)
+                            'description':"Error: %s \nTransferred %s to %s " % (e,f,outbound_path_fail),
+                            'file_source': f ,
+                            'file_destination': outbound_path_fail,
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERRROR process_shp')

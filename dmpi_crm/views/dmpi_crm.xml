@@ -993,6 +993,10 @@
                     <field name="name"/>
                     <field name="log_type"/>
                     <field name="description"/>
+                    <field name="file_source"/>
+                    <field name="file_destination"/>
+                    <field name="note"/>
+                    <button name="revert" type="object" class="oe_stat_button" icon="fa-refresh" string="Revert"/>
                 </tree>
             </field>
         </record>
