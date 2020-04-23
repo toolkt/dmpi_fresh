@@ -91,51 +91,51 @@
                         </group>
                     </group>
 
-                <center attrs="{'invisible': [('error_count','=',0)]}">
-                    <span style="color:red"><field name="errors_disp" readonly="1"/></span>
-                </center>
-                <notebook>
-                    <page string="Sales Order">
-                        <!-- <field name="sale_order_ids" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"> -->
-                        <field name="sale_order_ids">
-                            <tree>
-                                <field name="contract_line_no" string="#"/>
-                                <field name="ship_to_id" />
-                                <field name="total_p100" sum="Total"/>
-                                <field name="total_p200" sum="Total"/>
-                                <field name="total_qty" sum="Total"/>
-                                <field name="total_amount" sum="Total"/>
-                                <field name="state"/>
-                            </tree>
-                        </field>
-                        
-                    </page>
-                    <page string="Delivery">
-                        <field name="dr_ids" readonly="1">
-                            <tree>
-                                <field name="sap_dr_no" />
-                                <field name="name" />
-                            </tree>
-                        </field>                            
-                    </page>
-                    <page string="Shipment">
-                        <field name="shp_ids" readonly="1">
-                            <tree>
-                                <field name="shp_no" />
-                                <field name="sap_dr_no" />
-                            </tree>
-                        </field>                            
-                    </page>
+                    <center attrs="{'invisible': [('error_count','=',0)]}">
+                        <span style="color:red"><field name="errors_disp" readonly="1"/></span>
+                    </center>
+                    <notebook>
+                        <page string="Sales Order">
+                            <!-- <field name="sale_order_ids" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"> -->
+                            <field name="sale_order_ids">
+                                <tree>
+                                    <field name="contract_line_no" string="#"/>
+                                    <field name="ship_to_id" />
+                                    <field name="total_p100" sum="Total"/>
+                                    <field name="total_p200" sum="Total"/>
+                                    <field name="total_qty" sum="Total"/>
+                                    <field name="total_amount" sum="Total"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                            
+                        </page>
+                        <page string="Delivery">
+                            <field name="dr_ids" readonly="1">
+                                <tree>
+                                    <field name="sap_dr_no" />
+                                    <field name="name" />
+                                </tree>
+                            </field>                            
+                        </page>
+                        <page string="Shipment">
+                            <field name="shp_ids" readonly="1">
+                                <tree>
+                                    <field name="shp_no" />
+                                    <field name="sap_dr_no" />
+                                </tree>
+                            </field>                            
+                        </page>
 
-                    <page string="Invoice">
-                        <field name="invoice_ids" readonly="1">
-                            <tree>
-                                <field name="name" />
-                                <field name="dmpi_inv_no" />
-                            </tree>
-                        </field>                            
-                    </page>
-                </notebook>
+                        <page string="Invoice">
+                            <field name="invoice_ids" readonly="1">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="dmpi_inv_no" />
+                                </tree>
+                            </field>                            
+                        </page>
+                    </notebook>
 
                 </sheet>
 

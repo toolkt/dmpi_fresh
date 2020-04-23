@@ -2,80 +2,80 @@
 <odoo>
 
 
-        <record id="view_dmpi_crm_sale_contract_search" model="ir.ui.view">
-            <field name="name">CRM Sale Contract</field>
-            <field name="model">dmpi.crm.sale.contract</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="sap_cn_no"/>
-                    <field name="partner_id"/>
-                    <field name="customer_ref"/>
-                    <field name="partner_id"/>
-                    <field name="week_no" required="1"/>
-                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
-                    <filter name="filter_soa" string="SOA" domain="[('state', '=', 'soa')]"/>
-                    <group>
-                        <filter string="Active" context="{'group_by': 'active'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
+    <record id="view_dmpi_crm_sale_contract_search" model="ir.ui.view">
+        <field name="name">CRM Sale Contract</field>
+        <field name="model">dmpi.crm.sale.contract</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="sap_cn_no"/>
+                <field name="partner_id"/>
+                <field name="customer_ref"/>
+                <field name="partner_id"/>
+                <field name="week_no" required="1"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_soa" string="SOA" domain="[('state', '=', 'soa')]"/>
+                <group>
+                    <filter string="Active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
-        <record id="view_dmpi_crm_sale_contract_tree" model="ir.ui.view">
-            <field name="name">CRM Sale Contract</field>
-            <field name="model">dmpi.crm.sale.contract</field>
-            <field name="arch" type="xml">
-                <tree decoration-muted="state == 'cancel' ">
-                    <field name="name"/>
-                    <field name="sap_cn_no"/>
-                    <field name="week_no" required="1"/>
-                    <field name="partner_id"/>
-                    <field name="contract_type" invisible="1"/>
-                    <field name="customer_ref" />
-                    <field name="po_date"/>
-                    <field name="valid_from" />
-                    <field name="valid_to"/>   
-                    <field name="state"/>     
-
-
-                </tree>
-            </field>
-        </record>
+    <record id="view_dmpi_crm_sale_contract_tree" model="ir.ui.view">
+        <field name="name">CRM Sale Contract</field>
+        <field name="model">dmpi.crm.sale.contract</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'cancel' ">
+                <field name="name"/>
+                <field name="sap_cn_no"/>
+                <field name="week_no" required="1"/>
+                <field name="partner_id"/>
+                <field name="contract_type" invisible="1"/>
+                <field name="customer_ref" />
+                <field name="po_date"/>
+                <field name="valid_from" />
+                <field name="valid_to"/>   
+                <field name="state"/>     
 
 
-        <record id="view_dmpi_crm_sale_contract_form" model="ir.ui.view">
-            <field name="name">CRM Sale Contract</field>
-            <field name="model">dmpi.crm.sale.contract</field>
-            <field name="arch" type="xml">
-                <form class="o_form_document">
-                    <header>
-
-                        <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_request_confirmation" states="submitted" string="Request Customer Confirmation" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_confirm_contract" states="submitted,confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_approve_contract" states="confirmed" string="Approve Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
-
-                        <button name="action_cancel_po" string="Cancel PO" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Have you cancelled the corresponding SO and Contract in SAP?" states="approved,processing,processed"/>
+            </tree>
+        </field>
+    </record>
 
 
-                        <button name="action_generate_new_so" string="Recompute New SO/Lines" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Confirm Generation of new SO" states="enroute,processed"/>
+    <record id="view_dmpi_crm_sale_contract_form" model="ir.ui.view">
+        <field name="name">CRM Sale Contract</field>
+        <field name="model">dmpi.crm.sale.contract</field>
+        <field name="arch" type="xml">
+            <form class="o_form_document">
+                <header>
 
-                        <button name="action_send_contract_to_sap" string="Send Confirmed SOs to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Confirm Generation of new SO" states="enroute,processed"/>
+                    <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
+                    <button name="action_request_confirmation" states="submitted" string="Request Customer Confirmation" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                    <button name="action_confirm_contract" states="submitted,confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+
+                    <button name="action_approve_contract" states="confirmed" string="Approve Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
+
+                    <button name="action_release_contract" states="soa" string="Release Contract" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_finance_staff" confirm="Please confirm PO Submission"/>
+
+                    <button name="action_send_contract_to_sap" states="approved" string="Send Contract to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Please confirm PO Submission"/>
+
+                    <button name="action_cancel_po" string="Cancel PO" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Have you cancelled the corresponding SO and Contract in SAP?" states="approved,processing,processed"/>
 
 
-                    </header>
-                    <sheet>
-                        <div class="oe_button_box" name="button_box">
+                    <button name="action_generate_new_so" string="Recompute New SO/Lines" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Confirm Generation of new SO" states="enroute,processed"/>
+
+                    <button name="action_send_contract_to_sap" string="Send Confirmed SOs to SAP" type="object" class="oe_highlight" groups="dmpi_crm.group_custom_crm_commercial_manager" confirm="Confirm Generation of new SO" states="enroute,processed"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" clickable="1" statusbar_colors='{"approved":"blue"}'/>
+
+
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
 
 <!--                             <button name="send_email"
                                 type="object"
@@ -83,28 +83,28 @@
                                 class="oe_stat_button"
                                 icon="fa-envelope">
                             </button>
- -->
+                        -->
 
-                             <button name="action_multi_order_tag"
-                                type="object"
-                                string="Multi Tag"
-                                class="oe_stat_button"
-                                icon="fa-check-square-o">
-                            </button>
+                        <button name="action_multi_order_tag"
+                            type="object"
+                            string="Multi Tag"
+                            class="oe_stat_button"
+                            icon="fa-check-square-o">
+                        </button>
 
-                             <button name="download_order_wizard"
-                                type="object"
-                                string="Download Orders"
-                                class="oe_stat_button"
-                                icon="fa-download">
-                            </button>
+                        <button name="download_order_wizard"
+                            type="object"
+                            string="Download Orders"
+                            class="oe_stat_button"
+                            icon="fa-download">
+                        </button>
 
-                            <button name="upload_wizard"
-                                type="object"
-                                string="Upload"
-                                class="oe_stat_button"
-                                icon="fa-upload">
-                            </button>
+                        <button name="upload_wizard"
+                            type="object"
+                            string="Upload"
+                            class="oe_stat_button"
+                            icon="fa-upload">
+                        </button>
 
 <!--                             <button name="re_map_products"
                                 type="object"
@@ -153,127 +153,135 @@
                             </group>
                         </group>
 
-                    <center attrs="{'invisible': [('error_count','=',0)]}">
-                        <span style="color:red"><field name="errors_disp" readonly="1"/></span>
-                    </center>
+                        <center attrs="{'invisible': [('error_count','=',0)]}">
+                            <span style="color:red"><field name="errors_disp" readonly="1"/></span>
+                        </center>
 
-                    <notebook>
-                        <page string="Customer Orders">
-                            <field name="customer_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
-                                <tree>
-                                    <field name="contract_line_no" string="#"/>
-                                    <field name="ship_to_id" />
-                                    <field name="notify_id" />
-                                    <field name="ship_line" />
-                                    <field name="destination" />
-                                    <field name="total_p100" sum="Total" string="With Crown"/>
-                                    <field name="total_p200" sum="Total" string="Crownless"/>
-                                    <field name="total_qty" sum="Total" string="Qty"/>
-                                    <field name="total_amount" sum="Total" string="Amount"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Sales Order">
-                            <field name="sale_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
-                                <tree decoration-danger="error > 0">
-                                    <field name="contract_line_no" string="#"/>
-                                    <field name="ship_to_id" />
-                                    <field name="notify_id" />
-                                    <field name="ship_line" />
-                                    <field name="destination" />
-                                    <field name="name_disp" />
-                                    <field name="total_p100" sum="Total"/>
-                                    <field name="total_p200" sum="Total"/>
-                                    <field name="total_qty" sum="Total" string="Qty"/>
-                                    <field name="total_amount" sum="Total" string="Amount"/>
-                                    <field name="error" invisible="1"/>
-                                    <field name="state"/>
-                                </tree>
-                            </field>
-                            
-                        </page>
-                        <page string="Delivery">
-                            <field name="dr_ids">
-                                <tree>
-                                    <field name="sap_dr_no" />
-                                    <field name="name" />
-                                </tree>
-                            </field>                            
-                        </page>
-                        <page string="Shipment">
-                            <field name="shp_ids">
-                                <tree>
-                                    <field name="shp_no" />
-                                    <field name="sap_dr_no" />
-                                </tree>
-                            </field>                            
-                        </page>
+                        <notebook>
+                            <page string="Customer Orders">
+                                <field name="customer_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
+                                    <tree>
+                                        <field name="contract_line_no" string="#"/>
+                                        <field name="ship_to_id" />
+                                        <field name="notify_id" />
+                                        <field name="ship_line" />
+                                        <field name="destination" />
+                                        <field name="total_p100" sum="Total" string="With Crown"/>
+                                        <field name="total_p200" sum="Total" string="Crownless"/>
+                                        <field name="total_qty" sum="Total" string="Qty"/>
+                                        <field name="total_amount" sum="Total" string="Amount"/>
+                                    </tree>
+                                </field>
+                                <notebook>
+                                    <page string="Customer Notes">
+                                        <field name="note_ids">
+                                            <kanban>
+                                                <field name="subject"/>
+                                                <field name="body_html"/>
+                                                <field name="attachment_ids"/>
+                                                <templates>
+                                                    <t t-name="kanban-box">
+                                                        <div style="width: 100%;">
+                                                            <div class="row ">
+                                                                <div class="col-16 m4" style="padding: 10px 20px;">
+                                                                    <p>
+                                                                        <b>FROM:</b> <field name="user"/><br/>
+                                                                        <b>DATE:</b> <field name="date"/><br/>
+                                                                        <b>SUBJECT:</b> <field name="subject"/><br/>
+                                                                    </p>
+                                                                    <b>MESSAGE:</b><br/>
+                                                                    <field name="body_html" widget="html"/>
+                                                                    <field name="attachment_ids" widget="many2many_binary"/>
 
-                        <page string="Invoice">
-                            <field name="invoice_ids">
-                                <tree>
-                                    <field name="name" />
-                                    <field name="dmpi_inv_no" />
-                                </tree>
-                            </field>                            
-                        </page>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </templates>
+                                            </kanban>
 
-                        <page string="Customer Notes">
-                            <field name="note_ids">
-                                <kanban>
-                                    <field name="subject"/>
-                                    <field name="body_html"/>
-                                    <field name="attachment_ids"/>
-                                    <templates>
-                                        <t t-name="kanban-box">
-                                            <div style="width: 100%;">
-                                                <div class="row ">
-                                                    <div class="col-16">
-                                                        <ul>
-                                                            <li>DATE: <field name="date"/></li>
-                                                            <li>SUBJECT: <field name="subject"/></li>
-                                                            <li><field name="body_html" widget="html"/></li>
-                                                            <li><field name="attachment_ids" widget="many2many_binary"/></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </templates>
-                                </kanban>
+                                            <form>
+                                                <field name="date" invisible="1"/>
+                                                <label for="subject"/>
+                                                <h2 style="display: inline-block;"><field name="subject" placeholder="Subject (placeholders may be used here)"/></h2>
+                                                <field name="body_html" widget="html" options="{'style-inline': true}"/>
+                                                <field name="attachment_ids" widget="many2many_binary"/>
+                                            </form>
+                                        </field>
+                                    </page>
+                                </notebook>
 
-                                <form>
-                                    <label for="subject"/>
-                                    <h2 style="display: inline-block;"><field name="subject" placeholder="Subject (placeholders may be used here)"/></h2>
-                                    <field name="body_html" widget="html" options="{'style-inline': true}"/>
-                                    <field name="attachment_ids" widget="many2many_binary"/>
-                                </form>
-                            </field>
-                        </page>
+                            </page>
+                            <page string="Sales Order">
+                                <field name="sale_order_ids" context="{'default_sap_doc_type':sap_doc_type}">
+                                    <tree decoration-danger="error > 0">
+                                        <field name="contract_line_no" string="#"/>
+                                        <field name="ship_to_id" />
+                                        <field name="notify_id" />
+                                        <field name="ship_line" />
+                                        <field name="destination" />
+                                        <field name="name_disp" />
+                                        <field name="total_p100" sum="Total"/>
+                                        <field name="total_p200" sum="Total"/>
+                                        <field name="total_qty" sum="Total" string="Qty"/>
+                                        <field name="total_amount" sum="Total" string="Amount"/>
+                                        <field name="error" invisible="1"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                                
+                            </page>
+                            <page string="Delivery">
+                                <field name="dr_ids">
+                                    <tree>
+                                        <field name="sap_dr_no" />
+                                        <field name="name" />
+                                    </tree>
+                                </field>                            
+                            </page>
+                            <page string="Shipment">
+                                <field name="shp_ids">
+                                    <tree>
+                                        <field name="shp_no" />
+                                        <field name="sap_dr_no" />
+                                    </tree>
+                                </field>                            
+                            </page>
+
+                            <page string="Invoice">
+                                <field name="invoice_ids">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="dmpi_inv_no" />
+                                    </tree>
+                                </field>                            
+                            </page>
 
 
-                        <page string="Settings">
-                            <h5>
-                                <p>Remaining Credit = Credit Limit - Credit Exposure</p>
-                                <p>Credit After Sale = Remaining Credit - (Total Sales + Open SO)</p>
-                            </h5>
-                            <group>
+
+
+                            <page string="Settings">
+                                <h5>
+                                    <p>Remaining Credit = Credit Limit - Credit Exposure</p>
+                                    <p>Credit After Sale = Remaining Credit - (Total Sales + Open SO)</p>
+                                </h5>
                                 <group>
-                                    <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                    <field name="sap_doc_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
-                                    <field name="customer_ref_to_sap" readonly="1"/>
-                                    <field name="sent_to_sap"/>
-                                    <field name="sent_to_sap_time"/>
-                                    <field name="route_to_finance"/>
+                                    <group>
+                                        <field name="contract_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                        <field name="sap_doc_type" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                        <field name="customer_ref_to_sap" readonly="1"/>
+                                        <field name="sent_to_sap"/>
+                                        <field name="sent_to_sap_time"/>
+                                        <field name="route_to_finance"/>
+                                    </group>
+                                    <group>
+                                        <field name="name" />
+                                        <field name="sap_cn_no" />
+                                        <field name="state_disp"/>
+                                    </group>
                                 </group>
-                                <group>
-                                    <field name="name" />
-                                	<field name="sap_cn_no" />
-                                    <field name="state_disp"/>
-                                </group>
-                            </group>
-                        </page>
-                    </notebook>
+                            </page>
+                        </notebook>
 
                     </sheet>
                     <div class="oe_chatter">
@@ -310,210 +318,210 @@
 
 
 
-    <!-- commercial for confirmation template -->
-    <record id="commercial_send_for_confirmation" model="mail.template">
-        <field name="name">Send Email For Contract Confirmation</field>
-        <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
-        <field name="subject">SNW Online Purchase - For Contract Confirmation Notification</field>
-        <field name="partner_to"></field>
-        <field name="email_to"></field>
-        <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
-        <field name="auto_delete" eval="True"/>
-        <field name="lang">${object.lang}</field>
-        <field name="body_html"><![CDATA[
-            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
-                <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
-                <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
-                    <tbody><tr>
-                        <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                            <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
-                        </td>
-                    </tr></tbody>
-                </table>
-            </div>
-            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
-                <p>Dear ${object.partner_id.name},</p>
-                <p>
-                    Good Day!
-                </p>
-                <p>
-                    We have made changes on your contract orders. With this, we would like to request confirmation from your side regarding the said changes. Please visit the online purchasing site to verify the Sale Order details of your contract with reference number <srong>${object.name}</strong>. Thank you.
-                </p>
-                <p>Best regards,</p>
-                <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
-                    SNW Commercial Team
-                </div>
-            </div>
-            ]]>
-        </field>
-    </record>
-
-
-    <!-- finance for confirmation template -->
-    <record id="notify_finance_release_contract_with_ar" model="mail.template">
-        <field name="name">Send Email to Finance to Release Contract with AR</field>
-        <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
-        <field name="subject">SNW Online Purchase - Contract with AR ${object.partner_id.name}</field>
-        <field name="partner_to"></field>
-        <field name="email_to"></field>
-        <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
-        <field name="auto_delete" eval="True"/>
-        <field name="lang">${object.lang}</field>
-        <field name="body_html">
-            <![CDATA[
-            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
-                <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
-                <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
-                    <tbody><tr>
-                        <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                            <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
-                        </td>
-                    </tr></tbody>
-                </table>
-            </div>
-            <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
-                <p>Dear Finance Team,</p>
-                <p>
-                    Good Day!
-                </p>
-                <p>
-                    This is to inform you that customer ${object.partner_id.name} has been flagged for having exceeded the allowable AR Limit. Please visit the online purchasing site to verify the Purchase Order details with reference number <srong>${object.name}</strong>. Thank you.
-                </p>
-
-                <span>
-                    <a href="${object.get_base_url()}&view_type=list" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View All Contracts with AR</a> 
-                    or
-                    <a href="${object.get_base_url()}&view_type=form&id=${object.id}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View ${object.name}</a>
-                </span>
-                
-                <p>Best regards,</p>
-                <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
-                    SNW Commercial Team
-                </div>
-            </div>
-            ]]>
-        </field>
-    </record>
-
-
-
-    <!-- DOWNLOAD PO AND SO -->
-    <record id="view_dmpi_crm_download_order_wizard_form" model="ir.ui.view">
-        <field name="name">Download Orders</field>
-        <field name="model">dmpi.crm.download.order.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Download Orders">
-                <h4>Select which orders to download.</h4>
-                <group>
-                    <div>
-                        <button name="download_orders" string="Customer Orders" type="object" class="oe_highlight" context="{'type':'customer'}"/>
-                        or
-                        <button name="download_orders" string="Sale Orders" type="object" class="oe_highlight" context="{'type':'commercial'}"/>
+        <!-- commercial for confirmation template -->
+        <record id="commercial_send_for_confirmation" model="mail.template">
+            <field name="name">Send Email For Contract Confirmation</field>
+            <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
+            <field name="subject">SNW Online Purchase - For Contract Confirmation Notification</field>
+            <field name="partner_to"></field>
+            <field name="email_to"></field>
+            <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.lang}</field>
+            <field name="body_html"><![CDATA[
+                <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                    <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
+                    <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
+                        <tbody><tr>
+                            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
+                                <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
+                                </td>
+                            </tr></tbody>
+                        </table>
                     </div>
-                </group>
-                <field name="csv_file" invisible="1"/>
-                <footer>
-                    <button string="CANCEL" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
+                    <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                        <p>Dear ${object.partner_id.name},</p>
+                        <p>
+                            Good Day!
+                        </p>
+                        <p>
+                            We have made changes on your contract orders. With this, we would like to request confirmation from your side regarding the said changes. Please visit the online purchasing site to verify the Sale Order details of your contract with reference number <srong>${object.name}</strong>. Thank you.
+                        </p>
+                        <p>Best regards,</p>
+                        <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
+                            SNW Commercial Team
+                        </div>
+                    </div>
+                    ]]>
+                </field>
+            </record>
 
 
-    <record id="action_dmpi_crm_download_order_wizard" model="ir.actions.act_window">
-        <field name="name">Download Orders</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">dmpi.crm.download.order.wizard</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record>
+            <!-- finance for confirmation template -->
+            <record id="notify_finance_release_contract_with_ar" model="mail.template">
+                <field name="name">Send Email to Finance to Release Contract with AR</field>
+                <field name="email_from"><![CDATA[SNW Purchase<crm.swpremiumfresh@gmail.com>]]></field>
+                <field name="subject">SNW Online Purchase - Contract with AR ${object.partner_id.name}</field>
+                <field name="partner_to"></field>
+                <field name="email_to"></field>
+                <field name="model_id" ref="dmpi_crm.model_dmpi_crm_sale_contract"/>
+                <field name="auto_delete" eval="True"/>
+                <field name="lang">${object.lang}</field>
+                <field name="body_html">
+                    <![CDATA[
+                    <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                        <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
+                        <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
+                            <tbody><tr>
+                                <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
+                                    <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
+                                    </td>
+                                </tr></tbody>
+                            </table>
+                        </div>
+                        <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                            <p>Dear Finance Team,</p>
+                            <p>
+                                Good Day!
+                            </p>
+                            <p>
+                                This is to inform you that customer ${object.partner_id.name} has been flagged for having exceeded the allowable AR Limit. Please visit the online purchasing site to verify the Purchase Order details with reference number <srong>${object.name}</strong>. Thank you.
+                            </p>
+
+                            <span>
+                                <a href="${object.get_base_url()}&view_type=list" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View All Contracts with AR</a> 
+                                or
+                                <a href="${object.get_base_url()}&view_type=form&id=${object.id}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View ${object.name}</a>
+                            </span>
+                            
+                            <p>Best regards,</p>
+                            <div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#000000">
+                                SNW Commercial Team
+                            </div>
+                        </div>
+                        ]]>
+                    </field>
+                </record>
 
 
-    <!-- SALE ORDER MULTI TAG VIEW -->
-    <record id="view_dmpi_crm_sale_order_multi_tag_tree" model="ir.ui.view">
-        <field name="name">Sale Order</field>
-        <field name="model">dmpi.crm.sale.order</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="contract_line_no"/>
-                <field name="ship_to_id"/>
-                <field name="notify_id"/>
-                <field name="ship_line"/>
-                <field name="destination"/>
-            </tree>
-        </field>
-    </record>
+
+                <!-- DOWNLOAD PO AND SO -->
+                <record id="view_dmpi_crm_download_order_wizard_form" model="ir.ui.view">
+                    <field name="name">Download Orders</field>
+                    <field name="model">dmpi.crm.download.order.wizard</field>
+                    <field name="arch" type="xml">
+                        <form string="Download Orders">
+                            <h4>Select which orders to download.</h4>
+                            <group>
+                                <div>
+                                    <button name="download_orders" string="Customer Orders" type="object" class="oe_highlight" context="{'type':'customer'}"/>
+                                    or
+                                    <button name="download_orders" string="Sale Orders" type="object" class="oe_highlight" context="{'type':'commercial'}"/>
+                                </div>
+                            </group>
+                            <field name="csv_file" invisible="1"/>
+                            <footer>
+                                <button string="CANCEL" special="cancel"/>
+                            </footer>
+                        </form>
+                    </field>
+                </record>
 
 
-    <record id="view_customer_crm_sale_order_multi_tag_tree" model="ir.ui.view">
-        <field name="name">Customer Order</field>
-        <field name="model">customer.crm.sale.order</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="contract_line_no"/>
-                <field name="ship_to_id"/>
-                <field name="notify_id"/>
-                <field name="ship_line"/>
-                <field name="destination"/>
-            </tree>
-        </field>
-    </record>
+                <record id="action_dmpi_crm_download_order_wizard" model="ir.actions.act_window">
+                    <field name="name">Download Orders</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="res_model">dmpi.crm.download.order.wizard</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+                </record>
 
 
-    <!-- SELECT MULTIPLE ORDERS -->
-    <record id="view_dmpi_crm_multi_tag_form" model="ir.ui.view">
-        <field name="name">Select Orders</field>
-        <field name="model">dmpi.crm.multi.tag</field>
-        <field name="arch" type="xml">
-            <form string="Select Orders">
-                <h4>Select which orders to apply. Do not select price tags to remove them on the orders.</h4>
-                <group>
-                    <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
-                </group>
-
-                <notebook>
-                    <page string="Customer Orders">
-                        <field name="customer_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_customer_crm_sale_order_multi_tag_tree'}">
-                            <tree>
-                                <field name="contract_line_no"/>
-                                <field name="ship_to_id"/>
-                                <field name="notify_id"/>
-                                <field name="ship_line"/>
-                                <field name="destination"/>
-                            </tree>
-                        </field>
-                    </page>
-
-                    <page string="Sale Orders">
-                        <field name="sale_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_dmpi_crm_sale_order_multi_tag_tree'}">
-                            <tree>
-                                <field name="contract_line_no"/>
-                                <field name="ship_to_id"/>
-                                <field name="notify_id"/>
-                                <field name="ship_line"/>
-                                <field name="destination"/>
-                            </tree>
-                        </field>
-                    </page>
-                </notebook>
-
-                <footer>
-                    <button name="apply_settings" string="Apply" type="object" class="oe_highlight"/>
-                    <button string="CANCEL" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
+                <!-- SALE ORDER MULTI TAG VIEW -->
+                <record id="view_dmpi_crm_sale_order_multi_tag_tree" model="ir.ui.view">
+                    <field name="name">Sale Order</field>
+                    <field name="model">dmpi.crm.sale.order</field>
+                    <field name="arch" type="xml">
+                        <tree>
+                            <field name="contract_line_no"/>
+                            <field name="ship_to_id"/>
+                            <field name="notify_id"/>
+                            <field name="ship_line"/>
+                            <field name="destination"/>
+                        </tree>
+                    </field>
+                </record>
 
 
-    <record id="action_dmpi_crm_multi_tag" model="ir.actions.act_window">
-        <field name="name">Select Orders</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">dmpi.crm.multi.tag</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record>
+                <record id="view_customer_crm_sale_order_multi_tag_tree" model="ir.ui.view">
+                    <field name="name">Customer Order</field>
+                    <field name="model">customer.crm.sale.order</field>
+                    <field name="arch" type="xml">
+                        <tree>
+                            <field name="contract_line_no"/>
+                            <field name="ship_to_id"/>
+                            <field name="notify_id"/>
+                            <field name="ship_line"/>
+                            <field name="destination"/>
+                        </tree>
+                    </field>
+                </record>
 
-</odoo>
+
+                <!-- SELECT MULTIPLE ORDERS -->
+                <record id="view_dmpi_crm_multi_tag_form" model="ir.ui.view">
+                    <field name="name">Select Orders</field>
+                    <field name="model">dmpi.crm.multi.tag</field>
+                    <field name="arch" type="xml">
+                        <form string="Select Orders">
+                            <h4>Select which orders to apply. Do not select price tags to remove them on the orders.</h4>
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            </group>
+
+                            <notebook>
+                                <page string="Customer Orders">
+                                    <field name="customer_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_customer_crm_sale_order_multi_tag_tree'}">
+                                        <tree>
+                                            <field name="contract_line_no"/>
+                                            <field name="ship_to_id"/>
+                                            <field name="notify_id"/>
+                                            <field name="ship_line"/>
+                                            <field name="destination"/>
+                                        </tree>
+                                    </field>
+                                </page>
+
+                                <page string="Sale Orders">
+                                    <field name="sale_order_ids" widget="many2many" context="{'tree_view_ref' : 'dmpi_crm.view_dmpi_crm_sale_order_multi_tag_tree'}">
+                                        <tree>
+                                            <field name="contract_line_no"/>
+                                            <field name="ship_to_id"/>
+                                            <field name="notify_id"/>
+                                            <field name="ship_line"/>
+                                            <field name="destination"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+
+                            <footer>
+                                <button name="apply_settings" string="Apply" type="object" class="oe_highlight"/>
+                                <button string="CANCEL" special="cancel"/>
+                            </footer>
+                        </form>
+                    </field>
+                </record>
+
+
+                <record id="action_dmpi_crm_multi_tag" model="ir.actions.act_window">
+                    <field name="name">Select Orders</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="res_model">dmpi.crm.multi.tag</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+                </record>
+
+            </odoo>

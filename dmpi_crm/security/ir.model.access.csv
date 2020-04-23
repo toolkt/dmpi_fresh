@@ -59,3 +59,9 @@ access_dmpi_crm_email_notification_subscriber,user.dmpi.crm.email.notification.s
 access_user_dmpi_crm_shell_color,user.dmpi.crm.shell.color,model_dmpi_crm_shell_color,base.group_user,1,1,1,1
 access_user_dmpi_crm_customer_note,user.dmpi.crm.customer.note,model_dmpi_crm_customer_note,base.group_user,1,1,1,1
 access_customer_dmpi_crm_sale_contract,customer.dmpi.crm.sale.contract,model_dmpi_crm_sale_contract,group_custom_crm_customer,1,1,1,0
+
+
+access_portal_dmpi_crm_sale_contract,dmpi.crm.sale.contract,dmpi_crm.model_dmpi_crm_sale_contract,base.group_portal,1,1,0,0
+access_portal_dmpi_crm_customer_sale_contract,dmpi.crm.customer.sale.contract,dmpi_crm.model_dmpi_crm_customer_sale_contract,base.group_portal,1,1,0,0
+access_user_dmpi_crm_customer_sale_contract,dmpi.crm.customer.sale.contract,dmpi_crm.model_dmpi_crm_customer_sale_contract,base.group_user,1,1,1,1
+

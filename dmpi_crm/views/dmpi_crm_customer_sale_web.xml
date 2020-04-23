@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- CONTRACT RECORD -->
+    <record id="view_dmpi_crm_customer_sale_contract_tree" model="ir.ui.view">
+        <field name="name">Customer Contract Submissions</field>
+        <field name="model">dmpi.crm.customer.sale.contract</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_dmpi_crm_customer_sale_contract_form" model="ir.ui.view">
+        <field name="name">Customer Contract Submission</field>
+        <field name="model">dmpi.crm.customer.sale.contract</field>
+        <field name="arch" type="xml">
+            <form class="o_form_document">
+                <header>
+                    <button class="oe_highlight" confirm="Please confirm PO Submission" name="action_submit_contract" string="Submit Contract" type="object"/>
+                    <field clickable="1" name="state" statusbar_colors="{&quot;approved&quot;:&quot;blue&quot;}" statusbar_visible="draft,submitted,confirmed,approved,enroute,received" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="customer_ref"/>
+                            <field name="contract_id"/>
+                            <field name="upload_file"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partner Functions"/>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_customer_sale_contract" model="ir.actions.act_window">
+        <field name="name">Customer Contract Submissions</field>
+        <field name="res_model">dmpi.crm.customer.sale.contract</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_customer_sale_contract" id="menu_dmpi_crm_customer_sale_contract" parent="menu_dmpi_crm_purchase_top"/>
+
+
+
+
+
+    <data noupdate="0">
+        <!-- 
+            <record id="portal_customer_order_menu" model="website.menu"><field name="name">Orders</field><field name="url">/my/home</field><field name="parent_id" ref="website.main_menu"/></record>-->
+            <template id="portal_my_home_menu_contract" inherit_id="portal.portal_layout" name="Portal layout : contract menu entry" priority="15">
+                <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                    <li t-if="page_name == 'contracts' or contracts">
+                        <a t-attf-href="/my/contracts?{{ keep_query() }}" t-if="contracts">My Contracts
+                        </a>
+                        <t t-else="">My Contracts</t>
+                    </li>
+                    <li t-if="record">
+                        <span t-field="record.name"/>
+                    </li>
+                </xpath>
+            </template>
+            <template id="portal_my_home_contract" inherit_id="portal.portal_my_home" name="Portal My Home : contract entries" priority="15">
+                <xpath expr="//ul[hasclass('o_portal_docs')]" position="inside">
+                    <li class="list-group-item" t-if="contract_count">
+                        <span class="badge" t-esc="contract_count"/>
+                        <a href="/my/contracts">Contracts</a>
+                    </li>
+                </xpath>
+            </template>
+            <template id="portal_my_contracts" name="My Contracts">
+                <t t-call="portal.portal_layout">
+                    <h3>My Contracts
+                        
+                        
+                        <t t-call="portal.portal_searchbar"/>
+                        <a class="btn btn-default btn-xs" href="/my/contract/new">Create New</a></h3>
+                        <div class="alert alert-warning mt8" role="alert" t-if="not records">There are no contracts.
+                        </div>
+                        <div class="panel panel-default" t-if="records">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="active">
+                                        <th class="col-xs-2">Date</th>
+                                        <th class="col-xs-2">Contract No</th>
+                                        <th>Customer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-as="r" t-foreach="records">
+                                        <td>
+                                            <span t-field="r.create_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                        </td>
+                                        <td>
+                                            <a t-attf-href="/my/contract/#{r.id}">
+                                                <span t-field="r.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-field="r.partner_id"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="o_portal_pager text-center" t-if="pager">
+                            <t t-call="website.pager"/>
+                        </div>
+                    </t>
+                </template>
+                <template id="portal_my_contract" name="My Contract">
+                    <t t-call="portal.portal_layout">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Contract No. - 
+                                            
+                                            <span t-field="record.name"/></h4>
+                                            <a class="btn btn-default btn-xs" t-attf-href="/my/contract/edit/#{record.id}">Edit</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body row">
+                                    <div class="col-md-6">
+
+                                        <div class="row" t-if="record.partner_id">
+                                            <label class="col-xs-4">Partner</label>
+                                            <span class="col-xs-8" t-field="record.partner_id"/>
+                                        </div>
+                                        <div class="row" t-if="record.customer_ref">
+                                            <label class="col-xs-4">Customer Reference</label>
+                                            <span class="col-xs-8" t-field="record.customer_ref"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        
+
+                                        <div class="row" t-if="record.note">
+                                            <label class="col-xs-4">Notes</label>
+                                            <span class="col-xs-8" t-field="record.note"/>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt32">
+                                <div class="col-md-12">
+                                    <h4>
+                                        <strong>Message and communication history</strong>
+                                    </h4>
+                                </div>
+                                <div class="col-md-10 col-md-offset-1 mt16">
+                                    <t t-call="portal.message_thread">
+                                        <t t-set="object" t-value="record"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </template>
+
+
+
+                    <template id="portal_my_new_contract">
+                        <t t-call="portal.portal_layout">
+                            <t t-set="additional_title">Your Contract Details</t>
+                            <h3>Your Contract</h3>
+                            <form action="/my/contract/new" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row o_portal_details">
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            
+                                            <div t-attf-class="form-group col-lg-6">
+                                                <label class="control-label" for="customer_ref">Customer Reference</label>
+                                                <input type="text" name="customer_ref" class="form-control" t-att-value="customer_ref" />
+                                            </div>
+                                            <div t-attf-class="form-group col-lg-6">
+                                                <label class="control-label" for="partner_id">Sold To</label>
+                                                <select name="partner_id" class="form-control">
+                                                    <option value="">Sold to ...</option>
+                                                    <t t-foreach="partner_ids or []" t-as="partner">
+                                                        <option t-att-value="partner.id" t-att-data-partner_id="partner.id" t-att-selected="partner_id[0] == partner.id if partner_id else None ">
+                                                            <t t-esc="partner.name" />
+                                                        </option>
+                                                    </t>
+
+
+                                                </select>
+                                            </div>
+                                            <div t-attf-class="form-group #{error and 'has-error' or ''} col-lg-6">
+                                                <label class="control-label" for="upload_file">Upload Orders</label>
+                                                <input type="file" class="form-control o_website_form_input" name="upload_file"/>
+                                            </div>
+                                            
+                                            <input type="hidden" name="redirect" t-att-value="redirect"/>
+                                        </div>
+                                        <div class="clearfix">
+                                            <button type="submit" class="btn btn-primary pull-right mb32 ">
+                                                Confirm
+                                                <span class="fa fa-long-arrow-right" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </t>
+                    </template>
+
+
+
+
+
+                </data>
+            </odoo>

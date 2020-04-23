@@ -19,6 +19,7 @@
         'mail',
         'report_xlsx',
         'tk_pentaho_reports_odoo_v11',
+        'website',
         # 'bus',
     ],
     "data": [
@@ -32,6 +33,7 @@
         "views/res_users.xml",
         "views/dmpi_crm_sale_contract.xml",
         "views/dmpi_crm_sale_customer.xml",
+        "views/dmpi_crm_customer_sale_web.xml",
 
         "views/dmpi_crm_report.xml",
         "views/dmpi_crm_sale_upload.xml",

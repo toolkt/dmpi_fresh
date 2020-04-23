@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-
     <!-- CUSTOMER ORDERS -->
     <record id="view_customer_crm_sale_order_search" model="ir.ui.view">
         <field name="name">Customer Order</field>
@@ -9,20 +8,19 @@
             <search>
                 <field name="week_no"/>
                 <field name="partner_id"/>
-                <field name="sap_so_no" />
+                <field name="sap_so_no"/>
                 <field name="name"/>
-                <field name="ship_line" />
-                <field name="shell_color" />
-                <filter string="With SAP SO" name="with_sap_so" domain="[('sap_so_no','!=',False)]"/>
-                <filter string="Without SAP SO" name="without_sap_so" domain="[('sap_so_no','=',False)]"/>
+                <field name="ship_line"/>
+                <field name="shell_color"/>
+                <filter domain="[('sap_so_no','!=',False)]" name="with_sap_so" string="With SAP SO"/>
+                <filter domain="[('sap_so_no','=',False)]" name="without_sap_so" string="Without SAP SO"/>
                 <group expand="1" string="Group By">
-                    <filter string="Customer" name="partner" context="{'group_by':'partner_id'}"/>
-                    <filter string="Contract" name="contract" context="{'group_by':'contract_id'}"/>
+                    <filter context="{'group_by':'partner_id'}" name="partner" string="Customer"/>
+                    <filter context="{'group_by':'contract_id'}" name="contract" string="Contract"/>
                 </group>
             </search>
         </field>
     </record>
-
     <record id="view_customer_crm_sale_order_tree" model="ir.ui.view">
         <field name="name">Customer Order</field>
         <field name="model">customer.crm.sale.order</field>
@@ -34,13 +32,11 @@
                 <field name="notify_id"/>
                 <field name="requested_delivery_date"/>
                 <field name="estimated_date"/>
-                <field name="sap_doc_type" invisible="1"/>
+                <field invisible="1" name="sap_doc_type"/>
                 <field name="sales_org"/>
             </tree>
         </field>
     </record>
-
-
     <record id="view_customer_crm_sale_order_form" model="ir.ui.view">
         <field name="name">Customer Order</field>
         <field name="model">customer.crm.sale.order</field>
@@ -48,67 +44,60 @@
             <form class="o_form_document">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_submit_so"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-pencil-square-o"
-                            string="Submit SO"
-                            confirm="Please confirm Resending of SO">
-                        </button>
+                        <button class="oe_stat_button" confirm="Please confirm Resending of SO" icon="fa-pencil-square-o" name="action_submit_so" string="Submit SO" type="object"/>
                     </div>
                     <group>
                         <group>
-                            <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_ship_to)]" invisible="1"/>
-
-                            <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
-                            <field name="sales_org" required="1" invisible="1"/>
-                            <field name="plant" invisible="1"/>
-                            <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" invisible="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" invisible="1" name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0"/>
+                            <field invisible="1" name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field invisible="1" name="sales_org" required="1"/>
+                            <field invisible="1" name="plant"/>
+                            <field invisible="1" name="plant_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                             <field name="tag_ids" widget="many2many_tags"/>
-                            <field name="week_no" invisible="1"/>
+                            <field invisible="1" name="week_no"/>
                         </group>
                         <group>
-                            <!-- <field name="valid" /> -->
-                            <field name="destination" />
-                            <field name="ship_line" />
-                            <field name="shell_color" />
-                            <field name="requested_delivery_date" />
-                            <field name="estimated_date" />
-                            <!-- <field name="sap_so_no" /> -->
-                            <field name="total_amount" invisible="1"/>
-                            <field name="total_qty" invisible="1"/>
-                            <field name="total_p100" invisible="1"/>
-                            <field name="total_p200" invisible="1"/>
-                            <field name="found_p60" invisible="1"/>
+                            <!-- <field name="valid" />-->
+                            <field name="destination"/>
+                            <field name="ship_line"/>
+                            <field name="shell_color"/>
+                            <field name="requested_delivery_date"/>
+                            <field name="estimated_date"/>
+                            <!-- <field name="sap_so_no" />-->
+                            <field invisible="1" name="total_amount"/>
+                            <field invisible="1" name="total_qty"/>
+                            <field invisible="1" name="total_p100"/>
+                            <field invisible="1" name="total_p200"/>
+                            <field invisible="1" name="found_p60"/>
                         </group>
                     </group>
-                    
                     <center>
-                        <field name="error" invisible="1" style="color:red"/>
-                        <span style="color:red"><field name="error_msg" readonly="1"/></span>
+                        <field invisible="1" name="error" style="color:red"/>
+                        <span style="color:red">
+                            <field name="error_msg" readonly="1"/>
+                        </span>
                     </center>
-                    <field name="notes"  widget="html"/>
-
+                    <field name="notes" widget="html"/>
                     <notebook>
                         <page string="Orders">
                             <field name="order_ids">
                                 <tree editable="bottom">
-                                    <field name="contract_line_no" readonly="1" string="CO#" invisible="1"/>
+                                    <field invisible="1" name="contract_line_no" readonly="1" string="CO#"/>
                                     <field name="so_line_no" readonly="1" string="SO#"/>
-                                    <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('id', 'in', parent.allowed_products)]" required="1"/>
+                                    <field domain="[('id', 'in', parent.allowed_products)]" name="product_id" options="{'no_create': True, 'no_open': True}" required="1"/>
                                     <field name="product_code"/>
                                     <field name="name" readonly="1"/>
-                                    <field name="pricing_date" invisible="0"/>
-                                    <field name="price" />
-                                    <field name="uom" />
-                                    <field name="qty" sum='Total Qty'/>
-                                    <field name="found_p60" invisible="1"/>
-                                    <field name="total"  sum='Total Amount'/>
+                                    <field invisible="0" name="pricing_date"/>
+                                    <field name="price"/>
+                                    <field name="uom"/>
+                                    <field name="qty" sum="Total Qty"/>
+                                    <field invisible="1" name="found_p60"/>
+                                    <field name="total" sum="Total Amount"/>
                                 </tree>
-                            </field>                            
-                        </page>    
+                            </field>
+                        </page>
                         <page string="Settings">
                             <group>
                                 <group>
@@ -117,8 +106,8 @@
                                     <field name="sap_doc_type"/>
                                 </group>
                                 <group>
-                                    <field name="contract_id" />
-                                    <field name="partner_id" />
+                                    <field name="contract_id"/>
+                                    <field name="partner_id"/>
                                 </group>
                                 <group>
                                     <field name="pack_code_tmp"/>
@@ -127,15 +116,13 @@
                             </group>
                             <group>
                                 <group>
-                                    <field name="allowed_ship_to" invisible="0"/>
-                                    <field name="allowed_products" invisible="1"/>
+                                    <field invisible="0" name="allowed_ship_to"/>
+                                    <field invisible="1" name="allowed_products"/>
                                 </group>
                             </group>
                         </page>
-
                     </notebook>
                 </sheet>
-
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="message_ids" widget="mail_thread"/>
@@ -143,8 +130,6 @@
             </form>
         </field>
     </record>
-
-
     <record id="view_customer_crm_sale_order_kanban" model="ir.ui.view">
         <field name="name">customer.crm.sale.order.kanban</field>
         <field name="model">customer.crm.sale.order</field>
@@ -154,14 +139,22 @@
                 <field name="notify_id"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div >
-                            <a href="#" name="action_go_record" type="object" string="Go to Record"> Go to Record
+                        <div>
+                            <a href="#" name="action_go_record" string="Go to Record" type="object">Go to Record
                             </a>
                             <div class="row mb4">
                                 <div class="col-6">
                                     <ul>
-                                        <li><strong><span><t t-esc="record.ship_to_id.value"/></span></strong></li>
-                                        <li><t t-esc="record.notify_id.value"/></li>
+                                        <li>
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="record.ship_to_id.value"/>
+                                                </span>
+                                            </strong>
+                                        </li>
+                                        <li>
+                                            <t t-esc="record.notify_id.value"/>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -171,7 +164,6 @@
             </kanban>
         </field>
     </record>
-
     <record id="action_customer_crm_sale_order" model="ir.actions.act_window">
         <field name="name">Customer Order</field>
         <field name="res_model">customer.crm.sale.order</field>
@@ -179,11 +171,7 @@
         <field name="domain">[]</field>
         <field name="context">{'search_default_partner':1}</field>
     </record>
-
-    <menuitem id="menu_customer_sale_order" action="action_customer_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="10"/>
-
-
-
+    <menuitem action="action_customer_crm_sale_order" id="menu_customer_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="10"/>
     <!-- SALES ORDER -->
     <record id="view_dmpi_crm_sale_order_graph" model="ir.ui.view">
         <field name="name">dmpi.crm.sale.order.graph</field>
@@ -192,11 +180,10 @@
             <pivot string="Sale Report">
                 <field name="ship_to_id" type="row"/>
                 <field name="week_no" type="col"/>
-                <field name="total_qty" type='measure'/>
+                <field name="total_qty" type="measure"/>
             </pivot>
         </field>
     </record>
-
     <record id="view_dmpi_crm_sale_order_search" model="ir.ui.view">
         <field name="name">Sale Order</field>
         <field name="model">dmpi.crm.sale.order</field>
@@ -204,27 +191,26 @@
             <search>
                 <field name="week_no"/>
                 <field name="partner_id"/>
-                <field name="sap_so_no" />
+                <field name="sap_so_no"/>
                 <field name="name"/>
-                <field name="ship_line" />
-                <field name="shell_color" />
-                <filter string="With SAP SO" name="with_sap_so" domain="[('sap_so_no','!=',False)]"/>
-                <filter string="Without SAP SO" name="without_sap_so" domain="[('sap_so_no','=',False)]"/>
+                <field name="ship_line"/>
+                <field name="shell_color"/>
+                <filter domain="[('sap_so_no','!=',False)]" name="with_sap_so" string="With SAP SO"/>
+                <filter domain="[('sap_so_no','=',False)]" name="without_sap_so" string="Without SAP SO"/>
                 <group expand="1" string="Group By">
-                    <filter string="Customer" name="partner" context="{'group_by':'partner_id'}"/>
-                    <filter string="Contract" name="contract" context="{'group_by':'contract_id'}"/>
+                    <filter context="{'group_by':'partner_id'}" name="partner" string="Customer"/>
+                    <filter context="{'group_by':'contract_id'}" name="contract" string="Contract"/>
                 </group>
             </search>
         </field>
     </record>
-
     <record id="view_dmpi_crm_sale_order_tree" model="ir.ui.view">
         <field name="name">Sale Order</field>
         <field name="model">dmpi.crm.sale.order</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="sap_so_no" />
+                <field name="sap_so_no"/>
                 <field name="contract_line_no" string="#"/>
                 <field name="contract_id"/>
                 <field name="customer_ref"/>
@@ -242,17 +228,14 @@
             </tree>
         </field>
     </record>
-
     <record id="view_dmpi_crm_sale_order_form" model="ir.ui.view">
         <field name="name">Sale Order</field>
         <field name="model">dmpi.crm.sale.order</field>
         <field name="arch" type="xml">
             <form class="o_form_document">
                 <header>
-
-                    <button name="action_submit_so" type="object" class="oe_stat_button" icon="fa-check" string="Submit SO"
-                        confirm="Please confirm resending of SO"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,process,processed,hold" clickable="1"/>
+                    <button class="oe_stat_button" confirm="Please confirm resending of SO" icon="fa-check" name="action_submit_so" string="Submit SO" type="object"/>
+                    <field clickable="1" name="state" statusbar_visible="draft,confirmed,process,processed,hold" widget="statusbar"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -260,61 +243,59 @@
                             <field name="name_disp" readonly="1"/>
                         </h1>
                     </div>
-
-
                     <group>
                         <group>
-                            <field name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" domain="[('id','in',allowed_ship_to)]"/>
-                            <field name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0" domain="[('id','in',allowed_ship_to)]" invisible="1"/>
-                            <field name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1" invisible="1"/>
-                            <field name="sales_org" required="1" invisible="1"/>
-                            <field name="plant" invisible="1"/>
-                            <field name="plant_id" required="1" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" invisible="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" name="ship_to_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" name="notify_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field domain="[('id','in',allowed_ship_to)]" invisible="1" name="mailing_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="0"/>
+                            <field invisible="1" name="sap_doc_type" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
+                            <field invisible="1" name="sales_org" required="1"/>
+                            <field invisible="1" name="plant"/>
+                            <field invisible="1" name="plant_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}" required="1"/>
                             <field name="tag_ids" widget="many2many_tags"/>
-                            <field name="week_no" required="1" invisible="1"/>
+                            <field invisible="1" name="week_no" required="1"/>
                             <field name="instructions"/>
                         </group>
                         <group>
-                            <field name="valid" />
-                            <field name="ship_line" />
-                            <field name="destination" />
-                            <field name="shell_color" />
-                            <field name="requested_delivery_date" />
-                            <field name="estimated_date" />
-                            <!-- <field name="sap_so_no" /> -->
-                            <field name="total_amount" invisible="1"/>
-                            <field name="total_qty" invisible="1"/>
-                            <field name="total_p100" invisible="1"/>
-                            <field name="total_p200" invisible="1"/>
-                            <field name="found_p60" invisible="1"/>
+                            <field name="valid"/>
+                            <field name="ship_line"/>
+                            <field name="destination"/>
+                            <field name="shell_color"/>
+                            <field name="requested_delivery_date"/>
+                            <field name="estimated_date"/>
+                            <!-- <field name="sap_so_no" />-->
+                            <field invisible="1" name="total_amount"/>
+                            <field invisible="1" name="total_qty"/>
+                            <field invisible="1" name="total_p100"/>
+                            <field invisible="1" name="total_p200"/>
+                            <field invisible="1" name="found_p60"/>
                         </group>
                     </group>
-
                     <center>
-                        <field name="error" invisible="1" style="color:red"/>
-                        <span style="color:red"><field name="error_msg" readonly="1"/></span>
+                        <field invisible="1" name="error" style="color:red"/>
+                        <span style="color:red">
+                            <field name="error_msg" readonly="1"/>
+                        </span>
                     </center>
-
-                    <field name="notes"  widget="html"/>
+                    <field name="notes" widget="html"/>
                     <notebook>
                         <page string="Orders">
                             <field name="order_ids">
                                 <tree editable="bottom">
                                     <field name="contract_line_no" readonly="0" string="CO#"/>
                                     <field name="so_line_no" readonly="0" string="SO#"/>
-                                    <field name="product_id" options="{'no_create': True, 'no_open': True}" domain="[('id', 'in', parent.allowed_products)]" required="1"/>
+                                    <field domain="[('id', 'in', parent.allowed_products)]" name="product_id" options="{'no_create': True, 'no_open': True}" required="1"/>
                                     <field name="product_code"/>
-                                    <field name="name" />
-                                    <field name="pricing_date" invisible="0"/>
-                                    <field name="price" />
-                                    <field name="uom" />
-                                    <field name="qty" sum='Total Qty'/>
-                                    <field name="found_p60" invisible="1"/>
-                                    <field name="total"  sum='Total Amount'/>
+                                    <field name="name"/>
+                                    <field invisible="0" name="pricing_date"/>
+                                    <field name="price"/>
+                                    <field name="uom"/>
+                                    <field name="qty" sum="Total Qty"/>
+                                    <field invisible="1" name="found_p60"/>
+                                    <field name="total" sum="Total Amount"/>
                                 </tree>
-                            </field>                            
-                        </page>    
+                            </field>
+                        </page>
                         <page string="Settings">
                             <group>
                                 <group>
@@ -325,23 +306,21 @@
                                     <field name="sap_doc_type"/>
                                 </group>
                                 <group>
-                                    <field name="contract_id" />
-                                    <field name="partner_id" />
+                                    <field name="contract_id"/>
+                                    <field name="partner_id"/>
                                 </group>
                                 <group>
                                     <field name="pack_code_tmp"/>
                                     <field name="contract_tag_ids"/>
                                 </group>
                                 <group>
-                                    <field name="allowed_ship_to" invisible="0"/>
-                                    <field name="allowed_products" invisible="0"/>
+                                    <field invisible="0" name="allowed_ship_to"/>
+                                    <field invisible="0" name="allowed_products"/>
                                 </group>
                             </group>
                         </page>
-
                     </notebook>
                 </sheet>
-
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="message_ids" widget="mail_thread"/>
@@ -349,10 +328,6 @@
             </form>
         </field>
     </record>
-
-
-
-
     <record id="view_dmpi_crm_sale_order_kanban" model="ir.ui.view">
         <field name="name">dmpi.crm.sale.order.kanban</field>
         <field name="model">dmpi.crm.sale.order</field>
@@ -363,33 +338,40 @@
                 <field name="state"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div >
-                            <a href="#" name="action_go_record" type="object" string="Go to Activity"> Go to Record
+                        <div>
+                            <a href="#" name="action_go_record" string="Go to Activity" type="object">Go to Record
                             </a>
                             <div class="row mb4">
                                 <div class="col-6">
                                     <ul>
-                                        <li><strong><span><t t-esc="record.state.value"/></span></strong></li>
-                                        <li><t t-esc="record.ship_to_id.value"/></li>
-                                        <li><t t-esc="record.name_disp.value"/></li>
+                                        <li>
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="record.state.value"/>
+                                                </span>
+                                            </strong>
+                                        </li>
+                                        <li>
+                                            <t t-esc="record.ship_to_id.value"/>
+                                        </li>
+                                        <li>
+                                            <t t-esc="record.name_disp.value"/>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
-                            <a href="#" name="action_set_confirm" type="object" string="Confirm"> Confirm
-                            </a> | 
-                            <a href="#" name="action_set_hold" type="object" string="Hold"> Hold
-                            </a> | 
-                            <a href="#" name="action_set_cancel" type="object" string="Cancel"> Cancel
-                            </a>
+                            <a href="#" name="action_set_confirm" string="Confirm" type="object">Confirm
+                            </a>| 
+                            
+                            <a href="#" name="action_set_hold" string="Hold" type="object">Hold</a>| 
+                            
+                            <a href="#" name="action_set_cancel" string="Cancel" type="object">Cancel</a>
                         </div>
                     </t>
                 </templates>
             </kanban>
         </field>
     </record>
-
-
-
     <record id="action_dmpi_crm_sale_order" model="ir.actions.act_window">
         <field name="name">Sale Order</field>
         <field name="res_model">dmpi.crm.sale.order</field>
@@ -397,11 +379,8 @@
         <field name="domain">[]</field>
         <field name="context">{'search_default_partner':1}</field>
     </record>
-
-    <menuitem id="menu_sale_order" action="action_dmpi_crm_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="20"/>
-
-
-	<!-- DR -->
+    <menuitem action="action_dmpi_crm_sale_order" id="menu_sale_order" parent="menu_dmpi_crm_commercial_orders" sequence="20"/>
+    <!-- DR -->
     <record id="view_dmpi_crm_dr_search" model="ir.ui.view">
         <field name="name">Delivery Order</field>
         <field name="model">dmpi.crm.dr</field>
@@ -413,18 +392,17 @@
                 <field name="van_no"/>
                 <field name="delivery_creation_date"/>
                 <field name="gi_date"/>
-                <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
+                <filter domain="[('is_duplicate', '=', True)]" name="filter_active" string="Duplicates"/>
             </search>
         </field>
     </record>
-
     <record id="view_dmpi_crm_dr_tree" model="ir.ui.view">
         <field name="name">Delivery Order</field>
         <field name="model">dmpi.crm.dr</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="odoo_so_no" invisible="1"/>
+                <field invisible="1" name="odoo_so_no"/>
                 <field name="so_id"/>
                 <field name="sap_so_no"/>
                 <field name="van_no"/>
@@ -437,166 +415,153 @@
             </tree>
         </field>
     </record>
-
     <record id="view_dmpi_crm_dr_form" model="ir.ui.view">
         <field name="name">Delivery Order</field>
         <field name="model">dmpi.crm.dr</field>
         <field name="arch" type="xml">
             <form class="o_form_document">
                 <header>
-
-                    <button name="action_cancel" states="generated" string="Cancel DR" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm DR Cancellation"/>
-
-                    <button name="action_generated" states="cancelled" string="Set back to Generated" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm DR set to Generated"/>
-
-                    <field name="state" widget="statusbar" statusbar_visible="generated,cancelled" clickable="1"/>
-
-
+                    <button class="oe_highlight" confirm="Please confirm DR Cancellation" groups="base.group_user" name="action_cancel" states="generated" string="Cancel DR" type="object"/>
+                    <button class="oe_highlight" confirm="Please confirm DR set to Generated" groups="base.group_user" name="action_generated" states="cancelled" string="Set back to Generated" type="object"/>
+                    <field clickable="1" name="state" statusbar_visible="generated,cancelled" widget="statusbar"/>
                 </header>
-
                 <sheet>
                     <div class="oe_title">
                         <span>DR/Container </span>
                         <h1>
-                            <field name="name" readonly="1"/>/<field name="van_no" readonly="1"/>
-                            <span style="color:#D84424;" attrs="{'invisible':[('is_duplicate','=',False)]}"> (Duplicate)</span>
-                        </h1>
-                        <field name="is_duplicate" invisible="1"/>
+                            <field name="name" readonly="1"/>/
+                            <field name="van_no" readonly="1"/>
+                            <span attrs="{'invisible':[('is_duplicate','=',False)]}" style="color:#D84424;">(Duplicate)</span></h1>
+                        <field invisible="1" name="is_duplicate"/>
                     </div>
                     <group>
                         <group string="Odoo Docs">
-                            <field name="odoo_po_no" invisible="1"/>
-                            <field name="odoo_so_no" invisible="1"/>
+                            <field invisible="1" name="odoo_po_no"/>
+                            <field invisible="1" name="odoo_so_no"/>
                             <field name="contract_id" readonly="1"/>
-                            <field name="so_id" />
+                            <field name="so_id"/>
                         </group>
                         <group string="SAP Docs">
-                            <field name="sap_dr_no" invisible="1"/>
-                            <field name="sap_so_no" />
-                            <field name="sto_no" />
-                            <field name="shipment_no" />
-                            <field name="sap_delivery_no" invisible="1"/>
+                            <field invisible="1" name="sap_dr_no"/>
+                            <field name="sap_so_no"/>
+                            <field name="sto_no"/>
+                            <field name="shipment_no"/>
+                            <field invisible="1" name="sap_delivery_no"/>
                         </group>
                     </group>
-                    
                     <group string="Shipment">
                         <group>
-                            <field name="ship_to" />
-                            <field name="fwd_agent" />
-                            <field name="vessel_name" />
-                            <field name="truck_no" />
-                            <field name="load_no" />
-                            <field name="booking_no" />
-                            <field name="seal_no" />
+                            <field name="ship_to"/>
+                            <field name="fwd_agent"/>
+                            <field name="vessel_name"/>
+                            <field name="truck_no"/>
+                            <field name="load_no"/>
+                            <field name="booking_no"/>
+                            <field name="seal_no"/>
                         </group>
                         <group>
-                            <field name="delivery_creation_date" />
-                            <field name="gi_date" />
-                            <field name="port_origin" />
-                            <field name="port_destination" />
-                            <field name="port_discharge" />
+                            <field name="delivery_creation_date"/>
+                            <field name="gi_date"/>
+                            <field name="port_origin"/>
+                            <field name="port_destination"/>
+                            <field name="port_discharge"/>
                         </group>
                     </group>
-
                     <ul>
-                        <li>
-                            No Odoo SO and Contract number means SO created did not came from Odoo
+                        <li>No Odoo SO and Contract number means SO created did not came from Odoo
                         </li>
-                        <li>
-                            If duplicate, choose which among the documents is the correct one
+                        <li>If duplicate, choose which among the documents is the correct one
                         </li>
                     </ul>
-
                     <notebook>
                         <page string="DR Lines">
                             <field name="dr_lines">
                                 <tree>
-                                    <field name="dr_line_item_no" />
+                                    <field name="dr_line_item_no"/>
                                     <field name="tr_order_item"/>
-                                    <!-- <field name="sku" /> -->
-                                    <field name="material" />
+                                    <!-- <field name="sku" />-->
+                                    <field name="material"/>
                                     <field name="qty" sum="Total"/>
-                                    <field name="uom" />
-                                    <field name="plant" />
+                                    <field name="uom"/>
+                                    <field name="plant"/>
                                     <field name="wh_no" string="WH"/>
                                     <field name="storage_loc" string="Storage"/>
-                                    <field name="to_num" />
-                                    <!-- <field name="plant2" /> -->
-                                    <field name="batch" />
-                                    <field name="stock_category" />
-                                    <!-- <field name="source_su" /> -->
-                                    <!-- <field name="sap_delivery_no" /> -->
+                                    <field name="to_num"/>
+                                    <!-- <field name="plant2" />-->
+                                    <field name="batch"/>
+                                    <field name="stock_category"/>
+                                    <!-- <field name="source_su" />-->
+                                    <!-- <field name="sap_delivery_no" />-->
                                 </tree>
                                 <form>
                                     <group>
                                         <group>
-                                            <field name="dr_line_item_no" />
-                                            <field name="sku" />
-                                            <field name="qty" />
-                                            <field name="uom" />
-                                            <field name="plant" />
-                                            <field name="wh_no" />
-                                            <field name="storage_loc" />
-                                            <field name="to_num" />
-                                            <field name="tr_order_item" />
-                                            <field name="material" />
-                                            <field name="plant2" />
-                                            <field name="batch" />
-                                            <field name="stock_category" />
-                                            <field name="source_su" />
-                                            <field name="sap_delivery_no" />
+                                            <field name="dr_line_item_no"/>
+                                            <field name="sku"/>
+                                            <field name="qty"/>
+                                            <field name="uom"/>
+                                            <field name="plant"/>
+                                            <field name="wh_no"/>
+                                            <field name="storage_loc"/>
+                                            <field name="to_num"/>
+                                            <field name="tr_order_item"/>
+                                            <field name="material"/>
+                                            <field name="plant2"/>
+                                            <field name="batch"/>
+                                            <field name="stock_category"/>
+                                            <field name="source_su"/>
+                                            <field name="sap_delivery_no"/>
                                         </group>
                                         <group>
-                                            <field name="container" />
-                                            <field name="partner" />
-                                            <field name="sku" />
-                                            <field name="lot" />
-                                            <field name="type" />
-                                            <field name="factor" />
-                                            <field name="no_sample" />
-                                            <field name="no_defect" />
+                                            <field name="container"/>
+                                            <field name="partner"/>
+                                            <field name="sku"/>
+                                            <field name="lot"/>
+                                            <field name="type"/>
+                                            <field name="factor"/>
+                                            <field name="no_sample"/>
+                                            <field name="no_defect"/>
                                         </group>
                                     </group>
                                 </form>
-                            </field>    
+                            </field>
                         </page>
                         <page string="Alt Items">
                             <field name="alt_items">
                                 <tree editable="bottom">
-                                    <field name="sap_so_no" invisible="1"/>
-                                    <field name="sap_so_line_no" />
-                                    <field name="material" />
+                                    <field invisible="1" name="sap_so_no"/>
+                                    <field name="sap_so_line_no"/>
+                                    <field name="material"/>
                                     <field name="qty" sum="Total"/>
-                                    <field name="uom" />
-                                    <field name="plant" />
-                                    <field name="rejection_reason" />
-                                    <field name="alt_item" />
-                                    <field name="usage" />
+                                    <field name="uom"/>
+                                    <field name="plant"/>
+                                    <field name="rejection_reason"/>
+                                    <field name="alt_item"/>
+                                    <field name="usage"/>
                                 </tree>
-                            </field>                        
+                            </field>
                         </page>
                         <page string="Inspection Lots">
                             <field name="insp_lots">
                                 <tree editable="bottom">
-                                    <field name="dr_line_item_no" />
-                                    <!-- <field name="sap_so_no" /> -->
+                                    <field name="dr_line_item_no"/>
+                                    <!-- <field name="sap_so_no" />-->
                                     <field name="stock_unit"/>
-                                    <field name="lot" />
-                                    <field name="node_num" />
-                                    <field name="type" />
-                                    <field name="factor_num" />
-                                    <field name="factor" />
+                                    <field name="lot"/>
+                                    <field name="node_num"/>
+                                    <field name="type"/>
+                                    <field name="factor_num"/>
+                                    <field name="factor"/>
                                     <field name="no_sample" sum="Total"/>
                                     <field name="no_defect" sum="Total"/>
-                                    <field name="value" />
+                                    <field name="value"/>
                                 </tree>
-                            </field>                        
+                            </field>
                         </page>
-
                         <page string="CLP">
                             <field name="clp_ids">
                                 <tree>
-                                    <button name="action_view_clp" type="object" icon="fa-external-link text-success"/>
+                                    <button icon="fa-external-link text-success" name="action_view_clp" type="object"/>
                                     <field name="dr_id"/>
                                     <field name="control_no"/>
                                     <field name="container_no"/>
@@ -607,13 +572,11 @@
                                 </tree>
                             </field>
                         </page>
-
                         <page string="Certificate">
-                            <field name="preship_ids" />                        
+                            <field name="preship_ids"/>
                         </page>
-                        
                         <page string="Settings">
-                            <field name="raw" />                        
+                            <field name="raw"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -624,16 +587,13 @@
             </form>
         </field>
     </record>
-
     <record id="action_dmpi_crm_dr" model="ir.actions.act_window">
         <field name="name">Delivery Order</field>
         <field name="res_model">dmpi.crm.dr</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
-
-    <menuitem id="menu_crm_dr" action="action_dmpi_crm_dr" parent="menu_dmpi_crm_commercial_docs" sequence="10"/>
-
+    <menuitem action="action_dmpi_crm_dr" id="menu_crm_dr" parent="menu_dmpi_crm_commercial_docs" sequence="10"/>
     <!-- SHIPMENT -->
     <record id="view_dmpi_crm_shp_search" model="ir.ui.view">
         <field name="name">Shipment Details</field>
@@ -647,11 +607,10 @@
                 <field name="van_no"/>
                 <field name="dr_create_date"/>
                 <field name="gi_date"/>
-                <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
+                <filter domain="[('is_duplicate', '=', True)]" name="filter_active" string="Duplicates"/>
             </search>
         </field>
     </record>
-
     <record id="view_dmpi_crm_shp_tree" model="ir.ui.view">
         <field name="name">dmpi.crm.shp.tree</field>
         <field name="model">dmpi.crm.shp</field>
@@ -669,7 +628,6 @@
             </tree>
         </field>
     </record>
-
     <record id="view_dmpi_crm_shp_form" model="ir.ui.view">
         <field name="name">Shipment Details</field>
         <field name="model">dmpi.crm.shp</field>
@@ -678,19 +636,19 @@
                 <sheet>
                     <span>Shipment/Container</span>
                     <h1>
-                        <field name="name" attrs="{'readonly':True}"/>/<field name="van_no" readonly="1"/>
-                        <span style="color:#D84424;" attrs="{'invisible':[('is_duplicate','=',False)]}"> (Duplicate)</span>
-                    </h1>
-                    <field name="is_duplicate" invisible="1"/>
+                        <field attrs="{'readonly':True}" name="name"/>/
+                        <field name="van_no" readonly="1"/>
+                        <span attrs="{'invisible':[('is_duplicate','=',False)]}" style="color:#D84424;">(Duplicate)</span></h1>
+                    <field invisible="1" name="is_duplicate"/>
                     <group>
                         <group string="Odoo Docs">
-                            <field name="odoo_po_no" invisible="1"/>
-                            <field name="odoo_so_no" invisible="1"/>
+                            <field invisible="1" name="odoo_po_no"/>
+                            <field invisible="1" name="odoo_so_no"/>
                             <field name="contract_id"/>
                             <field name="so_id"/>
                         </group>
                         <group string="SAP Docs">
-                            <field name="shp_no" invisible="1"/>
+                            <field invisible="1" name="shp_no"/>
                             <field name="sap_so_no"/>
                             <field name="sap_dr_no"/>
                         </group>
@@ -717,8 +675,8 @@
                     <notebook>
                         <page string="Items">
                             <field name="shp_lines">
-                                <tree string="Items" editable="bottom">
-                                    <field name="sap_so_no" invisible="1"/>
+                                <tree editable="bottom" string="Items">
+                                    <field invisible="1" name="sap_so_no"/>
                                     <field name="so_line_no"/>
                                     <field name="material"/>
                                     <field name="qty" sum="Total"/>
@@ -739,17 +697,13 @@
             </form>
         </field>
     </record>
-
     <record id="action_dmpi_crm_shp" model="ir.actions.act_window">
         <field name="name">Shipment Details</field>
         <field name="res_model">dmpi.crm.shp</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
-
-    <menuitem id="menu_dmpi_crm_shp" action="action_dmpi_crm_shp" parent="menu_dmpi_crm_commercial_docs" sequence="20"/>
-
-    
+    <menuitem action="action_dmpi_crm_shp" id="menu_dmpi_crm_shp" parent="menu_dmpi_crm_commercial_docs" sequence="20"/>
     <!-- INVOICE -->
     <record id="view_dmpi_crm_inv_search" model="ir.ui.view">
         <field name="name">dmpi.crm.invoice.search</field>
@@ -761,16 +715,14 @@
                 <field name="sap_so_no"/>
                 <field name="sap_dr_no"/>
                 <field name="source"/>
-                <filter name="filter_dmpi" string="DMPI Invoices" domain="[('source', '=', '500')]"/>
-                <filter name="filter_dms" string="DMS Invoices" domain="[('source', '=', '530')]"/>
-                <filter name="filter_sbfti" string="SBFTI Invoices" domain="[('source', '=', '570')]"/>
-                <filter name="filter_active" string="Duplicates" domain="[('is_duplicate', '=', True)]"/>
+                <filter domain="[('source', '=', '500')]" name="filter_dmpi" string="DMPI Invoices"/>
+                <filter domain="[('source', '=', '530')]" name="filter_dms" string="DMS Invoices"/>
+                <filter domain="[('source', '=', '570')]" name="filter_sbfti" string="SBFTI Invoices"/>
+                <filter domain="[('is_duplicate', '=', True)]" name="filter_active" string="Duplicates"/>
             </search>
         </field>
     </record>
-
-
-	<record id="view_dmpi_crm_invoice_tree" model="ir.ui.view">
+    <record id="view_dmpi_crm_invoice_tree" model="ir.ui.view">
         <field name="name">dmpi.crm.invoice.tree</field>
         <field name="model">dmpi.crm.invoice</field>
         <field name="arch" type="xml">
@@ -782,35 +734,34 @@
                 <field name="inv_create_date"/>
                 <field name="create_date" string="Creation Date"/>
                 <field name="header_net"/>
-                <field name="inv_no" invisible="1"/>
+                <field invisible="1" name="inv_no"/>
                 <field name="is_duplicate"/>
             </tree>
         </field>
     </record>
-
     <record id="view_dmpi_crm_invoice_form" model="ir.ui.view">
         <field name="name">Invoice Details</field>
         <field name="model">dmpi.crm.invoice</field>
         <field name="arch" type="xml">
             <form string="Invoice Details">
                 <sheet>
-                    <h1><field name="name" attrs="{'readonly':True}"/></h1>
+                    <h1>
+                        <field attrs="{'readonly':True}" name="name"/>
+                    </h1>
                     <group>
                         <group string="Odoo Docs">
-                            <field name="source" invisible="1"/>
-                            <field name="odoo_po_no" invisible="1"/>
-                            <field name="odoo_so_no" invisible="1"/>
+                            <field invisible="1" name="source"/>
+                            <field invisible="1" name="odoo_po_no"/>
+                            <field invisible="1" name="odoo_so_no"/>
                             <field name="contract_id"/>
                             <field name="so_id"/>
                         </group>
                         <group string="SAP Docs">
-
                             <field name="sap_so_no"/>
                             <field name="sap_dr_no"/>
                             <field name="shp_no"/>
                         </group>
                     </group>
-
                     <group>
                         <group string="Details">
                             <field name="payer"/>
@@ -821,20 +772,19 @@
                             <field name="dmpi_inv_no"/>
                             <field name="sbfti_inv_no"/>
                             <field name="dms_inv_no"/>
-                            <field name="inv_no" invisible="1"/>
-                            <field name="invoice_filename" invisible="1"/> 
-                            <field name="invoice_file" filename="invoice_filename"/>
+                            <field invisible="1" name="inv_no"/>
+                            <field invisible="1" name="invoice_filename"/>
+                            <field filename="invoice_filename" name="invoice_file"/>
                         </group>
                     </group>
-
                     <notebook>
                         <page string="Items">
                             <field name="inv_lines">
-                                <tree string="Invoice" editable="bottom">
+                                <tree editable="bottom" string="Invoice">
                                     <field name="so_line_no"/>
                                     <field name="inv_line_no"/>
                                     <field name="material"/>
-                                    <field name="qty"  sum="Total"/>
+                                    <field name="qty" sum="Total"/>
                                     <field name="uom"/>
                                     <field name="line_net_value" sum="Total"/>
                                 </tree>
@@ -849,17 +799,13 @@
             </form>
         </field>
     </record>
-
     <record id="action_dmpi_crm_invoice" model="ir.actions.act_window">
         <field name="name">Invoice Details</field>
         <field name="res_model">dmpi.crm.invoice</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
-
-    <menuitem id="menu_dmpi_crm_invoice" action="action_dmpi_crm_invoice" parent="menu_dmpi_crm_commercial_docs" sequence="30"/>
-
-
+    <menuitem action="action_dmpi_crm_invoice" id="menu_dmpi_crm_invoice" parent="menu_dmpi_crm_commercial_docs" sequence="30"/>
     <!-- PRICELIST ITEM -->
     <record id="view_dmpi_crm_product_price_list_item_commericial_search" model="ir.ui.view">
         <field name="name">Price List Item</field>
@@ -871,12 +817,10 @@
                 <field name="valid_from"/>
                 <field name="valid_to"/>
                 <field name="tag_ids"/>
-                <filter string="Valid Today" name="valid_today" domain="[('valid_from', '&lt;=', context_today().strftime('%%Y-%%m-%%d')),('valid_to', '&gt;=', context_today().strftime('%%Y-%%m-%%d'))]"/>
+                <filter domain="[('valid_from', '&lt;=', context_today().strftime('%%Y-%%m-%%d')),('valid_to', '&gt;=', context_today().strftime('%%Y-%%m-%%d'))]" name="valid_today" string="Valid Today"/>
             </search>
         </field>
     </record>
-
-
     <record id="view_dmpi_crm_product_price_list_item_commericial_tree" model="ir.ui.view">
         <field name="name">Price List Item</field>
         <field name="model">dmpi.crm.product.price.list.item</field>
@@ -885,23 +829,22 @@
                 <field name="version_id"/>
                 <field name="product_id"/>
                 <field name="material"/>
-                <field name="sales_org" invisible="1"/>
-                <field name="customer_code" invisible="1"/>
+                <field invisible="1" name="sales_org"/>
+                <field invisible="1" name="customer_code"/>
                 <field name="partner_id"/>
-                <field name="freight_term" invisible="1"/>
+                <field invisible="1" name="freight_term"/>
                 <field name="amount"/>
-                <field name="currency" invisible="1"/>
+                <field invisible="1" name="currency"/>
                 <field name="uom"/>
                 <field name="valid_from"/>
                 <field name="valid_to"/>
                 <field name="sap_from"/>
                 <field name="sap_to"/>
-                <field name="remarks" invisible="1"/>
-                <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                <field invisible="1" name="remarks"/>
+                <field name="tag_ids" options="{'no_quick_create':True,'no_create_edit':True}" widget="many2many_tags"/>
             </tree>
         </field>
     </record>
-
     <record id="view_dmpi_crm_product_price_list_item_commericial_form" model="ir.ui.view">
         <field name="name">Price List Item</field>
         <field name="model">dmpi.crm.product.price.list.item</field>
@@ -912,15 +855,15 @@
                         <group>
                             <field name="version_id"/>
                             <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
-                            <field name="customer_code" invisible="1"/>
+                            <field invisible="1" name="customer_code"/>
                             <field name="sales_org"/>
                             <field name="freight_term"/>
-                            <field name="remarks" invisible="1"/>
-                            <field name="tag_ids" widget="many2many_tags" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field invisible="1" name="remarks"/>
+                            <field name="tag_ids" options="{'no_quick_create':True,'no_create_edit':True}" widget="many2many_tags"/>
                         </group>
                         <group>
-                            <field name="product_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1" domain="[('id','in',allowed_products)]"/>
-                            <field name="material" invisible="1"/>
+                            <field domain="[('id','in',allowed_products)]" name="product_id" options="{'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                            <field invisible="1" name="material"/>
                             <field name="amount" required="1"/>
                             <field name="currency"/>
                             <field name="uom" required="1"/>
@@ -930,30 +873,22 @@
                             <field name="sap_to" required="1"/>
                         </group>
                     </group>
-                    <field name="allowed_products" invisible="1"/>
+                    <field invisible="1" name="allowed_products"/>
                 </sheet>
             </form>
         </field>
     </record>
-
-
     <record id="action_dmpi_crm_product_price_list_item_commercial" model="ir.actions.act_window">
         <field name="name">Price List Item</field>
         <field name="res_model">dmpi.crm.product.price.list.item</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
         <field name="context">{'search_default_valid_today':1}</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_product_price_list_item_commericial_tree')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_product_price_list_item_commericial_form')})]"/>
+        <field eval="[(5, 0, 0),             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_product_price_list_item_commericial_tree')}),             (0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_product_price_list_item_commericial_form')})]" name="view_ids"/>
         <field name="search_view_id" ref="view_dmpi_crm_product_price_list_item_commericial_search"/>
     </record>
-
-    <menuitem id="menu_dmpi_crm_product_price_list_item_commercial" action="action_dmpi_crm_product_price_list_item_commercial" parent="menu_dmpi_crm_commercial_config"/>
-
-
-
-	<!-- MARKET ALLOCATION -->
+    <menuitem action="action_dmpi_crm_product_price_list_item_commercial" id="menu_dmpi_crm_product_price_list_item_commercial" parent="menu_dmpi_crm_commercial_config"/>
+    <!-- MARKET ALLOCATION -->
     <record id="view_dmpi_crm_market_allocation_search" model="ir.ui.view">
         <field name="name">Market Allocation</field>
         <field name="model">dmpi.crm.market.allocation</field>
@@ -964,7 +899,6 @@
             </search>
         </field>
     </record>
-
     <record id="view_dmpi_crm_market_allocation_tree" model="ir.ui.view">
         <field name="name">Market Allocation</field>
         <field name="model">dmpi.crm.market.allocation</field>
@@ -975,76 +909,43 @@
             </tree>
         </field>
     </record>
-
-
     <record id="view_dmpi_crm_market_allocation_form" model="ir.ui.view">
         <field name="name">Market Allocation</field>
         <field name="model">dmpi.crm.market.allocation</field>
         <field name="arch" type="xml">
             <form class="o_form_document">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,hold" clickable="1"/>
+                    <field clickable="1" name="state" statusbar_visible="draft,confirmed,hold" widget="statusbar"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_generate_report"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-refresh"
-                            string="1. Refresh">
-                        </button>
-                        <button name="print_market_allocations"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-cloud-download"
-                            string="2. Download Alloc">
-                        </button>
-                        <button name="upload_market_allocations"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-cloud-upload"
-                            string="3. Upload Alloc">
-                        </button>
-                        <button name="process_go"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-thumbs-o-up"
-                            string="4. Process GO">
-                        </button>
-                        <button name="process_all"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-thumbs-up"
-                            string="5. Process ALL">
-                        </button>
+                        <button class="oe_stat_button" icon="fa-refresh" name="action_generate_report" string="1. Refresh" type="object"/>
+                        <button class="oe_stat_button" icon="fa-cloud-download" name="print_market_allocations" string="2. Download Alloc" type="object"/>
+                        <button class="oe_stat_button" icon="fa-cloud-upload" name="upload_market_allocations" string="3. Upload Alloc" type="object"/>
+                        <button class="oe_stat_button" icon="fa-thumbs-o-up" name="process_go" string="4. Process GO" type="object"/>
+                        <button class="oe_stat_button" icon="fa-thumbs-up" name="process_all" string="5. Process ALL" type="object"/>
                     </div>
-
-
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="0"/>
                         </h1>
                     </div>
-
-
                     <group>
                         <group>
-                            <field name="week_no" />
+                            <field name="week_no"/>
                             <field name="tag_ids" widget="many2many_tags"/>
                         </group>
                         <group>
-                            <field name="date_from" />
-                            <field name="date_to" />
+                            <field name="date_from"/>
+                            <field name="date_to"/>
                         </group>
-                        <field name="notes" />
+                        <field name="notes"/>
                     </group>
-
-                
                     <notebook>
                         <page string="Market Allocation">
                             <field name="sale_order_ids">
                                 <tree>
-                                    <field name="ship_to_id" />
+                                    <field name="ship_to_id"/>
                                     <field name="notes" widget="html"/>
                                 </tree>
                             </field>
@@ -1055,7 +956,7 @@
                                     <field name="excel_file" string="UPLOAD FINAL ALLOCATIONS"/>
                                 </group>
                             </group>
-                            <field name="html_report" invisible="1"/>
+                            <field invisible="1" name="html_report"/>
                             <field name="html_report_disp" readonly="1"/>
                         </page>
                         <page string="Allocations">
@@ -1065,15 +966,15 @@
                             <field name="line_ids">
                                 <tree editable="bottom">
                                     <field name="psd"/>
-                                    <field name="product_crown" />
-                                    <field name="grade" />
-                                    <field name="corp" sum='Total'/>
-                                    <field name="dmf" sum='Total'/>
-                                    <field name="sb" sum='Total'/>
-                                    <field name="total"  sum='Total'/>
+                                    <field name="product_crown"/>
+                                    <field name="grade"/>
+                                    <field name="corp" sum="Total"/>
+                                    <field name="dmf" sum="Total"/>
+                                    <field name="sb" sum="Total"/>
+                                    <field name="total" sum="Total"/>
                                 </tree>
-                            </field>                            
-                        </page>    
+                            </field>
+                        </page>
                     </notebook>
                     <group>
                         <div class="oe_chatter">
@@ -1082,26 +983,18 @@
                         </div>
                     </group>
                 </sheet>
-
-                
             </form>
         </field>
     </record>
-
-
     <record id="action_dmpi_crm_market_allocation" model="ir.actions.act_window">
         <field name="name">Market Allocation</field>
         <field name="res_model">dmpi.crm.market.allocation</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
-       <!--  <field name="context" eval="{'search_default_filter_active':1}"/> -->
+        <!--  <field name="context" eval="{'search_default_filter_active':1}"/>-->
     </record>
-
-    <menuitem id="menu_market_allocation" action="action_dmpi_crm_market_allocation" parent="menu_dmpi_crm_commercial_reports" sequence="10"/>
-
-
-
-	<!-- MARKET ALLOCATION UPLOAD -->
+    <menuitem action="action_dmpi_crm_market_allocation" id="menu_market_allocation" parent="menu_dmpi_crm_commercial_reports" sequence="10"/>
+    <!-- MARKET ALLOCATION UPLOAD -->
     <record id="view_crm_market_allocation_upload_form" model="ir.ui.view">
         <field name="name">Upload Wizard for Market Allocation</field>
         <field name="model">crm.market.allocation.upload</field>
@@ -1112,15 +1005,12 @@
                 </group>
                 <field name="html_display"/>
                 <footer>
-                    <button string="Process Upload" name="process_upload" type="object" class="btn-primary" confirm="Are you sure you want to process upload?"/>
-                    <button string="Cancel" class="btn-default" special="cancel"/>
+                    <button class="btn-primary" confirm="Are you sure you want to process upload?" name="process_upload" string="Process Upload" type="object"/>
+                    <button class="btn-default" special="cancel" string="Cancel"/>
                 </footer>
             </form>
         </field>
     </record>
-
-
-
     <!-- SALE ORDER REPORT LINES -->
     <record id="view_dmpi_crm_report_order_lines_graph" model="ir.ui.view">
         <field name="name">Order Report</field>
@@ -1130,15 +1020,13 @@
                 <field name="country" type="row"/>
                 <field name="ship_to" type="row"/>
                 <field name="week_no" type="col"/>
-                <!-- <field name="product_crown" type="col"/> -->
+                <!-- <field name="product_crown" type="col"/>-->
                 <field name="product_code" type="col"/>
-                <!-- <field name="amount" type='measure'/> -->
-                <field name="qty" type='measure'/>
+                <!-- <field name="amount" type='measure'/>-->
+                <field name="qty" type="measure"/>
             </pivot>
         </field>
     </record>
-
-
     <record id="view_dmpi_crm_report_order_lines_search" model="ir.ui.view">
         <field name="name">Sale Order</field>
         <field name="model">dmpi.crm.report.order.lines</field>
@@ -1148,25 +1036,12 @@
                 <field name="week_no"/>
                 <field name="odoo_po_no"/>
                 <field name="po_date"/>
-
                 <separator/>
-                <filter name="week" string="This Week"
-                        domain="[
-                            '&amp;',
-                            ('po_date', '>=', (context_today() + relativedelta(weeks=-1,days=1,weekday=0)).strftime('%Y-%m-%d')),
-                            ('po_date', '&lt;=', (context_today() + relativedelta(weekday=6)).strftime('%Y-%m-%d')),
-                        ]"/>
-                <filter name="month" string="This Month"
-                        domain="[
-                            '&amp;',
-                            ('po_date', '>=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
-                            ('po_date', '&lt;=', (context_today() + relativedelta(months=1, day=1, days=-1)).strftime('%Y-%m-%d')),
-                        ]"/>
+                <filter domain="[                             '&amp;',                             ('po_date', '&gt;=', (context_today() + relativedelta(weeks=-1,days=1,weekday=0)).strftime('%Y-%m-%d')),                             ('po_date', '&lt;=', (context_today() + relativedelta(weekday=6)).strftime('%Y-%m-%d')),                         ]" name="week" string="This Week"/>
+                <filter domain="[                             '&amp;',                             ('po_date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),                             ('po_date', '&lt;=', (context_today() + relativedelta(months=1, day=1, days=-1)).strftime('%Y-%m-%d')),                         ]" name="month" string="This Month"/>
             </search>
         </field>
     </record>
-
-
     <record id="view_dmpi_crm_report_order_lines_tree" model="ir.ui.view">
         <field name="name">Order Line Report</field>
         <field name="model">dmpi.crm.report.order.lines</field>
@@ -1194,14 +1069,11 @@
             </tree>
         </field>
     </record>
-
     <record id="action_dmpi_crm_report_order_lines" model="ir.actions.act_window">
         <field name="name">Order Line Report</field>
         <field name="res_model">dmpi.crm.report.order.lines</field>
         <field name="view_mode">pivot,tree</field>
         <field name="domain">[]</field>
     </record>
-
-    <menuitem id="menu_dmpi_crm_report_order_lines" action="action_dmpi_crm_report_order_lines" parent="menu_dmpi_crm_commercial_reports" sequence="20"/>
+    <menuitem action="action_dmpi_crm_report_order_lines" id="menu_dmpi_crm_report_order_lines" parent="menu_dmpi_crm_commercial_reports" sequence="20"/>
 </odoo>
-

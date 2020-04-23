@@ -77,134 +77,148 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 	partner_id = fields.Many2one('dmpi.crm.partner', string='Customer', default=_get_customer)
 
 
+
+	def check_upload_file(self, contract, upload_file):
+		rows = read_data(upload_file)
+
+		row_count = 0
+		line_items = []
+		order_lines = {}
+		total_errors = 0
+
+		hdr = CSV_UPLOAD_HEADERS
+		pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
+		end_hdr = hdr.pop()
+		hdr.extend(pack_codes)
+		hdr.append(end_hdr)
+
+		for r in rows:
+			errors = []
+			error_count = 0
+
+			if row_count == 0:
+				if not all([r[i] in hdr for i in range(len(r))]):
+					raise UserError(_('Bad Header Formatting! Please use the CSV format.\n'))
+				head_fmt = r
+
+			elif r[0] != '':
+				data = dict(zip(head_fmt, r))
+
+				# CHECK LINE NO
+				line_no = 0
+				try:
+					line_no = int(data['NO'])
+				except:
+					errors.append("No Line Number")
+					error_count += 1
+
+				# GET CONTRACT NUMBER
+				
+				
+				sold_to = contract.partner_id
+
+				# CHECK SHIP TO EXISTS
+				shp = data['SHIP TO']
+				ship_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',shp),('customer_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
+				if ship_to:
+					ship_to_id = ship_to.id
+				else:
+					ship_to_id = False
+					errors.append("Ship to does not exist")
+					error_count += 1
+
+				# CHECK NOTIFY ID EXISTS
+				notif = data['NOTIFY PARTY']
+				notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.ship_to_ids.ids)],limit=1)
+				if notify_to:
+					notify_to_id = notify_to.id
+				else:
+					notify_to_id = False
+					errors.append("Notify Party does not exist")
+					error_count += 1
+
+				total_qty = 0
+				total_p100 = 0
+				total_p200 = 0
+				qty_list = []
+
+				for pcode in pack_codes:
+
+					q = data.get(pcode,0)
+					try:
+						qty = int(q)
+						print 
+						total_qty += qty
+
+						if 'C' not in pcode:
+							total_p100 += qty
+						else:
+							total_p200 += qty
+
+					except:
+						qty = 0
+
+					order_lines[pcode] = qty
+					qty_list.append(qty)
+
+				# upload format mm/dd/yyyy
+				# CHECK DELIVERY DATE
+				deliver_date = False
+				try:
+					deliver_date = datetime.strptime(data['DELIVERY DATE'], '%m/%d/%Y')
+				except:
+					errors.append("Invalid Delivery Date.")
+					error_count += 1
+
+				# CHECK ESTIMATED DATE
+				estimated_date = False
+				try:
+					estimated_date = datetime.strptime(data['ESTIMATED DATE'], '%m/%d/%Y')
+				except:
+					errors.append("Invalid Estimated Date.")
+					error_count += 1
+
+				# CONSOLIDATE ERRORS
+				errors = '\n\n'.join(errors)
+
+				item = {
+					'line_no': line_no,
+					'ship_to_id': ship_to_id,
+					'notify_id': notify_to_id,
+					'ship_line': data['SHIPPING LINE'],
+					'destination': data['DESTINATION'],
+					'shell_color': data['SHELL COLOR'],
+					'requested_delivery_date': deliver_date,
+					'estimated_date': estimated_date,
+					'order_lines': '%s' % order_lines,
+					'total_qty': total_qty,
+					'total_p100': total_p100,
+					'total_p200': total_p200,
+					'errors': errors,
+					'error_count': error_count,
+				}
+				line_items.append((0,0,item))
+
+			row_count += 1
+			total_errors += error_count
+
+		return line_items,total_errors
+
+
+
+		print("\n\n\n\n---TEST")
+
+
+
 	@api.onchange('upload_file')
 	def onchange_upload_file(self):
 
 		# if upload file exists
 		try:
 			if self.upload_file:
-				rows = read_data(self.upload_file)
-
-				row_count = 0
-				line_items = []
-				order_lines = {}
-				total_errors = 0
-
-				hdr = CSV_UPLOAD_HEADERS
-				pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
-				end_hdr = hdr.pop()
-				hdr.extend(pack_codes)
-				hdr.append(end_hdr)
-
-				for r in rows:
-					errors = []
-					error_count = 0
-
-					if row_count == 0:
-						if not all([r[i] in hdr for i in range(len(r))]):
-							raise UserError(_('Bad Header Formatting! Please use the CSV format.\n'))
-						head_fmt = r
-
-					elif r[0] != '':
-						data = dict(zip(head_fmt, r))
-
-						# CHECK LINE NO
-						line_no = 0
-						try:
-							line_no = int(data['NO'])
-						except:
-							errors.append("No Line Number")
-							error_count += 1
-
-						# GET CONTRACT NUMBER
-						contract_id = self.env.context.get('default_contract_id',False)
-						contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
-						sold_to = contract.partner_id
-
-						# CHECK SHIP TO EXISTS
-						shp = data['SHIP TO']
-						ship_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',shp),('customer_code','=',shp),('id','in',sold_to.ship_to_ids.ids)],limit=1)
-						if ship_to:
-							ship_to_id = ship_to.id
-						else:
-							ship_to_id = False
-							errors.append("Ship to does not exist")
-							error_count += 1
-
-						# CHECK NOTIFY ID EXISTS
-						notif = data['NOTIFY PARTY']
-						notify_to = self.env['dmpi.crm.partner'].search(['&','|',('name','=',notif),('customer_code','=',notif),('id','in',sold_to.ship_to_ids.ids)],limit=1)
-						if notify_to:
-							notify_to_id = notify_to.id
-						else:
-							notify_to_id = False
-							errors.append("Notify Party does not exist")
-							error_count += 1
-
-						total_qty = 0
-						total_p100 = 0
-						total_p200 = 0
-						qty_list = []
-
-						for pcode in pack_codes:
-
-							q = data.get(pcode,0)
-							try:
-								qty = int(q)
-								print 
-								total_qty += qty
-
-								if 'C' not in pcode:
-									total_p100 += qty
-								else:
-									total_p200 += qty
-
-							except:
-								qty = 0
-
-							order_lines[pcode] = qty
-							qty_list.append(qty)
-
-						# upload format mm/dd/yyyy
-						# CHECK DELIVERY DATE
-						deliver_date = False
-						try:
-							deliver_date = datetime.strptime(data['DELIVERY DATE'], '%m/%d/%Y')
-						except:
-							errors.append("Invalid Delivery Date.")
-							error_count += 1
-
-						# CHECK ESTIMATED DATE
-						estimated_date = False
-						try:
-							estimated_date = datetime.strptime(data['ESTIMATED DATE'], '%m/%d/%Y')
-						except:
-							errors.append("Invalid Estimated Date.")
-							error_count += 1
-
-						# CONSOLIDATE ERRORS
-						errors = '\n\n'.join(errors)
-
-						item = {
-							'line_no': line_no,
-							'ship_to_id': ship_to_id,
-							'notify_id': notify_to_id,
-							'ship_line': data['SHIPPING LINE'],
-							'destination': data['DESTINATION'],
-							'shell_color': data['SHELL COLOR'],
-							'requested_delivery_date': deliver_date,
-							'estimated_date': estimated_date,
-							'order_lines': '%s' % order_lines,
-							'total_qty': total_qty,
-							'total_p100': total_p100,
-							'total_p200': total_p200,
-							'errors': errors,
-							'error_count': error_count,
-						}
-						line_items.append((0,0,item))
-
-					row_count += 1
-					total_errors += error_count
+				contract_id = self.env.context.get('default_contract_id',False)
+				contract = self.env['dmpi.crm.sale.contract'].browse(contract_id)
+				line_items,total_errors = self.check_upload_file(contract,self.upload_file)
 
 				self.upload_line_ids = line_items
 				if total_errors > 0:

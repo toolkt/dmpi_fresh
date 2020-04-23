@@ -1,219 +1,219 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-        <record id="view_dmpi_crm_config_search" model="ir.ui.view">
-            <field name="name">CRM Config</field>
-            <field name="model">dmpi.crm.config</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+    <record id="view_dmpi_crm_config_search" model="ir.ui.view">
+        <field name="name">CRM Config</field>
+        <field name="model">dmpi.crm.config</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter string="Active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dmpi_crm_config_tree" model="ir.ui.view">
+        <field name="name">CRM Config</field>
+        <field name="model">dmpi.crm.config</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="default"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_dmpi_crm_config_form" model="ir.ui.view">
+        <field name="name">CRM Config</field>
+        <field name="model">dmpi.crm.config</field>
+        <field name="arch" type="xml">
+            <form class="o_form_document">
+                <sheet>
                     <group>
-                        <filter string="Active" context="{'group_by': 'active'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="view_dmpi_crm_config_tree" model="ir.ui.view">
-            <field name="name">CRM Config</field>
-            <field name="model">dmpi.crm.config</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="default"/>
-                    <field name="active"/>
-                </tree>
-            </field>
-        </record>
-
-
-        <record id="view_dmpi_crm_config_form" model="ir.ui.view">
-            <field name="name">CRM Config</field>
-            <field name="model">dmpi.crm.config</field>
-            <field name="arch" type="xml">
-                <form class="o_form_document">
-                    <sheet>
                         <group>
-                            <group>
-                                <field name="name" />
-                                <field name="date" />
-                            </group>
-                            <group>
-                                <field name="active" />
-                                <field name="default" />   
-                            </group>
-                            
-                            
+                            <field name="name" />
+                            <field name="date" />
                         </group>
-                        <notebook>
-                            <page string="Directory">
+                        <group>
+                            <field name="active" />
+                            <field name="default" />   
+                        </group>
+                        
+                        
+                    </group>
+                    <notebook>
+                        <page string="Directory">
+                            <group>
+                                <field name="ssh_user" />
+                                <field name="ssh_pass" />
+                                <field name="ssh_host" />
+                                <button name="test" string="Test" type="object" class="oe_highlight" />
+                            </group>
+                            <group>
                                 <group>
-                                    <field name="ssh_user" />
-                                    <field name="ssh_pass" />
-                                    <field name="ssh_host" />
-                                    <button name="test" string="Test" type="object" class="oe_highlight" />
-                                </group>
-                                <group>
-                                    <group>
-                                        <field name="inbound_k" />
-                                        <field name="inbound_k_success" />
-                                        <field name="inbound_k_fail" />
-                                        <field name="inbound_k_log_success" />
-                                        <field name="inbound_k_log_success_sent" />
-                                        <field name="inbound_k_log_success_error_send" />
-                                        <field name="inbound_k_log_fail" />
-                                        <field name="inbound_k_log_fail_sent" />
+                                    <field name="inbound_k" />
+                                    <field name="inbound_k_success" />
+                                    <field name="inbound_k_fail" />
+                                    <field name="inbound_k_log_success" />
+                                    <field name="inbound_k_log_success_sent" />
+                                    <field name="inbound_k_log_success_error_send" />
+                                    <field name="inbound_k_log_fail" />
+                                    <field name="inbound_k_log_fail_sent" />
 
-                                        <field name="inbound_k_success_offline" />
-                                        <field name="inbound_k_log_success_offline" />
+                                    <field name="inbound_k_success_offline" />
+                                    <field name="inbound_k_log_success_offline" />
 
-                                        <button name="process_success_contract" string="Process Success and SO" type="object" class="oe_highlight" />
-                                        <button name="process_fail_contract" string="Process Fail Contract" type="object" class="oe_highlight" />
-                                        <button name="process_offline_contract" string="Process Offline Contract" type="object" class="oe_highlight" />
+                                    <button name="process_success_contract" string="Process Success and SO" type="object" class="oe_highlight" />
+                                    <button name="process_fail_contract" string="Process Fail Contract" type="object" class="oe_highlight" />
+                                    <button name="process_offline_contract" string="Process Offline Contract" type="object" class="oe_highlight" />
 
-                                        
-                                    </group>
-
-                                    <group>
-                                        <field name="inbound_so" />
-                                        <field name="inbound_so_success" />
-                                        <field name="inbound_so_fail" />
-                                        <field name="inbound_so_log_success" />
-                                        <field name="inbound_so_log_success_sent" />
-                                        <field name="inbound_so_log_success_error_send" />
-                                        <field name="inbound_so_log_fail" />
-                                        <field name="inbound_so_log_fail_sent" />
-
-
-                                        <field name="inbound_so_success_offline" />
-                                        <field name="inbound_so_log_success_offline" />
-
-                                        <button name="process_so" string="Process SO" type="object" class="oe_highlight" />
-                                        <button name="process_offline_so" string="Process Offline SO" type="object" class="oe_highlight" />
-                                    </group>
-
-                                    <group>
-                                        <field name="outbound_ar_success" />
-                                        <field name="outbound_ar_success_sent" />
-                                        <field name="outbound_ar_fail" />
-                                        <field name="outbound_ar_fail_sent" />
-                                        <button name="process_ar" string="Process AR" type="object" class="oe_highlight" />
-                                        <button name="process_cl" string="Process Credit Limit" type="object" class="oe_highlight" />
-                                    </group>
-
-                                    <group>
-                                        <field name="outbound_dr_success" />
-                                        <field name="outbound_dr_success_sent" />
-                                        <field name="outbound_dr_fail" />
-                                        <field name="outbound_dr_fail_sent" />
-                                        <button name="process_dr" string="Process DR" type="object" class="oe_highlight" />
-                                    </group>
-                                    <group>
-                                        <field name="outbound_shp_success" />
-                                        <field name="outbound_shp_success_sent" />
-                                        <field name="outbound_shp_fail" />
-                                        <field name="outbound_shp_fail_sent" />
-                                        <button name="process_shp" string="Process Shipping" type="object" class="oe_highlight" />
-                                    </group>
-                                    <group>
-                                        <field name="outbound_inv_success" />
-                                        <field name="outbound_inv_success_sent" />
-                                        <field name="outbound_inv_fail" />
-                                        <field name="outbound_inv_fail_sent" />
-                                        <button name="process_inv" string="Process 500 Invoice" type="object" class="oe_highlight" />
-                                    </group>
-                                    <group>
-                                        <field name="outbound_inv1_success" />
-                                        <field name="outbound_inv1_success_sent" />
-                                        <field name="outbound_inv1_fail" />
-                                        <field name="outbound_inv1_fail_sent" />
-                                        <button name="process_inv1" string="Process 570 Invoice" type="object" class="oe_highlight" />
-                                    </group>                                    
-                                    <group>
-                                        <field name="outbound_inv2_success" />
-                                        <field name="outbound_inv2_success_sent" />
-                                        <field name="outbound_inv2_fail" />
-                                        <field name="outbound_inv2_fail_sent" />
-                                        <button name="process_inv2" string="Process DMS Invoice" type="object" class="oe_highlight" />
-                                        <button name="process_inv2_pdf" string="Process DMS Invoice PDF" type="object" class="oe_highlight" />
-                                    </group>
-                                    <group>
-                                        <field name="outbound_prc_success"/>
-                                        <field name="outbound_prc_success_sent"/>
-                                        <field name="outbound_prc_fail"/>
-                                        <field name="outbound_prc_fail_sent"/>
-                                    </group>
+                                    
                                 </group>
 
-                            </page>
-                            <page string="Document Control">
                                 <group>
-                                    <group>
-                                        <field name="cn_no_prefix" />
-                                        <field name="po_no_prefix" />
-                                        <field name="so_no_prefix" />
-                                        <field name="dr_no_prefix" />
-                                        <field name="inv_no_prefix" />
-                                    </group>
-                                    <group>
-                                        <field name="default_validity" />
-                                    </group>
+                                    <field name="inbound_so" />
+                                    <field name="inbound_so_success" />
+                                    <field name="inbound_so_fail" />
+                                    <field name="inbound_so_log_success" />
+                                    <field name="inbound_so_log_success_sent" />
+                                    <field name="inbound_so_log_success_error_send" />
+                                    <field name="inbound_so_log_fail" />
+                                    <field name="inbound_so_log_fail_sent" />
+
+
+                                    <field name="inbound_so_success_offline" />
+                                    <field name="inbound_so_log_success_offline" />
+
+                                    <button name="process_so" string="Process SO" type="object" class="oe_highlight" />
+                                    <button name="process_offline_so" string="Process Offline SO" type="object" class="oe_highlight" />
                                 </group>
-                            </page>
-                            <page string="Selection Defaults">
-                                <field name="selection_ids">
-                                    <tree editable="bottom">
-                                        <field name="sequence" widget="handle"/>
-                                        <field name="select_group" />
-                                        <field name="select_name" />
-                                        <field name="select_value" />
-                                        <field name="default" />
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="FCL Config">
-                                <field name="fcl_config_ids">
-                                    <tree editable="bottom">
-                                        <field name="name"/>
-                                        <field name="cases"/>
-                                        <field name="pallet"/>
-                                        <field name="active"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Resources">
+
                                 <group>
-                                    <group>
-                                        <field name="clp_logo" widget="image"/>
-                                        <field name="clp_header" widget="html"/>
-                                    </group>
-                                    <group>
-                                        <field name="clp_logo2" widget="image"/>
-                                        <field name="clp_header2" widget="html"/>
-                                    </group>
+                                    <field name="outbound_ar_success" />
+                                    <field name="outbound_ar_success_sent" />
+                                    <field name="outbound_ar_fail" />
+                                    <field name="outbound_ar_fail_sent" />
+                                    <button name="process_ar" string="Process AR" type="object" class="oe_highlight" />
+                                    <button name="process_cl" string="Process Credit Limit" type="object" class="oe_highlight" />
                                 </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-                </form>
-            </field>
-        </record>
+
+                                <group>
+                                    <field name="outbound_dr_success" />
+                                    <field name="outbound_dr_success_sent" />
+                                    <field name="outbound_dr_fail" />
+                                    <field name="outbound_dr_fail_sent" />
+                                    <button name="process_dr" string="Process DR" type="object" class="oe_highlight" />
+                                </group>
+                                <group>
+                                    <field name="outbound_shp_success" />
+                                    <field name="outbound_shp_success_sent" />
+                                    <field name="outbound_shp_fail" />
+                                    <field name="outbound_shp_fail_sent" />
+                                    <button name="process_shp" string="Process Shipping" type="object" class="oe_highlight" />
+                                </group>
+                                <group>
+                                    <field name="outbound_inv_success" />
+                                    <field name="outbound_inv_success_sent" />
+                                    <field name="outbound_inv_fail" />
+                                    <field name="outbound_inv_fail_sent" />
+                                    <button name="process_inv" string="Process 500 Invoice" type="object" class="oe_highlight" />
+                                </group>
+                                <group>
+                                    <field name="outbound_inv1_success" />
+                                    <field name="outbound_inv1_success_sent" />
+                                    <field name="outbound_inv1_fail" />
+                                    <field name="outbound_inv1_fail_sent" />
+                                    <button name="process_inv1" string="Process 570 Invoice" type="object" class="oe_highlight" />
+                                </group>                                    
+                                <group>
+                                    <field name="outbound_inv2_success" />
+                                    <field name="outbound_inv2_success_sent" />
+                                    <field name="outbound_inv2_fail" />
+                                    <field name="outbound_inv2_fail_sent" />
+                                    <button name="process_inv2" string="Process DMS Invoice" type="object" class="oe_highlight" />
+                                    <button name="process_inv2_pdf" string="Process DMS Invoice PDF" type="object" class="oe_highlight" />
+                                </group>
+                                <group>
+                                    <field name="outbound_prc_success"/>
+                                    <field name="outbound_prc_success_sent"/>
+                                    <field name="outbound_prc_fail"/>
+                                    <field name="outbound_prc_fail_sent"/>
+                                </group>
+                            </group>
+
+                        </page>
+                        <page string="Document Control">
+                            <group>
+                                <group>
+                                    <field name="cn_no_prefix" />
+                                    <field name="po_no_prefix" />
+                                    <field name="so_no_prefix" />
+                                    <field name="dr_no_prefix" />
+                                    <field name="inv_no_prefix" />
+                                </group>
+                                <group>
+                                    <field name="default_validity" />
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Selection Defaults">
+                            <field name="selection_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="select_group" />
+                                    <field name="select_name" />
+                                    <field name="select_value" />
+                                    <field name="default" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="FCL Config">
+                            <field name="fcl_config_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="cases"/>
+                                    <field name="pallet"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Resources">
+                            <group>
+                                <group>
+                                    <field name="clp_logo" widget="image"/>
+                                    <field name="clp_header" widget="html"/>
+                                </group>
+                                <group>
+                                    <field name="clp_logo2" widget="image"/>
+                                    <field name="clp_header2" widget="html"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
 
 
-        <record id="action_dmpi_crm_config" model="ir.actions.act_window">
-            <field name="name">CRM Config</field>
-            <field name="res_model">dmpi.crm.config</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-            <field name="context" eval="{'search_default_filter_active':1,'active_test':False}"/>
-        </record>
+    <record id="action_dmpi_crm_config" model="ir.actions.act_window">
+        <field name="name">CRM Config</field>
+        <field name="res_model">dmpi.crm.config</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context" eval="{'search_default_filter_active':1,'active_test':False}"/>
+    </record>
 
-        <menuitem id="menu_dmpi_crm_config" action="action_dmpi_crm_config" parent="menu_dmpi_crm_settings_top" />
+    <menuitem id="menu_dmpi_crm_config" action="action_dmpi_crm_config" parent="menu_dmpi_crm_settings_top" />
 
 
 </odoo>

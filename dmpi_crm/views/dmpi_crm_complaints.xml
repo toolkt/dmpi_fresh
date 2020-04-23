@@ -193,7 +193,7 @@
                                         <field name="date_claim_endorsement_receipt"/>
                                     </group>
                                 </group>
-                        
+                                
                             </page>
 
                             <page string="Complaint Tracking">
@@ -210,7 +210,7 @@
                                         <field name="date_cn_note_issued"/>
                                     </group>
                                 </group>
-                        
+                                
                             </page>
 
                             <page string="Transit Details">
@@ -232,7 +232,7 @@
                                     <label for="temp_reading"/>
                                     <field name="temp_reading"/>
                                 </group>
-                        
+                                
                             </page>
                             <page string="QA Evaluation">
                                 <group>

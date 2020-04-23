@@ -10,44 +10,44 @@
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_sale_order_tree')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_sale_order_form')})]"/>
-        <field name="context">{'search_default_partner':1,'search_default_with_sap_so':1}</field>
-    </record>
+            <field name="context">{'search_default_partner':1,'search_default_with_sap_so':1}</field>
+        </record>
 
-    <menuitem id="menu_sale_order_logistics" action="action_dmpi_crm_sale_order_logistics" parent="menu_dmpi_crm_logistics_top" sequence="10"/>
-
-
-    <!-- DELIVERY DETAILS -->
-    <record id="action_dmpi_crm_dr_logistics" model="ir.actions.act_window">
-        <field name="name">Delivery</field>
-        <field name="res_model">dmpi.crm.dr</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">[]</field>
-    </record>
-
-    <menuitem id="menu_dmpi_crm_dr_logistics" action="action_dmpi_crm_dr_logistics" parent="menu_dmpi_crm_logistics_top" sequence="20"/>
+        <menuitem id="menu_sale_order_logistics" action="action_dmpi_crm_sale_order_logistics" parent="menu_dmpi_crm_logistics_top" sequence="10"/>
 
 
-    <!-- SHIPMENT DETAILS -->
-    <record id="action_dmpi_crm_shp_logistics" model="ir.actions.act_window">
-        <field name="name">Shipment</field>
-        <field name="res_model">dmpi.crm.shp</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">[]</field>
-    </record>
+        <!-- DELIVERY DETAILS -->
+        <record id="action_dmpi_crm_dr_logistics" model="ir.actions.act_window">
+            <field name="name">Delivery</field>
+            <field name="res_model">dmpi.crm.dr</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
 
-    <menuitem id="menu_dmpi_crm_shp_logistics" action="action_dmpi_crm_shp_logistics" parent="menu_dmpi_crm_logistics_top" sequence="30"/>
+        <menuitem id="menu_dmpi_crm_dr_logistics" action="action_dmpi_crm_dr_logistics" parent="menu_dmpi_crm_logistics_top" sequence="20"/>
 
 
-    <!-- CONTAINER LOAD PLAN -->
-    <record id="action_dmpi_crm_clp_full_logistics" model="ir.actions.act_window">
-        <field name="name">Container Load Plan</field>
-        <field name="res_model">dmpi.crm.clp</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_dmpi_crm_clp_tree"/>
-        <field name="domain">[]</field>
-    </record>
+        <!-- SHIPMENT DETAILS -->
+        <record id="action_dmpi_crm_shp_logistics" model="ir.actions.act_window">
+            <field name="name">Shipment</field>
+            <field name="res_model">dmpi.crm.shp</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
 
-    <menuitem id="menu_dmpi_crm_clp_full_logistics" action="action_dmpi_crm_clp_full_logistics" parent="menu_dmpi_crm_logistics_top" sequence="40"/>
+        <menuitem id="menu_dmpi_crm_shp_logistics" action="action_dmpi_crm_shp_logistics" parent="menu_dmpi_crm_logistics_top" sequence="30"/>
 
-</odoo>
+
+        <!-- CONTAINER LOAD PLAN -->
+        <record id="action_dmpi_crm_clp_full_logistics" model="ir.actions.act_window">
+            <field name="name">Container Load Plan</field>
+            <field name="res_model">dmpi.crm.clp</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_dmpi_crm_clp_tree"/>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_dmpi_crm_clp_full_logistics" action="action_dmpi_crm_clp_full_logistics" parent="menu_dmpi_crm_logistics_top" sequence="40"/>
+
+    </odoo>
