@@ -98,10 +98,17 @@ class DmpiCrmComplaintReport(models.Model):
         self.claim_nature_desc = ','.join([x for x in claim_nature_desc])
         
 
+    @api.onchange('clp_id')
+    def on_change_clp_id(self):
+        print ("Onchange Preship")
+        preship_ids = [x.id for x in self.clp_id.preship_ids]
+        if len(preship_ids) > 0:
+            self.preship_id = preship_ids[0]
+
 
     name = fields.Char("FFCR Series No.")
     preship_id = fields.Many2one('dmpi.crm.preship.report', string='Preship No.')
-    clp_id = fields.Many2one('dmpi.crm.clp', string='CLP No.', related="preship_id.clp_id")
+    clp_id = fields.Many2one('dmpi.crm.clp', string='CLP No.')
 
     ffcr_series_no = fields.Integer('Series No')
     ffcr_series_year = fields.Integer('Series Year')
