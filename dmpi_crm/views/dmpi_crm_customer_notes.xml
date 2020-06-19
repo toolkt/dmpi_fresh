@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+<!-- 
+    contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    note_type = fields.Selection([('message','Message'),('feedback','Feedback'),('quality','Quality Control')], default='message',string="Note Type")
+    user = fields.Many2one('res.users', related='create_uid')
+    date = fields.Datetime("Date", default=fields.Datetime.now())
+    subject = fields.Char("Subject")
+    body_html = fields.Text('Contents', default='', sanitize_style=True, strip_classes=True)
+    attachment_ids = fields.Many2many(
+
+ -->
+
+        <record id="view_dmpi_crm_customer_note_tree" model="ir.ui.view">
+            <field name="name">Customer Notes</field>
+            <field name="model">dmpi.crm.customer.note</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="date"/>
+                    <field name="note_type"/>
+                    <field name="user"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="view_dmpi_crm_customer_note_form" model="ir.ui.view">
+            <field name="name">dmpi.crm.customer.note.form</field>
+            <field name="model">dmpi.crm.customer.note</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal Year">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="note_type"/>
+                                <field name="user"/>
+                                <field name="contract_id"/>
+                                <field name="subject"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Weeks">
+                                <field name="body_html"/>
+                                <field name="attachment_ids" widget="many2many_binary"/>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_dmpi_crm_customer_note" model="ir.actions.act_window">
+            <field name="name">Customer Notes</field>
+            <field name="res_model">dmpi.crm.customer.note</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+
+        <menuitem id="menu_action_dmpi_crm_customer_note" action="action_dmpi_crm_customer_note" parent="menu_dmpi_crm_complaint_report_header"/>
+
+    </data>
+</odoo>

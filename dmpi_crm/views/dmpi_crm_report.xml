@@ -199,6 +199,7 @@
                                 <field name="clp_id" options="{'no_quick_create':True,'no_create_edit':True}" readonly="1"/>
                                 <field name="dr_no" readonly="1" invisible="1"/>
                                 <field name="tmpl_id" string="Template" options="{'no_open':True,'no_quick_create':True,'no_create_edit':True}" required="1"/>
+                                <field name="preship_doc"/>
                                 <field name="img"/>
                             </group>
                             <group>

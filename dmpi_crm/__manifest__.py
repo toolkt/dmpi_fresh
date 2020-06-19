@@ -44,6 +44,7 @@
         "views/dmpi_crm_logistics.xml",
         "views/dmpi_crm_production.xml",
         "views/dmpi_crm_complaints.xml",
+        "views/dmpi_crm_customer_notes.xml",
 
         "data/schedule.xml",
         "data/sequence.xml",

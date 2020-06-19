@@ -1839,10 +1839,11 @@ class DmpiCrmCustomerNotes(models.Model):
     _name = 'dmpi.crm.customer.note'
 
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Contract ID")
+    note_type = fields.Selection([('message','Message'),('feedback','Feedback'),('quality','Quality Control')], default='message',string="Note Type")
     user = fields.Many2one('res.users', related='create_uid')
     date = fields.Datetime("Date", default=fields.Datetime.now())
     subject = fields.Char("Subject")
-    body_html = fields.Html('Contents', default='', sanitize_style=True, strip_classes=True)
+    body_html = fields.Text('Contents', default='', sanitize_style=True, strip_classes=True)
     attachment_ids = fields.Many2many(
         'ir.attachment', 'message_attachment_rel',
         'message_id', 'attachment_id',
