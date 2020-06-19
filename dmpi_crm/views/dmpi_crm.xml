@@ -580,28 +580,6 @@
                             </field>
                         </page>
                         
-                        <page string="Transit Details">
-                            <group>
-                                <group>
-                                    <field name="incoterm"/>
-                                    <field name="date_atd_pol"/>
-                                    <field name="date_arrival"/>
-                                    <field name="date_pullout"/>
-                                    <field name="date_inspection"/>
-                                </group>
-                                <group>
-                                    <field name="aop_ata"/>
-                                    <field name="aop_pull_out"/>
-                                    <field name="aop_inspect"/>
-                                    <field name="feeder_vessel"/>
-                                    <field name="delay_reason"/>
-                                </group>
-                                <label for="temp_reading"/>
-                                <field name="temp_reading"/>
-                            </group>
-                            
-                        </page>
-
 
                         <page string="Others">
                             <group>
@@ -653,6 +631,26 @@
                                     <field name="remarks" placeholder="Add notes here..."/>
                                 </group>
                             </group>
+
+                            <group string="Transit Details">
+                                <group>
+                                    <field name="incoterm"/>
+                                    <field name="date_atd_pol"/>
+                                    <field name="date_arrival"/>
+                                    <field name="date_pullout"/>
+                                    <field name="date_inspection"/>
+                                </group>
+                                <group>
+                                    <field name="aop_ata"/>
+                                    <field name="aop_pull_out"/>
+                                    <field name="aop_inspect"/>
+                                    <field name="feeder_vessel"/>
+                                    <field name="delay_reason"/>
+                                </group>
+                                <label for="temp_reading"/>
+                                <field name="temp_reading"/>
+                            </group>
+
                         </page>
                         <page string="Production">
                             <group>
