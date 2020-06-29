@@ -119,6 +119,27 @@
                                     <field name="remarks" placeholder="Add notes here..." readonly="1"/>
                                 </group>
                             </group>
+
+                            <group string="Transit Details">
+                                <group>
+                                    <field name="incoterm" attrs="{'readonly':True}"/>
+                                    <field name="date_atd_pol" attrs="{'readonly':True}"/>
+                                    <field name="date_arrival" attrs="{'readonly':True}"/>
+                                    <field name="date_pullout" attrs="{'readonly':True}"/>
+                                    <field name="date_inspection" attrs="{'readonly':True}"/>
+                                </group>
+                                <group>
+                                    <field name="aop_ata" attrs="{'readonly':True}"/>
+                                    <field name="aop_pull_out" attrs="{'readonly':True}"/>
+                                    <field name="aop_inspect" attrs="{'readonly':True}"/>
+                                    <field name="feeder_vessel" attrs="{'readonly':True}"/>
+                                    <field name="delay_reason" attrs="{'readonly':True}"/>
+                                </group>
+                                <label for="temp_reading" attrs="{'readonly':True}"/>
+                                <field name="temp_reading" attrs="{'readonly':True}"/>
+                            </group>
+
+
                         </page>
 
                         <page string="Production">
