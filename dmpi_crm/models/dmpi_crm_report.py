@@ -319,6 +319,13 @@ class DmpiCrmClp(models.Model):
         self.preship_count = len(self.preship_ids)
 
 
+    @api.multi
+    def get_shipment_details(self):
+        for rec in self:
+            rec.dr_id.get_shipment_details()
+
+
+
     # headers
     control_no = fields.Char('Control No')
     logo = fields.Binary('Logo')

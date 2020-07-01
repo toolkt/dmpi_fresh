@@ -309,7 +309,8 @@
     <field name="name">Contract</field>
     <field name="res_model">dmpi.crm.sale.contract</field>
     <field name="view_mode">tree,form</field>
-    <field name="domain">[]</field>
+    <!-- <field name="domain">[]</field> -->
+    <field name="domain">[('partner_id.user_ids','in',[uid])]</field>
     <!-- <field name="domain">[('partner_id', 'child_of', user.id.partner_ids.id)]</field> -->
     <!-- <field name="filter_domain">[('customer', '=', True)]</field> -->
     <!-- <field name="context">{'search_default_valid_today':1}</field> -->

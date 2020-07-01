@@ -64,4 +64,5 @@ access_customer_dmpi_crm_sale_contract,customer.dmpi.crm.sale.contract,model_dmp
 access_portal_dmpi_crm_sale_contract,dmpi.crm.sale.contract,dmpi_crm.model_dmpi_crm_sale_contract,base.group_portal,1,1,0,0
 access_portal_dmpi_crm_customer_sale_contract,dmpi.crm.customer.sale.contract,dmpi_crm.model_dmpi_crm_customer_sale_contract,base.group_portal,1,1,0,0
 access_user_dmpi_crm_customer_sale_contract,dmpi.crm.customer.sale.contract,dmpi_crm.model_dmpi_crm_customer_sale_contract,base.group_user,1,1,1,1
-
+access_user_dmpi_crm_feedback,dmpi.crm.feedback,dmpi_crm.model_dmpi_crm_feedback,base.group_user,1,1,1,1
+access_user_dmpi_crm_files,dmpi.crm.files,dmpi_crm.model_dmpi_crm_files,base.group_user,1,1,1,1

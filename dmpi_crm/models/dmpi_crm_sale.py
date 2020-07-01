@@ -1411,6 +1411,41 @@ class DmpiCrmDr(models.Model):
 
 
     @api.multi
+    def get_shipment_details(self):
+        for rec in self:
+            print ("GET DR %s" % rec.ship_to)
+            shp_id = False
+            if rec.shipment_no:
+                shp_id = self.env['dmpi.crm.shp'].search([('name','=',rec.shipment_no)], limit=1, order='id desc')[0]
+            else:
+                shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
+
+            if shp_id:
+                rec.write({
+                        'fwd_agent':shp_id.fwd_agent,
+                        'shipment_no': shp_id.name,
+                        'vessel_name': shp_id.vessel_no,
+                        'van_no': shp_id.van_no,
+                        'truck_no': shp_id.truck_no,
+                        'load_no': shp_id.load_no,
+                        'booking_no': shp_id.booking_no,
+                        'seal_no': shp_id.seal_no,
+                        'port_origin': shp_id.origin,
+                        'port_destination': shp_id.destination,
+                        'port_discharge': shp_id.discharge,
+                    })
+
+                for clp in rec.clp_ids:
+                    clp.write({
+                            'container_no': shp_id.van_no,
+                            'seal_no': shp_id.seal_no,
+                            'vessel_name': shp_id.vessel_no,
+                            'port_origin': shp_id.origin,
+                        })
+            print(shp_id)
+
+
+    @api.multi
     def check_duplicates(self, sap_dr_no, typ):
         # type = 'create' or 'unlink'
         similar_dr = self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)])

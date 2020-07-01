@@ -148,6 +148,7 @@ class DmpiCrmPartner(models.Model):
     contact = fields.Text('Contact Info')
     function_ids = fields.Many2many('dmpi.crm.partner.function','dmpi_partner_function_rel','ship_to_id','function_id', string='Function Type')
     instructions = fields.Text('Default Insructions')
+    user_ids = fields.Many2many('res.users','dmpi_crm_partner_res_users_rel','partner_id','user_id', string='Users')
 
 
 
