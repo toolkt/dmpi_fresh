@@ -33,7 +33,7 @@
             <field name="domain">[]</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_customer_files" action="action_dmpi_crm_customer_files" parent="menu_main_dmpi_customer_contract" groups="group_custom_crm_customer" />
+        <menuitem id="menu_dmpi_crm_customer_files" action="action_dmpi_crm_customer_files" parent="menu_main_dmpi_customer_contract" groups="group_custom_crm_customer" sequence="60"/>
 
 
 
@@ -103,7 +103,7 @@
             <field name="domain">[]</field>
         </record>
 
-        <menuitem id="menu_dmpi_crm_customer_feedback" action="action_dmpi_crm_customer_feedback" parent="menu_main_dmpi_customer_contract" groups="group_custom_crm_customer" />
+        <menuitem id="menu_dmpi_crm_customer_feedback" action="action_dmpi_crm_customer_feedback" parent="menu_main_dmpi_customer_contract" groups="group_custom_crm_customer" sequence="50"/>
 
 
     </data>

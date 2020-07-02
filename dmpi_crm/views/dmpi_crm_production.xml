@@ -37,6 +37,10 @@
 
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="get_shipment_details" type="object" string="Get Shipment Details" class="oe_stat_button" icon="fa-check-square-o"></button>
+                    </div>
+
                     <h1><field name="dr_no" readonly="1"/>/<field name="control_no" attrs="{'readonly':True}"/></h1>
                     <group>
                         <group>
