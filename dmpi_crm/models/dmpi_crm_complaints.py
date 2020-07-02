@@ -164,7 +164,7 @@ class DmpiCrmComplaintReport(models.Model):
     date_cn_note_issued = fields.Date("Date of CN Note issued")
     cn_no = fields.Char("CN No.")
     cn_amount = fields.Char("CN Amount (USD)")
-    state = fields.Selection([('draft','Draft'),('resolution','For Resolution'),('done','Done')], default='draft', string="State", track_visibility='onchange')
+    state = fields.Selection([('draft','Draft'),('investigation','OL Investigation'),('resolution','For Resolution'),('quality','Quality'),('production','Production'),('commercial','Commercial'),('done','Done')], default='draft', string="State", track_visibility='onchange')
     car_id = fields.One2many('dmpi.crm.corrective.action', 'ffcr_id', "CAR Ids", ondelete='cascade')
 
 

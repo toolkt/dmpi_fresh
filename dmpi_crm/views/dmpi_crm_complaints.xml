@@ -107,6 +107,7 @@
                     <field name="market"/>
                     <field name="plant"/>
                     <field name="report_type"/>
+                    <field name="state"/>
                 </search>
             </field>
         </record>
@@ -124,6 +125,7 @@
                     <field name="market"/>
                     <field name="plant"/>
                     <field name="report_type"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -137,7 +139,8 @@
                     <header>
                         <button name="action_submit_complaint" states="draft" string="Submit Complaint" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission" attrs="{'invisible':[('state','!=','draft')]}"/>
 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,resolution,done" clickable="1"/>
+                        <field name="state" widget="statusbar"  clickable="1"/>
+                        <!-- <field name="state" widget="statusbar" statusbar_visible="draft,resolution,done" clickable="1"/> -->
                     </header>
                     <sheet>
                         <div class="oe_title">

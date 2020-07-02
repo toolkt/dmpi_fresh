@@ -5,7 +5,7 @@
 
 
         <record id="view_dmpi_crm_files_tree" model="ir.ui.view">
-            <field name="name">CRM files</field>
+            <field name="name">CRM Files</field>
             <field name="model">dmpi.crm.files</field>
             <field name="arch" type="xml">
                 <tree editable='bottom'>
@@ -18,7 +18,7 @@
 
 
         <record id="action_dmpi_crm_files" model="ir.actions.act_window">
-            <field name="name">iles</field>
+            <field name="name">Files</field>
             <field name="res_model">dmpi.crm.files</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
