@@ -198,25 +198,25 @@
 
 
     <!-- DELIVERY DETAILS -->
-    <record id="action_dmpi_crm_dr_logistics" model="ir.actions.act_window">
+    <record id="action_dmpi_crm_dr_production" model="ir.actions.act_window">
         <field name="name">Delivery</field>
         <field name="res_model">dmpi.crm.dr</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
 
-    <menuitem id="menu_dmpi_crm_dr_logistics" action="action_dmpi_crm_dr_logistics" parent="dmpi_crm_production_top" sequence="20"/>
+    <menuitem id="menu_dmpi_crm_dr_production" action="action_dmpi_crm_dr_logistics" parent="dmpi_crm_production_top" sequence="20"/>
 
 
     <!-- SHIPMENT DETAILS -->
-    <record id="action_dmpi_crm_shp_logistics" model="ir.actions.act_window">
+    <record id="action_dmpi_crm_shp_production" model="ir.actions.act_window">
         <field name="name">Shipment</field>
         <field name="res_model">dmpi.crm.shp</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
 
-    <menuitem id="menu_dmpi_crm_shp_logistics" action="action_dmpi_crm_shp_logistics" parent="dmpi_crm_production_top" sequence="30" groups="group_custom_crm_prod_staff"/>
+    <menuitem id="menu_dmpi_crm_shp_production" action="action_dmpi_crm_shp_logistics" parent="dmpi_crm_production_top" sequence="30" groups="group_custom_crm_prod_staff"/>
 
 
 
