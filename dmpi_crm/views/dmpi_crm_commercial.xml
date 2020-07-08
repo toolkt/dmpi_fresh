@@ -411,6 +411,7 @@
                 <field name="port_origin"/>
                 <field name="port_destination"/>
                 <field name="state"/>
+                <field name="clp_ids" widget="many2many_tags"/>
                 <field name="is_duplicate"/>
             </tree>
         </field>
