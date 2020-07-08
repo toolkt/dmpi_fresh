@@ -58,9 +58,9 @@ class DmpiCrmDr(models.Model):
             print ("GET DR %s" % rec.ship_to)
             shp_id = False
             if rec.shipment_no:
-                shp_id = self.env['dmpi.crm.shp'].search([('name','=',rec.shipment_no)], limit=1, order='id desc')[0]
+                shp_id = self.env['dmpi.crm.shp'].search(['|',('name','=',rec.shipment_no),('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
             else:
-                shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
+                raise UserError(_("No Shipment Details Found"))
 
             if shp_id:
                 rec.write({
