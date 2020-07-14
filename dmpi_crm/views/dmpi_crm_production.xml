@@ -190,7 +190,7 @@
       <field name="view_ids" eval="[(5, 0, 0),
          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_dmpi_crm_clp_prod_tree')}),
          (0, 0, {'view_mode': 'form', 'view_id': ref('view_dmpi_crm_clp_production_form')})]"/>
-         <field name="domain">[('status','in',('sap_generated','prod_confirmed','qa_confirmed'))]</field>
+         <field name="domain">[]</field>
      </record>
 
      <menuitem id="menu_dmpi_crm_clp_production" action="action_dmpi_crm_clp_production" parent="dmpi_crm_production_top" sequence="10" groups="group_custom_crm_prod_staff"/>
