@@ -28,6 +28,14 @@ class DmpiCrmTemplate(models.Model):
 
             print (rec.ext_weight, rec.int_weight, rec.pack_weight, rec.total_weight)
 
+    @api.one
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        default = dict(default or {})
+        default.setdefault('name', _("%s (copy)") % (self.name or ''))
+        return super(DmpiCrmTemplate, self).copy(default)
+
+
     name = fields.Char('Template Name', track_visibility="onchange")
     ext_rule = fields.Char('External', track_visibility="onchange")
     int_rule = fields.Char('Internal', track_visibility="onchange")
@@ -38,7 +46,7 @@ class DmpiCrmTemplate(models.Model):
     pack_hold = fields.Boolean('Packaging', track_visibility="onchange")
     
     active = fields.Boolean('Active', default=True, track_visibility="onchange")
-    tmpl_lines = fields.One2many('dmpi.crm.template.line','tmpl_id','Weight Factors')
+    tmpl_lines = fields.One2many('dmpi.crm.template.line','tmpl_id','Weight Factors', copy=True)
 
     ext_weight = fields.Float('Total External Weight', compute="_get_total")
     int_weight = fields.Float('Total Internal Weight', compute="_get_total")
