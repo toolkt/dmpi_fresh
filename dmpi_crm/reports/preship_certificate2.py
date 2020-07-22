@@ -11,8 +11,8 @@ import re
 import time
 import codecs
 
-class PreShipmentCertificateReport(models.AbstractModel):
-	_name = 'report.preship_cert_report'
+class PreShipmentCertificateReport2(models.AbstractModel):
+	_name = 'report.preship_cert_report2'
 	_inherit = 'report.report_xlsx.abstract'
 
 
@@ -99,8 +99,8 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			mrg_center = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1})
 			mrg_center_bold = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1, 'bold':True})
 
-			sheet.write('C1',config.preship_header_l1, phead_bold)
-			sheet.write('C2',config.preship_header_l2, phead)
+			sheet.write('C1',config.preship_header2_l1, phead_bold)
+			sheet.write('C2',config.preship_header2_l2, phead)
 			# sheet.write('C2','Fresh Fruit Quality Assurance', phead)
 			sheet.write('C4','(This form is uncontrolled when printed)', phead_blue)
 			sheet.write('I1',o.tmpl_id.doc_num, phead)
@@ -108,11 +108,11 @@ class PreShipmentCertificateReport(models.AbstractModel):
 
 			try:
 				
-				img = config.preship_logo
+				img = config.preship_logo2
 				# img = self.env['ir.attachment'].search([('datas_fname','like','philpack_logo.png')]).datas
 				img = codecs.decode(img, 'base64')
 				image_data = BytesIO(img)
-				scale = config.preship_logo_scale/100 or 1
+				scale = config.preship_logo2_scale/100 or 1
 				sheet.insert_image('B1', '', {'image_data':image_data, 'x_offset':-25.0, 'x_scale':scale, 'y_scale':scale})
 			except:
 				pass

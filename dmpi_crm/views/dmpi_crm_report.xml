@@ -182,7 +182,8 @@
 
                         <button name="action_confirm_preship_report" string="Confirm Pre-Shipment Certificate" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','draft')]}" confirm="Are sure you want to confirm the Pre-shipment report?"/>
 
-                        <button name="print_preship_report" string="Print Pre-Shipment Report" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','draft')]}"/>
+                        <button name="print_preship_report" string="Print Pre-Shipment Report (Version 1)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','draft')]}"/>
+                        <button name="print_preship_report2" string="Print Pre-Shipment Report (Version 2)" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','draft')]}"/>
 
                         <button name="print_fg_cert_report" string="Print FG Certificate" type="object" class="oe_highlight" attrs="{'invisible':[('status','=','draft')]}"/>
 

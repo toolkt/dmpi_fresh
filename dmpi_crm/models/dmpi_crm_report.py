@@ -196,6 +196,21 @@ class DmpiCrmPreshipReport(models.Model):
         }
         return values
 
+    def print_preship_report2(self):
+        if not self.tmpl_id:
+            raise UserError(_('No Pre-shipment Template Selected'))
+
+        user = self.env.user
+
+        values = {
+            'type': 'ir.actions.report',
+            'report_name': 'preship_cert_report2',
+            'report_type': 'xlsx',
+            'name': 'Pre-Shipment Certificate',
+        }
+        return values
+
+
     def print_fg_cert_report(self):
         user = self.env.user
 
@@ -387,10 +402,10 @@ class DmpiCrmClp(models.Model):
     simul_no = fields.Char('Simulation No')
     simul_pack_size = fields.Char('Simulation Pack Size')
     simul_pack_date = fields.Date('Simulation Pack Date')
-    first_temp = fields.Char('First Temp')
-    mid_temp = fields.Char('Mid Temp')
-    last_temp = fields.Char('Last Temp')
-    van_temp = fields.Char('Van Temp')
+    first_temp = fields.Char('Pulp Temp (First)')
+    mid_temp = fields.Char('Pulp Temp (Mid)')
+    last_temp = fields.Char('Pulp Temp (Last Temp)')
+    van_temp = fields.Char('Supply Temp upon PH Departure')
     
     temp_start = fields.Float('Supply Temp Starting')
     temp_end = fields.Float('Supply Temp Upon Departure')

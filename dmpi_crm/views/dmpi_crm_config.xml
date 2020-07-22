@@ -183,7 +183,8 @@
                             </field>
                         </page>
                         <page string="Resources">
-                            <group>
+
+                            <group string="CLP Header Settings">
                                 <group>
                                     <field name="clp_logo" widget="image"/>
                                     <field name="clp_header" widget="html"/>
@@ -193,6 +194,22 @@
                                     <field name="clp_header2" widget="html"/>
                                 </group>
                             </group>
+
+                            <group string="Preship Header Settings">
+                                <group>
+                                    <field name="preship_logo" widget="image"/>
+                                    <field name="preship_logo_scale" />
+                                    <field name="preship_header_l1"/>
+                                    <field name="preship_header_l2"/>
+                                </group>
+                                <group>
+                                    <field name="preship_logo2" widget="image"/>
+                                    <field name="preship_logo2_scale"/>
+                                    <field name="preship_header2_l1"/>
+                                    <field name="preship_header2_l2"/>
+                                </group>
+                            </group>
+
                         </page>
                     </notebook>
                 </sheet>

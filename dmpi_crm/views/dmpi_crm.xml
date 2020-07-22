@@ -605,13 +605,15 @@
                                     <h3>
                                         <strong style="color:#79717D;">Container Temp</strong>
                                     </h3>
-                                    <field name="simul_no" string="Simul No."/>
-                                    <field name="simul_pack_size" string="Simul Pack Size"/>
-                                    <field name="simul_pack_date" string="Simul Pack Date"/>
-                                    <field name="first_temp" string="First"/>
-                                    <field name="mid_temp" string="Mid"/>
-                                    <field name="last_temp" string="Last"/>
-                                    <field name="van_temp" sring="Van Temp"/>
+                                    <!-- 
+                                    <field name="simul_no"/>
+                                    <field name="simul_pack_size"/>
+                                    <field name="simul_pack_date"/>
+                                     -->
+                                    <field name="first_temp"/>
+                                    <field name="mid_temp"/>
+                                    <field name="last_temp"/>
+                                    <field name="van_temp"/>
                                 </group>
                             </group>
                             <group>
@@ -637,6 +639,8 @@
                                 </group>
                             </group>
 
+                        </page>
+                        <page string="Transit Detials">
                             <group string="Transit Details">
                                 <group>
                                     <field name="incoterm"/>
@@ -655,7 +659,6 @@
                                 <label for="temp_reading"/>
                                 <field name="temp_reading"/>
                             </group>
-
                         </page>
                         <page string="Production">
                             <group>

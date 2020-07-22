@@ -135,6 +135,21 @@ class DmpiCrmConfig(models.Model):
     clp_header2 = fields.Text("CLP Headers External")
 
 
+
+    #Report Headers
+    preship_logo = fields.Binary("Preship Logo")
+    preship_logo_scale = fields.Integer("Preship Logo Scale")
+    preship_header_l1 = fields.Char("Preship Header (Line 1)")
+    preship_header_l2 = fields.Char("Preship Header (Line 2)")
+
+    #Report Headers
+    preship_logo2 = fields.Binary("Preship Logo External")
+    preship_logo2_scale = fields.Integer("Preship Logo Scale")
+    preship_header2_l1 = fields.Char("Preship Header Ver2 (Line 1)")
+    preship_header2_l2 = fields.Char("Preship Header Ver2 (Line 2)")
+
+
+
     #Directories
     ssh_user    = fields.Char("SSH User")
     ssh_pass    = fields.Char("SSH Pass")

@@ -13,6 +13,20 @@
             attachment_use="False"
         />
 
+
+        <!-- PRE SHIPMENT REPORT VERSION 2 -->
+        <report
+            id="preship_report2"
+            model="dmpi.crm.preship.report"
+            string="Pre-Shipment Certificate"
+            report_type="xlsx"
+            name="preship_cert_report2"
+            file="preship_certificate2"
+            attachment_use="False"
+        />
+
+
+
         <!-- PRE SHIPMENT LOAD VANS SUMMARY REPORT -->
         <report
             id="preship_summary_report"
