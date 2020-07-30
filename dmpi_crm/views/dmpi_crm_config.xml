@@ -201,12 +201,14 @@
                                     <field name="preship_logo_scale" />
                                     <field name="preship_header_l1"/>
                                     <field name="preship_header_l2"/>
+                                    <field name="preship_header_l3"/>
                                 </group>
                                 <group>
                                     <field name="preship_logo2" widget="image"/>
                                     <field name="preship_logo2_scale"/>
                                     <field name="preship_header2_l1"/>
                                     <field name="preship_header2_l2"/>
+                                    <field name="preship_header2_l3"/>
                                 </group>
                             </group>
 

@@ -99,12 +99,13 @@ class PreShipmentCertificateReport2(models.AbstractModel):
 			mrg_center = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1})
 			mrg_center_bold = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1, 'bold':True})
 
-			sheet.write('C1',config.preship_header2_l1, phead_bold)
+			sheet.write('C1',config.preship_header2_l1, phead)
 			sheet.write('C2',config.preship_header2_l2, phead)
+			sheet.write('C3',config.preship_header2_l3, phead)
 			# sheet.write('C2','Fresh Fruit Quality Assurance', phead)
 			sheet.write('C4','(This form is uncontrolled when printed)', phead_blue)
 			sheet.write('I1',o.tmpl_id.doc_num, phead)
-			sheet.write('I2','Effectivity date:', phead)
+			# sheet.write('I2','Effectivity date:', phead)
 
 			try:
 				

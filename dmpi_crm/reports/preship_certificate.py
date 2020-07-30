@@ -99,12 +99,13 @@ class PreShipmentCertificateReport(models.AbstractModel):
 			mrg_center = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1})
 			mrg_center_bold = workbook.add_format({'font_size': 8, 'font_name':'Arial', 'border':1, 'align':'center', 'valign':'vcenter', 'text_wrap':1, 'bold':True})
 
-			sheet.write('C1',config.preship_header_l1, phead_bold)
+			sheet.write('C1',config.preship_header_l1, phead) #phead_bold
 			sheet.write('C2',config.preship_header_l2, phead)
+			sheet.write('C3',config.preship_header_l3, phead)
 			# sheet.write('C2','Fresh Fruit Quality Assurance', phead)
 			sheet.write('C4','(This form is uncontrolled when printed)', phead_blue)
 			sheet.write('I1',o.tmpl_id.doc_num, phead)
-			sheet.write('I2','Effectivity date:', phead)
+			# sheet.write('I2','Effectivity date:', phead)
 
 			try:
 				
@@ -202,8 +203,8 @@ WITH totals as (
 												WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
 											END as type
 											,dil.lot, dil.factor, dil.factor_num, dil.no_sample
-										FROM dmpi_crm_inspection_lot dil
-										WHERE dil.dr_id = %s
+										FROM dmpi_crm_preship_inspection_lot dil
+										WHERE dil.preship_id = %s
 							) as a
 							group by a.lot, a.type
 							order by a.lot, a.type
@@ -222,8 +223,8 @@ WITH totals as (
 									WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
 								END as type,
 								dil.factor_num, dil.factor, sum(dil.no_sample) as no_sample, sum(dil.no_defect) as no_defect, avg(dil.value) as average
-							FROM dmpi_crm_inspection_lot dil
-							WHERE dil.dr_id = %s
+							FROM dmpi_crm_preship_inspection_lot dil
+							WHERE dil.preship_id = %s
 							GROUP BY dil.type, dil.factor, dil.factor_num
 			) as dil
 			LEFT JOIN dmpi_crm_factor f on (f.code = dil.factor_num and f.type = dil.type)
@@ -243,8 +244,8 @@ WITH totals as (
 									WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
 								END as type,
 								dil.factor_num, dil.factor, sum(dil.no_sample) as no_sample, sum(dil.no_defect) as no_defect
-							FROM dmpi_crm_inspection_lot dil
-							WHERE dil.dr_id = %s
+							FROM dmpi_crm_preship_inspection_lot dil
+							WHERE dil.preship_id = %s
 							GROUP BY dil.type, dil.factor, dil.factor_num
 			) as dil
 			LEFT JOIN dmpi_crm_factor f on (f.code = dil.factor_num and f.type = dil.type)
@@ -277,7 +278,7 @@ left join totals tot on tot.type = f.type
 left join inspection_lots_mean ilm on ilm.parent_id = f.id
 where tl.tmpl_id = %s
 order by type, factor_code
-			""" % (o.dr_id.id, o.dr_id.id, o.dr_id.id, o.tmpl_id.id)
+			""" % (o.id, o.id, o.id, o.tmpl_id.id)
 			print(query)
 			self._cr.execute(query)
 			result = self._cr.dictfetchall()

@@ -404,7 +404,7 @@ class DmpiCrmClp(models.Model):
     simul_pack_date = fields.Date('Simulation Pack Date')
     first_temp = fields.Char('Pulp Temp (First)')
     mid_temp = fields.Char('Pulp Temp (Mid)')
-    last_temp = fields.Char('Pulp Temp (Last Temp)')
+    last_temp = fields.Char('Pulp Temp (Last)')
     van_temp = fields.Char('Supply Temp upon PH Departure')
     
     temp_start = fields.Float('Supply Temp Starting')
