@@ -720,6 +720,7 @@ class DmpiCrmProductPriceTag(models.Model):
     date_from = fields.Date("Date From")
     date_to = fields.Date("Date To")
     active = fields.Boolean("Active", default=True)
+    parent_id = fields.Many2one("dmpi.crm.product.price.tag","Parent ID")
 
 
 class DmpiCRMProductCode(models.Model):
