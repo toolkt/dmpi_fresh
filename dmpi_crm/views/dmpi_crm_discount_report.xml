@@ -15,10 +15,11 @@
                  <field name="line_net_value"/>
                  <field name="invoice_price"/>
                  <field name="base_price"/>
+                 <field name="discount_amount"/>
+                 <field name="discount_percentage"/>
              </tree>
          </field>
     </record>
-
     <record id="action_dmpi_crm_discount" model="ir.actions.act_window">
         <field name="name">Discount Report</field>
         <field name="res_model">dmpi.crm.discount</field>

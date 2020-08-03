@@ -22,6 +22,8 @@ class DmpiCrmDiscount(models.Model):
 	line_net_value = fields.Float("Net Value")
 	invoice_price = fields.Float("Invoice Price")
 	base_price = fields.Float("Base Price")
+	discount_amount = fields.Float("Discount Amount")
+	discount_percentage = fields.Float("Discount Percentage")
 
 	def _query(self):
 # Create Idexes
@@ -34,23 +36,26 @@ class DmpiCrmDiscount(models.Model):
 
 
 		query = """
-			SELECT il.id,i.inv_create_date, cc.name as contract, so.name as sale_order, 
-				so.partner_id,cp.id as product_id, il.material,il.qty,il.line_net_value, 
-				il.line_net_value/NULLIF(il.qty,0) as invoice_price,
-				(SELECT amount
-				from dmpi_crm_product_price_list_item pli
-				left join price_item_tag_rel tr on tr.item_id = pli.id
-				left join dmpi_crm_product_price_tag pt on pt.id = tr.tag_id
-				where partner_id = so.partner_id and product_id = cp.id 
-				--and i.inv_create_date::DATE BETWEEN sap_from AND sap_to
-				and pt.parent_id is null
-				limit 1) AS base_price
-			from dmpi_crm_invoice_line il
-			left join dmpi_crm_product cp on cp.sku = il.material
-			left join dmpi_crm_invoice i on i.id = il.inv_id
-			left join dmpi_crm_sale_order so on so.id = i.so_id
-			left join dmpi_crm_sale_contract cc on cc.id = i.contract_id
-			where so.name is not null
+			SELECT *, (base_price-invoice_price) as discount_amount, round((base_price-invoice_price)*100/base_price) as discount_percentage
+			FROM(
+				SELECT il.id,i.inv_create_date, cc.name as contract, so.name as sale_order, 
+					so.partner_id,cp.id as product_id, il.material,il.qty,il.line_net_value, 
+					il.line_net_value/NULLIF(il.qty,0) as invoice_price,
+					(SELECT amount
+					from dmpi_crm_product_price_list_item pli
+					left join price_item_tag_rel tr on tr.item_id = pli.id
+					left join dmpi_crm_product_price_tag pt on pt.id = tr.tag_id
+					where partner_id = so.partner_id and product_id = cp.id 
+					--and i.inv_create_date::DATE BETWEEN sap_from AND sap_to
+					and pt.parent_id is null
+					limit 1) AS base_price
+				from dmpi_crm_invoice_line il
+				left join dmpi_crm_product cp on cp.sku = il.material
+				left join dmpi_crm_invoice i on i.id = il.inv_id
+				left join dmpi_crm_sale_order so on so.id = i.so_id
+				left join dmpi_crm_sale_contract cc on cc.id = i.contract_id
+				where so.name is not null
+			) AS Q1
 		"""
 		return query
 
