@@ -533,6 +533,7 @@
             <form string="Container Load Plan">
                 <header>
                     <button attrs="{'invisible':[('status','!=','qa_confirmed')]}" class="oe_highlight" name="action_generate_preship" string="Generate Pre-Shipment" type="object"/>
+                    <button name="action_prod_confirm" string="Confirm Prod Data" type="object" class="oe_highlight" attrs="{'invisible':[('status','!=','sap_generated')]}" confirm="Are you sure you have encoded the required data?" groups="dmpi_crm.group_custom_crm_prod_staff"/>
                     <button attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}" class="oe_stat_button" name="print_clp_v2" string="Print Container Load Plan v2 (Internal)" type="object"/>
                     <button attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}" class="oe_stat_button" name="print_clp" string="Print Container Load Plan (Internal)" type="object"/>
                     <button attrs="{'invisible':[('status','in',('sap_generated','prod_confirmed'))]}" class="oe_stat_button" name="print_clp_customer" string="Print Container Load Plan" type="object"/>
