@@ -56,14 +56,15 @@ class DmpiCrmDr(models.Model):
     def get_shipment_details(self):
         for rec in self:
             print ("GET DR %s" % rec.ship_to)
-            shp_id = False
+            shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
+
             if rec.shipment_no:
                 shp_id = self.env['dmpi.crm.shp'].search(['|',('name','=',rec.shipment_no),('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
-            else:
-                raise UserError(_("No Shipment Details Found"))
+
 
             if shp_id:
                 rec.write({
+                        'ship_to':shp_id.ship_to,
                         'fwd_agent':shp_id.fwd_agent,
                         'shipment_no': shp_id.name,
                         'vessel_name': shp_id.vessel_no,
@@ -84,6 +85,9 @@ class DmpiCrmDr(models.Model):
                             'vessel_name': shp_id.vessel_no,
                             'port_origin': shp_id.origin,
                         })
+
+            else:
+                raise UserError(_("No Shipment Details Found"))
             print(shp_id)
 
 
