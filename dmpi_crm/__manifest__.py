@@ -47,6 +47,7 @@
         "views/dmpi_crm_feedback.xml",
         "views/dmpi_crm_customer_notes.xml",
         "views/dmpi_crm_discount_report.xml",
+        "views/analytics_report.xml",
 
         "data/schedule.xml",
         "data/sequence.xml",

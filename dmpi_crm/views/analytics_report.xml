@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- COUNTRY -->
+    <record id="view_dmpi_crm_analytics_histroical_tree" model="ir.ui.view">
+        <field name="name">Historical</field>
+        <field name="model">dmpi.crm.analytics.histroical</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="customer"/>
+                <field name="customer_code"/>
+                <field name="date"/>
+                <field name="week_no"/>
+                <field name="category"/>
+                <field name="type"/>
+                <field name="amount"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_histroical" model="ir.actions.act_window">
+        <field name="name">Historical Data</field>
+        <field name="res_model">dmpi.crm.analytics.histroical</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_histroical" id="menu_dmpi_crm_analytics_histroical" parent="menu_dmpi_crm_commercial_reports"/>
+
+</odoo>
+

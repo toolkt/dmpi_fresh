@@ -143,3 +143,16 @@ class DmpiCrmAnalyticsDataSplit(models.Model):
 
 
 
+
+class DmpiCrmAnalyticsHistorical(models.Model):
+    _name = 'dmpi.crm.analytics.histroical'
+    _description = "CRM Historical Data"
+
+    customer = fields.Char(string="Customer")
+    customer_code = fields.Char(string="Customer Code")
+    date = fields.Date(string="Date")
+    week_no = fields.Char(string="Week No")
+    category = fields.Char(string="Category")
+    type = fields.Char(string="Type")
+    amount = fields.Float(string="Amount")
+

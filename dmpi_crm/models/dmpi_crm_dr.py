@@ -84,6 +84,7 @@ class DmpiCrmDr(models.Model):
                             'seal_no': shp_id.seal_no,
                             'vessel_name': shp_id.vessel_no,
                             'port_origin': shp_id.origin,
+                            'port_destination': rec.port_destination,
                         })
 
             else:
