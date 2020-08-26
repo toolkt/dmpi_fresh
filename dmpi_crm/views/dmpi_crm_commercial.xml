@@ -892,6 +892,7 @@
         <field name="search_view_id" ref="view_dmpi_crm_product_price_list_item_commericial_search"/>
     </record>
     <menuitem action="action_dmpi_crm_product_price_list_item_commercial" id="menu_dmpi_crm_product_price_list_item_commercial" parent="menu_dmpi_crm_commercial_config"/>
+    <menuitem action="action_dmpi_crm_product_price_list_item_commercial" id="menu_dmpi_crm_product_price_list_item_finance" parent="menu_dmpi_crm_finance_account"/>
     <!-- MARKET ALLOCATION -->
     <record id="view_dmpi_crm_market_allocation_search" model="ir.ui.view">
         <field name="name">Market Allocation</field>
