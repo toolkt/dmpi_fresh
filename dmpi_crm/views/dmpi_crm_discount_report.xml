@@ -31,5 +31,6 @@
     </record>
 
     <menuitem action="action_dmpi_crm_discount" id="menu_dmpi_crm_discount" parent="menu_dmpi_crm_commercial_reports" sequence="20"/>
+    <menuitem action="action_dmpi_crm_discount" id="menu_dmpi_crm_discount_finance" parent="menu_dmpi_crm_finance_account" sequence="20"/>
 
 </odoo>
