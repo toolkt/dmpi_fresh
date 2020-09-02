@@ -235,6 +235,27 @@
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_shell_color" id="menu_dmpi_crm_shell_color" parent="menu_dmpi_crm_master_top"/>
+    <!-- DISTRIBUTION CHANNEL-->
+    <record id="view_dmpi_crm_sale_dist_channel" model="ir.ui.view">
+        <field name="name">Sale Distribition Channel</field>
+        <field name="model">dmpi.crm.sale.dist.channel</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_sale_dist_channel" model="ir.actions.act_window">
+        <field name="name">Sale Distribition Channel</field>
+        <field name="res_model">dmpi.crm.sale.dist.channel</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_sale_dist_channel" id="menu_dmpi_crm_sale_dist_channel" parent="menu_dmpi_crm_master_top"/>
+
+
+
     <!-- PRODUCT CODE -->
     <record id="view_dmpi_crm_product_code_tree" model="ir.ui.view">
         <field name="name">Product Code</field>

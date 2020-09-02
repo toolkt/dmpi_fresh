@@ -363,6 +363,13 @@ class DmpiCrmShellColor(models.Model):
     code = fields.Char('Code')
 
 
+class DmpiCrmSaleDistChannel(models.Model):
+    _name = 'dmpi.crm.sale.dist.channel'
+
+    name = fields.Char('Name')
+    code = fields.Char('Code')
+
+
 
 class DmpiCrmProduct(models.Model):
     _name = 'dmpi.crm.product'
