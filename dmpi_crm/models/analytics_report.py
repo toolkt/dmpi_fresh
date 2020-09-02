@@ -153,6 +153,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     date = fields.Date(string="Date")
     week_no = fields.Char(string="Week No")
     category = fields.Char(string="Category")
+    sku = fields.Char(string="SKU")
     type = fields.Char(string="Type")
     qty = fields.Integer(string="Quantity")
     amount = fields.Float(string="Amount")
