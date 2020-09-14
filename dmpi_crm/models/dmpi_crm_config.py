@@ -46,6 +46,7 @@ def file_get(remotepath, localpath):
 def transfer_files(from_path, to_path):
     with settings(warn_only=True):
         mv = "mv %s %s" % (from_path,to_path)
+        print(mv)
         sudo(mv)
 
 #@parallel
