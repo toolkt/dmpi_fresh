@@ -156,8 +156,14 @@ class DmpiCrmSaleContract(models.Model):
     @api.depends('credit_limit','credit_exposure','total_sales', 'open_so')
     def _compute_credit(self):
         for rec in self:
-            rec.remaining_credit = rec.credit_limit - rec.credit_exposure
-            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
+            try:
+                rec.remaining_credit = rec.credit_limit - rec.credit_exposure
+                rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
+            except:
+                rec.remaining_credit = False
+                rec.credit_after_sale = False
+                pass
+
 
 
     @api.onchange('sold_via_id')
@@ -1393,20 +1399,24 @@ class DmpiCrmInvoice(models.Model):
     @api.depends('sap_so_no')
     def _get_odoo_doc(self):
         for rec in self:
-            
-            so_id = False
-            contract_id = False
-            sap_so_no = rec.sap_so_no
+            try:
+                so_id = False
+                contract_id = False
+                sap_so_no = rec.sap_so_no
 
-            if sap_so_no:
-                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
+                if sap_so_no:
+                    so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
 
-                if so:
-                    so_id = so
-                    contract_id = so.contract_id
+                    if so:
+                        so_id = so
+                        contract_id = so.contract_id
 
-            rec.so_id = so_id
-            rec.contract_id = contract_id
+                rec.so_id = so_id
+                rec.contract_id = contract_id
+            except:
+                rec.so_id = False
+                rec.contract_id = False                
+                pass
 
     # odoo docs
     name = fields.Char("Name")
