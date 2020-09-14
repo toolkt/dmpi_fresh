@@ -1084,6 +1084,8 @@ class DmpiCrmConfig(models.Model):
                         invoice_no.write(inv)
                     else:
                         new_inv = self.env['dmpi.crm.invoice'].create(inv)
+
+                    print(f, outbound_path_success)
                     execute(transfer_files,f, outbound_path_success)
                     _logger.info('SUCCESS process_inv dmpi')
                     print('SUCCESS process_inv dmpi')
