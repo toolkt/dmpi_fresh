@@ -1447,17 +1447,20 @@ class DmpiCrmInvoiceLine(models.Model):
     @api.depends('sap_so_no')
     def _get_odoo_doc(self):
         for rec in self:
-            
-            so_id = False
-            contract_id = False
-            sap_so_no = rec.sap_so_no
+            try:
+                so_id = False
+                contract_id = False
+                sap_so_no = rec.sap_so_no
 
-            if sap_so_no:
-                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)[0]
-                if so:
-                    so_id = so.id
+                if sap_so_no:
+                    so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)[0]
+                    if so:
+                        so_id = so.id
 
-            rec.so_id = so_id
+                rec.so_id = so_id
+            except:
+                rec.so_id = False
+                pass
 
     so_line_no = fields.Char("SO Line Item No.")
     inv_line_no = fields.Char("Invoice Line Item No.")
