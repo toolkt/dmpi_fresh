@@ -1010,7 +1010,7 @@ class DmpiCrmConfig(models.Model):
 
             files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
             for f in files[host_string]:
-                try:
+                # try:
                     result = execute(read_file,f)[host_string]
                     line = result.split('\n')
 
@@ -1090,9 +1090,9 @@ class DmpiCrmConfig(models.Model):
                     _logger.info('SUCCESS process_inv dmpi')
                     print('SUCCESS process_inv dmpi')
 
-                except Exception as e:
-                    _logger.warning('READ ERROR process_inv dmpi')
-                    print('READ ERROR process_inv dmpi')
+                # except Exception as e:
+                #     _logger.warning('READ ERROR process_inv dmpi')
+                #     print('READ ERROR process_inv dmpi')
 
 
     @api.multi
