@@ -56,12 +56,17 @@ class DmpiCrmDr(models.Model):
     def get_shipment_details(self):
         for rec in self:
             print ("GET DR %s" % rec.ship_to)
-            shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
+            shp_id = False
+            try:
+                shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
+            except:
+                pass
 
-            if rec.shipment_no:
+            try:
                 shp_id = self.env['dmpi.crm.shp'].search(['|',('name','=',rec.shipment_no),('sap_dr_no','=',rec.name)], limit=1, order='id desc')[0]
-
-
+            except:
+                pass
+                
             if shp_id:
                 rec.write({
                         'ship_to':shp_id.ship_to,
@@ -85,6 +90,19 @@ class DmpiCrmDr(models.Model):
                             'vessel_name': shp_id.vessel_no,
                             'port_origin': shp_id.origin,
                             'port_destination': rec.port_destination,
+
+                            'delay_reason':shp_id.delay_reason,
+                            'temp_reading':shp_id.temp_reading,
+                            'date_start':shp_id.date_start,
+                            'date_end':shp_id.date_end,
+                            'date_depart':shp_id.date_depart,
+                            'date_atd_pol':shp_id.date_atd_pol,
+                            'date_arrive':shp_id.date_arrive,
+                            'incoterm':shp_id.incoterm,
+                            'incoterm_description':shp_id.incoterm_description,
+                            'date_pullout':shp_id.date_pullout,
+                            'date_inspection':shp_id.date_inspection,
+
                         })
 
             else:
@@ -357,6 +375,21 @@ class DmpiCrmShp(models.Model):
     origin = fields.Char("Port of Origin")
     destination = fields.Char("Port of Destination")
     discharge = fields.Char("Port of Discharge")
+
+    # additional fields
+    delay_reason = fields.Char("Reason for Delay") # 19
+    temp_reading = fields.Char("Temperature Reading") # 20
+    date_start = fields.Char('Start') #Date time 22 23
+    date_end = fields.Char('Finish') # Loading End 24 25
+    date_depart = fields.Char('ETD') # 26 27
+    date_atd_pol = fields.Date("ATD at POL") #28 29
+    date_arrive = fields.Char('ETA') #30 31
+    incoterm = fields.Char("Incoterm") # 32
+    incoterm_description = fields.Char("Incoterm Description") # 33
+    date_pullout = fields.Char("Date of Pull-out") #34 35
+    date_inspection = fields.Char("Date of Inspection") #36 37
+
+
 
     # others
     raw = fields.Text("Raw")

@@ -134,7 +134,9 @@ class DmpiCrmPartner(models.Model):
     country_code    = fields.Char('Country Code', related="country.code", store=True)
     sales_org       = fields.Char("Sales Org")
     dist_channel    = fields.Char("Distribution Channel")
+    dist_channel_id = fields.Many2one("dmpi.crm.sale.dist.channel", "Distribution Channel ID")
     division        = fields.Char("Division")
+    category        = fields.Char("Category")
 
     # ship_to_ids = fields.Many2many('dmpi.crm.partner','dmpi_partner_shp_rel','partner_id','ship_to_id',string='Partner Functions',domain=[('function_ids.code','=','SHP')])
     ship_to_ids = fields.Many2many('dmpi.crm.partner','dmpi_partner_shp_rel','partner_id','ship_to_id',string='Partner Functions')
@@ -347,7 +349,17 @@ class DmpiCrmCountry(models.Model):
 
     name        = fields.Char("Name")
     code        = fields.Char("Country Code")
+    region_id = fields.Many2one('dmpi.crm.country.region',"Country Region")
     active      = fields.Boolean("Active", default=True)
+
+
+class DmpiCrmCountryRegion(models.Model):
+    _name = 'dmpi.crm.country.region'
+
+    name = fields.Char('Name')
+    code = fields.Char('Code')
+
+
 
 class DmpiCrmPlant(models.Model):
     _name = 'dmpi.crm.plant'

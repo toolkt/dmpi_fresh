@@ -667,14 +667,26 @@
                             <field name="load_no"/>
                             <field name="booking_no"/>
                             <field name="seal_no"/>
-                        </group>
-                        <group>
                             <field name="dr_create_date"/>
                             <field name="gi_date"/>
                             <field name="origin"/>
                             <field name="destination"/>
                             <field name="discharge"/>
                         </group>
+                        <group>
+                            <field name="delay_reason"/>
+                            <field name="temp_reading"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="date_depart"/>
+                            <field name="date_atd_pol"/>
+                            <field name="date_arrive"/>
+                            <field name="incoterm"/>
+                            <field name="incoterm_description"/>
+                            <field name="date_pullout"/>
+                            <field name="date_inspection"/>
+                        </group>
+
                     </group>
                     <notebook>
                         <page string="Items">
@@ -791,6 +803,9 @@
                                     <field name="qty" sum="Total"/>
                                     <field name="uom"/>
                                     <field name="line_net_value" sum="Total"/>
+                                    <field name="sap_so_no"/>
+                                    <field name="week_no_int"/>
+                                    <field name="so_id"/>
                                 </tree>
                             </field>
                         </page>

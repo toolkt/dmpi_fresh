@@ -52,10 +52,12 @@
                             <field name="account_group"/>
                             <field name="default_validity"/>
                             <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="category"/>
                         </group>
                         <group string="Sales Area">
                             <field name="sales_org"/>
                             <field name="dist_channel"/>
+                            <field name="dist_channel_id"/>
                             <field name="division"/>
                         </group>
                         <group string="Address 1">
@@ -161,6 +163,26 @@
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_sap_doc_type" id="menu_dmpi_crm_sap_doc_type" parent="menu_dmpi_crm_master_top"/>
+
+    <!-- SAP DOC TYPE -->
+    <record id="view_dmpi_crm_country_region_tree" model="ir.ui.view">
+        <field name="name">Country Region</field>
+        <field name="model">dmpi.crm.country.region</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_country_region" model="ir.actions.act_window">
+        <field name="name">Country Region</field>
+        <field name="res_model">dmpi.crm.country.region</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_country_region" id="menu_dmpi_crm_country_region" parent="menu_dmpi_crm_master_top"/>
+
     <!-- COUNTRY -->
     <record id="view_dmpi_crm_country_tree" model="ir.ui.view">
         <field name="name">Country</field>
@@ -169,6 +191,7 @@
             <tree editable="bottom">
                 <field name="name"/>
                 <field name="code"/>
+                <field name="region_id"/>
                 <field name="active"/>
             </tree>
         </field>
@@ -237,7 +260,7 @@
     <menuitem action="action_dmpi_crm_shell_color" id="menu_dmpi_crm_shell_color" parent="menu_dmpi_crm_master_top"/>
     <!-- DISTRIBUTION CHANNEL-->
     <record id="view_dmpi_crm_sale_dist_channel" model="ir.ui.view">
-        <field name="name">Sale Distribition Channel</field>
+        <field name="name">Sale Distribution Channel</field>
         <field name="model">dmpi.crm.sale.dist.channel</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
@@ -667,6 +690,7 @@
                             <group string="Transit Details">
                                 <group>
                                     <field name="incoterm"/>
+                                    <field name="incoterm_description"/>
                                     <field name="date_atd_pol"/>
                                     <field name="date_arrival"/>
                                     <field name="date_pullout"/>
