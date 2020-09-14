@@ -1085,9 +1085,11 @@ class DmpiCrmConfig(models.Model):
                         new_inv = self.env['dmpi.crm.invoice'].create(inv)
                     execute(transfer_files,f, outbound_path_success)
                     _logger.info('SUCCESS process_inv dmpi')
+                    print('SUCCESS process_inv dmpi')
 
                 except Exception as e:
                     _logger.warning('READ ERROR process_inv dmpi')
+                    print('READ ERROR process_inv dmpi')
 
 
     @api.multi
