@@ -1070,6 +1070,7 @@ class DmpiCrmConfig(models.Model):
                                 'line_net_value': index_to_float(row,18),
                                 'week_no': row[19],
                                 'week_no_int': re.sub('\D', '', row[19]),
+                                'inv_create_date': row[10],
                             }
 
 

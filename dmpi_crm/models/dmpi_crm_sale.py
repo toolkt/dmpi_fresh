@@ -1483,6 +1483,7 @@ class DmpiCrmInvoiceLine(models.Model):
     week_no_int = fields.Integer("Week Number")
     so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
     inv_id = fields.Many2one('dmpi.crm.invoice', 'SHP ID', ondelete='cascade')
+    inv_create_date = fields.Char("Invoice creation date")
 
 
 

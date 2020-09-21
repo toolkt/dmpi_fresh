@@ -805,6 +805,7 @@
                                     <field name="line_net_value" sum="Total"/>
                                     <field name="sap_so_no"/>
                                     <field name="week_no_int"/>
+                                    <field name="inv_create_date"/>
                                     <field name="so_id"/>
                                 </tree>
                             </field>
