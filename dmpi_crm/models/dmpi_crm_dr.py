@@ -87,6 +87,7 @@ class DmpiCrmDr(models.Model):
                     clp.write({
                             'container_no': shp_id.van_no,
                             'seal_no': shp_id.seal_no,
+                            'feeder_vessel': shp_id.vessel_no,
                             'vessel_name': shp_id.vessel_no,
                             'port_origin': shp_id.origin,
                             'port_destination': rec.port_destination,
@@ -98,6 +99,7 @@ class DmpiCrmDr(models.Model):
                             'date_depart':shp_id.date_depart,
                             'date_atd_pol':shp_id.date_atd_pol,
                             'date_arrive':shp_id.date_arrive,
+                            'date_arrival':shp_id.date_arrive,
                             'incoterm':shp_id.incoterm,
                             'incoterm_description':shp_id.incoterm_description,
                             'date_pullout':shp_id.date_pullout,

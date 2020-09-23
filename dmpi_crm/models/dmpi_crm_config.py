@@ -924,17 +924,28 @@ class DmpiCrmConfig(models.Model):
                                 #Additional Fields
                                 'delay_reason':row[19],
                                 'temp_reading':row[20],
-                                'date_start':row[22]+' '+row[23],
-                                'date_end':row[24]+' '+row[25],
-                                'date_depart':row[26]+' '+row[27],
-                                'date_atd_pol':row[28]+' '+row[29],
-                                'date_arrive':row[30]+' '+row[31],
+                                
+                                # 'date_end':row[24]+' '+row[25],
+                                # 'date_depart':row[26]+' '+row[27],
+                                # 'date_atd_pol':row[28]+' '+row[29],
+                                # 'date_arrive':row[30]+' '+row[31],
                                 'incoterm':row[32],
                                 'incoterm_description':row[33],
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
                             }
+                            if row[22]:
+                                shp['date_start'] = row[22]+' '+row[23]
+                            if row[24]:
+                                shp['date_end'] = row[24]+' '+row[25]
+                            if row[26]:
+                                shp['date_depart'] = row[26]+' '+row[27]
+                            if row[28]:
+                                shp['date_atd_pol'] = row[28]+' '+row[29]
+                            if row[30]:
+                                shp['date_arrive'] = row[30]+' '+row[31]
+
                         print(shp)
                         if row[0].upper() == 'ALTTOITM':
                             line = {
