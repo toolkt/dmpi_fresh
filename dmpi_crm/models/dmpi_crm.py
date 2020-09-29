@@ -349,7 +349,17 @@ class DmpiCrmCountry(models.Model):
 
     name        = fields.Char("Name")
     code        = fields.Char("Country Code")
+    region_id = fields.Many2one('dmpi.crm.country.region',"Country Region")
     active      = fields.Boolean("Active", default=True)
+
+
+class DmpiCrmCountryRegion(models.Model):
+    _name = 'dmpi.crm.country.region'
+
+    name = fields.Char('Name')
+    code = fields.Char('Code')
+
+
 
 class DmpiCrmPlant(models.Model):
     _name = 'dmpi.crm.plant'

@@ -156,8 +156,14 @@ class DmpiCrmSaleContract(models.Model):
     @api.depends('credit_limit','credit_exposure','total_sales', 'open_so')
     def _compute_credit(self):
         for rec in self:
-            rec.remaining_credit = rec.credit_limit - rec.credit_exposure
-            rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
+            try:
+                rec.remaining_credit = rec.credit_limit - rec.credit_exposure
+                rec.credit_after_sale = rec.credit_limit - rec.credit_exposure - rec.total_sales - rec.open_so
+            except:
+                rec.remaining_credit = False
+                rec.credit_after_sale = False
+                pass
+
 
 
     @api.onchange('sold_via_id')
@@ -755,6 +761,7 @@ class DmpiCrmSaleOrder(models.Model):
                         'usage' : '',
                         'original_ship_to' : '',
                         'pricing_date' : pricing_date,
+                        'week_no' : cid.week_no or ''
                     }
 
                     if cid.sold_via_id:
@@ -785,7 +792,7 @@ class DmpiCrmSaleOrder(models.Model):
                                         l['po_line_no'],l['so_line_no'],
                                         l['material'],l['qty'],
                                         l['uom'],l['plant'],
-                                        l['original_ship_to'],l['pricing_date']
+                                        l['original_ship_to'],l['pricing_date'],l['week_no']
                                     ])
                         else:
                             writer.writerow([ l['odoo_po_no'],l['sap_cn_no'],
@@ -797,7 +804,7 @@ class DmpiCrmSaleOrder(models.Model):
                                         l['po_line_no'],l['so_line_no'],
                                         l['material'],l['qty'],
                                         l['uom'],l['plant'],
-                                        '',l['pricing_date']
+                                        '',l['pricing_date'],l['week_no']
                                     ])
 
                     if rec.instructions:
@@ -1392,20 +1399,24 @@ class DmpiCrmInvoice(models.Model):
     @api.depends('sap_so_no')
     def _get_odoo_doc(self):
         for rec in self:
-            
-            so_id = False
-            contract_id = False
-            sap_so_no = rec.sap_so_no
+            try:
+                so_id = False
+                contract_id = False
+                sap_so_no = rec.sap_so_no
 
-            if sap_so_no:
-                so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
+                if sap_so_no:
+                    so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)
 
-                if so:
-                    so_id = so
-                    contract_id = so.contract_id
+                    if so:
+                        so_id = so
+                        contract_id = so.contract_id
 
-            rec.so_id = so_id
-            rec.contract_id = contract_id
+                rec.so_id = so_id
+                rec.contract_id = contract_id
+            except:
+                rec.so_id = False
+                rec.contract_id = False                
+                pass
 
     # odoo docs
     name = fields.Char("Name")
@@ -1440,14 +1451,39 @@ class DmpiCrmInvoice(models.Model):
 class DmpiCrmInvoiceLine(models.Model):
     _name = 'dmpi.crm.invoice.line'
 
+
+
+    @api.multi
+    @api.depends('sap_so_no')
+    def _get_odoo_doc(self):
+        for rec in self:
+            try:
+                so_id = False
+                contract_id = False
+                sap_so_no = rec.sap_so_no
+
+                if sap_so_no:
+                    so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',rec.sap_so_no)], limit=1)[0]
+                    if so:
+                        so_id = so.id
+
+                rec.so_id = so_id
+            except:
+                rec.so_id = False
+                pass
+
     so_line_no = fields.Char("SO Line Item No.")
     inv_line_no = fields.Char("Invoice Line Item No.")
     material = fields.Char("Material")
     qty = fields.Float("Qty")
     uom = fields.Char("UoM")
     line_net_value = fields.Float("Net Value")
-
+    sap_so_no = fields.Char("SAP SO No.")
+    week_no = fields.Char("Week No.")
+    week_no_int = fields.Integer("Week Number")
+    so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
     inv_id = fields.Many2one('dmpi.crm.invoice', 'SHP ID', ondelete='cascade')
+    inv_create_date = fields.Char("Invoice creation date")
 
 
 

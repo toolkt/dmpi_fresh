@@ -438,10 +438,11 @@ class DmpiCrmClp(models.Model):
 
 
     incoterm = fields.Char("Incoterm")
+    incoterm_description = fields.Char("Incoterm Description")
     date_atd_pol = fields.Date("ATD at POL")
     date_arrival = fields.Date("Date of Arrival")
-    date_pullout = fields.Date("Date of Pull-out")
-    date_inspection = fields.Date("Date of Inspection")
+    date_pullout = fields.Datetime("Date of Pull-out")
+    date_inspection = fields.Datetime("Date of Inspection")
     aop_ata = fields.Integer("AOP at ATA")
     aop_pull_out = fields.Integer("AOP at Pull-out")
     aop_inspect = fields.Integer("AOP at Inspection")

@@ -920,8 +920,33 @@ class DmpiCrmConfig(models.Model):
                                 'origin':row[16],  
                                 'destination':row[17], 
                                 'discharge':row[18], 
-                            }
 
+                                #Additional Fields
+                                'delay_reason':row[19],
+                                'temp_reading':row[20],
+                                
+                                # 'date_end':row[24]+' '+row[25],
+                                # 'date_depart':row[26]+' '+row[27],
+                                # 'date_atd_pol':row[28]+' '+row[29],
+                                # 'date_arrive':row[30]+' '+row[31],
+                                'incoterm':row[32],
+                                'incoterm_description':row[33],
+                                'date_pullout':row[34]+' '+row[35],
+                                'date_inspection':row[36]+' '+row[37],
+
+                            }
+                            if row[22]:
+                                shp['date_start'] = row[22]+' '+row[23]
+                            if row[24]:
+                                shp['date_end'] = row[24]+' '+row[25]
+                            if row[26]:
+                                shp['date_depart'] = row[26]+' '+row[27]
+                            if row[28]:
+                                shp['date_atd_pol'] = row[28]+' '+row[29]
+                            if row[30]:
+                                shp['date_arrive'] = row[30]+' '+row[31]
+
+                        print(shp)
                         if row[0].upper() == 'ALTTOITM':
                             line = {
                                 'sap_so_no':row[1],
@@ -936,7 +961,9 @@ class DmpiCrmConfig(models.Model):
                             }
 
                             shp_lines.append((0,0,line))
+                    print(shp_lines)
                     shp['shp_lines'] = shp_lines
+
 
                     if shp_no:
                         new_shp = self.env['dmpi.crm.shp'].create(shp)
@@ -1040,23 +1067,34 @@ class DmpiCrmConfig(models.Model):
                                 'dms_inv_no': dms_inv,
                                 'sbfti_inv_no': sbfti_inv,
                                 'payer': row[8],
-                                'inv_create_date': row[9],
-                                'header_net': row[10],
+                                'inv_create_date': row[10],
+                                'header_net': row[11],
                             }
 
                             inv_line = {
-                                'so_line_no': row[11],
-                                'inv_line_no': row[12],
-                                'material' : row[13], 
-                                'qty': index_to_float(row,14),
-                                'uom': row[15],
-                                'line_net_value': index_to_float(row,16),
+                                'sap_so_no': row[12],
+                                'so_line_no': row[13],
+                                'inv_line_no': row[14],
+                                'material' : row[15], 
+                                'qty': index_to_float(row,16),
+                                'uom': row[17],
+                                'line_net_value': index_to_float(row,18),
+                                'week_no': row[19],
+                                'week_no_int': re.sub('\D', '', row[19]),
+                                'inv_create_date': row[10],
                             }
 
-                            inv_lines.append((0,0,inv_line))
-                    inv['inv_lines'] = inv_lines
 
-                    new_inv = self.env['dmpi.crm.invoice'].create(inv)
+                            inv_lines.append((0,0,inv_line))
+
+                    inv['inv_lines'] = inv_lines
+                    print(inv)
+                    invoice_no = self.env['dmpi.crm.invoice'].search([('name','=',name)], limit=1)
+                    if invoice_no:
+                        invoice_no.inv_lines.unlink()
+                        invoice_no.write(inv)
+                    else:
+                        new_inv = self.env['dmpi.crm.invoice'].create(inv)
                     execute(transfer_files,f, outbound_path_success)
                     _logger.info('SUCCESS process_inv dmpi')
 
