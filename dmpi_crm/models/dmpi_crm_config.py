@@ -937,27 +937,27 @@ class DmpiCrmConfig(models.Model):
                             }
                             try:
                                 m,d,y = row[22].split("/")
-                                shp['date_start'] = "%s-%s-%s %s" % (m,d,y,row[23]) if int(y)>1900 else ""
+                                shp['date_start'] = "%s-%s-%s %s" % (m,d,y,row[23]) if int(y)>1900 else False
                             except:
                                 pass
                             try:
                                 m,d,y = row[24].split("/")
-                                shp['date_end'] = "%s-%s-%s %s" % (m,d,y,row[25]) if int(y)>1900 else ""
+                                shp['date_end'] = "%s-%s-%s %s" % (m,d,y,row[25]) if int(y)>1900 else False
                             except:
                                 pass
                             try:
                                 m,d,y = row[26].split("/")
-                                shp['date_depart'] = "%s-%s-%s %s" % (m,d,y,row[27]) if int(y)>1900 else ""
+                                shp['date_depart'] = "%s-%s-%s %s" % (m,d,y,row[27]) if int(y)>1900 else False
                             except:
                                 pass
                             try:
                                 m,d,y = row[28].split("/")
-                                shp['date_atd_pol'] = "%s-%s-%s %s" % (m,d,y,row[29]) if int(y)>1900 else ""
+                                shp['date_atd_pol'] = "%s-%s-%s %s" % (m,d,y,row[29]) if int(y)>1900 else False
                             except:
                                 pass
                             try:
                                 m,d,y = row[22].split("/")
-                                shp['date_arrive'] = "%s-%s-%s %s" % (m,d,y,row[31]) if int(y)>1900 else ""
+                                shp['date_arrive'] = "%s-%s-%s %s" % (m,d,y,row[31]) if int(y)>1900 else False
                             except:
                                 pass
 
