@@ -925,41 +925,41 @@ class DmpiCrmConfig(models.Model):
                                 'delay_reason':row[19],
                                 'temp_reading':row[20],
                                 
-                                # 'date_end':row[24]+' '+row[25],
-                                # 'date_depart':row[26]+' '+row[27],
+                                'date_end':row[24]+' '+row[25],
+                                'date_depart':row[26]+' '+row[27],
                                 # 'date_atd_pol':row[28]+' '+row[29],
-                                # 'date_arrive':row[30]+' '+row[31],
+                                'date_arrive':row[30]+' '+row[31],
                                 'incoterm':row[32],
                                 'incoterm_description':row[33],
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
                             }
-                            try:
-                                m,d,y = row[22].split("/")
-                                shp['date_start'] = "%s-%s-%s %s" % (m,d,y,row[23]) if int(y)>1900 else False
-                            except:
-                                pass
-                            try:
-                                m,d,y = row[24].split("/")
-                                shp['date_end'] = "%s-%s-%s %s" % (m,d,y,row[25]) if int(y)>1900 else False
-                            except:
-                                pass
-                            try:
-                                m,d,y = row[26].split("/")
-                                shp['date_depart'] = "%s-%s-%s %s" % (m,d,y,row[27]) if int(y)>1900 else False
-                            except:
-                                pass
+                            # try:
+                            #     m,d,y = row[22].split("/")
+                            #     shp['date_start'] = "%s-%s-%s %s" % (m,d,y,row[23]) if int(y)>1900 else False
+                            # except:
+                            #     pass
+                            # try:
+                            #     m,d,y = row[24].split("/")
+                            #     shp['date_end'] = "%s-%s-%s %s" % (m,d,y,row[25]) if int(y)>1900 else False
+                            # except:
+                            #     pass
+                            # try:
+                            #     m,d,y = row[26].split("/")
+                            #     shp['date_depart'] = "%s-%s-%s %s" % (m,d,y,row[27]) if int(y)>1900 else False
+                            # except:
+                            #     pass
                             try:
                                 m,d,y = row[28].split("/")
                                 shp['date_atd_pol'] = "%s-%s-%s %s" % (m,d,y,row[29]) if int(y)>1900 else False
                             except:
                                 pass
-                            try:
-                                m,d,y = row[22].split("/")
-                                shp['date_arrive'] = "%s-%s-%s %s" % (m,d,y,row[31]) if int(y)>1900 else False
-                            except:
-                                pass
+                            # try:
+                            #     m,d,y = row[22].split("/")
+                            #     shp['date_arrive'] = "%s-%s-%s %s" % (m,d,y,row[31]) if int(y)>1900 else False
+                            # except:
+                            #     pass
 
                         print(shp)
                         if row[0].upper() == 'ALTTOITM':
