@@ -925,26 +925,38 @@ class DmpiCrmConfig(models.Model):
                                 'delay_reason':row[19],
                                 'temp_reading':row[20],
                                 
+                                # 'date_start':row[24]+' '+row[25],
                                 # 'date_end':row[24]+' '+row[25],
                                 # 'date_depart':row[26]+' '+row[27],
                                 # 'date_atd_pol':row[28]+' '+row[29],
                                 # 'date_arrive':row[30]+' '+row[31],
+                                'date_start':datetime.strptime(row[22]+' '+row[23], '%m/%d/%y %H:%M:%S'),
+                                'date_end':datetime.strptime(row[24]+' '+row[25], '%m/%d/%y %H:%M:%S'),
+                                'date_depart':datetime.strptime(row[26]+' '+row[27], '%m/%d/%y %H:%M:%S'),
+                                'date_atd_pol':datetime.strptime(row[28]+' '+row[29], '%m/%d/%y %H:%M:%S'),
+                                'date_arrive':datetime.strptime(row[30]+' '+row[31], '%m/%d/%y %H:%M:%S'),
+
                                 'incoterm':row[32],
                                 'incoterm_description':row[33],
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
                             }
-                            if row[22]:
-                                shp['date_start'] = row[22]+' '+row[23]
-                            if row[24]:
-                                shp['date_end'] = row[24]+' '+row[25]
-                            if row[26]:
-                                shp['date_depart'] = row[26]+' '+row[27]
-                            if row[28]:
-                                shp['date_atd_pol'] = row[28]+' '+row[29]
-                            if row[30]:
-                                shp['date_arrive'] = row[30]+' '+row[31]
+                            # if row[22]:
+                            #     d =  datetime.strptime(row[22]+' '+row[23], '%m/%d/%y %H:%M:%S')
+                            #     shp['date_start'] =  d
+                            # if row[24]:
+                            #     d =  datetime.strptime(row[24]+' '+row[25], '%m/%d/%y %H:%M:%S')
+                            #     shp['date_end'] =  d
+                            # if row[26]:
+                            #     d =   datetime.strptime(row[26]+' '+row[27], '%m/%d/%y %H:%M:%S')
+                            #     shp['date_depart'] = d
+                            # if row[28]:
+                            #     d =  datetime.strptime(row[28]+' '+row[29], '%m/%d/%y %H:%M:%S')
+                            #     shp['date_atd_pol'] =  d
+                            # if row[30]:
+                            #     d =  datetime.strptime(row[30]+' '+row[31], '%m/%d/%y %H:%M:%S')
+                            #     shp['date_arrive'] =  d
 
                         print(shp)
                         if row[0].upper() == 'ALTTOITM':
