@@ -925,6 +925,7 @@ class DmpiCrmConfig(models.Model):
                                 'delay_reason':row[19],
                                 'temp_reading':row[20],
                                 
+                                'date_start':row[22]+' '+row[23],
                                 'date_end':row[24]+' '+row[25],
                                 'date_depart':row[26]+' '+row[27],
                                 # 'date_atd_pol':row[28]+' '+row[29],
