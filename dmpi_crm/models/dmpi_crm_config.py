@@ -944,19 +944,19 @@ class DmpiCrmConfig(models.Model):
                             }
                             if row[22]:
                                 d =  datetime.strptime(row[22]+' '+row[23], '%m/%d/%y %H:%M:%S')
-                                shp['date_start'] =  d
+                                shp['date_start'] =  d.strftime("%y-%m-%d %H:%M:%S")
                             if row[24]:
                                 d =  datetime.strptime(row[24]+' '+row[25], '%m/%d/%y %H:%M:%S')
-                                shp['date_end'] =  d
+                                shp['date_end'] =  d.strftime("%y-%m-%d %H:%M:%S")
                             if row[26]:
                                 d =   datetime.strptime(row[26]+' '+row[27], '%m/%d/%y %H:%M:%S')
-                                shp['date_depart'] = d
+                                shp['date_depart'] = d.strftime("%y-%m-%d %H:%M:%S")
                             if row[28]:
                                 d =  datetime.strptime(row[28]+' '+row[29], '%m/%d/%y %H:%M:%S')
-                                shp['date_atd_pol'] =  d
+                                shp['date_atd_pol'] =  d.strftime("%y-%m-%d %H:%M:%S")
                             if row[30]:
                                 d =  datetime.strptime(row[30]+' '+row[31], '%m/%d/%y %H:%M:%S')
-                                shp['date_arrive'] =  d
+                                shp['date_arrive'] =  d.strftime("%y-%m-%d %H:%M:%S")
 
                         print(shp)
                         if row[0].upper() == 'ALTTOITM':
