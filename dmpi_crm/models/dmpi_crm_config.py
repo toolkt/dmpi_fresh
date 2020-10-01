@@ -925,38 +925,36 @@ class DmpiCrmConfig(models.Model):
                                 'delay_reason':row[19],
                                 'temp_reading':row[20],
                                 
-                                # 'date_start':row[24]+' '+row[25],
                                 # 'date_end':row[24]+' '+row[25],
                                 # 'date_depart':row[26]+' '+row[27],
                                 # 'date_atd_pol':row[28]+' '+row[29],
                                 # 'date_arrive':row[30]+' '+row[31],
-                                # 'date_start':datetime.strptime(row[22]+' '+row[23], '%m/%d/%y %H:%M:%S'),
-                                # 'date_end':datetime.strptime(row[24]+' '+row[25], '%m/%d/%y %H:%M:%S'),
-                                # 'date_depart':datetime.strptime(row[26]+' '+row[27], '%m/%d/%y %H:%M:%S'),
-                                # 'date_atd_pol':datetime.strptime(row[28]+' '+row[29], '%m/%d/%y %H:%M:%S'),
-                                # 'date_arrive':datetime.strptime(row[30]+' '+row[31], '%m/%d/%y %H:%M:%S'),
-
                                 'incoterm':row[32],
                                 'incoterm_description':row[33],
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
                             }
-                            if row[22]:
-                                d =  datetime.strptime(row[22]+' '+row[23], '%m/%d/%y %H:%M:%S')
-                                shp['date_start'] =  d.strftime("%y-%m-%d %H:%M:%S")
-                            if row[24]:
-                                d =  datetime.strptime(row[24]+' '+row[25], '%m/%d/%y %H:%M:%S')
-                                shp['date_end'] =  d.strftime("%y-%m-%d %H:%M:%S")
-                            if row[26]:
-                                d =   datetime.strptime(row[26]+' '+row[27], '%m/%d/%y %H:%M:%S')
-                                shp['date_depart'] = d.strftime("%y-%m-%d %H:%M:%S")
-                            if row[28]:
-                                d =  datetime.strptime(row[28]+' '+row[29], '%m/%d/%y %H:%M:%S')
-                                shp['date_atd_pol'] =  d.strftime("%y-%m-%d %H:%M:%S")
-                            if row[30]:
-                                d =  datetime.strptime(row[30]+' '+row[31], '%m/%d/%y %H:%M:%S')
-                                shp['date_arrive'] =  d.strftime("%y-%m-%d %H:%M:%S")
+                            try:
+                                shp['date_start'] = row[22]+' '+row[23]
+                            except:
+                                pass
+                            try:
+                                shp['date_end'] = row[24]+' '+row[25]
+                            except:
+                                pass
+                            try:
+                                shp['date_depart'] = row[26]+' '+row[27]
+                            except:
+                                pass
+                            try:
+                                shp['date_atd_pol'] = row[28]+' '+row[29]
+                            except:
+                                pass
+                            try:
+                                shp['date_arrive'] = row[30]+' '+row[31]
+                            except:
+                                pass
 
                         print(shp)
                         if row[0].upper() == 'ALTTOITM':
