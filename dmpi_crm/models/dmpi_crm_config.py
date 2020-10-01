@@ -936,23 +936,28 @@ class DmpiCrmConfig(models.Model):
 
                             }
                             try:
-                                shp['date_start'] = row[22]+' '+row[23]
+                                m,d,y = row[22].split("/")
+                                shp['date_start'] = "%s-%s-%s %s" % (m,d,y,row[23])
                             except:
                                 pass
                             try:
-                                shp['date_end'] = row[24]+' '+row[25]
+                                m,d,y = row[24].split("/")
+                                shp['date_end'] = "%s-%s-%s %s" % (m,d,y,row[25])
                             except:
                                 pass
                             try:
-                                shp['date_depart'] = row[26]+' '+row[27]
+                                m,d,y = row[26].split("/")
+                                shp['date_depart'] = "%s-%s-%s %s" % (m,d,y,row[27])
                             except:
                                 pass
                             try:
-                                shp['date_atd_pol'] = row[28]+' '+row[29]
+                                m,d,y = row[28].split("/")
+                                shp['date_atd_pol'] = "%s-%s-%s %s" % (m,d,y,row[29])
                             except:
                                 pass
                             try:
-                                shp['date_arrive'] = row[30]+' '+row[31]
+                                m,d,y = row[22].split("/")
+                                shp['date_arrive'] = "%s-%s-%s %s" % (m,d,y,row[31])
                             except:
                                 pass
 
