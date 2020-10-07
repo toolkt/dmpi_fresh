@@ -164,42 +164,78 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     def _query(self):
         query = """
         SELECT 
+        NULL as date,
         'historical' as record_type,
         cp.name as customer,
         h.customer_code,
         cp.sales_org,
-        h.week_no::CHAR,
+        h.week_no,
         h.category,
         h."type",
         '' as product_code,
+        '' as psd,
         h.qty,
         cc.code as region,
         cc.name as region_description
         from dmpi_crm_analytics_histroical h 
         left join dmpi_crm_partner cp on cp.customer_code = h.customer_code
-        left join dmpi_crm_country cc on cc.id = cp.country  
+        left join dmpi_crm_country cc on cc.id = cp.country)
         
         UNION ALL
-
-    
-        SELECT 
+                
+        (SELECT 
+                so.requested_delivery_date as date,
         'transaction' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
-        sc.week_no::CHAR,
-        '' as category,
+        sc.week_no::varchar(255),
+        pr.category as category,
         'SALE' as "type",
         sol.product_code,
+        'P'||pc.psd as psd,
         SUM(sol.qty),
         cc.code as region,
         cc.name as region_description
         from dmpi_crm_sale_order_line sol
         left join dmpi_crm_sale_order so on so.id = sol.order_id
+        left join dmpi_crm_product pr on pr.id = sol.product_id
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
-        group by cp.name, cp.customer_code,sc.week_no,cc.code, cc.name,sol.product_code,cp.sales_org
+        where so.requested_delivery_date >= '2020-08-01'::DATE
+        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd
+        order by so.requested_delivery_date)
+                
+        UNION ALL
+        
+        (SELECT 
+        i.inv_create_date::DATE as date,
+        'transaction' as record_type,
+        cp.name as customer,
+        cp.customer_code,
+        cp.sales_org,
+        sc.week_no::varchar(255),
+        pr.category as category,
+        'INVOICE' as "type",
+        pc.name as product_code,
+        'P'||pc.psd as psd,
+        SUM(il.qty),
+        cc.code as region,
+        cc.name as region_description
+        FROM dmpi_crm_invoice_line il
+        left join dmpi_crm_product pr on pr.sku = il.material
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id                
+        left join dmpi_crm_invoice i on i.id = il.inv_id
+        left join dmpi_crm_sale_order so on so.sap_so_no = i.sap_so_no
+        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_country cc on cc.id = cp.country
+        where i.inv_create_date::DATE >= '2020-08-01'::DATE and i.source ='500'
+        group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name
+        order by i.inv_create_date::DATE)
+                
     
         """
         return query
