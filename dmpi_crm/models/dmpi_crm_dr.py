@@ -102,20 +102,20 @@ class DmpiCrmDr(models.Model):
                             'incoterm_description':shp_id.incoterm_description,
                             
                         })
-                    # try:
-                    #     clp.write({'date_inspection':shp_id.date_inspection})
-                    # except:
-                    #     pass
+                    try:
+                        clp.write({'date_inspection':shp_id.date_inspection})
+                    except:
+                        pass
 
-                    # try:
-                    #     clp.write({'date_pullout':shp_id.date_pullout})
-                    # except:
-                    #     pass
+                    try:
+                        clp.write({'date_pullout':shp_id.date_pullout})
+                    except:
+                        pass
 
-                    # try:
-                    #     clp.write({'date_arrival':shp_id.date_arrive})
-                    # except:
-                    #     pass
+                    try:
+                        clp.write({'date_arrival':shp_id.date_arrive})
+                    except:
+                        pass
 
 
             else:
