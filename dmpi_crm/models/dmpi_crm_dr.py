@@ -103,17 +103,20 @@ class DmpiCrmDr(models.Model):
                             
                         })
                     try:
-                        clp.write({'date_inspection':shp_id.date_inspection})
+                        date_inspection = datetime.strptime(shp_id.date_inspection, '%m/%d/%Y %H:%M:%S')
+                        clp.write({'date_inspection':date_inspection})
                     except:
                         pass
 
                     try:
-                        clp.write({'date_pullout':shp_id.date_pullout})
+                        date_pullout = datetime.strptime(shp_id.date_pullout, '%m/%d/%Y %H:%M:%S')
+                        clp.write({'date_pullout':date_pullout})
                     except:
                         pass
 
                     try:
-                        clp.write({'date_arrival':shp_id.date_arrive})
+                        date_arrive = datetime.strptime(shp_id.date_arrive, '%m/%d/%Y %H:%M:%S')
+                        clp.write({'date_arrival':date_arrive})
                     except:
                         pass
 
