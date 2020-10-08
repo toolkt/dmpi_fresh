@@ -91,7 +91,6 @@ class DmpiCrmDr(models.Model):
                             'vessel_name': shp_id.vessel_no,
                             'port_origin': shp_id.origin,
                             'port_destination': rec.port_destination,
-
                             'delay_reason':shp_id.delay_reason,
                             'temp_reading':shp_id.temp_reading,
                             'date_start':shp_id.date_start,
@@ -99,13 +98,25 @@ class DmpiCrmDr(models.Model):
                             'date_depart':shp_id.date_depart,
                             'date_atd_pol':shp_id.date_atd_pol,
                             'date_arrive':shp_id.date_arrive,
-                            'date_arrival':shp_id.date_arrive,
                             'incoterm':shp_id.incoterm,
                             'incoterm_description':shp_id.incoterm_description,
-                            'date_pullout':shp_id.date_pullout,
-                            'date_inspection':shp_id.date_inspection,
-
+                            
                         })
+                    try:
+                        clp.write({'date_inspection':shp_id.date_inspection})
+                    except:
+                        pass
+
+                    try:
+                        clp.write({'date_pullout':shp_id.date_pullout})
+                    except:
+                        pass
+
+                    try:
+                        clp.write({'date_arrival':shp_id.date_arrive})
+                    except:
+                        pass
+
 
             else:
                 raise UserError(_("No Shipment Details Found"))

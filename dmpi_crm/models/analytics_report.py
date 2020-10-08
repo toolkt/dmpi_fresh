@@ -179,7 +179,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cc.name as region_description
         from dmpi_crm_analytics_histroical h 
         left join dmpi_crm_partner cp on cp.customer_code = h.customer_code
-        left join dmpi_crm_country cc on cc.id = cp.country)
+        left join dmpi_crm_country cc on cc.id = cp.country
         
         UNION ALL
                 
