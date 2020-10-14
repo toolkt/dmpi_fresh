@@ -171,6 +171,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cp.sales_org,
         h.week_no,
         h.category,
+        h.category as brand,
         h."type",
         '' as product_code,
         '' as psd,
@@ -183,14 +184,46 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         
         UNION ALL
                 
+                                
         (SELECT 
-                so.requested_delivery_date as date,
+        so.requested_delivery_date as date,
         'transaction' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
         sc.week_no::varchar(255),
         pr.category as category,
+                pr.brand as brand,
+        'ORDER' as "type",
+        sol.product_code,
+        'P'||pc.psd as psd,
+        SUM(sol.qty),
+        cc.code as region,
+        cc.name as region_description
+        from customer_crm_sale_order_line sol
+        left join customer_crm_sale_order so on so.id = sol.order_id
+        left join dmpi_crm_product pr on pr.id = sol.product_id
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id
+        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_country cc on cc.id = cp.country
+        where so.requested_delivery_date >= '2020-08-01'::DATE
+        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
+        order by so.requested_delivery_date)
+                                
+                                
+        UNION ALL               
+                                
+                                
+        (SELECT 
+        so.requested_delivery_date as date,
+        'transaction' as record_type,
+        cp.name as customer,
+        cp.customer_code,
+        cp.sales_org,
+        sc.week_no::varchar(255),
+        pr.category as category,
+                pr.brand as brand,
         'SALE' as "type",
         sol.product_code,
         'P'||pc.psd as psd,
@@ -205,7 +238,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
         where so.requested_delivery_date >= '2020-08-01'::DATE
-        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd
+        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
         order by so.requested_delivery_date)
                 
         UNION ALL
@@ -218,6 +251,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cp.sales_org,
         sc.week_no::varchar(255),
         pr.category as category,
+                pr.brand as brand,
         'INVOICE' as "type",
         pc.name as product_code,
         'P'||pc.psd as psd,
@@ -233,9 +267,8 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
         where i.inv_create_date::DATE >= '2020-08-01'::DATE and i.source ='500'
-        group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name
+        group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name,pr.brand
         order by i.inv_create_date::DATE)
-                
     
         """
         return query

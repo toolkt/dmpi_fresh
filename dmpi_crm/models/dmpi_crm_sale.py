@@ -1436,7 +1436,7 @@ class DmpiCrmInvoice(models.Model):
 
     # headers
     payer = fields.Char("Payer")  
-    inv_create_date = fields.Char("Invoice creation date")
+    inv_create_date = fields.Char("Invoice Creation Date")
     header_net = fields.Char("Header net value") 
     invoice_file = fields.Binary("Invoice Attachment")
     invoice_filename = fields.Char("Invoice Filename ")
@@ -1483,7 +1483,7 @@ class DmpiCrmInvoiceLine(models.Model):
     week_no_int = fields.Integer("Week Number")
     so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
     inv_id = fields.Many2one('dmpi.crm.invoice', 'SHP ID', ondelete='cascade')
-    inv_create_date = fields.Char("Invoice creation date")
+    inv_create_date = fields.Char("Invoice Pricing Date")
 
 
 
