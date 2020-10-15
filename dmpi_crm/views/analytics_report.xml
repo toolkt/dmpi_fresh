@@ -28,11 +28,29 @@
     <menuitem action="action_dmpi_crm_analytics_histroical" id="menu_dmpi_crm_analytics_histroical" parent="menu_dmpi_crm_commercial_reports"/>
 
     <!-- COUNTRY -->
+
+    <!-- SALE ORDER REPORT LINES -->
+    <record id="view_dmpi_crm_analytics_data_historical_graph" model="ir.ui.view">
+        <field name="name">Historical Analytics</field>
+        <field name="model">dmpi.crm.analytics.data.historical</field>
+        <field name="arch" type="xml">
+            <pivot string="Sale Report">
+                <field name="region_description" type="row"/>
+                <field name="region" type="row"/>
+                <field name="week_no" type="col"/>
+                <field name="product_code" type="type"/>
+                <field name="qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+
     <record id="view_dmpi_crm_analytics_data_historical_tree" model="ir.ui.view">
         <field name="name">Analytics Data</field>
         <field name="model">dmpi.crm.analytics.data.historical</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
+                <field name="date"/>
                 <field name="record_type"/>
                 <field name="customer"/>
                 <field name="customer_code"/>
@@ -52,7 +70,7 @@
     <record id="action_dmpi_crm_analytics_data_historical" model="ir.actions.act_window">
         <field name="name">Analytics Data</field>
         <field name="res_model">dmpi.crm.analytics.data.historical</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">tree,graph</field>
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_analytics_data_historical" id="menu_dmpi_crm_analytics_data_historical" parent="menu_dmpi_crm_commercial_reports"/>

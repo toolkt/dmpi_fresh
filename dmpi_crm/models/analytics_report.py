@@ -147,6 +147,8 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     _description = "CRM Analytics Data Historical"
     _auto = False
 
+    
+    date = fields.Date(string="Date")
     record_type = fields.Char(string="Record")
     customer = fields.Char(string="Customer")
     customer_code = fields.Char(string="Code")
