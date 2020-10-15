@@ -232,7 +232,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
             cp.sales_org,
             sc.week_no::varchar(255),
             pr.category as category,
-                    pr.brand as brand,
+            pr.brand as brand,
             'SALE' as "type",
             sol.product_code,
             'P'||pc.psd as psd,
@@ -260,7 +260,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
             cp.sales_org,
             sc.week_no::varchar(255),
             pr.category as category,
-                    pr.brand as brand,
+            pr.brand as brand,
             'INVOICE' as "type",
             pc.name as product_code,
             'P'||pc.psd as psd,
@@ -305,6 +305,6 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     category = fields.Char(string="Category")
     sku = fields.Char(string="SKU")
     type = fields.Char(string="Type")
-    qty = fields.Integer(string="Quantity")
+    qty = fields.Float(string="Quantity")
     amount = fields.Float(string="Amount")
 
