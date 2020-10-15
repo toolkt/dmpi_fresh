@@ -1083,39 +1083,28 @@ class DmpiCrmConfig(models.Model):
                                 'dms_inv_no': dms_inv,
                                 'sbfti_inv_no': sbfti_inv,
                                 'payer': row[8],
-                                'inv_create_date': row[10],
-                                'header_net': row[11],
+                                'inv_create_date': row[9],
+                                'header_net': row[10],
                             }
 
                             inv_line = {
-                                'sap_so_no': row[12],
-                                'so_line_no': row[13],
-                                'inv_line_no': row[14],
-                                'material' : row[15], 
-                                'qty': index_to_float(row,16),
-                                'uom': row[17],
-                                'line_net_value': index_to_float(row,18),
-                                'week_no': row[19],
-                                'week_no_int': re.sub('\D', '', row[19]),
-                                'inv_create_date': row[10],
+                                'so_line_no': row[11],
+                                'inv_line_no': row[12],
+                                'material' : row[13], 
+                                'qty': index_to_float(row,14),
+                                'uom': row[15],
+                                'line_net_value': index_to_float(row,16),
                             }
 
-
                             inv_lines.append((0,0,inv_line))
-
                     inv['inv_lines'] = inv_lines
-                    print(inv)
-                    invoice_no = self.env['dmpi.crm.invoice'].search([('name','=',name)], limit=1)
-                    if invoice_no:
-                        invoice_no.inv_lines.unlink()
-                        invoice_no.write(inv)
-                    else:
-                        new_inv = self.env['dmpi.crm.invoice'].create(inv)
+
+                    new_inv = self.env['dmpi.crm.invoice'].create(inv)
                     execute(transfer_files,f, outbound_path_success)
                     _logger.info('SUCCESS process_inv dmpi')
 
                 except Exception as e:
-                    _logger.warning('READ ERROR process_inv dmpi')
+                    _logger.warning('READ ERROR process_inv dmpi: %s' % e)
 
 
     @api.multi
