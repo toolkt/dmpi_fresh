@@ -159,7 +159,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     type = fields.Char(string="Record")
     product_code = fields.Char(string="Product")
     psd = fields.Char(string="PSD")
-    qty = fields.Char(string="Qty")
+    qty = fields.Float(string="Qty")
     region = fields.Char(string="Region")
     region_description = fields.Char(string="Region Desc")
 
