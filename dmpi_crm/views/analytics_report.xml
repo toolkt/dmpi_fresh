@@ -51,7 +51,7 @@
     </record>
     <record id="action_dmpi_crm_analytics_data_historical" model="ir.actions.act_window">
         <field name="name">Analytics Data</field>
-        <field name="res_model">dmpi.crm.analytics.histroical</field>
+        <field name="res_model">dmpi.crm.analytics.data.historical</field>
         <field name="view_mode">tree</field>
         <field name="domain">[]</field>
     </record>
