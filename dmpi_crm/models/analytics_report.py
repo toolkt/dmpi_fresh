@@ -197,7 +197,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                     
                                     
             (SELECT 
-            so.requested_delivery_date as date,
+            so.requested_delivery_date::DATE as date,
             'transaction' as record_type,
             cp.name as customer,
             cp.customer_code,
@@ -227,7 +227,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                     
                                     
             (SELECT 
-            so.requested_delivery_date as date,
+            so.requested_delivery_date::DATE as date,
             'transaction' as record_type,
             cp.name as customer,
             cp.customer_code,
