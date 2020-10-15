@@ -27,5 +27,37 @@
     </record>
     <menuitem action="action_dmpi_crm_analytics_histroical" id="menu_dmpi_crm_analytics_histroical" parent="menu_dmpi_crm_commercial_reports"/>
 
+    <!-- COUNTRY -->
+    <record id="view_dmpi_crm_analytics_data_historical_tree" model="ir.ui.view">
+        <field name="name">Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.data.historical</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="record_type"/>
+                <field name="customer"/>
+                <field name="customer_code"/>
+                <field name="sales_org"/>
+                <field name="week_no"/>
+                <field name="category"/>
+                <field name="brand"/>
+                <field name="type"/>
+                <field name="product_code"/>
+                <field name="psd"/>
+                <field name="qty"/>
+                <field name="region"/>
+                <field name="region_description"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_data_historical" model="ir.actions.act_window">
+        <field name="name">Analytics Data</field>
+        <field name="res_model">dmpi.crm.analytics.histroical</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_data_historical" id="menu_dmpi_crm_analytics_data_historical" parent="menu_dmpi_crm_commercial_reports"/>
+
+
+
 </odoo>
 

@@ -1072,7 +1072,7 @@ class DmpiCrmConfig(models.Model):
 
                             inv = {
                                 'contract_id' : contract_id,
-                            	'source':'500',
+                                'source':'500',
                                 'name': name,
                                 'odoo_po_no' : row[0],
                                 'odoo_so_no' : row[1],

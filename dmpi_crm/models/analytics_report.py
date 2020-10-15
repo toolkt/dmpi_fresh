@@ -152,13 +152,15 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     customer = fields.Char(string="Customer")
     customer_code = fields.Char(string="Code")
     sales_org = fields.Char(string="Sales Org")
-    week_no = fields.Char(string="Record")
-    category = fields.Char(string="Record")
+    week_no = fields.Char(string="Week No")
+    category = fields.Char(string="Category")
+    brand = fields.Char(string="Brand")
     type = fields.Char(string="Record")
-    product_code = fields.Char(string="Record")
-    qty = fields.Char(string="Record")
-    region = fields.Char(string="Record")
-    region_description = fields.Char(string="Record")
+    product_code = fields.Char(string="Product")
+    psd = fields.Char(string="PSD")
+    qty = fields.Char(string="Qty")
+    region = fields.Char(string="Region")
+    region_description = fields.Char(string="Region Desc")
 
 
     def _query(self):
