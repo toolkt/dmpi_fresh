@@ -51,7 +51,7 @@
         <field name="arch" type="xml">
             <tree editable="bottom">
                 <field name="date"/>
-                <field name="date_char"/>
+                <field name="cdate"/>
                 <field name="record_type"/>
                 <field name="customer"/>
                 <field name="customer_code"/>

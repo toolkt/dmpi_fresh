@@ -149,7 +149,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
     
     date = fields.Date(string="Date")
-    char_date = fields.Char(string="Date String")
+    cdate = fields.Char(string="Date String")
     record_type = fields.Char(string="Record")
     customer = fields.Char(string="Customer")
     customer_code = fields.Char(string="Code")
@@ -176,7 +176,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
         SELECT 
         NULL as date,
-        '' as char_date,
+        '' as cdate,
         'historical' as record_type,
         cp.name as customer,
         h.customer_code,
@@ -199,7 +199,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                 
         (SELECT 
         so.requested_delivery_date as date,
-                TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as char_date,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
         'transaction' as record_type,
         cp.name as customer,
         cp.customer_code,
@@ -230,7 +230,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                 
         (SELECT 
         so.requested_delivery_date as date,
-                TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as char_date,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
         'transaction' as record_type,
         cp.name as customer,
         cp.customer_code,
@@ -259,7 +259,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         
         (SELECT 
         i.inv_create_date::DATE as date,
-                TO_CHAR(i.inv_create_date::DATE , 'mm/dd/yyyy') as char_date,
+        TO_CHAR(i.inv_create_date::DATE , 'mm/dd/yyyy') as cdate,
         'transaction' as record_type,
         cp.name as customer,
         cp.customer_code,
