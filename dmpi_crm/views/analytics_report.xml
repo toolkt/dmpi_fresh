@@ -70,7 +70,7 @@
     <record id="action_dmpi_crm_analytics_data_historical" model="ir.actions.act_window">
         <field name="name">Analytics Data</field>
         <field name="res_model">dmpi.crm.analytics.data.historical</field>
-        <field name="view_mode">tree,graph</field>
+        <field name="view_mode">tree,pivot</field>
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_analytics_data_historical" id="menu_dmpi_crm_analytics_data_historical" parent="menu_dmpi_crm_commercial_reports"/>
