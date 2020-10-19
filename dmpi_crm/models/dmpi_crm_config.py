@@ -179,7 +179,10 @@ class DmpiCrmConfig(models.Model):
     inbound_so_log_success_error_send   = fields.Char("SO Log Success Error Send")
     inbound_so_log_fail                 = fields.Char("SO Log Fail")
     inbound_so_log_fail_sent            = fields.Char("SO Log Fail Sent")
-    inbound_so_success_offline           = fields.Char("SO Success Offline")
+    inbound_so_success_offline          = fields.Char("SO Success Offline")
+
+    #SO
+    inbound_analytics                   = fields.Char("Analytics")
 
     #AR
     outbound_ar_success                 = fields.Char("AR Success")
@@ -1306,7 +1309,9 @@ class DmpiCrmConfig(models.Model):
                 except Exception as e:
                     _logger.warning('READ ERROR process_inv2_pdf')
 
-
+    @api.multi
+    def action_send_analytics_to_sap(self):
+        self.env['dmpi.crm.analytics.data.historical'].action_send_analytics_to_sap()
 
 class DmpiCrmConfigSelection(models.Model):
     _name = 'dmpi.crm.config.selection'

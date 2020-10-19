@@ -8,6 +8,40 @@ from datetime import timedelta
 import base64
 import re
 import json
+import pandas as pd
+import numpy as np
+
+
+# pip3 install Fabric3
+import logging
+from fabric.api import *
+import paramiko
+import socket
+import os
+import glob
+
+
+#@parallel
+def file_send(localpath,remotepath):
+    with settings(warn_only=True):
+        put(localpath,remotepath,use_sudo=True)
+
+
+class DmpiCrmAnalyticsHistorical(models.Model):
+    _name = 'dmpi.crm.analytics.historical'
+    _description = "CRM Historical Data"
+
+    customer = fields.Char(string="Customer")
+    customer_code = fields.Char(string="Customer Code")
+    fiscal_year = fields.Char(string="Fiscal Year")
+    date = fields.Date(string="Date")
+    week_no = fields.Char(string="Week No")
+    category = fields.Char(string="Category")
+    sku = fields.Char(string="SKU")
+    type = fields.Char(string="Type")
+    qty = fields.Float(string="Quantity")
+    amount = fields.Float(string="Amount")
+
 
 
 class DmpiCrmAnalyticsData(models.Model):
@@ -150,6 +184,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     
     date = fields.Date(string="Date")
     cdate = fields.Char(string="Date String")
+    fiscal_year = fields.Char(string="Fiscal Year")
     record_type = fields.Char(string="Record")
     customer = fields.Char(string="Customer")
     customer_code = fields.Char(string="Code")
@@ -176,8 +211,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
         SELECT 
         NULL as date,
+        h.fiscal_year,
         '' as cdate,
-        'historical' as record_type,
+        'Plan' as record_type,
         cp.name as customer,
         h.customer_code,
         cp.sales_org,
@@ -190,7 +226,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         h.qty,
         cc.code as region,
         cc.name as region_description
-        from dmpi_crm_analytics_histroical h 
+        from dmpi_crm_analytics_historical h 
         left join dmpi_crm_partner cp on cp.customer_code = h.customer_code
         left join dmpi_crm_country cc on cc.id = cp.country
         
@@ -199,8 +235,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                 
         (SELECT 
         so.requested_delivery_date as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
         TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
-        'transaction' as record_type,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
@@ -230,8 +267,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                 
         (SELECT 
         so.requested_delivery_date as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
         TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
-        'transaction' as record_type,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
@@ -259,8 +297,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         
         (SELECT 
         i.inv_create_date::DATE as date,
+        TO_CHAR(i.inv_create_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
         TO_CHAR(i.inv_create_date::DATE , 'mm/dd/yyyy') as cdate,
-        'transaction' as record_type,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
@@ -300,18 +339,44 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
 
 
+    @api.multi
+    def action_send_analytics_to_sap(self):
+        filename = 'COMMERCIAL_ODOO_DATA.csv'
+        path = '/tmp/%s' % filename
 
-class DmpiCrmAnalyticsHistorical(models.Model):
-    _name = 'dmpi.crm.analytics.histroical'
-    _description = "CRM Historical Data"
+        historical_data = self.env['dmpi.crm.analytics.data.historical'].search([])
 
-    customer = fields.Char(string="Customer")
-    customer_code = fields.Char(string="Customer Code")
-    date = fields.Date(string="Date")
-    week_no = fields.Char(string="Week No")
-    category = fields.Char(string="Category")
-    sku = fields.Char(string="SKU")
-    type = fields.Char(string="Type")
-    qty = fields.Float(string="Quantity")
-    amount = fields.Float(string="Amount")
+        data = [{
+            'Date': d.cdate,
+            'Record Type': d.record_type,
+            'Customer Code': d.customer_code,
+            'Customer Description': d.customer,
+            'Region Code': d.region,
+            'Region Description': d.region_description,
+            'Sales Org': d.sales_org,
+            'Week No.': d.week_no,
+            'Fiscal Year': d.fiscal_year,
+            'Brand': d.brand,
+            'Type': d.type,
+            'product_code': d.product_code,
+            'psd': d.psd,
+            'qty': d.qty,
+        } for d in historical_data]
 
+        df = pd.DataFrame
+        data_df = df(data)
+        data_df.to_csv(path)
+        print(data_df)
+        
+        
+        #TRANSFER TO REMOTE SERVER
+        h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+        host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+        env.hosts.append(host_string)
+        env.passwords[host_string] = h.ssh_pass
+
+        localpath = path
+        path = '%s/%s' % (h.inbound_analytics,filename)
+        remotepath = path
+
+        execute(file_send,localpath,remotepath)
