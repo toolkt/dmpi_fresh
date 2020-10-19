@@ -52,6 +52,7 @@
             <tree editable="bottom">
                 <field name="date"/>
                 <field name="cdate"/>
+                <field name="fiscal_year"/>
                 <field name="record_type"/>
                 <field name="customer"/>
                 <field name="customer_code"/>
