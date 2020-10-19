@@ -10,6 +10,7 @@
                 <field name="customer"/>
                 <field name="customer_code"/>
                 <field name="date"/>
+                <field name="fiscal_year"/>
                 <field name="week_no"/>
                 <field name="category"/>
                 <field name="type"/>
