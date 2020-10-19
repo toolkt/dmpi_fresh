@@ -183,6 +183,7 @@ class DmpiCrmConfig(models.Model):
 
     #SO
     inbound_analytics                   = fields.Char("Analytics")
+    inbound_analytics_months            = fields.Integer("No of Months")
 
     #AR
     outbound_ar_success                 = fields.Char("AR Success")
@@ -273,6 +274,17 @@ class DmpiCrmConfig(models.Model):
             self.search([('default','=',True)],limit=1)[0].process_shp()
         except:
             pass
+
+
+    @api.model
+    def _cron_process_analytics(self):
+        _logger.info('CRON process Analytics')
+        try:
+            self.search([('default','=',True)],limit=1)[0].action_send_analytics_to_sap()
+        except:
+            pass
+
+
 
     @api.model
     def _cron_process_invoice(self):
