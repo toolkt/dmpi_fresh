@@ -358,9 +358,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
             'Fiscal Year': d.fiscal_year,
             'Brand': d.brand,
             'Type': d.type,
-            'product_code': d.product_code,
-            'psd': d.psd,
-            'qty': d.qty,
+            'Product Code': d.product_code,
+            'PSD': d.psd,
+            'Qty': d.qty,
         } for d in historical_data]
 
         df = pd.DataFrame
