@@ -365,7 +365,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
         df = pd.DataFrame
         data_df = df(data)
-        data_df.to_csv(path)
+        data_df.to_csv(path, index=False)
         print(data_df)
         
         
