@@ -366,7 +366,8 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         } for d in historical_data]
 
         df = pd.DataFrame
-        data_df = df(data)
+        cols = ['Date','Record Type','Customer Code','Customer Description','Region Code','Region Description','Sales Org','Week No.','Fiscal Year','Brand','Type','Product Code','PSD','Qty']
+        data_df = df(data, columns=cols)
         data_df.to_csv(path, index=False)
         print(data_df)
         
