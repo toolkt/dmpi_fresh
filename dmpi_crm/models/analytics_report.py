@@ -349,7 +349,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         historical_data = self.env['dmpi.crm.analytics.data.historical'].search([])
 
         data = [{
-            'Date': cdate if cdate else '',
+            'Date': d.cdate if d.cdate else '',
             'Record Type': d.record_type,
             'Customer Code': d.customer_code,
             'Customer Description': d.customer,
