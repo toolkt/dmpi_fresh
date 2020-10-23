@@ -222,7 +222,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         h.week_no,
         h.category,
         h.brand as brand,
-        'PLAN' as "type",
+        h."type",
         '' as product_code,
         '' as psd,
         h.qty,
@@ -259,7 +259,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
-        where so.requested_delivery_date >= '2020-08-01'::DATE
+        where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
         order by so.requested_delivery_date)
                                 
@@ -291,7 +291,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
-        where so.requested_delivery_date >= '2020-08-01'::DATE
+        where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
         order by so.requested_delivery_date)
                 
@@ -322,7 +322,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
         left join dmpi_crm_partner cp on cp.id = sc.partner_id 
         left join dmpi_crm_country cc on cc.id = cp.country
-        where i.inv_create_date::DATE >= '2020-08-01'::DATE and i.source ='500'
+        where i.inv_create_date::DATE >= '2020-09-01'::DATE and i.source ='500'
         group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name,pr.brand
         order by i.inv_create_date::DATE)
                 ) as Q1
