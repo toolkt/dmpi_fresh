@@ -236,7 +236,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                 
                                 
         (SELECT 
-        so.requested_delivery_date as date,
+        so.requested_delivery_date::DATE as date,
         TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
         TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
         'Transactional' as record_type,
@@ -268,7 +268,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
                                 
                                 
         (SELECT 
-        so.requested_delivery_date as date,
+        so.requested_delivery_date::DATE as date,
         TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
         TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
         'Transactional' as record_type,
