@@ -350,19 +350,19 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
         data = [{
             'Date': d.cdate if d.cdate else '',
-            'Record Type': d.record_type,
-            'Customer Code': d.customer_code,
-            'Customer Description': d.customer,
-            'Region Code': d.region,
-            'Region Description': d.region_description,
-            'Sales Org': d.sales_org,
-            'Week No.': d.week_no,
-            'Fiscal Year': d.fiscal_year,
-            'Brand': d.brand,
+            'Record Type': d.record_type if d.record_type else '',
+            'Customer Code': d.customer_code if d.customer_code else '',
+            'Customer Description': d.customer if d.customer else '',
+            'Region Code': d.region if d.region else '',
+            'Region Description': d.region_description if d.region_description else '',
+            'Sales Org': d.sales_org if d.sales_org else '',
+            'Week No.': d.week_no if d.week_no else '',
+            'Fiscal Year': d.fiscal_year if d.fiscal_year else '',
+            'Brand': d.brand if d.brand else '',
             'Type': d.type if d.type else '',
-            'Product Code': d.product_code,
-            'PSD': d.psd,
-            'Qty': d.qty,
+            'Product Code': d.product_code if d.product_code else '',
+            'PSD': d.psd if d.psd else '',
+            'Qty': d.qty if d.qty else '',
         } for d in historical_data]
 
         df = pd.DataFrame
