@@ -17,6 +17,7 @@
                 <field name="brand"/>
                 <field name="sku"/>
                 <field name="qty"/>
+                <field name="uom"/>
                 <field name="amount"/>
             </tree>
         </field>

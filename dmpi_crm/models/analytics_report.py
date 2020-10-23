@@ -42,6 +42,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     brand = fields.Char(string="Brand")
     qty = fields.Float(string="Quantity")
     amount = fields.Float(string="Amount")
+    uom = fields.Char(string="UOM")
 
 
 
