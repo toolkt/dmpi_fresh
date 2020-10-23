@@ -222,7 +222,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         h.week_no,
         h.category,
         h.brand as brand,
-        h."type",
+        h.type,
         '' as product_code,
         '' as psd,
         h.qty,
@@ -349,7 +349,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         historical_data = self.env['dmpi.crm.analytics.data.historical'].search([])
 
         data = [{
-            'Date': d.cdate,
+            'Date': d.date,
             'Record Type': d.record_type,
             'Customer Code': d.customer_code,
             'Customer Description': d.customer,
@@ -359,7 +359,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
             'Week No.': d.week_no,
             'Fiscal Year': d.fiscal_year,
             'Brand': d.brand,
-            'Type': d.type or '',
+            'Type': d.type if d.type else '',
             'Product Code': d.product_code,
             'PSD': d.psd,
             'Qty': d.qty,
