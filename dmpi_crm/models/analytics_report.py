@@ -221,7 +221,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cp.sales_org,
         h.week_no,
         h.category,
-        h.category as brand,
+        h.brand as brand,
         h."type",
         '' as product_code,
         '' as psd,
