@@ -14,6 +14,7 @@
                 <field name="week_no"/>
                 <field name="category"/>
                 <field name="type"/>
+                <field name="brand"/>
                 <field name="sku"/>
                 <field name="qty"/>
                 <field name="amount"/>

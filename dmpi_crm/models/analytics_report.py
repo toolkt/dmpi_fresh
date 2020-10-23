@@ -39,6 +39,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     category = fields.Char(string="Category")
     sku = fields.Char(string="SKU")
     type = fields.Char(string="Type")
+    brand = fields.Char(string="Brand")
     qty = fields.Float(string="Quantity")
     amount = fields.Float(string="Amount")
 

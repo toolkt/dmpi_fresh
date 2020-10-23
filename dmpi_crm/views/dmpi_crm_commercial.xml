@@ -225,6 +225,8 @@
                 <field name="total_amount" sum="Total"/>
                 <field name="po_state" string="PO Status"/>
                 <field name="state" string="SO Status"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+
             </tree>
         </field>
     </record>
