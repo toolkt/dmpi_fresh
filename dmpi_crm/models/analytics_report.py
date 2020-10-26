@@ -229,7 +229,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cc.code as region,
         cc.name as region_description
         from dmpi_crm_analytics_historical h 
-        left join dmpi_crm_partner cp on cp.customer_code = h.customer_code
+        left join dmpi_crm_partner cp on cp.customer_code = h.customer_code and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
         
         UNION ALL
@@ -257,7 +257,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_product pr on pr.id = sol.product_id
         left join dmpi_crm_product_code pc on pc.id = pr.code_id
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
         where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
@@ -289,7 +289,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_product pr on pr.id = sol.product_id
         left join dmpi_crm_product_code pc on pc.id = pr.code_id
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
         where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
@@ -320,7 +320,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_invoice i on i.id = il.inv_id
         left join dmpi_crm_sale_order so on so.sap_so_no = i.sap_so_no
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
         where i.inv_create_date::DATE >= '2020-09-01'::DATE and i.source ='500'
         group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name,pr.brand
