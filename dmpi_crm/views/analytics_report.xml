@@ -2,30 +2,97 @@
 <odoo>
 
     <!-- COUNTRY -->
-    <record id="view_dmpi_crm_analytics_histroical_tree" model="ir.ui.view">
+    <record id="view_dmpi_crm_analytics_historical_tree" model="ir.ui.view">
         <field name="name">Historical</field>
-        <field name="model">dmpi.crm.analytics.histroical</field>
+        <field name="model">dmpi.crm.analytics.historical</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
                 <field name="customer"/>
                 <field name="customer_code"/>
                 <field name="date"/>
+                <field name="fiscal_year"/>
                 <field name="week_no"/>
                 <field name="category"/>
                 <field name="type"/>
+                <field name="brand"/>
                 <field name="sku"/>
                 <field name="qty"/>
+                <field name="uom"/>
                 <field name="amount"/>
             </tree>
         </field>
     </record>
-    <record id="action_dmpi_crm_analytics_histroical" model="ir.actions.act_window">
+    <record id="action_dmpi_crm_analytics_historical" model="ir.actions.act_window">
         <field name="name">Historical Data</field>
-        <field name="res_model">dmpi.crm.analytics.histroical</field>
+        <field name="res_model">dmpi.crm.analytics.historical</field>
         <field name="view_mode">tree</field>
         <field name="domain">[]</field>
     </record>
-    <menuitem action="action_dmpi_crm_analytics_histroical" id="menu_dmpi_crm_analytics_histroical" parent="menu_dmpi_crm_commercial_reports"/>
+    <menuitem action="action_dmpi_crm_analytics_historical" id="menu_dmpi_crm_analytics_historical" parent="menu_dmpi_crm_commercial_reports"/>
+
+    <!-- COUNTRY -->
+
+    <!-- SALE ORDER REPORT LINES -->
+    <record id="view_dmpi_crm_analytics_data_historical_graph" model="ir.ui.view">
+        <field name="name">Historical Analytics</field>
+        <field name="model">dmpi.crm.analytics.data.historical</field>
+        <field name="arch" type="xml">
+            <pivot string="Sale Report">
+                <field name="region_description" type="row"/>
+                <field name="region" type="row"/>
+                <field name="week_no" type="col"/>
+                <field name="product_code" type="type"/>
+                <field name="qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+
+    <record id="view_dmpi_crm_analytics_data_historical_tree" model="ir.ui.view">
+        <field name="name">Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.data.historical</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="date"/>
+                <field name="cdate"/>
+                <field name="fiscal_year"/>
+                <field name="record_type"/>
+                <field name="customer"/>
+                <field name="customer_code"/>
+                <field name="sales_org"/>
+                <field name="week_no"/>
+                <field name="category"/>
+                <field name="brand"/>
+                <field name="type"/>
+                <field name="product_code"/>
+                <field name="psd"/>
+                <field name="qty"/>
+                <field name="region"/>
+                <field name="region_description"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_data_historical" model="ir.actions.act_window">
+        <field name="name">Analytics Data</field>
+        <field name="res_model">dmpi.crm.analytics.data.historical</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_data_historical" id="menu_dmpi_crm_analytics_data_historical" parent="menu_dmpi_crm_commercial_reports"/>
+
+    <!-- Export button on Historical Data -->
+    <record id="action_send_historical_data_to_sap" model="ir.actions.server">
+        <field name="name">Send Data To SAP</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="dmpi_crm.model_dmpi_crm_analytics_data_historical"/>
+        <field name="binding_model_id" ref="dmpi_crm.model_dmpi_crm_analytics_data_historical"/>
+        <field name="code">
+records.action_send_analytics_to_sap()
+        </field>
+    </record>
+
+
 
 </odoo>
 

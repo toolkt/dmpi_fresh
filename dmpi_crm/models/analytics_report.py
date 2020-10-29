@@ -8,6 +8,42 @@ from datetime import timedelta
 import base64
 import re
 import json
+import pandas as pd
+import numpy as np
+
+
+# pip3 install Fabric3
+import logging
+from fabric.api import *
+import paramiko
+import socket
+import os
+import glob
+
+
+#@parallel
+def file_send(localpath,remotepath):
+    with settings(warn_only=True):
+        put(localpath,remotepath,use_sudo=True)
+
+
+class DmpiCrmAnalyticsHistorical(models.Model):
+    _name = 'dmpi.crm.analytics.historical'
+    _description = "CRM Historical Data"
+
+    customer = fields.Char(string="Customer")
+    customer_code = fields.Char(string="Customer Code")
+    fiscal_year = fields.Char(string="Fiscal Year")
+    date = fields.Date(string="Date")
+    week_no = fields.Char(string="Week No")
+    category = fields.Char(string="Category")
+    sku = fields.Char(string="SKU")
+    type = fields.Char(string="Type")
+    brand = fields.Char(string="Brand")
+    qty = fields.Float(string="Quantity")
+    amount = fields.Float(string="Amount")
+    uom = fields.Char(string="UOM")
+
 
 
 class DmpiCrmAnalyticsData(models.Model):
@@ -147,53 +183,69 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     _description = "CRM Analytics Data Historical"
     _auto = False
 
-
+    
+    date = fields.Date(string="Date")
+    cdate = fields.Char(string="Date String")
+    fiscal_year = fields.Char(string="Fiscal Year")
     record_type = fields.Char(string="Record")
     customer = fields.Char(string="Customer")
     customer_code = fields.Char(string="Code")
     sales_org = fields.Char(string="Sales Org")
-    week_no = fields.Char(string="Record")
-    category = fields.Char(string="Record")
-    type = fields.Char(string="Record")
-    product_code = fields.Char(string="Record")
-    qty = fields.Char(string="Record")
-    region = fields.Char(string="Record")
-    region_description = fields.Char(string="Record")
+    week_no = fields.Char(string="Week No")
+    category = fields.Char(string="Category")
+    brand = fields.Char(string="Brand")
+    type = fields.Char(string="Type")
+    product_code = fields.Char(string="Product")
+    psd = fields.Char(string="PSD")
+    qty = fields.Float(string="Qty")
+    region = fields.Char(string="Region")
+    region_description = fields.Char(string="Region Desc")
 
 
     def _query(self):
         query = """
+
+        SELECT
+        ROW_NUMBER () OVER (
+                ORDER BY record_type
+        ) as ID, *
+        FROM (
+
         SELECT 
         NULL as date,
-        'historical' as record_type,
+        h.fiscal_year,
+        '' as cdate,
+        'Plan' as record_type,
         cp.name as customer,
         h.customer_code,
         cp.sales_org,
         h.week_no,
         h.category,
-        h.category as brand,
-        h."type",
+        h.brand as brand,
+        h.type,
         '' as product_code,
         '' as psd,
         h.qty,
         cc.code as region,
         cc.name as region_description
-        from dmpi_crm_analytics_histroical h 
-        left join dmpi_crm_partner cp on cp.customer_code = h.customer_code
+        from dmpi_crm_analytics_historical h 
+        left join dmpi_crm_partner cp on cp.customer_code = h.customer_code and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
         
         UNION ALL
                 
                                 
         (SELECT 
-        so.requested_delivery_date as date,
-        'transaction' as record_type,
+        so.requested_delivery_date::DATE as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
         sc.week_no::varchar(255),
         pr.category as category,
-                pr.brand as brand,
+        pr.brand as brand,
         'ORDER' as "type",
         sol.product_code,
         'P'||pc.psd as psd,
@@ -205,19 +257,21 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_product pr on pr.id = sol.product_id
         left join dmpi_crm_product_code pc on pc.id = pr.code_id
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
-        where so.requested_delivery_date >= '2020-08-01'::DATE
+        where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
         order by so.requested_delivery_date)
                                 
                                 
-        UNION ALL               
+                UNION ALL               
                                 
                                 
         (SELECT 
-        so.requested_delivery_date as date,
-        'transaction' as record_type,
+        so.requested_delivery_date::DATE as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
@@ -235,9 +289,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_product pr on pr.id = sol.product_id
         left join dmpi_crm_product_code pc on pc.id = pr.code_id
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
-        where so.requested_delivery_date >= '2020-08-01'::DATE
+        where so.requested_delivery_date >= '2020-09-01'::DATE
         group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
         order by so.requested_delivery_date)
                 
@@ -245,7 +299,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         
         (SELECT 
         i.inv_create_date::DATE as date,
-        'transaction' as record_type,
+        TO_CHAR(i.inv_create_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(i.inv_create_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
         cp.name as customer,
         cp.customer_code,
         cp.sales_org,
@@ -264,12 +320,13 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         left join dmpi_crm_invoice i on i.id = il.inv_id
         left join dmpi_crm_sale_order so on so.sap_so_no = i.sap_so_no
         left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
-        left join dmpi_crm_partner cp on cp.id = sc.partner_id 
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
         left join dmpi_crm_country cc on cc.id = cp.country
-        where i.inv_create_date::DATE >= '2020-08-01'::DATE and i.source ='500'
+        where i.inv_create_date::DATE >= '2020-09-01'::DATE and i.source ='500'
         group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name,pr.brand
         order by i.inv_create_date::DATE)
-    
+                ) as Q1
+
         """
         return query
 
@@ -284,18 +341,45 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 
 
 
+    @api.multi
+    def action_send_analytics_to_sap(self):
+        filename = 'COMMERCIAL_ODOO_DATA.csv'
+        path = '/tmp/%s' % filename
 
-class DmpiCrmAnalyticsHistorical(models.Model):
-    _name = 'dmpi.crm.analytics.histroical'
-    _description = "CRM Historical Data"
+        historical_data = self.env['dmpi.crm.analytics.data.historical'].search([])
 
-    customer = fields.Char(string="Customer")
-    customer_code = fields.Char(string="Customer Code")
-    date = fields.Date(string="Date")
-    week_no = fields.Char(string="Week No")
-    category = fields.Char(string="Category")
-    sku = fields.Char(string="SKU")
-    type = fields.Char(string="Type")
-    qty = fields.Integer(string="Quantity")
-    amount = fields.Float(string="Amount")
+        data = [{
+            'Date': d.cdate if d.cdate else '',
+            'Record Type': d.record_type if d.record_type else '',
+            'Customer Code': d.customer_code if d.customer_code else '',
+            'Customer Description': d.customer if d.customer else '',
+            'Region Code': d.region if d.region else '',
+            'Region Description': d.region_description if d.region_description else '',
+            'Sales Org': d.sales_org if d.sales_org else '',
+            'Week No.': d.week_no if d.week_no else '',
+            'Fiscal Year': d.fiscal_year if d.fiscal_year else '',
+            'Brand': d.brand if d.brand else '',
+            'Type': d.type if d.type else '',
+            'Product Code': d.product_code if d.product_code else '',
+            'PSD': d.psd if d.psd else '',
+            'Qty': d.qty if d.qty else '',
+        } for d in historical_data]
 
+        df = pd.DataFrame
+        cols = ['Date','Record Type','Customer Code','Customer Description','Region Code','Region Description','Sales Org','Week No.','Fiscal Year','Brand','Type','Product Code','PSD','Qty']
+        data_df = df(data, columns=cols)
+        data_df.to_csv(path, index=False)
+        print(data_df)
+        
+        
+        #TRANSFER TO REMOTE SERVER
+        h = self.env['dmpi.crm.config'].search([('default','=',True)],limit=1)
+        host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+        env.hosts.append(host_string)
+        env.passwords[host_string] = h.ssh_pass
+
+        localpath = path
+        path = '%s/%s' % (h.inbound_analytics,filename)
+        remotepath = path
+
+        execute(file_send,localpath,remotepath)

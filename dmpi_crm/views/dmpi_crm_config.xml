@@ -144,6 +144,11 @@
                                     <field name="outbound_prc_fail"/>
                                     <field name="outbound_prc_fail_sent"/>
                                 </group>
+                                <group>
+                                    <field name="inbound_analytics"/>
+                                    <field name="inbound_analytics_months"/>
+                                    <button name="action_send_analytics_to_sap" string="Send Analytics to SAP" type="object" class="oe_highlight" />
+                                </group>
                             </group>
 
                         </page>

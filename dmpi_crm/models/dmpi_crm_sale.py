@@ -198,6 +198,8 @@ class DmpiCrmSaleContract(models.Model):
     valid_from = fields.Date("Valid From", default=fields.Date.context_today)
     valid_to = fields.Date("Valid To")
     week_no = fields.Integer("Week No")
+    week_no_char = fields.Selection([('a','A'),('b','B')],"Week No (Char)")
+    week_no_suffix = fields.Char("Week No (Info)")
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_contract_tag_rel', 'contract_id', 'tag_id', string='Price Tags', copy=True)
 
     credit_limit = fields.Float("Credit Limit")

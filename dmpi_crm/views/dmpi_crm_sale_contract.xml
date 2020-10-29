@@ -137,6 +137,8 @@
                                 <field name="valid_from" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="valid_to" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
                                 <field name="week_no" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" required="1"/>
+                                <field name="week_no_char" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
+                                <field name="week_no_suffix" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}"/>
                                 <field name="tag_ids" widget="many2many_tags" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" options="{'no_quick_create':True,'no_create_edit':True}" invisible="1"/>
                                 <field name="sold_via_id" attrs="{'readonly': [('state', 'not in', ['draft','submitted'])]}" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
                             </group>
