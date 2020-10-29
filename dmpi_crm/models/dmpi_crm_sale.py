@@ -1063,14 +1063,26 @@ class DmpiCrmSaleOrder(models.Model):
 
     contract_tag_ids = fields.Many2many('dmpi.crm.product.price.tag',"Contract Price Tags", related='contract_id.tag_ids')
     tag_ids = fields.Many2many('dmpi.crm.product.price.tag', 'sale_order_tag_rel', 'order_id', 'tag_id', string='Sale Price Tags', copy=True)
-
+    
+    tag_ids_Disp = fields.Char(
+        string='Sale Price Tags',
+        track_visibility="onchange"
+    )
+    
 
     @api.multi
     @api.onchange('tag_ids')
     def onchange_tag_ids(self):
+        tag_name_list = []
+        if self.tag_ids:
+            for tag in self.tag_ids:
+                tag_name_list.append(tag.name)
+        self.tag_ids_Disp = ','.join(tag_name_list)
         for rec in self:
             for l in rec.order_ids:
                 l.onchange_product_id()
+        
+            
 
 
     def _get_default_pack_codes(self):

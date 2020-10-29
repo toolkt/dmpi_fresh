@@ -257,6 +257,9 @@
                             <field name="instructions"/>
                         </group>
                         <group>
+                            <field name="tag_ids_Disp" 
+                            invisible="1"
+                             />
                             <field name="valid"/>
                             <field name="ship_line"/>
                             <field name="destination"/>
