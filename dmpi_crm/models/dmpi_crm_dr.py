@@ -81,6 +81,9 @@ class DmpiCrmDr(models.Model):
                         'port_origin': shp_id.origin,
                         'port_destination': shp_id.destination,
                         'port_discharge': shp_id.discharge,
+                        'vessel_name': shp_id.vessel_name,
+                        'shipping_instruction': shp_id.shipping_instruction,
+
                     })
 
                 for clp in rec.clp_ids:
@@ -184,6 +187,7 @@ class DmpiCrmDr(models.Model):
     fwd_agent  = fields.Char("Forward Agent")
     van_no  = fields.Char("Container No.")
     vessel_name  = fields.Char("Vessel Name / Voyage")
+    shipping_instruction = fields.Char("Shipping Instruction")
     truck_no  = fields.Char("Truck No.")
     load_no  = fields.Char("Load no.")
     booking_no  = fields.Char("Booking No.")
@@ -404,7 +408,8 @@ class DmpiCrmShp(models.Model):
     incoterm_description = fields.Char("Incoterm Description") # 33
     date_pullout = fields.Char("Date of Pull-out") #34 35
     date_inspection = fields.Char("Date of Inspection") #36 37
-
+    vessel_name = fields.Char("Vessel Name")#38
+    shipping_instruction = fields.Char("Shipping Instruction")#39
 
 
     # others
