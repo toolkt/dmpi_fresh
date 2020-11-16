@@ -61,10 +61,9 @@ access_user_dmpi_crm_shell_color,user.dmpi.crm.shell.color,model_dmpi_crm_shell_
 access_user_dmpi_crm_customer_note,user.dmpi.crm.customer.note,model_dmpi_crm_customer_note,base.group_user,1,1,1,1
 access_user_dmpi_crm_discount,user.dmpi_crm_discount,model_dmpi_crm_discount,base.group_user,1,1,1,1
 access_user_dmpi_crm_analytics_historical,user.dmpi_crm_analytics_historical,model_dmpi_crm_analytics_historical,base.group_user,1,1,1,1
+access_user_dmpi_crm_analytics_data_historical,user.dmpi_crm_analytics_data_historical,model_dmpi_crm_analytics_data_historical,base.group_user,1,1,1,1
+
 access_user_dmpi_crm_sale_dist_channel,user.dmpi_crm_sale_dist_channel,model_dmpi_crm_sale_dist_channel,base.group_user,1,1,1,1
-
-
-
 
 access_customer_dmpi_crm_sale_contract,customer.dmpi.crm.sale.contract,model_dmpi_crm_sale_contract,group_custom_crm_customer,1,1,1,0
 

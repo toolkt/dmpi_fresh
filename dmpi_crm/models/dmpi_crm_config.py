@@ -949,8 +949,10 @@ class DmpiCrmConfig(models.Model):
                                 'incoterm_description':row[33],
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
-                                'vessel_name':row[38],
-                                'shipping_instruction':row[39],
+
+                                #Not Yet Implemented
+                                # 'vessel_name':row[38],
+                                # 'shipping_instruction':row[39],
 
                             }
                             # try:
