@@ -187,7 +187,7 @@ class DmpiCrmDr(models.Model):
     fwd_agent  = fields.Char("Forward Agent")
     van_no  = fields.Char("Container No.")
     vessel_name  = fields.Char("Vessel Name / Voyage")
-    si_no = fields.Char("Shipping Instruction No.")
+    si_no = fields.Char("SI No.")
     truck_no  = fields.Char("Truck No.")
     load_no  = fields.Char("Load no.")
     booking_no  = fields.Char("Booking No.")
@@ -377,7 +377,7 @@ class DmpiCrmShp(models.Model):
     so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
 
     # sap docs
-    shp_no  = fields.Char("Shipment No.")
+    shp_no  = fields.Char("Shipment Doc")
     sap_so_no = fields.Char("SAP SO No.")
     sap_dr_no = fields.Char("SAP DR No.")
 
