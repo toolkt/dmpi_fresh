@@ -1444,6 +1444,7 @@ class DmpiCrmInvoice(models.Model):
     sap_so_no = fields.Char("SAP SO No.")  
     sap_dr_no = fields.Char("SAP DR No.")
     shp_no  = fields.Char("Shipment No.")
+    si_no  = fields.Char("Shipment Instruction.")
     dmpi_inv_no = fields.Char("DMPI Invoice No.")
     dms_inv_no = fields.Char("DMS Invoice No.")
     sbfti_inv_no = fields.Char("SBFTI Invoice No.")

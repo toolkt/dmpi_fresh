@@ -378,6 +378,7 @@ class DmpiCrmShp(models.Model):
 
     # sap docs
     shp_no  = fields.Char("Shipment No.")
+    si_no  = fields.Char("Shipment Instruction.")
     sap_so_no = fields.Char("SAP SO No.")
     sap_dr_no = fields.Char("SAP DR No.")
 
