@@ -370,7 +370,7 @@ class DmpiCrmShp(models.Model):
             rec.contract_id = contract_id
 
     # odoo docs
-    name = fields.Char("Shipment No.", related="shp_no", store=True)
+    name = fields.Char("Shipment Doc.", related="shp_no", store=True)
     odoo_po_no = fields.Char("Odoo PO No.")
     odoo_so_no = fields.Char("Odoo SO No.")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Odoo PO", compute="_get_odoo_doc", store=True)
