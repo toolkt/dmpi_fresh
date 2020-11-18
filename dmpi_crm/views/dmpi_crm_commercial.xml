@@ -694,7 +694,6 @@
                             <field name="date_pullout"/>
                             <field name="date_inspection"/>
                             <field name="vessel_name"/>
-                            <field name="si_no"/>
                         </group>
 
                     </group>

@@ -187,7 +187,7 @@ class DmpiCrmDr(models.Model):
     fwd_agent  = fields.Char("Forward Agent")
     van_no  = fields.Char("Container No.")
     vessel_name  = fields.Char("Vessel Name / Voyage")
-    si_no = fields.Char("Shipping Instruction")
+    si_no = fields.Char("Shipping Instruction No.")
     truck_no  = fields.Char("Truck No.")
     load_no  = fields.Char("Load no.")
     booking_no  = fields.Char("Booking No.")
@@ -409,7 +409,7 @@ class DmpiCrmShp(models.Model):
     date_pullout = fields.Char("Date of Pull-out") #34 35
     date_inspection = fields.Char("Date of Inspection") #36 37
     vessel_name = fields.Char("Vessel Name")#38
-    si_no = fields.Char("Shipping Instruction")#39
+    si_no = fields.Char("Shipping Instruction No.")#39
 
 
     # others
