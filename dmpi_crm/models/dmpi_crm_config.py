@@ -951,8 +951,8 @@ class DmpiCrmConfig(models.Model):
                                 'date_inspection':row[36]+' '+row[37],
 
                                 #Not Yet Implemented
-                                # 'vessel_name':row[38],
-                                # 'shipping_instruction':row[39],
+                                'vessel_name':row[38],
+                                'shipping_instruction':row[39],
 
                             }
                             # try:
