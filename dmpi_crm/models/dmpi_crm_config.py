@@ -952,7 +952,9 @@ class DmpiCrmConfig(models.Model):
 
                                 #Not Yet Implemented
                                 'vessel_name':row[38],
-                                'shipping_instruction':row[39],
+                                'si_no':row[39],
+
+
 
                             }
                             # try:
@@ -1088,6 +1090,9 @@ class DmpiCrmConfig(models.Model):
                             dmpi_inv = row[5]
                             dms_inv = row[6]
                             sbfti_inv = row[7]
+                            shp_no = row[4]
+
+
 
                             inv = {
                                 'contract_id' : contract_id,
@@ -1097,7 +1102,7 @@ class DmpiCrmConfig(models.Model):
                                 'odoo_so_no' : row[1],
                                 'sap_so_no': row[2],
                                 'sap_dr_no': row[3],
-                                'shp_no' : row[4],
+                                'shp_no' : shp_no,
                                 'dmpi_inv_no': dmpi_inv,
                                 'dms_inv_no': dms_inv,
                                 'sbfti_inv_no': sbfti_inv,
@@ -1105,6 +1110,11 @@ class DmpiCrmConfig(models.Model):
                                 'inv_create_date': row[9],
                                 'header_net': row[10],
                             }
+
+                            shp_id = self.env['dmpi.crm.shp'].search([('name','=',shp_no)], limit=1)
+                            if shp_id:
+                                inv['si_no'] = shp_no
+
 
                             inv_line = {
                                 'so_line_no': row[11],
