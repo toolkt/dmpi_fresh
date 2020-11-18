@@ -409,7 +409,7 @@ class DmpiCrmShp(models.Model):
     date_pullout = fields.Char("Date of Pull-out") #34 35
     date_inspection = fields.Char("Date of Inspection") #36 37
     vessel_name = fields.Char("Vessel Name")#38
-    si_no = fields.Char("Shipping Instruction No.")#39
+    si_no = fields.Char("SI No.")#39
 
 
     # others
