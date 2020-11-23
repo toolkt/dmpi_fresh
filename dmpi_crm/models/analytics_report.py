@@ -249,7 +249,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         'ORDER' as "type",
         sol.product_code,
         'P'||pc.psd as psd,
-        SUM(sol.qty),
+        SUM(sol.qty * pr.case_factor),
         cc.code as region,
         cc.name as region_description
         from customer_crm_sale_order_line sol
@@ -281,7 +281,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         'SALE' as "type",
         sol.product_code,
         'P'||pc.psd as psd,
-        SUM(sol.qty),
+        SUM(sol.qty * pr.case_factor),
         cc.code as region,
         cc.name as region_description
         from dmpi_crm_sale_order_line sol
@@ -311,7 +311,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         'INVOICE' as "type",
         pc.name as product_code,
         'P'||pc.psd as psd,
-        SUM(il.qty),
+        SUM(il.qty * pr.case_factor),
         cc.code as region,
         cc.name as region_description
         FROM dmpi_crm_invoice_line il
