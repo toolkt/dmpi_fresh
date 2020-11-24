@@ -198,12 +198,14 @@ WITH totals as (
 							from (
 										SELECT
 											CASE
-												WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
-												WHEN trim(dil.type) ilike '%%internal%%' THEN 'internal'
-												WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
-											END as type
-											,dil.lot, dil.factor, dil.factor_num, dil.no_sample
-										FROM dmpi_crm_preship_inspection_lot dil
+												WHEN trim(dil.dil_type) ilike '%%external%%' THEN 'external'
+												WHEN trim(dil.dil_type) ilike '%%internal%%' THEN 'internal'
+												WHEN trim(dil.dil_type) ilike '%%pack%%' THEN 'packaging'
+											END as type,
+											dil.lot, dil.factor, dil.factor_num, dil.no_sample
+											FROM
+										(SELECT *, UPPER(type) as dil_type from 
+										dmpi_crm_preship_inspection_lot) as dil
 										WHERE dil.preship_id = %s
 							) as a
 							group by a.lot, a.type
@@ -218,9 +220,9 @@ WITH totals as (
 			FROM (
 							SELECT
 								CASE
-									WHEN trim(dil.dil_type) ilike '%external%' THEN 'external'
-									WHEN trim(dil.dil_type) ilike '%internal%' THEN 'internal'
-									WHEN trim(dil.dil_type) ilike '%pack%' THEN 'packaging'
+									WHEN trim(dil.dil_type) ilike '%%external%%' THEN 'external'
+									WHEN trim(dil.dil_type) ilike '%%internal%%' THEN 'internal'
+									WHEN trim(dil.dil_type) ilike '%%pack%%' THEN 'packaging'
 								END as type,
 								dil.factor_num, dil.factor, sum(dil.no_sample) as no_sample, sum(dil.no_defect) as no_defect, avg(dil.value) as average
 							FROM
@@ -241,14 +243,16 @@ WITH totals as (
 			FROM (
 							SELECT
 								CASE
-									WHEN trim(dil.type) ilike '%%external%%' THEN 'external'
-									WHEN trim(dil.type) ilike '%%internal%%' THEN 'internal'
-									WHEN trim(dil.type) ilike '%%pack%%' THEN 'packaging'
+									WHEN trim(dil.dil_type) ilike '%%external%%' THEN 'external'
+									WHEN trim(dil.dil_type) ilike '%%internal%%' THEN 'internal'
+									WHEN trim(dil.dil_type) ilike '%%pack%%' THEN 'packaging'
 								END as type,
 								dil.factor_num, dil.factor, sum(dil.no_sample) as no_sample, sum(dil.no_defect) as no_defect
-							FROM dmpi_crm_preship_inspection_lot dil
+							FROM
+							(SELECT *, UPPER(type) as dil_type from 
+							dmpi_crm_preship_inspection_lot) as dil
 							WHERE dil.preship_id = %s
-							GROUP BY dil.type, dil.factor, dil.factor_num
+							GROUP BY dil.dil_type, dil.factor, dil.factor_num
 			) as dil
 			LEFT JOIN dmpi_crm_factor f on (f.code = dil.factor_num and f.type = dil.type)
 			WHERE f.is_mean is false and f.parent_id is null
