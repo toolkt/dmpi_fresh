@@ -339,6 +339,7 @@
                 <field name="brand"/>
                 <field name="sub_brand"/>
                 <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                <field name="default"/>
                 <field name="active"/>
             </tree>
         </field>
@@ -378,6 +379,7 @@
                             <field name="brand"/>
                             <field name="sub_brand"/>
                             <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field name="default"/>
                             <field name="active"/>
                         </group>
                         <group/>

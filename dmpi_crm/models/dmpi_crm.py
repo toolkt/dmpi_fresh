@@ -443,6 +443,7 @@ class DmpiCrmProduct(models.Model):
     sub_brand       = fields.Char('Sub-Brand')
     variant         = fields.Many2one('dmpi.crm.variety','Variant')
     active          = fields.Boolean("Active", default=True)
+    default          = fields.Boolean("Default")
 
 
 class DmpiCrmProductPriceList(models.Model):

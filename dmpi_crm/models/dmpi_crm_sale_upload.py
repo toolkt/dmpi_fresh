@@ -252,7 +252,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 					query = """ SELECT cp.id as product_id, cp.sku, cp.code, cp.product_class, spu.condition_rate, spu.condition_currency, spu.uom
 								from dmpi_crm_product cp left join dmpi_sap_price_upload spu on spu.material = cp.sku
 								where cp.code = '%s' and cp.active is true and cp.id in
-								(select ppr.product_id from dmpi_partner_product_rel ppr where ppr.partner_id = %s) order by product_class """ % (product_code,partner_id)
+								(select ppr.product_id from dmpi_partner_product_rel ppr where ppr.partner_id = %s) cp.default desc, product_class """ % (product_code,partner_id)
 
 					print ('query1',query)
 					self.env.cr.execute(query)
