@@ -95,6 +95,7 @@
                                     <field name="product_class"/>
                                     <field name="packaging"/>
                                     <field name="variant"/>
+                                    <field name="default"/>
                                 </tree>
                             </field>
                         </page>
