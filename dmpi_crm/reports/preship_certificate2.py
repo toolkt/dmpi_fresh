@@ -279,7 +279,7 @@ left join inspection_lots_mean ilm on ilm.parent_id = f.id
 where tl.tmpl_id = %s
 order by type, factor_code
 			""" % (o.dr_id.id, o.dr_id.id, o.dr_id.id, o.tmpl_id.id)
-			print(query)
+			#print(query)
 			self._cr.execute(query)
 			result = self._cr.dictfetchall()
 

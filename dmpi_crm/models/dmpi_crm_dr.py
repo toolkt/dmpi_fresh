@@ -126,7 +126,7 @@ class DmpiCrmDr(models.Model):
 
             else:
                 raise UserError(_("No Shipment Details Found"))
-            print(shp_id)
+            #print(shp_id)
 
 
     @api.multi

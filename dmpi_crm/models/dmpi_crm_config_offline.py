@@ -96,7 +96,7 @@ class DmpiCrmConfig(models.Model):
 
     @api.multi
     def process_offline_contract(self):
-        print("Create Offline Contract")
+        #print("Create Offline Contract")
 
         for rec in self:
             h = self.search([('default','=',True)],limit=1)
@@ -164,18 +164,18 @@ class DmpiCrmConfig(models.Model):
 
                             if po_exist:
                                 po_exist.write(po)
-                                print("Exist updated")
+                                #print("Exist updated")
                             else:
                                 po_id = po_exist.create(po)
-                                print("Does not Exist, Created PO %s" % po_id)
+                                #print("Does not Exist, Created PO %s" % po_id)
 
                     execute(transfer_files,f_po_suc, rec.inbound_k_log_success_offline)
                     execute(transfer_files,f_po, rec.inbound_k_success_offline)
-                    print(f_po+f_po_suc)        
+                    #print(f_po+f_po_suc)        
 
 
                 except Exception as e:
-                    print("Error %s" % e)
+                    #print("Error %s" % e)
                     pass
 
 
@@ -293,7 +293,7 @@ class DmpiCrmConfig(models.Model):
                     # print(f_so+f_so_suc) 
 
                 except Exception as e:
-                    print("Error %s" % e)
+                    #print("Error %s" % e)
                     pass
 
 

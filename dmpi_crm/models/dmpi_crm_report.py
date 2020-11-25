@@ -498,7 +498,7 @@ class DmpiCrmClp(models.Model):
         return action
 
     def parse_pack_code(self):
-        print('parse pack code')
+        #print('parse pack code')
         # sample code = 1180806031
         # 1 = timecode (1-8) 8am - 6am 3 hours interval
         # 18 = year

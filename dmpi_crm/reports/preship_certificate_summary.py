@@ -210,7 +210,7 @@ class PreShipmentCertificateReport(models.AbstractModel):
 				where ps.date_load between '%s'::DATE and '%s'::DATE
 					and ps.tmpl_id in %s
 			""" % (o.date_start, o.date_end, str(tmpl_ids))
-			print(query)
+			#print(query)
 			self._cr.execute(query)
 			result = self._cr.fetchall()
 

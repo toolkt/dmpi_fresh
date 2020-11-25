@@ -843,7 +843,7 @@ class DmpiCrmConfig(models.Model):
                         clp['dr_id'] = new_dr.id
                         clp_id = self.env['dmpi.crm.clp'].create(clp)
 
-                        print(new_dr,clp_id) 
+                        #print(new_dr,clp_id) 
                         if self.env['dmpi.crm.dr'].search([('sap_dr_no','=',sap_dr_no)]).id == new_dr.id:
                             execute(transfer_files,f, outbound_path_success)
                             log = { 'name':"ODOO_DR", 'log_type':"success",
@@ -981,7 +981,7 @@ class DmpiCrmConfig(models.Model):
                             # except:
                             #     pass
 
-                        print(shp)
+                        #print(shp)
                         if row[0].upper() == 'ALTTOITM':
                             line = {
                                 'sap_so_no':row[1],
@@ -996,7 +996,7 @@ class DmpiCrmConfig(models.Model):
                             }
 
                             shp_lines.append((0,0,line))
-                    print(shp_lines)
+                    #print(shp_lines)
                     shp['shp_lines'] = shp_lines
 
 

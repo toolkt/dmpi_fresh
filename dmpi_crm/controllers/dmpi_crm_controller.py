@@ -156,7 +156,7 @@ class FreshCustomerPortal(CustomerPortal):
                 values.update({key: post[key] for key in self.OPTIONAL_CONTRACT_FIELDS if key in post})
                 if post.get('upload_file'):
                     values.update({'upload_file': base64.encodestring(post.get('upload_file').read())})
-                print(values)
+                #print(values)
                 # contract_id = contract.contract_id.id
                 if mode == 'new':
                     contract = contract_obj.sudo().create(values)

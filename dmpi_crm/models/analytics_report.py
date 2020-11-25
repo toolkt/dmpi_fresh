@@ -369,7 +369,7 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         cols = ['Date','Record Type','Customer Code','Customer Description','Region Code','Region Description','Sales Org','Week No.','Fiscal Year','Brand','Type','Product Code','PSD','Qty']
         data_df = df(data, columns=cols)
         data_df.to_csv(path, index=False)
-        print(data_df)
+        #print(data_df)
         
         
         #TRANSFER TO REMOTE SERVER

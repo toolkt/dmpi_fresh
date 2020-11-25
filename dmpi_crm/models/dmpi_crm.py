@@ -173,7 +173,7 @@ class DmpiCrmPartnerAR(models.Model):
     @api.depends('base_line_date','payment_term_days')
     def _get_date_overdue(self):
         for rec in self:
-            print(rec.payment_term_days)
+            #print(rec.payment_term_days)
             date1 = datetime.strptime(rec.base_line_date, "%m/%d/%Y") + timedelta(days=+7)
             date2 = datetime.now()
             # print ((date2-date1).days)
@@ -607,7 +607,7 @@ class DmpiCrmProductPriceList(models.Model):
 
 
     def action_send_pricelist_to_sap(self):
-        print('send to sap pricelist')
+        #print('send to sap pricelist')
         for rec in self:
             try:
                 # filename = 'ODOOPriceUploadZPR8_%s_%s.csv' % (rec.name.translate(removeWhiteSpace),datetime.now().strftime("%Y%m%d_%H%M%S"))

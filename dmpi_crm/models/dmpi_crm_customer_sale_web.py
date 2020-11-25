@@ -44,7 +44,7 @@ class DmpiCrmCustomerSaleContract(models.Model):
     def action_submit_contract(self):
         for rec in self:
             rec.contract_id.action_submit_contract()
-            print("Submit")
+            #print("Submit")
 
 
     @api.model

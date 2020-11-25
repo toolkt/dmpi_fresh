@@ -848,7 +848,7 @@ class DmpiCrmSaleOrder(models.Model):
 
                 msg = "SO was not Submitted for the following Reasons: %s" % errors
                 rec.message_post(msg)
-                print("SO not submitted")
+                #print("SO not submitted")
                 return False, msg
 
 

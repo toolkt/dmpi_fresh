@@ -158,7 +158,7 @@ UNION ALL
         df = pd.DataFrame.from_dict(result)
         pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to','product_class'], 
             columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
-        print(pd_res)
+        #print(pd_res)
 
 
         pd_res_vals = pd_res.reset_index().values
@@ -257,7 +257,7 @@ UNION ALL
         df = pd.DataFrame.from_dict(result)
         pd_res = pd.pivot_table(df, values='qty', index=['so_id','country','so_no','customer','ship_to','product_class'], 
             columns=['sequence','prod_code'],fill_value=0, aggfunc=np.sum, margins=True)
-        print(pd_res)
+        #print(pd_res)
 
 
         pd_res_index = pd_res.reset_index()
@@ -683,7 +683,7 @@ ORDER BY sequence
                         }
 
                         #Add Error Checking
-                        print(item)
+                        #print(item)
                         line_items.append((0,0,item))
                 row_count+=1
             
@@ -719,7 +719,7 @@ ORDER BY sequence
 
     @api.multi
     def update_so(self):
-        print('Process GO')
+        #print('Process GO')
 
         th = lambda x: """<th data-original-title="" title="" style="text-align: center; color:#FFF; background-color: #78717e;" >%s</th>""" % x 
         td = lambda x: """<td class="o_data_cell o_list_number">%s</td>""" % x
@@ -760,7 +760,7 @@ ORDER BY sequence
 
     @api.multi
     def process_go(self):
-        print('Process GO')
+        #print('Process GO')
         for rec in self:
             if rec.excel_file:
                 
@@ -794,7 +794,8 @@ ORDER BY sequence
 
     @api.multi
     def process_all(self):
-        print('Process ALL')
+        p = "Process All"
+        # print('Process ALL')
 
 
     name = fields.Char("Name")
