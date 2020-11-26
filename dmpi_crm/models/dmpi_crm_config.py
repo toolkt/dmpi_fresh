@@ -817,6 +817,13 @@ class DmpiCrmConfig(models.Model):
                                 #     line['shell_color'] = pc[3]
                                 #     line['shell_color2'] = pc[3]
                                 # print(line)
+                                if ' ' in row[2]:
+                                    pc = row[2].split(' ')
+                                    if len(pc) > 2:
+                                        line['pack_code']  =  '%s %s' % (pc[0],pc[1])
+                                        line['shell_color'] = pc[-1]
+                                        line['shell_color2'] = pc[-1]
+
                                 clp_lines.append((0,0,line))                                               
 
                             if row[0].upper() == 'CLPFTR':
