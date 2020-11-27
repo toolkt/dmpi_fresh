@@ -83,7 +83,7 @@ CONTRACT_STATE = [
         ('confirm','For Confirmation'),
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
-        ('approved','Approved'),
+        ('approved','Cleared'),
         ('processing','Processing'),
         ('processed','Processed'),
         ('enroute','Enroute'),

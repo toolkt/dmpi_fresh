@@ -84,6 +84,12 @@
                         </group>
                     </group>
 
+                    <center attrs="{'invisible': [('error_count','=',0)]}">
+                        <span style="color:red">
+                            <field name="errors_disp" readonly="1"/>
+                        </span>
+                    </center>
+                
                     <notebook>
                         <page string="Customer Orders">
                             <field name="customer_order_ids" context="{'default_sap_doc_type':sap_doc_type}" attrs="{'readonly': [('state', 'not in', ['draft'])]}">
@@ -276,7 +282,7 @@
                         <field name="dr_ids"  readonly="1" style="pointer-events:none;">
                             <tree editable='bottom'>
                                 <field name="sap_dr_no" />
-                                <field name="name" />
+                                <field name="van_no" />
                             </tree>
                         </field>                            
                     </page>
