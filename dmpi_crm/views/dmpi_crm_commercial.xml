@@ -613,6 +613,7 @@
                 <field name="so_id"/>
                 <field name="sap_so_no"/>
                 <field name="sap_dr_no"/>
+                <field name="si_no"/>
                 <field name="van_no"/>
                 <field name="dr_create_date"/>
                 <field name="gi_date"/>
@@ -629,6 +630,7 @@
                 <field name="so_id"/>
                 <field name="sap_so_no"/>
                 <field name="sap_dr_no"/>
+                <field name="si_no"/>
                 <field name="van_no"/>
                 <field name="gi_date"/>
                 <field name="origin"/>
@@ -660,6 +662,7 @@
                             <field invisible="1" name="shp_no"/>
                             <field name="sap_so_no"/>
                             <field name="sap_dr_no"/>
+                            <field name="si_no"/>
                         </group>
                     </group>
                     <group string="Shipment">
@@ -691,7 +694,6 @@
                             <field name="date_pullout"/>
                             <field name="date_inspection"/>
                             <field name="vessel_name"/>
-                            <field name="shipping_instruction"/>
                         </group>
 
                     </group>
@@ -754,6 +756,9 @@
                 <field name="source"/>
                 <field name="so_id"/>
                 <field name="sap_so_no"/>
+                <field name="sap_dr_no"/>
+                <field name="shp_no"/>
+                <field name="si_no"/>                
                 <field name="inv_create_date"/>
                 <field name="create_date" string="Creation Date"/>
                 <field name="header_net"/>
@@ -783,6 +788,7 @@
                             <field name="sap_so_no"/>
                             <field name="sap_dr_no"/>
                             <field name="shp_no"/>
+                            <field name="si_no"/>
                         </group>
                     </group>
                     <group>
