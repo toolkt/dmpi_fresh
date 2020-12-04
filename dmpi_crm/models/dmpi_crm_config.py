@@ -957,7 +957,6 @@ class DmpiCrmConfig(models.Model):
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
-                                #Not Yet Implemented
                                 'vessel_name':row[38],
                                 'si_no':row[39],
 
