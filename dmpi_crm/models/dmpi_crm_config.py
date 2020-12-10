@@ -1097,7 +1097,7 @@ class DmpiCrmConfig(models.Model):
                             dms_inv = row[6]
                             sbfti_inv = row[7]
                             shp_no = row[4]
-
+                            sap_dr_no = row[3]
 
 
                             inv = {
@@ -1107,7 +1107,7 @@ class DmpiCrmConfig(models.Model):
                                 'odoo_po_no' : row[0],
                                 'odoo_so_no' : row[1],
                                 'sap_so_no': row[2],
-                                'sap_dr_no': row[3],
+                                'sap_dr_no': sap_dr_no,
                                 'shp_no' : shp_no,
                                 'dmpi_inv_no': dmpi_inv,
                                 'dms_inv_no': dms_inv,
@@ -1117,7 +1117,7 @@ class DmpiCrmConfig(models.Model):
                                 'header_net': row[10],
                             }
 
-                            shp_id = self.env['dmpi.crm.shp'].search([('name','=',shp_no)], limit=1)
+                            shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',sap_dr_no)], limit=1)
                             if shp_id:
                                 inv['si_no'] = shp_id.si_no
 
