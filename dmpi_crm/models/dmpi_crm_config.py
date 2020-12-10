@@ -1119,7 +1119,7 @@ class DmpiCrmConfig(models.Model):
 
                             shp_id = self.env['dmpi.crm.shp'].search([('name','=',shp_no)], limit=1)
                             if shp_id:
-                                inv['si_no'] = shp_no
+                                inv['si_no'] = shp_id.si_no
 
 
                             inv_line = {
