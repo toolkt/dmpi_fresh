@@ -878,7 +878,7 @@ class DmpiCrmConfig(models.Model):
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_dr')
-                    # print (e)
+                    print (e)
 
 
     @api.multi
