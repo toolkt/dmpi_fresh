@@ -821,8 +821,12 @@ class DmpiCrmConfig(models.Model):
                                     pc = row[2].split(' ')
                                     if len(pc) > 2:
                                         line['pack_code']  =  '%s %s' % (pc[0],pc[1])
-                                        line['shell_color'] = pc[-1]
-                                        line['shell_color2'] = pc[-1]
+
+                                        if self.env['dmpi.crm.shell.color'].search([('code','=',pc[-1])]):
+                                            line['shell_color'] = pc[-1]
+                                            line['shell_color2'] = pc[-1]
+
+                                        
 
                                 clp_lines.append((0,0,line))                                               
 
@@ -878,7 +882,7 @@ class DmpiCrmConfig(models.Model):
                         }
                     self.env['dmpi.crm.activity.log'].create(log)
                     _logger.warning('READ ERROR process_dr')
-                    print (e)
+                    # print (e)
 
 
     @api.multi
