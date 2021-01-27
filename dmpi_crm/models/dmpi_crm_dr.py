@@ -82,7 +82,7 @@ class DmpiCrmDr(models.Model):
                         'port_destination': shp_id.destination,
                         'port_discharge': shp_id.discharge,
                         'vessel_name': shp_id.vessel_name,
-                        'shipping_instruction': shp_id.shipping_instruction,
+                        'si_no': shp_id.si_no,
 
                     })
 
@@ -187,7 +187,7 @@ class DmpiCrmDr(models.Model):
     fwd_agent  = fields.Char("Forward Agent")
     van_no  = fields.Char("Container No.")
     vessel_name  = fields.Char("Vessel Name / Voyage")
-    shipping_instruction = fields.Char("Shipping Instruction")
+    si_no = fields.Char("SI No.")
     truck_no  = fields.Char("Truck No.")
     load_no  = fields.Char("Load no.")
     booking_no  = fields.Char("Booking No.")
@@ -370,14 +370,14 @@ class DmpiCrmShp(models.Model):
             rec.contract_id = contract_id
 
     # odoo docs
-    name = fields.Char("Shipment No.", related="shp_no", store=True)
+    name = fields.Char("Shipment Doc.", related="shp_no", store=True)
     odoo_po_no = fields.Char("Odoo PO No.")
     odoo_so_no = fields.Char("Odoo SO No.")
     contract_id = fields.Many2one('dmpi.crm.sale.contract', "Odoo PO", compute="_get_odoo_doc", store=True)
     so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
 
     # sap docs
-    shp_no  = fields.Char("Shipment No.")
+    shp_no  = fields.Char("Shipment Doc")
     sap_so_no = fields.Char("SAP SO No.")
     sap_dr_no = fields.Char("SAP DR No.")
 
@@ -409,7 +409,7 @@ class DmpiCrmShp(models.Model):
     date_pullout = fields.Char("Date of Pull-out") #34 35
     date_inspection = fields.Char("Date of Inspection") #36 37
     vessel_name = fields.Char("Vessel Name")#38
-    shipping_instruction = fields.Char("Shipping Instruction")#39
+    si_no = fields.Char("SI No.")#39
 
 
     # others

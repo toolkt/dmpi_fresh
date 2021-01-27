@@ -83,7 +83,7 @@ CONTRACT_STATE = [
         ('confirm','For Confirmation'),
         ('confirmed','Confirmed'),
         ('soa','Statement of Account'),
-        ('approved','Approved'),
+        ('approved','Cleared'),
         ('processing','Processing'),
         ('processed','Processed'),
         ('enroute','Enroute'),
@@ -1443,7 +1443,8 @@ class DmpiCrmInvoice(models.Model):
     inv_no = fields.Integer("Invoice No.")
     sap_so_no = fields.Char("SAP SO No.")  
     sap_dr_no = fields.Char("SAP DR No.")
-    shp_no  = fields.Char("Shipment No.")
+    shp_no  = fields.Char("Shipment Doc")
+    si_no  = fields.Char("SI No.")
     dmpi_inv_no = fields.Char("DMPI Invoice No.")
     dms_inv_no = fields.Char("DMS Invoice No.")
     sbfti_inv_no = fields.Char("SBFTI Invoice No.")

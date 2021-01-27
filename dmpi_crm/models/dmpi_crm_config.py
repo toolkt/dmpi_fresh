@@ -821,8 +821,12 @@ class DmpiCrmConfig(models.Model):
                                     pc = row[2].split(' ')
                                     if len(pc) > 2:
                                         line['pack_code']  =  '%s %s' % (pc[0],pc[1])
-                                        line['shell_color'] = pc[-1]
-                                        line['shell_color2'] = pc[-1]
+
+                                        if self.env['dmpi.crm.shell.color'].search([('code','=',pc[-1])]):
+                                            line['shell_color'] = pc[-1]
+                                            line['shell_color2'] = pc[-1]
+
+                                        
 
                                 clp_lines.append((0,0,line))                                               
 
@@ -957,9 +961,10 @@ class DmpiCrmConfig(models.Model):
                                 'date_pullout':row[34]+' '+row[35],
                                 'date_inspection':row[36]+' '+row[37],
 
-                                #Not Yet Implemented
-                                # 'vessel_name':row[38],
-                                # 'shipping_instruction':row[39],
+                                'vessel_name':row[38],
+                                'si_no':row[39],
+
+
 
                             }
                             # try:
@@ -1095,6 +1100,9 @@ class DmpiCrmConfig(models.Model):
                             dmpi_inv = row[5]
                             dms_inv = row[6]
                             sbfti_inv = row[7]
+                            shp_no = row[4]
+                            sap_dr_no = row[3]
+
 
                             inv = {
                                 'contract_id' : contract_id,
@@ -1103,8 +1111,8 @@ class DmpiCrmConfig(models.Model):
                                 'odoo_po_no' : row[0],
                                 'odoo_so_no' : row[1],
                                 'sap_so_no': row[2],
-                                'sap_dr_no': row[3],
-                                'shp_no' : row[4],
+                                'sap_dr_no': sap_dr_no,
+                                'shp_no' : shp_no,
                                 'dmpi_inv_no': dmpi_inv,
                                 'dms_inv_no': dms_inv,
                                 'sbfti_inv_no': sbfti_inv,
@@ -1112,6 +1120,11 @@ class DmpiCrmConfig(models.Model):
                                 'inv_create_date': row[9],
                                 'header_net': row[10],
                             }
+
+                            shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',sap_dr_no)], limit=1)
+                            if shp_id:
+                                inv['si_no'] = shp_id.si_no
+
 
                             inv_line = {
                                 'so_line_no': row[11],
