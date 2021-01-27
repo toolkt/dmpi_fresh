@@ -621,7 +621,7 @@
                     <notebook>
                         <page string="Packages">
                             <field name="clp_line_ids">
-                                <tree editable="bottom" string="Packages">
+                                <tree editable="bottom" string="Packages" limit="20">
                                     <field name="position"/>
                                     <field name="tag_no"/>
                                     <field name="pack_code"/>
