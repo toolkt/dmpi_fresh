@@ -69,7 +69,7 @@ class DmpiCrmAnalyticsAR(models.Model):
 SELECT row_number() OVER () AS id, c.id as partner_id, var.* 
 from v_ar_redshift var
 left join dmpi_crm_partner c on c.customer_code = LTRIM(var.debitor,'0')
-where c.id > 1 
+--where c.id > 1 
         """
         return query
 
