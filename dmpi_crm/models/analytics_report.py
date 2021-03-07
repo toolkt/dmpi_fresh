@@ -45,6 +45,23 @@ class DmpiCrmAnalyticsHistorical(models.Model):
     uom = fields.Char(string="UOM")
 
 
+class DmpiCrmAnalyticsAR(models.Model):
+    _name = 'dmpi.crm.analytics.ar'
+    _description = "CRM Analytics AR"
+
+    comp_code = fields.Char(string="Comp Code")
+    debitor = fields.Char(string="Debitor")\
+    ac_doc_no = fields.Char(string="AC Doc No")
+    clr_doc_no = fields.Char(string="CLR Doc No")
+    due_date = fields.Date(string="Due Date")
+    amount = fields.Float(string="AmountC")
+    ar_1_30 = fields.Float(string="1-30")
+    ar_31_60 = fields.Float(string="31-60")
+    ar_61_90 = fields.Float(string="61-90")
+    ar_91_120 = fields.Float(string="91-120")
+    ar_120 = fields.Float(string="120")
+
+
 
 class DmpiCrmAnalyticsData(models.Model):
     _name = 'dmpi.crm.analytics.data'
