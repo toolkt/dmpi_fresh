@@ -62,7 +62,7 @@ class DmpiCrmAnalyticsAR(models.Model):
     ar_31_60 = fields.Float(string="31-60")
     ar_61_90 = fields.Float(string="61-90")
     ar_91_120 = fields.Float(string="91-120")
-    ar_120 = fields.Float(string="120")
+    ar_120 = fields.Float(string=">120")
 
     def _query(self):
         query = """
