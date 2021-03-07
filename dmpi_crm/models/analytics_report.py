@@ -57,7 +57,7 @@ class DmpiCrmAnalyticsAR(models.Model):
     ac_doc_no = fields.Char(string="AC Doc No")
     clr_doc_no = fields.Char(string="CLR Doc No")
     due_date = fields.Date(string="Due Date")
-    amount = fields.Float(string="AmountC")
+    amount = fields.Float(string="Amount")
     ar_1_30 = fields.Float(string="1-30")
     ar_31_60 = fields.Float(string="31-60")
     ar_61_90 = fields.Float(string="61-90")
