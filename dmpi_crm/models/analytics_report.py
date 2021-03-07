@@ -65,8 +65,7 @@ class DmpiCrmAnalyticsAR(models.Model):
 
     def _query(self):
         query = """
-SELECT *
-from v_ar_redshift
+SELECT * from v_ar_redshift
         """
         return query
 
