@@ -50,7 +50,7 @@ class DmpiCrmAnalyticsAR(models.Model):
     _description = "CRM Analytics AR"
 
     comp_code = fields.Char(string="Comp Code")
-    debitor = fields.Char(string="Debitor")\
+    debitor = fields.Char(string="Debitor")
     ac_doc_no = fields.Char(string="AC Doc No")
     clr_doc_no = fields.Char(string="CLR Doc No")
     due_date = fields.Date(string="Due Date")
