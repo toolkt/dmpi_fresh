@@ -48,7 +48,9 @@ class DmpiCrmAnalyticsHistorical(models.Model):
 class DmpiCrmAnalyticsAR(models.Model):
     _name = 'dmpi.crm.analytics.ar'
     _description = "CRM Analytics AR"
+    _auto = False
 
+    
     comp_code = fields.Char(string="Comp Code")
     debitor = fields.Char(string="Debitor")
     ac_doc_no = fields.Char(string="AC Doc No")
@@ -60,6 +62,25 @@ class DmpiCrmAnalyticsAR(models.Model):
     ar_61_90 = fields.Float(string="61-90")
     ar_91_120 = fields.Float(string="91-120")
     ar_120 = fields.Float(string="120")
+
+    def _query(self):
+        query = """
+SELECT *
+FROM dblink('pg_redshift', $REDSHIFT$
+SELECT comp_code,debitor,ac_doc_no,clr_doc_no,due_date,amount,ar_1_30,ar_31_60,ar_61_90,ar_91_120,ar_120
+FROM v_fresh_ar
+limit 1000;
+$REDSHIFT$) AS t1 (comp_code varchar, debitor varchar, ac_doc_no varchar, clr_doc_no varchar, due_date date, amount float, ar_1_30 float, ar_31_60 float, ar_61_90 float, ar_91_120 float, ar_120 float);
+        """
+        return query
+
+
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute("""CREATE or REPLACE VIEW %s as ( 
+            %s
+            ) """ % (self._table, self._query()))
+
 
 
 
