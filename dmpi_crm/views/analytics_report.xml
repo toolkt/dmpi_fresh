@@ -118,6 +118,7 @@ records.action_send_analytics_to_sap()
             <tree editable="bottom">
                 <field name="comp_code"/>
                 <field name="debitor"/>
+                <field name="partner_id"/>
                 <field name="ac_doc_no"/>
                 <field name="clr_doc_no"/>
                 <field name="due_date"/>

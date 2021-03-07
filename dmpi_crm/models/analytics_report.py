@@ -53,6 +53,7 @@ class DmpiCrmAnalyticsAR(models.Model):
 
     comp_code = fields.Char(string="Comp Code")
     debitor = fields.Char(string="Debitor")
+    partner_id = fields.Many2one('dmpi.crm.partner',"Partner")
     ac_doc_no = fields.Char(string="AC Doc No")
     clr_doc_no = fields.Char(string="CLR Doc No")
     due_date = fields.Date(string="Due Date")
@@ -65,7 +66,9 @@ class DmpiCrmAnalyticsAR(models.Model):
 
     def _query(self):
         query = """
-SELECT row_number() OVER () AS id, * from v_ar_redshift
+SELECT row_number() OVER () AS id, c.id as customer, var.* 
+from v_ar_redshift var
+left join dmpi_crm_partner c on c.customer_code = LTRIM(var.debitor,'0')
         """
         return query
 
