@@ -96,7 +96,6 @@ SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= due_date then deb_cre_lc else 
  where c.id > 1 
  group by c.id,ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date
 ) as Q1
-limit 5
         """
         return query
 
