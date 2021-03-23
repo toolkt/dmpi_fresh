@@ -16,6 +16,7 @@
                 <field name="ar_240" type="measure"/>
                 <field name="ar_120" type="measure"/>
                 <field name="ar_360" type="measure"/>
+                <field name="ar_g360" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -40,6 +41,7 @@
                 <field name="ar_240"/>
                 <field name="ar_120"/>
                 <field name="ar_360"/>
+                <field name="ar_g360"/>
             </tree>
         </field>
     </record>
