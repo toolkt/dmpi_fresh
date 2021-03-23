@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_user_dmpi_crm_analytics_ar,user.dmpi_crm_analytics_ar,model_dmpi_crm_analytics_ar,base.group_user,1,1,1,1
+access_user_dmpi_crm_analytics_ar_date,user.dmpi_crm_analytics_ar_date,model_dmpi_crm_analytics_ar_date,base.group_user,1,1,1,1

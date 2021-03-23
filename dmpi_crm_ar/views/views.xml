@@ -1,0 +1,115 @@
+<odoo>
+  <data>
+
+
+    <record id="view_dmpi_crm_analytics_ar_tree" model="ir.ui.view">
+        <field name="name">AR Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.ar</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="comp_code"/>
+                <field name="debitor"/>
+                <field name="partner_id"/>
+                <field name="ac_doc_no"/>
+                <field name="clr_doc_no"/>
+                <field name="due_date"/>
+                <field name="total_ar"/>
+                <field name="ar_0"/>
+                <field name="ar_30"/>
+                <field name="ar_60"/>
+                <field name="ar_90"/>
+                <field name="ar_240"/>
+                <field name="ar_120"/>
+                <field name="ar_360"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_ar" model="ir.actions.act_window">
+        <field name="name">AR Analytics Data</field>
+        <field name="res_model">dmpi.crm.analytics.ar</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar" parent="dmpi_crm.menu_dmpi_crm_commercial_reports"/>
+
+
+
+    <record id="view_dmpi_crm_analytics_ar_date_tree" model="ir.ui.view">
+        <field name="name">AR Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.ar.date</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_ar_date" model="ir.actions.act_window">
+        <field name="name">AR Analytics As Of</field>
+        <field name="res_model">dmpi.crm.analytics.ar.date</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_ar_date" id="menu_dmpi_crm_analytics_ar_date" parent="dmpi_crm.menu_dmpi_crm_commercial_reports"/>
+
+
+
+
+
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="dmpi_crm_ar.list">
+      <field name="name">dmpi_crm_ar list</field>
+      <field name="model">dmpi_crm_ar.dmpi_crm_ar</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="dmpi_crm_ar.action_window">
+      <field name="name">dmpi_crm_ar window</field>
+      <field name="res_model">dmpi_crm_ar.dmpi_crm_ar</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dmpi_crm_ar.action_server">
+      <field name="name">dmpi_crm_ar server</field>
+      <field name="model_id" ref="model_dmpi_crm_ar_dmpi_crm_ar"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="dmpi_crm_ar" id="dmpi_crm_ar.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="dmpi_crm_ar.menu_1" parent="dmpi_crm_ar.menu_root"/>
+    <menuitem name="Menu 2" id="dmpi_crm_ar.menu_2" parent="dmpi_crm_ar.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="dmpi_crm_ar.menu_1_list" parent="dmpi_crm_ar.menu_1"
+              action="dmpi_crm_ar.action_window"/>
+    <menuitem name="Server to list" id="dmpi_crm_ar" parent="dmpi_crm_ar.menu_2"
+              action="dmpi_crm_ar.action_server"/>
+    -->
+  </data>
+</odoo>

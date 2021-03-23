@@ -74,7 +74,4 @@ access_user_dmpi_crm_customer_sale_contract,dmpi.crm.customer.sale.contract,dmpi
 access_user_dmpi_crm_feedback,dmpi.crm.feedback,dmpi_crm.model_dmpi_crm_feedback,base.group_user,1,1,1,1
 access_user_dmpi_crm_files,dmpi.crm.files,dmpi_crm.model_dmpi_crm_files,base.group_user,1,1,1,1
 
-access_user_dmpi_crm_analytics_ar,user.dmpi_crm_analytics_ar,model_dmpi_crm_analytics_ar,base.group_user,1,1,1,1
-access_user_dmpi_crm_analytics_ar_date,user.dmpi_crm_analytics_ar_date,model_dmpi_crm_analytics_ar_date,base.group_user,1,1,1,1
-
 

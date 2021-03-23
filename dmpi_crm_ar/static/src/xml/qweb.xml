@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<templates id="template" xml:space="preserve">
+
+
+    <t t-extend="ListView.buttons">
+        <t  t-jquery="button.o_list_button_add" t-operation="after">
+           <button t-if="widget.modelName == 'dmpi.crm.analytics.ar'" name="get_as_of_date" type="action" id="get_as_of_date" class="btn btn-primary btn-sm o_list_analytics_ar_button" >As of Date</button> 
+        </t>
+    </t>
+
+
+</templates>
