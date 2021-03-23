@@ -122,12 +122,14 @@ records.action_send_analytics_to_sap()
                 <field name="ac_doc_no"/>
                 <field name="clr_doc_no"/>
                 <field name="due_date"/>
-                <field name="amount"/>
-                <field name="ar_1_30"/>
-                <field name="ar_31_60"/>
-                <field name="ar_61_90"/>
-                <field name="ar_91_120"/>
+                <field name="total_ar"/>
+                <field name="ar_0"/>
+                <field name="ar_30"/>
+                <field name="ar_60"/>
+                <field name="ar_90"/>
+                <field name="ar_240"/>
                 <field name="ar_120"/>
+                <field name="ar_360"/>
             </tree>
         </field>
     </record>
@@ -138,6 +140,25 @@ records.action_send_analytics_to_sap()
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar" parent="menu_dmpi_crm_commercial_reports"/>
+
+
+
+    <record id="view_dmpi_crm_analytics_ar_date_tree" model="ir.ui.view">
+        <field name="name">AR Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.ar.date</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_dmpi_crm_analytics_ar_date" model="ir.actions.act_window">
+        <field name="name">AR Analytics As Of</field>
+        <field name="res_model">dmpi.crm.analytics.ar.date</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem action="action_dmpi_crm_analytics_ar_date" id="menu_dmpi_crm_analytics_ar_date" parent="menu_dmpi_crm_commercial_reports"/>
 
 
 
