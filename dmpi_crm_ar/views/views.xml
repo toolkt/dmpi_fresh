@@ -8,7 +8,6 @@
         <field name="arch" type="xml">
             <pivot string="AR Ageging Report">
                 <field name="partner_id" type="row"/>
-                <field name="total_ar" type="row"/>
                 <field name="total_ar" type="measure"/>
                 <field name="ar_0" type="measure"/>
                 <field name="ar_30" type="measure"/>
