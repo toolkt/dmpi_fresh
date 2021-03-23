@@ -1,6 +1,26 @@
 <odoo>
   <data>
 
+    <!-- SALE ORDER REPORT LINES -->
+    <record id="view_dmpi_crm_analytics_ar_graph" model="ir.ui.view">
+        <field name="name">AR Analytics Data</field>
+        <field name="model">dmpi.crm.analytics.ar</field>
+        <field name="arch" type="xml">
+            <pivot string="AR Ageging Report">
+                <field name="partner_id" type="row"/>
+                <field name="total_ar" type="row"/>
+                <field name="total_ar" type="measure"/>
+                <field name="ar_0" type="measure"/>
+                <field name="ar_30" type="measure"/>
+                <field name="ar_60" type="measure"/>
+                <field name="ar_90" type="measure"/>
+                <field name="ar_240" type="measure"/>
+                <field name="ar_120" type="measure"/>
+                <field name="ar_360" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
 
     <record id="view_dmpi_crm_analytics_ar_tree" model="ir.ui.view">
         <field name="name">AR Analytics Data</field>
@@ -27,7 +47,7 @@
     <record id="action_dmpi_crm_analytics_ar" model="ir.actions.act_window">
         <field name="name">AR Analytics Data</field>
         <field name="res_model">dmpi.crm.analytics.ar</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">tree,pivot</field>
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar" parent="dmpi_crm.menu_dmpi_crm_commercial_reports"/>
