@@ -45,7 +45,7 @@ class DmpiCrmAnalyticsAR(models.Model):
     def _query(self):
         query = """
 SELECT row_number() OVER () AS id, *,
-CASE WHEN days_overdue = 0 then total_ar END as ar_0,
+CASE WHEN days_overdue <= 0 then total_ar END as ar_0,
 CASE WHEN days_overdue > 0 AND days_overdue <= 30  then total_ar END as ar_30,
 CASE WHEN days_overdue > 30 AND days_overdue <= 60  then total_ar END as ar_60,
 CASE WHEN days_overdue > 60 AND days_overdue <= 90  then total_ar END as ar_90,
