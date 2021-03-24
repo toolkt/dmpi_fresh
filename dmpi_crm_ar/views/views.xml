@@ -42,8 +42,8 @@
                 <field name="ar_30"/>
                 <field name="ar_60"/>
                 <field name="ar_90"/>
-                <field name="ar_240"/>
                 <field name="ar_120"/>
+                <field name="ar_240"/>
                 <field name="ar_360"/>
                 <field name="ar_g360"/>
                 <field name="total_overdue"/>

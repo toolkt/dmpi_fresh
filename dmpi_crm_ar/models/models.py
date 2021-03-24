@@ -35,8 +35,8 @@ class DmpiCrmAnalyticsAR(models.Model):
     ar_30 = fields.Float(string="1-30")
     ar_60 = fields.Float(string="31-60")
     ar_90 = fields.Float(string="61-90")
-    ar_240 = fields.Float(string="91-120")
-    ar_120 = fields.Float(string="121-240")
+    ar_120 = fields.Float(string="91-120")
+    ar_240 = fields.Float(string="121-240")
     ar_360 = fields.Float(string="241-360")
     ar_g360 = fields.Float(string=">360")
 
