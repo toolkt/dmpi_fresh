@@ -34,6 +34,8 @@
                 <field name="ac_doc_no"/>
                 <field name="clr_doc_no"/>
                 <field name="due_date"/>
+                <field name="pstng_date"/>
+                <field name="clear_date"/>
                 <field name="total_ar"/>
                 <field name="ar_0"/>
                 <field name="ar_30"/>
@@ -44,6 +46,7 @@
                 <field name="ar_360"/>
                 <field name="ar_g360"/>
                 <field name="total_overdue"/>
+
             </tree>
         </field>
     </record>

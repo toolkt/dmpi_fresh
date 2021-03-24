@@ -26,6 +26,8 @@ class DmpiCrmAnalyticsAR(models.Model):
     ac_doc_no = fields.Char(string="AC Doc No")
     clr_doc_no = fields.Char(string="CLR Doc No")
     due_date = fields.Date(string="Due Date")
+    pstng_date = fields.Date(string="Posting Date")
+    clear_date = fields.Date(string="Clear Date")
     total_ar = fields.Float(string="Total AR Balance")
     total_overdue = fields.Float(string="Total Overdue")
     ar_0 = fields.Float(string="0")
@@ -56,7 +58,8 @@ CASE WHEN days_overdue > 0 then total_ar END as total_overdue
 FROM (
 SELECT c.id as partner_id, ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date, 
 ( (SELECT date from dmpi_crm_analytics_ar_date limit 1) - ar.due_date) as days_overdue,
-SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= due_date then deb_cre_lc else 0 END)+(CASE WHEN pstng_date <= due_date and clear_date > due_date then deb_cre_lc else 0 END)) as total_ar
+SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= due_date then deb_cre_lc else 0 END)+
+(CASE WHEN pstng_date <= due_date and clear_date > due_date then deb_cre_lc else 0 END)) as total_ar
  FROM v_ar_redshift_001 ar
  left join dmpi_crm_partner c on c.customer_code = LTRIM(ar.debitor,'0')
  where c.id > 1 and ar.due_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) 
