@@ -33,6 +33,7 @@
                 <field name="partner_id"/>
                 <field name="ac_doc_no"/>
                 <field name="clr_doc_no"/>
+                <field name="days_overdue"/>
                 <field name="due_date"/>
                 <field name="pstng_date"/>
                 <field name="clear_date"/>

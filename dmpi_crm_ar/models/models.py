@@ -30,6 +30,7 @@ class DmpiCrmAnalyticsAR(models.Model):
     clear_date = fields.Date(string="Clear Date")
     total_ar = fields.Float(string="Total AR Balance")
     total_overdue = fields.Float(string="Total Overdue")
+    days_overdue = fields.Integer(string="Days Overdue")
     ar_0 = fields.Float(string="0")
     ar_30 = fields.Float(string="1-30")
     ar_60 = fields.Float(string="31-60")
