@@ -26,7 +26,8 @@ class DmpiCrmAnalyticsAR(models.Model):
     ac_doc_no = fields.Char(string="AC Doc No")
     clr_doc_no = fields.Char(string="CLR Doc No")
     due_date = fields.Date(string="Due Date")
-    total_ar = fields.Float(string="Amount")
+    total_ar = fields.Float(string="Total AR Balance")
+    total_overdue = fields.Float(string="Total Overdue")
     ar_0 = fields.Float(string="0")
     ar_30 = fields.Float(string="1-30")
     ar_60 = fields.Float(string="31-60")
@@ -48,7 +49,9 @@ CASE WHEN days_overdue > 60 AND days_overdue <= 90  then total_ar END as ar_90,
 CASE WHEN days_overdue > 90 AND days_overdue <= 120  then total_ar END as ar_120,
 CASE WHEN days_overdue > 120 AND days_overdue <= 240  then total_ar END as ar_240,
 CASE WHEN days_overdue > 240 AND days_overdue <= 360  then total_ar END as ar_360,
-CASE WHEN days_overdue > 360 then total_ar END as ar_g360
+CASE WHEN days_overdue > 360 then total_ar END as ar_g360,
+CASE WHEN days_overdue > 0 then total_ar END as total_overdue
+
 
 FROM (
 SELECT c.id as partner_id, ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date, 
