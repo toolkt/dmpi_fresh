@@ -64,7 +64,7 @@ SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= (SELECT date from dmpi_crm_ana
 (CASE WHEN pstng_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) and clear_date > (SELECT date from dmpi_crm_analytics_ar_date limit 1) then deb_cre_lc else 0 END)) as total_ar,
 
 SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) and due_date >= (SELECT date from dmpi_crm_analytics_ar_date limit 1) then deb_cre_lc else 0 END)+
-(CASE WHEN pstng_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) and clear_date > (SELECT date from dmpi_crm_analytics_ar_date limit 1) and due_date >= (SELECT date from dmpi_crm_analytics_ar_date limit 1) then deb_cre_lc else 0 END)) as total_0ar,
+(CASE WHEN pstng_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) and clear_date > (SELECT date from dmpi_crm_analytics_ar_date limit 1) and due_date >= (SELECT date from dmpi_crm_analytics_ar_date limit 1) then deb_cre_lc else 0 END)) as total_0ar
 
 
  FROM v_ar_redshift_001 ar
