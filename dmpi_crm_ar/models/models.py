@@ -56,14 +56,14 @@ CASE WHEN days_overdue > 0 then total_ar END as total_overdue
 
 
 FROM (
-SELECT c.id as partner_id, ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date, 
+SELECT c.id as partner_id, ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date, ar.pstng_date, ar.clear_date,
 ( (SELECT date from dmpi_crm_analytics_ar_date limit 1) - ar.due_date) as days_overdue,
 SUM((CASE WHEN fi_docstat = 'O' and pstng_date <= due_date then deb_cre_lc else 0 END)+
 (CASE WHEN pstng_date <= due_date and clear_date > due_date then deb_cre_lc else 0 END)) as total_ar
  FROM v_ar_redshift_001 ar
  left join dmpi_crm_partner c on c.customer_code = LTRIM(ar.debitor,'0')
  where c.id > 1 and ar.due_date <= (SELECT date from dmpi_crm_analytics_ar_date limit 1) 
- group by c.id,ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date
+ group by c.id,ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date,ar.pstng_date, ar.clear_date
 ) as Q1
         """
         return query
