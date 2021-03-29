@@ -57,9 +57,21 @@
         <field name="view_mode">tree,pivot</field>
         <field name="domain">[]</field>
     </record>
+    <!-- Commercial Report -->
     <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar" parent="dmpi_crm.menu_dmpi_crm_commercial_reports"/>
-
+    <!-- Finance Report -->
     <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar_finance" parent="dmpi_crm.menu_dmpi_crm_finance_account"/>
+
+
+    <!-- Customer Report -->
+    <record id="action_dmpi_crm_analytics_ar_customer" model="ir.actions.act_window">
+        <field name="name">Statement of Account</field>
+        <field name="res_model">dmpi.crm.analytics.ar</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_id.user_ids','in',[uid])]</field>
+    </record>
+
+    <menuitem action="action_dmpi_crm_analytics_ar_customer" id="menu_dmpi_crm_analytics_ar_customer" parent="dmpi_crm.menu_main_dmpi_customer_contract"/>
 
 
 
