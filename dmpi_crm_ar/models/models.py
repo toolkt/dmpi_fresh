@@ -55,7 +55,6 @@ CASE WHEN days_overdue > 240 AND days_overdue <= 360  then total_ar END as ar_36
 CASE WHEN days_overdue > 360 then total_ar END as ar_g360,
 CASE WHEN days_overdue > 0 then total_ar END as total_overdue
 
-
 FROM (
 SELECT c.id as partner_id, ar.comp_code, ar.debitor, ar.ac_doc_no, ar.clr_doc_no, ar.due_date, ar.pstng_date, ar.clear_date,
 ( (SELECT date from dmpi_crm_analytics_ar_date limit 1) - ar.due_date) as days_overdue,

@@ -13,8 +13,8 @@
                 <field name="ar_30" type="measure"/>
                 <field name="ar_60" type="measure"/>
                 <field name="ar_90" type="measure"/>
-                <field name="ar_240" type="measure"/>
                 <field name="ar_120" type="measure"/>
+                <field name="ar_240" type="measure"/>
                 <field name="ar_360" type="measure"/>
                 <field name="ar_g360" type="measure"/>
                 <field name="total_overdue" type="measure"/>
@@ -58,6 +58,11 @@
         <field name="domain">[]</field>
     </record>
     <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar" parent="dmpi_crm.menu_dmpi_crm_commercial_reports"/>
+
+    <menuitem action="action_dmpi_crm_analytics_ar" id="menu_dmpi_crm_analytics_ar_finance" parent="dmpi_crm.menu_dmpi_crm_finance_account"/>
+
+
+
 
 
 
