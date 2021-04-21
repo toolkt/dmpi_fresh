@@ -462,3 +462,137 @@ class DmpiCrmAnalyticsHistorical(models.Model):
         remotepath = path
 
         execute(file_send,localpath,remotepath)
+
+
+class DmpiCrmAnalyticsCaseFill(models.Model):
+    _name = 'dmpi.crm.analytics.case.fill'
+    _description = "CRM Analytics Case Fill"
+    _auto = False
+
+    
+    def _query(self):
+        query = """
+                 
+        (SELECT 
+        so.requested_delivery_date::DATE as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
+        cp.name as customer,
+        cp.customer_code,
+        cp.sales_org,
+        sc.week_no::varchar(255),
+        pr.category as category,
+        pr.brand as brand,
+        'ORDER' as "type",
+        sol.product_code,
+        'P'||pc.psd as psd,
+        SUM(sol.qty * pr.case_factor) as cases,
+        SUM(sol.qty) as raw_cases,
+        SUM(sol.qty * pr.case_factor) as order_cases,
+        SUM(sol.qty) as order_raw_cases,
+                0 as sale_cases,
+                0 AS sale_raw_cases,
+                0 as invoice_cases,
+                0 AS invoice_raw_cases,
+        cc.code as region,
+        cc.name as region_description
+        from customer_crm_sale_order_line sol
+        left join customer_crm_sale_order so on so.id = sol.order_id
+        left join dmpi_crm_product pr on pr.id = sol.product_id
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id
+        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
+        left join dmpi_crm_country cc on cc.id = cp.country
+        --where so.requested_delivery_date >= '2020-09-01'::DATE
+        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
+        order by so.requested_delivery_date)
+                                
+                                
+                UNION ALL               
+                                
+                                
+        (SELECT 
+        so.requested_delivery_date::DATE as date,
+        TO_CHAR(so.requested_delivery_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(so.requested_delivery_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
+        cp.name as customer,
+        cp.customer_code,
+        cp.sales_org,
+        sc.week_no::varchar(255),
+        pr.category as category,
+                pr.brand as brand,
+        'SALE' as "type",
+        sol.product_code,
+        'P'||pc.psd as psd,
+        SUM(sol.qty * pr.case_factor) as cases,
+        SUM(sol.qty) as raw_cases,
+        0 as order_cases,
+        0 as order_raw_cases,
+                SUM(sol.qty * pr.case_factor) as sale_cases,
+                SUM(sol.qty) AS sale_raw_cases,
+                0 as invoice_cases,
+                0 AS invoice_raw_cases,             
+        cc.code as region,
+        cc.name as region_description
+        from dmpi_crm_sale_order_line sol
+        left join dmpi_crm_sale_order so on so.id = sol.order_id
+        left join dmpi_crm_product pr on pr.id = sol.product_id
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id
+        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
+        left join dmpi_crm_country cc on cc.id = cp.country
+        --where so.requested_delivery_date >= '2020-09-01'::DATE
+        group by so.requested_delivery_date,cp.name, cp.customer_code,sc.week_no,pr.category,cc.code, cc.name,sol.product_code,cp.sales_org,pc.psd,pr.brand
+        order by so.requested_delivery_date)
+                
+        UNION ALL
+        
+        (SELECT 
+        i.inv_create_date::DATE as date,
+        TO_CHAR(i.inv_create_date::DATE + interval '1 year' * 1 - interval '1 month' * 4, 'yyyy') as fiscal_year,
+        TO_CHAR(i.inv_create_date::DATE , 'mm/dd/yyyy') as cdate,
+        'Transactional' as record_type,
+        cp.name as customer,
+        cp.customer_code,
+        cp.sales_org,
+        sc.week_no::varchar(255),
+        pr.category as category,
+                pr.brand as brand,
+        'INVOICE' as "type",
+        pc.name as product_code,
+        'P'||pc.psd as psd,
+        SUM(il.qty * pr.case_factor) as cases,
+        SUM(il.qty) as raw_cases,
+        0 as order_cases,
+        0 as order_raw_cases,
+                0 as sale_cases,
+                0 AS sale_raw_cases,
+                SUM(il.qty * pr.case_factor) as invoice_cases,
+                SUM(il.qty) AS invoice_raw_cases,                           
+        cc.code as region,
+        cc.name as region_description
+        FROM dmpi_crm_invoice_line il
+        left join dmpi_crm_product pr on pr.sku = il.material
+        left join dmpi_crm_product_code pc on pc.id = pr.code_id                
+        left join dmpi_crm_invoice i on i.id = il.inv_id
+        left join dmpi_crm_sale_order so on so.sap_so_no = i.sap_so_no
+        left join dmpi_crm_sale_contract sc on sc.id = so.contract_id
+        left join dmpi_crm_partner cp on cp.id = sc.partner_id and cp.active = true
+        left join dmpi_crm_country cc on cc.id = cp.country
+        --where i.inv_create_date::DATE >= '2020-09-01'::DATE and i.source ='500'
+        group by i.inv_create_date,cp.name,cp.customer_code,cp.sales_org,sc.week_no,pr.category,pc.name,pc.psd,cc.code,cc.name,pr.brand
+        order by i.inv_create_date::DATE)
+                
+
+        """
+        return query
+
+
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute("""CREATE or REPLACE VIEW %s as ( 
+            %s
+            ) """ % (self._table, self._query()))
+

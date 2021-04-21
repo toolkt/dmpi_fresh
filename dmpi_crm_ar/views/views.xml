@@ -97,6 +97,8 @@
 
 
 
+    <!--Customer AR Balance -->
+    <menuitem id="menu_dmpi_crm_customer_ar_balance" action="action_dmpi_crm_analytics_ar_customer" parent="dmpi_crm.menu_dmpi_crm_commercial_config"/>
 
 
     <!-- explicit list view definition -->
