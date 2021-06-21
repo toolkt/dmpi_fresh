@@ -238,7 +238,6 @@
                                                             <b>MESSAGE:</b><br/>
                                                             <field name="body_html" widget="html"/>
                                                             <field name="attachment_ids" widget="many2many_binary"/>
-
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,16 +246,15 @@
                                     </kanban>
 
                                     <form>
-                                        <group>
-                                            <field name="date" invisible="1"/>
-                                            <field name="subject" placeholder="Subject (placeholders may be used here)"/>
-                                            <field name="note_type"/>
-                                        </group>
-                                        <field name="body_html" options="{'style-inline': true}"/>
+                                        <field name="date" invisible="1"/>
+                                        <label for="subject"/>
+                                        <h2 style="display: inline-block;"><field name="subject" placeholder="Subject (placeholders may be used here)"/></h2>
+                                        <field name="body_html" widget="html" options="{'style-inline': true}"/>
                                         <field name="attachment_ids" widget="many2many_binary"/>
                                     </form>
                                 </field>
                             </page>
+
 
                         </notebook>
 
