@@ -5,6 +5,7 @@ from odoo.osv import expression
 from odoo import models, api, fields
 from odoo.exceptions import ValidationError, AccessError, UserError
 from datetime import datetime, timedelta
+import dateutil.parser as parser
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
 from fabric.api import *
@@ -165,7 +166,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 				# CHECK DELIVERY DATE
 				deliver_date = False
 				try:
-					deliver_date = datetime.strptime(data['DELIVERY DATE'], '%m/%d/%Y')
+					deliver_date = parser.parse(data['DELIVERY DATE'])
 				except:
 					errors.append("Invalid Delivery Date.")
 					error_count += 1
@@ -173,7 +174,7 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 				# CHECK ESTIMATED DATE
 				estimated_date = False
 				try:
-					estimated_date = datetime.strptime(data['ESTIMATED DATE'], '%m/%d/%Y')
+					estimated_date = parser.parse(data['ESTIMATED DATE'])
 				except:
 					errors.append("Invalid Estimated Date.")
 					error_count += 1
