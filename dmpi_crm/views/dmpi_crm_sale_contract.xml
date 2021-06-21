@@ -194,8 +194,8 @@
                                                                     <b>MESSAGE:</b><br/>
                                                                     <field name="body_html" widget="html"/>
                                                                     <field name="attachment_ids" widget="many2many_binary"/>
-
                                                                 </div>
+                                                                <a type="delete">Delete</a>
                                                             </div>
                                                         </div>
                                                     </t>
