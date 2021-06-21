@@ -330,19 +330,34 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 		writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
 		pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
 
-		hdr = CSV_UPLOAD_HEADERS[0:-1] + pack_codes
-		hdr.append(CSV_UPLOAD_HEADERS[-1])
-		writer.writerow(hdr)
+
 
 		query = """SELECT partner_id from dmpi_crm_partner_res_users_rel
 			where user_id = %s """ % self.env.user.id
 		self._cr.execute(query)
-		partners_ids = self._cr.fetchall()
+		result = self._cr.fetchall()
+
+		valid_pack_codes = []
+		partners_ids = self.env['dmpi.crm.partner'].search([('id','in',[x for x in result])])
+
+
+
+
+		for p in partners_ids:
+			valid_products = self.env['dmpi.crm.product.price.list.item'].search([('partner_id','=',p.id),('valid_to','>=',datetime.now())])
+			for v in valid_products:
+				if v.product_id.code_id.name:
+					if v.product_id.code_id.name not in valid_pack_codes:
+						valid_pack_codes.append(v.product_id.code_id.name)
+
+
+		hdr = CSV_UPLOAD_HEADERS[0:-1] + valid_pack_codes
+		hdr.append(CSV_UPLOAD_HEADERS[-1])
+		writer.writerow(hdr)
 
 		counter = 0
-		for p_id in partners_ids:
+		for partner in partners_ids:
 			counter =+ 1
-			partner = self.env['dmpi.crm.partner'].search([('id','=',p_id)])
 
 			address = []
 			address.append(partner.street if partner.street is not None else '')
@@ -351,8 +366,8 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 			address.append(partner.postal_code if partner.postal_code is not None else '')
 			address = " ".join([x for x in address if x is not False])
 
-			row = [counter,partner.customer_code,partner.customer_code,address,"SHP-LINE","SC 1-2","01/01/2000","01/15/2000"]
-			row = row + ['' for x in pack_codes]
+			row = [counter,partner.customer_code,partner.customer_code,address,"SHP-LINE","SC 1-2",datetime.now().strftime('%m/%d/%Y'),datetime.now().strftime('%m/%d/%Y')]
+			row = row + ['' for x in valid_pack_codes]
 			row.append(1500)
 			writer.writerow(row)
 
