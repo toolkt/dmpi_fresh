@@ -321,19 +321,19 @@
         <field name="model">dmpi.crm.product</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="sku"/>
+                <field name="name"/>
+                <field name="code_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                 <field name="fruit_size"/>
                 <field name="fruit_count"/>
-                <field name="weight"/>
+                <!-- <field name="weight"/>
                 <field name="net_weight"/>
                 <field name="psd"/>
                 <field name="uom"/>
                 <field name="case_factor"/>
-                <field name="code_id" options="{'no_quick_create':True,'no_create_edit':True}"/>
                 <field invisible="1" name="code" readonly="1"/>
                 <field name="product_crown" readonly="1"/>
                 <field name="product_class"/>
-                <field name="sku"/>
-                <field name="name"/>
                 <field name="packaging"/>
                 <field name="category"/>
                 <field name="sub_category"/>
@@ -341,7 +341,7 @@
                 <field name="sub_brand"/>
                 <field name="variant" options="{'no_quick_create':True,'no_create_edit':True}"/>
                 <field name="default"/>
-                <field name="active"/>
+                <field name="active"/> -->
             </tree>
         </field>
     </record>

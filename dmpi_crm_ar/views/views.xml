@@ -71,7 +71,8 @@
         <field name="domain">[('partner_id.user_ids','in',[uid])]</field>
     </record>
 
-    <menuitem action="action_dmpi_crm_analytics_ar_customer" id="menu_dmpi_crm_analytics_ar_customer" parent="dmpi_crm.menu_main_dmpi_customer_contract"/>
+    <!-- HIDE TEMPORARILY -->
+    <!-- <menuitem action="action_dmpi_crm_analytics_ar_customer" id="menu_dmpi_crm_analytics_ar_customer" parent="dmpi_crm.menu_main_dmpi_customer_contract"/> -->
 
 
 

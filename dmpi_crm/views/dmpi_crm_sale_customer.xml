@@ -43,7 +43,7 @@
                 <header>
 
                     <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-
+                    <button name="action_confirm_contract" states="submitted,confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,enroute,received" statusbar_colors='{"approved":"blue"}'/>
                 </header>
@@ -71,7 +71,7 @@
                             <field name="customer_ref" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
                             <field name="po_date" attrs="{'readonly': [('state', 'not in', ['draft'])]}" required="1"/>
                         </group>
-                        <group>
+                        <group invisible="1">
                             <field name="credit_limit" readonly="1" force_save="1"/>
                             <field name="credit_exposure" readonly="1" force_save="1"/>
                             <field name="remaining_credit" readonly="1" force_save="1"/>
@@ -84,9 +84,9 @@
                         </group>
                     </group>
 
-                    <center attrs="{'invisible': [('error_count','=',0)]}">
+                    <center attrs="{'invisible': [('error_count','=',0)]}" invisible="1">
                         <span style="color:red">
-                            <field name="errors_disp" readonly="1"/>
+                            <field name="errors_disp" readonly="1" />
                         </span>
                     </center>
                 
@@ -335,9 +335,11 @@
                                                     <field invisible="1" name="found_p60"/>
                                                     <field name="total" sum="Total Amount"/>
                                                 </tree>
+                                                <form>
+                                                </form>
                                             </field>
                                         </page>
-                                        <page string="Settings">
+                                        <page string="Settings" invisible="1">
                                             <group>
                                                 <group>
                                                     <field name="sent_to_sap"/>
@@ -375,9 +377,6 @@
 
                             <form class="o_form_document" >
                                 <sheet>
-                                    <div class="oe_button_box" name="button_box">
-                                        <button name="get_shipment_details" type="object" string="Get Shipment Details" class="oe_stat_button" icon="fa-check-square-o"></button>
-                                    </div>
                                     <div class="oe_title">
                                         <span>DR/Container </span>
                                         <h1>
@@ -386,7 +385,7 @@
                                         </h1>
                                         <field invisible="1" name="is_duplicate"/>
                                     </div>
-                                    <group>
+                                    <group  invisible="1">
                                         <group string="Odoo Docs">
                                             <field invisible="1" name="odoo_po_no"/>
                                             <field invisible="1" name="odoo_so_no"/>

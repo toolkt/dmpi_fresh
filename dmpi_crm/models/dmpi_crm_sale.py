@@ -417,6 +417,14 @@ class DmpiCrmSaleContract(models.Model):
     def action_request_confirmation(self):
         for rec in self:
 
+            if not rec.week_no or not rec.customer_ref:
+                raise Warning(_("No Customer Ref or Week Number!"))
+
+            for so in rec.sale_order_ids:
+                if so.error > 0:
+                    raise Warning(_("Some items in sale orders have no price computation!"))
+
+
             # send mail
             email_to = "<%s>" % rec.partner_id.email
             
@@ -430,12 +438,13 @@ class DmpiCrmSaleContract(models.Model):
     @api.multi
     def action_confirm_contract(self):
         for rec in self:
+
             if not rec.week_no or not rec.customer_ref:
-                raise UserError(_("No Customer Ref or Week Number!"))
+                raise Warning(_("No Customer Ref or Week Number!"))
 
             for so in rec.sale_order_ids:
                 if so.error > 0:
-                    raise UserError(_("Some items in sale orders have no price computation!"))
+                    raise Warning(_("Some items in sale orders have no price computation!"))
 
 
             for so in rec.sale_order_ids:

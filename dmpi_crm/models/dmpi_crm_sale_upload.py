@@ -330,11 +330,35 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 		writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
 		pack_codes = self.env['dmpi.crm.product.code'].get_product_codes()
 
-		hdr = CSV_UPLOAD_HEADERS
-		end_hdr = hdr.pop()
-		hdr.extend(pack_codes)
-		hdr.append(end_hdr)
+		hdr = CSV_UPLOAD_HEADERS[0:-1] + pack_codes
+		hdr.append(CSV_UPLOAD_HEADERS[-1])
 		writer.writerow(hdr)
+
+		query = """SELECT partner_id from dmpi_crm_partner_res_users_rel
+			where user_id = %s """ % self.env.user.id
+		self._cr.execute(query)
+		partners_ids = self._cr.fetchall()
+
+		counter = 0
+		for p_id in partners_ids:
+			counter =+ 1
+			partner = self.env['dmpi.crm.partner'].search([('id','=',p_id)])
+
+			address = []
+			address.append(partner.street if partner.street is not None else '')
+			address.append(partner.city if partner.city is not None else '')
+			address.append(partner.city_code if partner.city_code is not None else '')
+			address.append(partner.postal_code if partner.postal_code is not None else '')
+			address = " ".join([x for x in address if x is not False])
+
+			row = [counter,partner.customer_code,partner.customer_code,address,"SHP-LINE","SC 1-2","01/01/2000","01/15/2000"]
+			row = row + ['' for x in pack_codes]
+			row[10] = 500
+			row[15] = 1000
+			row.append(1500)
+			writer.writerow(row)
+
+
 
 		xy = output.getvalue().encode('utf-8')
 		file = base64.encodestring(xy)
