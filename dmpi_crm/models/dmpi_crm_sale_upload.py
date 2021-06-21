@@ -353,8 +353,6 @@ class DmpiCrmSaleContractUpload(models.TransientModel):
 
 			row = [counter,partner.customer_code,partner.customer_code,address,"SHP-LINE","SC 1-2","01/01/2000","01/15/2000"]
 			row = row + ['' for x in pack_codes]
-			row[10] = 500
-			row[15] = 1000
 			row.append(1500)
 			writer.writerow(row)
 
