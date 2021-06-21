@@ -43,7 +43,7 @@
                 <header>
 
                     <button name="action_submit_contract" states="draft" string="Submit Contract" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
-                    <button name="action_confirm_contract" states="submitted,confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
+                    <button name="action_confirm_contract" states="confirm" string="Confirm Order" type="object" class="oe_highlight" groups="base.group_user" confirm="Please confirm PO Submission"/>
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,enroute,received" statusbar_colors='{"approved":"blue"}'/>
                 </header>
