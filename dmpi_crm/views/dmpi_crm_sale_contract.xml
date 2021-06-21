@@ -331,15 +331,16 @@
             <field name="auto_delete" eval="True"/>
             <field name="lang">${object.lang}</field>
             <field name="body_html"><![CDATA[
-                <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
+                    <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
                     <i>THIS IS AN AUTOMATED EMAIL. DO NOT REPLY.</i>
-                    <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
-                        <tbody><tr>
-                            <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
-                                <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
-                                </td>
-                            </tr></tbody>
-                        </table>
+                        <!-- <table cellspacing="0" cellpadding="0" style="width:600px;background:inherit;color:inherit">
+                            <tbody><tr>
+                                <td valign="center" width="200" style="padding:10px 10px 10px 5px;font-size: 12px">
+                                    <img src="/logo.png" style="padding: 0px; margin: 0px; height: auto; width: 80px;" alt="Del Monte Philippines Incorporated" data-original-title="" title="">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> -->
                     </div>
                     <div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#000000">
                         <p>Dear ${object.partner_id.name},</p>
