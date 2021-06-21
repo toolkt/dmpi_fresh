@@ -237,7 +237,7 @@
                                                             </p>
                                                             <b>MESSAGE:</b><br/>
                                                             <field name="body_html" widget="html"/>
-                                                            <!-- <field name="attachment_ids" widget="many2many_binary"/> -->
+                                                            <field name="attachment_ids" widget="many2many_binary"/>
 
                                                         </div>
                                                     </div>
@@ -253,7 +253,7 @@
                                             <field name="note_type"/>
                                         </group>
                                         <field name="body_html" options="{'style-inline': true}"/>
-                                        <!-- <field name="attachment_ids" widget="many2many_binary"/> -->
+                                        <field name="attachment_ids" widget="many2many_binary"/>
                                     </form>
                                 </field>
                             </page>
