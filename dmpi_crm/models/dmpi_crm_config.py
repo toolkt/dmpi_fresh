@@ -1118,6 +1118,103 @@ class DmpiCrmConfig(models.Model):
                                 'sbfti_inv_no': sbfti_inv,
                                 'payer': row[8],
                                 'inv_create_date': row[9],
+                                'header_net': row[11],
+                            }
+
+                            shp_id = self.env['dmpi.crm.shp'].search([('sap_dr_no','=',sap_dr_no)], limit=1)
+                            if shp_id:
+                                inv['si_no'] = shp_id.si_no
+
+
+                            inv_line = {
+                                'so_line_no': row[13],
+                                'inv_line_no': row[14],
+                                'material' : row[15], 
+                                'qty': index_to_float(row,16),
+                                'uom': row[17],
+                                'line_net_value': index_to_float(row,18),
+                                'pricing_date': row[10],
+                                'collective_no': row[19],
+                            }
+
+                            inv_lines.append((0,0,inv_line))
+                    inv['inv_lines'] = inv_lines
+
+                    new_inv = self.env['dmpi.crm.invoice'].create(inv)
+                    execute(transfer_files,f, outbound_path_success)
+                    _logger.info('SUCCESS process_inv dmpi')
+
+                except Exception as e:
+                    _logger.warning('READ ERROR process_inv dmpi: %s' % e)
+
+
+    @api.multi
+    def process_inv_old(self):
+        _logger.info('RUN process_inv dmpi')
+
+        for rec in self:
+            outbound_path= rec.outbound_inv_success
+            outbound_path_success= rec.outbound_inv_success_sent
+
+            h = self.search([('default','=',True)],limit=1)
+            host_string = h.ssh_user + '@' + h.ssh_host + ':22'
+            env.hosts.append(host_string)
+            env.passwords[host_string] = h.ssh_pass
+            env.keepalive = 15
+
+            files = execute(list_dir,outbound_path,'ODOO_DMPI_INV')
+            for f in files[host_string]:
+                try:
+                    result = execute(read_file,f)[host_string]
+                    line = result.split('\n')
+
+                    inv_lines = []
+                    inv = {}
+                    name = ''
+                    contract_id = 0
+
+                    for l in line:
+                        row = l.split('\t')
+
+                        if any(row):
+                            inv_no = []
+                            inv_no.append('500')
+                            if row[5] != '':
+                                inv_no.append(row[5])
+                            if row[6] != '':
+                                inv_no.append(row[6])
+                            if row[7] != '':
+                                inv_no.append(row[7])
+
+                            name = "/".join(inv_no)
+
+                            so = self.env['dmpi.crm.sale.order'].search([('sap_so_no','=',row[2])], limit=1)
+
+                            if so:
+                                contract = so.contract_id
+                                contract_id = contract.id
+
+                            dmpi_inv = row[5]
+                            dms_inv = row[6]
+                            sbfti_inv = row[7]
+                            shp_no = row[4]
+                            sap_dr_no = row[3]
+
+
+                            inv = {
+                                'contract_id' : contract_id,
+                                'source':'500',
+                                'name': name,
+                                'odoo_po_no' : row[0],
+                                'odoo_so_no' : row[1],
+                                'sap_so_no': row[2],
+                                'sap_dr_no': sap_dr_no,
+                                'shp_no' : shp_no,
+                                'dmpi_inv_no': dmpi_inv,
+                                'dms_inv_no': dms_inv,
+                                'sbfti_inv_no': sbfti_inv,
+                                'payer': row[8],
+                                'inv_create_date': row[9],
                                 'header_net': row[10],
                             }
 
@@ -1144,6 +1241,8 @@ class DmpiCrmConfig(models.Model):
 
                 except Exception as e:
                     _logger.warning('READ ERROR process_inv dmpi: %s' % e)
+
+
 
 
     @api.multi

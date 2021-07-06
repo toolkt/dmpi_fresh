@@ -819,6 +819,8 @@
                                     <field name="sap_so_no"/>
                                     <field name="week_no_int"/>
                                     <field name="inv_create_date"/>
+                                    <field name="pricing_date"/>
+                                    <field name="collective_no"/>
                                     <field name="so_id"/>
                                 </tree>
                             </field>
