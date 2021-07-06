@@ -1134,8 +1134,11 @@ class DmpiCrmConfig(models.Model):
                                 'uom': row[17],
                                 'line_net_value': index_to_float(row,18),
                                 'pricing_date': row[10],
-                                'collective_no': row[19],
+                                'week_no': row[19],
                             }
+                            if row[19]:
+                                if int(row[19]) > 0:
+                                    inv_line['week_no_int'] = int(row[19])
 
                             inv_lines.append((0,0,inv_line))
                     inv['inv_lines'] = inv_lines
