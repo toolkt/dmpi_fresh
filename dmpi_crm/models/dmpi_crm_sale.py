@@ -1503,7 +1503,7 @@ class DmpiCrmInvoiceLine(models.Model):
     uom = fields.Char("UoM")
     line_net_value = fields.Float("Net Value")
     sap_so_no = fields.Char("SAP SO No.")
-    sale_doc = fields.Char("Sale Document")
+    sale_doc = fields.Char("Sale Doc")
     week_no = fields.Char("Week No.")
     week_no_int = fields.Integer("Week Number")
     so_id = fields.Many2one('dmpi.crm.sale.order', 'Odoo SO', compute="_get_odoo_doc", store=True)
