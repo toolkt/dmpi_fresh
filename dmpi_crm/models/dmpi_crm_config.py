@@ -1127,6 +1127,7 @@ class DmpiCrmConfig(models.Model):
 
 
                             inv_line = {
+                                'sale_doc': row[12],
                                 'so_line_no': row[13],
                                 'inv_line_no': row[14],
                                 'material' : row[15], 
