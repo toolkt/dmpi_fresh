@@ -29,6 +29,8 @@
                 <field name="country"/>
                 <field name="country_code"/>
                 <field name="active"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="ship_to_ids" widget="many2many_tags"/>
                 <field name="tag_ids" widget="many2many_tags"/>
             </tree>
         </field>
